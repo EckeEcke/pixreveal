@@ -2,37 +2,97 @@
   <div class="app-container">
     <main class="game-layout">
       <section class="canvas-section">
-        <PixelCanvas :pixel-array="pixelData" :resolution="resolution" />
+        <div class="canvas-wrapper">
+          <div
+            class="interaction-layer"
+            :style="{
+              gridTemplateColumns: `repeat(${resolution}, 1fr)`,
+              gridTemplateRows: `repeat(${resolution}, 1fr)`,
+            }"
+            @contextmenu.prevent
+          >
+            <div
+              v-for="(_, index) in flatPixelData"
+              :key="index"
+              class="pixel-cell"
+              @mousedown="paintPixel(index)"
+              @mouseenter="handleDrag(index, $event)"
+            ></div>
+          </div>
+
+          <PixelCanvas :pixel-array="pixelData" :resolution="resolution" />
+        </div>
       </section>
 
       <section class="editor-section">
         <div class="tool-card">
-          <h3>Data Input</h3>
+          <div class="editor-header">
+            <h3>Data Input</h3>
+            <div
+              class="active-indicator"
+              :style="{ backgroundColor: colorPalette[selectedColor] }"
+            ></div>
+          </div>
+
           <textarea
             v-model="rawInput"
-            placeholder="Paste Array here: [0, 1, 0...]"
+            placeholder="Paste Array here..."
             @input="updateArrayFromInput"
           ></textarea>
 
           <div class="stats">
-            Pixels: {{ pixelData.length }} | Res: {{ resolution }}x{{ resolution }}
+            Pixels: {{ resolution * resolution }} | Res: {{ resolution }}x{{
+              resolution
+            }}
           </div>
-          <button @click="generateEmpty" class="btn-secondary">Clear / New 16x16</button>
-          <div>
-            <h3>Color Palette</h3>
+
+          <div class="action-buttons">
+            <button @click="generateEmpty" class="btn-outline">
+              Clear / New 16x16
+            </button>
+            <button
+              @click="copyToClipboard"
+              class="btn-outline"
+              :class="{ 'btn-success': copyStatus === 'Copied!' }"
+            >
+              {{ copyStatus }}
+            </button>
+          </div>
+
+          <div class="palette-container">
+            <h3>Color Palette (Selected: {{ selectedColor }})</h3>
             <div class="color-palette">
-              <div v-for="i in 15" class="color-palette-item">
+              <div
+                v-for="(color, index) in colorPalette"
+                :key="index"
+                class="color-palette-item"
+                :class="{ active: selectedColor === index }"
+                @click="selectedColor = index"
+              >
                 <div
                   class="color-flag"
-                  :style="{ backgroundColor: colorPalette[i - 1] }"
+                  :style="{
+                    backgroundColor: color === 'transparent' ? '#333' : color,
+                  }"
                 ></div>
-                <div>{{ i - 1 }}</div>
+                <div class="color-label">{{ index }}</div>
               </div>
             </div>
           </div>
-          <button v-for="drawing in drawings" @click="setDrawing(drawing.data)">
-            {{ drawing.name }}
-          </button>
+
+          <div class="drawings-list">
+            <h3>Presets</h3>
+            <div class="preset-grid">
+              <button
+                v-for="drawing in drawings"
+                :key="drawing.name"
+                @click="setDrawing(drawing.data)"
+                class="btn-preset"
+              >
+                {{ drawing.name }}
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -40,19 +100,35 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import colorPalette from "@/data/colorPalette";
 import drawings from "@/data/drawings";
 
 const resolution = ref(16);
 const rawInput = ref("");
+const selectedColor = ref(1);
+const pixelData = ref(Array.from({ length: 16 }, () => Array(16).fill(0)));
 
-const createEmptyMatrix = (res) => {
-  return Array.from({ length: res }, () => Array(res).fill(0));
+const flatPixelData = computed(() => pixelData.value.flat());
+
+const syncRawInput = () => {
+  rawInput.value = JSON.stringify(pixelData.value);
 };
 
-const pixelData = ref(createEmptyMatrix(16));
+const paintPixel = (index) => {
+  const y = Math.floor(index / resolution.value);
+  const x = index % resolution.value;
+  pixelData.value[y][x] = Number(selectedColor.value);
+
+  syncRawInput();
+};
+
+const handleDrag = (index, event) => {
+  if (event.buttons === 1) {
+    paintPixel(index);
+  }
+};
 
 const updateArrayFromInput = () => {
   try {
@@ -65,100 +141,78 @@ const updateArrayFromInput = () => {
 };
 
 const generateEmpty = () => {
-  const newMatrix = Array.from({ length: 16 }, () => Array(16).fill(0));
-  pixelData.value = newMatrix;
+  pixelData.value = Array.from({ length: 16 }, () => Array(16).fill(0));
   resolution.value = 16;
-  rawInput.value = JSON.stringify(newMatrix);
+  syncRawInput();
 };
 
 const setDrawing = (data) => {
   pixelData.value = data;
-  resolution.value = Math.sqrt(data.length);
-  rawInput.value = JSON.stringify(data);
+  resolution.value = data.length;
+  syncRawInput();
+};
+
+const copyStatus = ref("Copy to Clipboard");
+
+const copyToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(rawInput.value);
+    copyStatus.value = "Copied!";
+    setTimeout(() => {
+      copyStatus.value = "Copy to Clipboard";
+    }, 2000);
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+    copyStatus.value = "Error!";
+  }
 };
 </script>
 
-<style>
-:root {
-  --bg-dark: #0d0e14;
-  --card-bg: #161821;
-  --neon-orange: #ff4d00;
-  --text-main: #e0e0e0;
-}
-
-body {
-  margin: 0;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  font-family: "Inter", sans-serif;
-}
-
-.app-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: calc(100vh - 4rem);
-  padding: 2rem;
-}
-
-.logo {
-  font-size: 2.5rem;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 2rem;
-}
-
-.logo span {
-  color: var(--neon-orange);
-}
-
-.game-layout {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 2rem;
-  max-width: calc(1000px + 2rem);
-  width: 100%;
-}
-
-.tool-card {
-  background: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid #2a2d3e;
-}
-
-textarea {
-  width: 100%;
-  height: 200px;
+<style scoped>
+.canvas-wrapper {
+  position: relative;
+  width: 512px;
+  height: 512px;
   background: #000;
-  color: #0f0;
-  font-family: monospace;
-  border: 1px solid #333;
-  padding: 10px;
+}
+
+.interaction-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  z-index: 10;
+}
+
+.pixel-cell {
+  border: 0.5px solid rgba(255, 255, 255, 0.03);
   box-sizing: border-box;
-  resize: none;
 }
 
-.btn-secondary {
-  margin-top: 1rem;
-  background: transparent;
-  border: 1px solid var(--neon-orange);
-  color: var(--neon-orange);
-  padding: 8px 16px;
-  cursor: pointer;
+.pixel-cell:hover {
+  background: rgba(255, 255, 255, 0.1);
+  outline: 1px solid var(--neon-orange);
+  z-index: 11;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.active-indicator {
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
-}
-
-.btn-secondary:hover {
-  background: var(--neon-orange);
-  color: white;
+  border: 2px solid #fff;
 }
 
 .color-palette {
   display: grid;
-  grid-template-columns: repeat(4, 64px);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
@@ -171,6 +225,46 @@ textarea {
 .color-palette-item {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  padding: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.color-palette-item.active {
+  border-color: var(--neon-orange);
+  background: rgba(255, 77, 0, 0.15);
+}
+
+.color-label {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.preset-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-preset {
+  background: #2a2d3e;
+  border: 1px solid #3f4257;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-preset:hover {
+  border-color: var(--neon-orange);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home-content-wrapper">
     <header>
       <h1 class="logo">Pix<span>Reveal</span></h1>
     </header>
@@ -93,7 +93,11 @@ const handleEnter = () => {
 </script>
 
 <style scoped>
+.home-content-wrapper {
+  width: 100%;
+}
 .logo {
+  text-align: center;
   font-size: 2.5rem;
   text-transform: uppercase;
   letter-spacing: 4px;

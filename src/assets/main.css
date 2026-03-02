@@ -76,3 +76,15 @@
 .fade-leave-from {
   opacity: 1;
 }
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-width: calc(1000px + 2rem);
+  width: 100%;
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+  }
+}

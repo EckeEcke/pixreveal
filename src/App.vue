@@ -49,14 +49,6 @@ body {
   padding: 2rem;
 }
 
-.game-layout {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 2rem;
-  max-width: calc(1000px + 2rem);
-  width: 100%;
-}
-
 .tool-card {
   background: var(--card-bg);
   padding: 1.5rem;
