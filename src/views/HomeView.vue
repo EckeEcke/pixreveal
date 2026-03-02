@@ -22,7 +22,7 @@
             </div>
           </div>
         </div>
-
+        {{ selectedAvatarIndex }}
         <div class="input-group" @keyup.enter="handleEnter">
           <label for="username">Player Name</label>
           <input
@@ -54,10 +54,9 @@ import { usePlayerStore } from "@/stores/player";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
-const username = ref("");
-const selectedAvatar = ref(null);
+const username = ref(playerStore.playerName || "");
 
-const selectedAvatarIndex = ref(null);
+const selectedAvatarIndex = ref(playerStore.avatarIndex || null);
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
 
@@ -92,7 +91,7 @@ const handleEnter = () => {
   if (username.value && selectedAvatarIndex.value) {
     startGame();
   }
-}
+};
 </script>
 
 <style scoped>
