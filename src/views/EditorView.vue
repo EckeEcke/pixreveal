@@ -21,7 +21,7 @@
           <div>
             <h3>Color Palette</h3>
             <div class="color-palette">
-              <div v-for="i in 14" class="color-palette-item">
+              <div v-for="i in 15" class="color-palette-item">
                 <div
                   class="color-flag"
                   :style="{ backgroundColor: colorPalette[i - 1] }"
@@ -165,6 +165,7 @@ textarea {
 .color-flag {
   height: 16px;
   width: 16px;
+  border: 1px solid white;
 }
 
 .color-palette-item {
