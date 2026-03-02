@@ -1,7 +1,7 @@
 <template>
   <main class="game-layout">
     <section class="canvas-section">
-      <PlayerDisplay />
+      <PlayerDisplay class="hud" />
       <PixelCanvas
         :pixel-array="pixelData"
         :resolution="resolution"
@@ -46,6 +46,7 @@ import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
 import { useGame } from "@/composables/useQuizData";
 import { usePlayerStore } from "@/stores/player";
+import router from "@/router";
 
 const playerStore = usePlayerStore();
 const resolution = ref(16);
@@ -57,7 +58,7 @@ const timerDuration = 15;
 const timer = ref(timerDuration);
 let timerId = null;
 
-const { initGame, rounds, currentRoundIndex, nextRound } = useGame();
+const { initGame, rounds, currentRoundIndex, nextRound, maxRounds } = useGame();
 
 const startTimer = () => {
   if (!pixelData.value || !pixelData.value[0]) return;
@@ -130,8 +131,11 @@ const checkAnswer = (answer) => {
     pixelData.value = rounds.value[currentRoundIndex.value].data;
   }, 1500);
   setTimeout(() => {
-    nextRound();
-    setDrawing(rounds.value[currentRoundIndex.value].data);
+    if (currentRoundIndex.value < maxRounds - 1) {
+      nextRound();
+      setDrawing(rounds.value[currentRoundIndex.value].data);
+    } else router.push("/gameover");
+    
   }, 3000);
 };
 
@@ -218,5 +222,9 @@ textarea {
   display: grid;
   grid-template-columns: repeat(1fr);
   gap: 1rem;
+}
+
+.hud {
+  margin-bottom: 16px;
 }
 </style>

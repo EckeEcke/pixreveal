@@ -44,7 +44,6 @@ const avatarStyle = computed(() => {
   border-left: 8px solid var(--neon-orange);
   border-radius: 4px;
   backdrop-filter: blur(5px);
-  margin-bottom: 16px;
 }
 
 .hud-avatar {

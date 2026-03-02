@@ -22,6 +22,7 @@ type Round = {
 export function useGame() {
   const rounds = ref<Round[]>([]);
   const currentRoundIndex = ref(0);
+  const maxRounds = 10;
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
 
@@ -71,6 +72,7 @@ export function useGame() {
     rounds,
     currentRound,
     currentRoundIndex,
+    maxRounds,
     selectedOption,
     isGameOver,
     initGame,
