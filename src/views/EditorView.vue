@@ -1,16 +1,8 @@
 <template>
   <div class="app-container">
-    <header>
-      <h1 class="logo">Pix<span>Reveal</span></h1>
-    </header>
-
     <main class="game-layout">
       <section class="canvas-section">
-        <PixelCanvas
-          :pixel-array="pixelData"
-          :resolution="resolution"
-          :colors="colorPalette"
-        />
+        <PixelCanvas :pixel-array="pixelData" :resolution="resolution" />
       </section>
 
       <section class="editor-section">
@@ -25,8 +17,22 @@
           <div class="stats">
             Pixels: {{ pixelData.length }} | Res: {{ resolution }}x{{ resolution }}
           </div>
-
           <button @click="generateEmpty" class="btn-secondary">Clear / New 16x16</button>
+          <div>
+            <h3>Color Palette</h3>
+            <div class="color-palette">
+              <div v-for="i in 14" class="color-palette-item">
+                <div
+                  class="color-flag"
+                  :style="{ backgroundColor: colorPalette[i - 1] }"
+                ></div>
+                <div>{{ i - 1 }}</div>
+              </div>
+            </div>
+          </div>
+          <button v-for="drawing in drawings" @click="setDrawing(drawing.data)">
+            {{ drawing.name }}
+          </button>
         </div>
       </section>
     </main>
@@ -35,38 +41,51 @@
 
 <script setup>
 import { ref } from "vue";
-import PixelCanvas from "./components/PixelCanvas.vue";
+import PixelCanvas from "../components/PixelCanvas.vue";
+import colorPalette from "@/data/colorPalette";
+import drawings from "@/data/drawings";
 
 const resolution = ref(16);
 const rawInput = ref("");
-const pixelData = ref(Array(256).fill(0));
 
-const colorPalette = {
-  0: "transparent",
-  1: "#ff4d00",
-  2: "#00f2ff",
-  3: "#bc13fe",
-  4: "#39ff14",
+const createEmptyMatrix = (res) => {
+  return Array.from({ length: res }, () => Array(res).fill(0));
 };
+
+const pixelData = ref(createEmptyMatrix(16));
 
 const updateArrayFromInput = () => {
   try {
     const parsed = JSON.parse(rawInput.value);
     if (Array.isArray(parsed)) {
       pixelData.value = parsed;
-      resolution.value = Math.sqrt(parsed.length);
+      resolution.value = parsed.length;
     }
   } catch (e) {}
 };
 
 const generateEmpty = () => {
-  pixelData.value = Array(256).fill(0);
-  rawInput.value = JSON.stringify(pixelData.value);
+  const newMatrix = Array.from({ length: 16 }, () => Array(16).fill(0));
+  pixelData.value = newMatrix;
   resolution.value = 16;
+  rawInput.value = JSON.stringify(newMatrix);
+};
+
+const setDrawing = (data) => {
+  pixelData.value = data;
+  resolution.value = Math.sqrt(data.length);
+  rawInput.value = JSON.stringify(data);
 };
 </script>
 
 <style>
+:root {
+  --bg-dark: #0d0e14;
+  --card-bg: #161821;
+  --neon-orange: #ff4d00;
+  --text-main: #e0e0e0;
+}
+
 body {
   margin: 0;
   background-color: var(--bg-dark);
@@ -99,7 +118,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 400px;
   gap: 2rem;
-  max-width: 1200px;
+  max-width: calc(1000px + 2rem);
   width: 100%;
 }
 
@@ -135,5 +154,22 @@ textarea {
 .btn-secondary:hover {
   background: var(--neon-orange);
   color: white;
+}
+
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  gap: 8px;
+}
+
+.color-flag {
+  height: 16px;
+  width: 16px;
+}
+
+.color-palette-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 </style>

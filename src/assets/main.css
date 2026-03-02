@@ -1,0 +1,48 @@
+:root {
+  --bg-dark: #0d0e14;
+  --card-bg: #161821;
+  --neon-orange: #ff4d00;
+  --text-main: #e0e0e0;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--neon-orange);
+  color: var(--neon-orange);
+  padding: 10px 20px;
+  font-family: "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.btn-outline:not(:disabled):hover {
+  background: var(--neon-orange);
+  color: #fff;
+  box-shadow:
+    0 0 20px var(--neon-orange),
+    0 0 40px var(--neon-orange);
+  transform: translateY(-2px);
+}
+
+.btn-outline:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-outline.is-correct {
+  background-color: green;
+  opacity: 1;
+  color: var(--text-main);
+}
+
+.btn-outline.is-wrong {
+  background-color: red;
+  opacity: 1;
+  color: var(--text-main);
+}

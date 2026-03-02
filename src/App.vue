@@ -1,35 +1,6 @@
 <template>
   <div class="app-container">
-    <header>
-      <h1 class="logo">Pix<span>Reveal</span></h1>
-    </header>
-
-    <main class="game-layout">
-      <section class="canvas-section">
-        <PixelCanvas
-          :pixel-array="pixelData"
-          :resolution="resolution"
-          :colors="colorPalette"
-        />
-      </section>
-
-      <section class="editor-section">
-        <div class="tool-card">
-          <h3>Data Input</h3>
-          <textarea
-            v-model="rawInput"
-            placeholder="Paste Array here: [0, 1, 0...]"
-            @input="updateArrayFromInput"
-          ></textarea>
-
-          <div class="stats">
-            Pixels: {{ pixelData.length }} | Res: {{ resolution }}x{{ resolution }}
-          </div>
-
-          <button @click="generateEmpty" class="btn-secondary">Clear / New 16x16</button>
-        </div>
-      </section>
-    </main>
+    <RouterView />
   </div>
 </template>
 
@@ -40,14 +11,6 @@ import PixelCanvas from "./components/PixelCanvas.vue";
 const resolution = ref(16);
 const rawInput = ref("");
 const pixelData = ref(Array(256).fill(0));
-
-const colorPalette = {
-  0: "transparent",
-  1: "#ff4d00",
-  2: "#00f2ff",
-  3: "#bc13fe",
-  4: "#39ff14",
-};
 
 const updateArrayFromInput = () => {
   try {
@@ -82,24 +45,11 @@ body {
   padding: 2rem;
 }
 
-.logo {
-  font-size: 2.5rem;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 2rem;
-}
-
-.logo span {
-  color: var(--neon-orange);
-}
-
 .game-layout {
   display: grid;
   grid-template-columns: 1fr 400px;
   gap: 2rem;
-  max-width: 1200px;
+  max-width: calc(1000px + 2rem);
   width: 100%;
 }
 
