@@ -22,7 +22,6 @@
             </div>
           </div>
         </div>
-        {{ selectedAvatarIndex }}
         <div class="input-group" @keyup.enter="handleEnter">
           <label for="username">Player Name</label>
           <input
@@ -39,7 +38,7 @@
           :disabled="!username || !selectedAvatarIndex"
           @click="startGame"
         >
-          INITIALIZE GAME
+          PLAY GAME
         </button>
       </section>
     </main>
@@ -61,7 +60,6 @@ const selectedAvatarIndex = ref(playerStore.avatarIndex || null);
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
 
 const getAvatarStyle = (index) => {
-  const size = 100;
   const columns = 6;
 
   const x = index % columns;
