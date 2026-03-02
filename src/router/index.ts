@@ -24,6 +24,11 @@ const router = createRouter({
       name: "gameover",
       component: () => import("../views/GameOverView.vue"),
     },
+    {
+      // PATH GUARD: always put in the end
+      path: "/:pathMatch(.*)*",
+      redirect: "/",
+    },
   ],
 });
 
