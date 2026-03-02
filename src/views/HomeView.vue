@@ -41,6 +41,7 @@
           PLAY GAME
         </button>
       </section>
+      <router-link to="/editor" class="editor-link">Open Editor</router-link>
     </main>
   </div>
 </template>
@@ -237,5 +238,10 @@ input[type="text"]:focus {
 .btn-start:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.editor-link {
+  color: white;
+  margin-top: 32px;
 }
 </style>
