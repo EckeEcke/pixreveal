@@ -1,44 +1,49 @@
 <template>
-  <header>
-    <h1 class="logo">Pix<span>Reveal</span></h1>
-  </header>
-  <main class="home-container">
-    <section class="setup-card">
-      <div class="avatar-selection">
-        <h3>Choose your Avatar</h3>
-        <div class="avatar-grid">
-          <div
-            v-for="avatar in avatars"
-            :key="avatar.id"
-            class="avatar-slot"
-            :class="{ active: selectedAvatarIndex === avatar.id }"
-            @click="selectedAvatarIndex = avatar.id"
-          >
-            <div class="avatar-image" :style="getAvatarStyle(avatar.id)"></div>
+  <div>
+    <header>
+      <h1 class="logo">Pix<span>Reveal</span></h1>
+    </header>
+    <main class="home-container">
+      <section class="setup-card">
+        <div class="avatar-selection">
+          <h3>Choose your Avatar</h3>
+          <div class="avatar-grid">
+            <div
+              v-for="avatar in avatars"
+              :key="avatar.id"
+              class="avatar-slot"
+              :class="{ active: selectedAvatarIndex === avatar.id }"
+              @click="selectedAvatarIndex = avatar.id"
+            >
+              <div
+                class="avatar-image"
+                :style="getAvatarStyle(avatar.id)"
+              ></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="input-group">
-        <label for="username">Player Name</label>
-        <input
-          id="username"
-          v-model="username"
-          type="text"
-          placeholder="Enter Name..."
-          maxlength="15"
-        />
-      </div>
+        <div class="input-group">
+          <label for="username">Player Name</label>
+          <input
+            id="username"
+            v-model="username"
+            type="text"
+            placeholder="Enter Name..."
+            maxlength="15"
+          />
+        </div>
 
-      <button
-        class="btn-outline"
-        :disabled="!username || !selectedAvatarIndex"
-        @click="startGame"
-      >
-        INITIALIZE GAME
-      </button>
-    </section>
-  </main>
+        <button
+          class="btn-outline"
+          :disabled="!username || !selectedAvatarIndex"
+          @click="startGame"
+        >
+          INITIALIZE GAME
+        </button>
+      </section>
+    </main>
+  </div>
 </template>
 
 <script setup>
@@ -75,7 +80,10 @@ const getAvatarStyle = (index) => {
 
 const startGame = () => {
   if (username.value && selectedAvatarIndex.value) {
-    playerStore.setUser({ username: username.value, avatar: selectedAvatarIndex.value });
+    playerStore.setUser({
+      username: username.value,
+      avatar: selectedAvatarIndex.value,
+    });
     router.push("/game");
   }
 };
