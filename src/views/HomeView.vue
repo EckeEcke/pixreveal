@@ -223,23 +223,6 @@ input[type="text"]:focus {
   border-color: var(--neon-orange);
 }
 
-.btn-start {
-  width: 100%;
-  padding: 15px;
-  background: var(--neon-orange);
-  color: #000;
-  border: none;
-  font-weight: bold;
-  letter-spacing: 2px;
-  cursor: pointer;
-  clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
-}
-
-.btn-start:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
 .editor-link {
   color: white;
   margin-top: 32px;

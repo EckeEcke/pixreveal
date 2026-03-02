@@ -184,6 +184,7 @@ const copyToClipboard = async () => {
   height: 100%;
   display: grid;
   z-index: 10;
+  border: 2px solid transparent;
 }
 
 .pixel-cell {
