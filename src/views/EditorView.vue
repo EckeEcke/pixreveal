@@ -103,7 +103,7 @@
 import { ref, computed } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import colorPalette from "@/data/colorPalette";
-import drawings from "@/data/drawings";
+import drawings from "@/data/drawings.json";
 
 const resolution = ref(16);
 const rawInput = ref("");

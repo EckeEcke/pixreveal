@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import drawings from "@/data/drawings";
+import drawings from "@/data/drawings.json";
 
 type PixelGrid = number[][];
 
@@ -30,13 +30,13 @@ export function useGame() {
     [...array].sort(() => Math.random() - 0.5);
 
   const initGame = () => {
-    const shuffled = shuffle(drawings as Drawing[]);
+    const shuffled = shuffle(drawings as unknown as Drawing[]);
     const selectedDrawings = shuffled.slice(0, 10);
 
     rounds.value = selectedDrawings.map((drawing) => {
-      const otherNames = drawings
-        .filter((d) => d.name !== drawing.name)
-        .map((d) => d.name);
+      const otherNames = (drawings as unknown as Drawing[])
+        .filter((d: Drawing) => d.name !== drawing.name)
+        .map((d: Drawing) => d.name);
 
       const distractors = shuffle(otherNames).slice(0, 3);
 
