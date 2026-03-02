@@ -3,8 +3,8 @@
   --card-bg: #161821;
   --neon-orange: #ff4d00;
   --text-main: #e0e0e0;
-  --neon-success: #008f4c;
-  --neon-error: #ff0055;
+  --neon-success: #39ff14;
+  --neon-error: #ff003c;
 }
 
 .btn-outline {
@@ -46,6 +46,7 @@
   opacity: 1;
   color: var(--text-main);
   border: none;
+  color: black;
   box-shadow:
       0 0 20px var(--neon-success),
       0 0 40px var(--neon-success);
