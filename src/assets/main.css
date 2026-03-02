@@ -3,6 +3,8 @@
   --card-bg: #161821;
   --neon-orange: #ff4d00;
   --text-main: #e0e0e0;
+  --neon-success: #008f4c;
+  --neon-error: #ff0055;
 }
 
 .btn-outline {
@@ -21,13 +23,17 @@
   width: 100%;
 }
 
-.btn-outline:not(:disabled):hover {
-  background: var(--neon-orange);
-  color: #fff;
-  box-shadow:
-    0 0 20px var(--neon-orange),
-    0 0 40px var(--neon-orange);
-  transform: translateY(-2px);
+/* only hover effect on desktop */
+
+@media (hover: hover) {
+  .btn-outline:not(:disabled):hover {
+    background: var(--neon-orange);
+    color: #fff;
+    box-shadow:
+      0 0 20px var(--neon-orange),
+      0 0 40px var(--neon-orange);
+    transform: translateY(-2px);
+  }
 }
 
 .btn-outline:disabled {
@@ -36,15 +42,23 @@
 }
 
 .btn-outline.is-correct {
-  background-color: green;
+  background-color: var(--neon-success);
   opacity: 1;
   color: var(--text-main);
+  border: none;
+  box-shadow:
+      0 0 20px var(--neon-success),
+      0 0 40px var(--neon-success);
 }
 
 .btn-outline.is-wrong {
-  background-color: red;
+  background-color: var(--neon-error);
   opacity: 1;
   color: var(--text-main);
+  border: none;
+  box-shadow:
+      0 0 20px var(--neon-error),
+      0 0 40px var(--neon-error);
 }
 
 .fade-enter-from,

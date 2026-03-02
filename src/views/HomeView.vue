@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <div class="input-group">
+        <div class="input-group" @keyup.enter="handleEnter">
           <label for="username">Player Name</label>
           <input
             id="username"
@@ -87,6 +87,12 @@ const startGame = () => {
     router.push("/game");
   }
 };
+
+const handleEnter = () => {
+  if (username.value && selectedAvatarIndex.value) {
+    startGame();
+  }
+}
 </script>
 
 <style scoped>

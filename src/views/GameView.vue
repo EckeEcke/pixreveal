@@ -29,7 +29,7 @@
               !answer.isCorrect,
             'is-correct': hasAnswered && answer.isCorrect,
           }"
-          @click="checkAnswer(answer)"
+          @click="checkAnswer(answer, $event)"
         >
           {{ answer.title }}
         </button>
@@ -41,7 +41,6 @@
 <script setup>
 import { ref } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
-import drawings from "@/data/drawings";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
 import { useGame } from "@/composables/useQuizData";
@@ -73,6 +72,7 @@ const startTimer = () => {
 const setDrawing = (data) => {
   hasAnswered.value = false;
   isRevealing.value = true;
+  selectedAnswer.value = undefined
   pixelData.value = data;
   resolution.value = Math.sqrt(data.length);
   timer.value = timerDuration;
@@ -118,7 +118,8 @@ const statusIcons = {
   ],
 };
 
-const checkAnswer = (answer) => {
+const checkAnswer = (answer, event) => {
+  event.currentTarget.blur();
   selectedAnswer.value = answer.title;
   pixelData.value = answer.isCorrect
     ? statusIcons.success
