@@ -5,8 +5,14 @@
       <PixelCanvas
         :pixel-array="pixelData"
         :resolution="resolution"
-        :is-revealing="true"
+        :is-revealing="isRevealing"
         :is-status-icon="hasAnswered"
+        :timer-duration="timerDuration"
+      />
+      <TimerDisplay
+        :class="{ 'is-hidden': !isRevealing || hasAnswered }"
+        :count="timer"
+        :max="timerDuration"
       />
     </section>
     <section class="answer-section">
@@ -18,7 +24,9 @@
           :disabled="hasAnswered"
           :class="{
             'is-wrong':
-              hasAnswered && selectedAnswer === answer.title && !answer.isCorrect,
+              hasAnswered &&
+              selectedAnswer === answer.title &&
+              !answer.isCorrect,
             'is-correct': hasAnswered && answer.isCorrect,
           }"
           @click="checkAnswer(answer)"
@@ -35,17 +43,39 @@ import { ref } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import drawings from "@/data/drawings";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
+import TimerDisplay from "@/components/TimerDisplay.vue";
 import { useGame } from "@/composables/useQuizData";
+import { usePlayerStore } from "@/stores/player";
 
+const playerStore = usePlayerStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const selectedAnswer = ref(undefined);
+const isRevealing = ref(true);
+const timerDuration = 15;
+const timer = ref(timerDuration);
+let timerId = null;
+
+const { initGame, rounds, currentRoundIndex, nextRound } = useGame();
+
+const startTimer = () => {
+  if (!pixelData.value || !pixelData.value[0]) return;
+  if (timer.value < timerDuration) timer.value = timerDuration;
+  if (timerId) clearInterval(timerId);
+  timerId = setInterval(() => {
+    timer.value--;
+    if (timer.value <= 0) clearInterval(timerId);
+  }, 1000);
+};
 
 const setDrawing = (data) => {
   hasAnswered.value = false;
+  isRevealing.value = true;
   pixelData.value = data;
   resolution.value = Math.sqrt(data.length);
+  timer.value = timerDuration;
+  startTimer();
 };
 
 const statusIcons = {
@@ -87,32 +117,24 @@ const statusIcons = {
   ],
 };
 
-const answers = [
-  {
-    title: "Mario",
-    isCorrect: true,
-  },
-  {
-    title: "Watermelon",
-    isCorrect: false,
-  },
-  {
-    title: "Pacman",
-    isCorrect: false,
-  },
-  {
-    title: "Heart",
-    isCorrect: false,
-  },
-];
-
 const checkAnswer = (answer) => {
   selectedAnswer.value = answer.title;
-  pixelData.value = answer.isCorrect ? statusIcons.success : statusIcons.failure;
+  pixelData.value = answer.isCorrect
+    ? statusIcons.success
+    : statusIcons.failure;
   hasAnswered.value = true;
+  if (answer.isCorrect) playerStore.addPoints(timer.value);
+  clearInterval(timerId);
+  setTimeout(() => {
+    isRevealing.value = false;
+    pixelData.value = rounds.value[currentRoundIndex.value].data;
+  }, 1500);
+  setTimeout(() => {
+    nextRound();
+    setDrawing(rounds.value[currentRoundIndex.value].data);
+  }, 3000);
 };
 
-const { initGame, rounds, currentRoundIndex } = useGame();
 initGame();
 setDrawing(rounds.value[currentRoundIndex.value].data);
 </script>

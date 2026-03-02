@@ -2,33 +2,26 @@
   <div class="canvas-wrapper" ref="wrapper">
     <canvas ref="canvasRef" :width="internalSize" :height="internalSize"></canvas>
   </div>
-  <TimerDisplay
-    :class="{ 'is-hidden': !isRevealing || isStatusIcon }"
-    :count="timer"
-    :max="timerDuration"
-  />
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import colorPalette from "../data/colorPalette";
-import TimerDisplay from "./TimerDisplay.vue";
 
 const props = defineProps({
   pixelArray: Array,
   resolution: Number,
   isRevealing: Boolean,
   isStatusIcon: Boolean,
+  timerDuration: Number | undefined,
 });
 
-const timerDuration = 15;
+const timerDuration = props.timerDuration || 15;
 
 const canvasRef = ref(null);
 const internalSize = 600;
-const timer = ref(timerDuration);
 
 let intervalId = null;
-let timerId = null;
 
 const startReveal = () => {
   if (intervalId) clearInterval(intervalId);
@@ -48,7 +41,7 @@ const startReveal = () => {
     }
   });
 
-  const totalDurationMs = props.isStatusIcon ? 500 : 15000;
+  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
   const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
 
   allVisible.sort(() => Math.random() - 0.5);
@@ -153,22 +146,11 @@ const allPixelsFromProp = () => {
   return list;
 };
 
-const startTimer = () => {
-  if (!props.pixelArray || !props.pixelArray[0]) return;
-  if (timer.value < timerDuration) timer.value = timerDuration;
-  if (timerId) clearInterval(timerId);
-  timerId = setInterval(() => {
-    timer.value--;
-    if (timer.value <= 0) clearInterval(timerId);
-  }, 1000);
-};
-
 watch(
   () => props.pixelArray,
   () => {
     if (props.pixelArray && props.pixelArray.length > 0) {
       startReveal();
-      startTimer();
     }
   },
   { deep: true }
@@ -176,7 +158,6 @@ watch(
 
 onMounted(() => {
   startReveal();
-  startTimer();
 });
 </script>
 
