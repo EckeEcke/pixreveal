@@ -268,4 +268,37 @@ const copyToClipboard = async () => {
   gap: 10px;
   margin-top: 1rem;
 }
+
+.tool-card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #2a2d3e;
+}
+
+textarea {
+  width: 100%;
+  background: #000;
+  color: #0f0;
+  font-family: monospace;
+  border: 1px solid #333;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.btn-secondary {
+  margin-top: 1rem;
+  background: transparent;
+  border: 1px solid var(--neon-orange);
+  color: var(--neon-orange);
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-secondary:hover {
+  background: var(--neon-orange);
+  color: white;
+}
 </style>
