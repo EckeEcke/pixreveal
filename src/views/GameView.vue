@@ -1,7 +1,12 @@
 <template>
   <main class="game-layout">
     <section class="canvas-section">
-      <PlayerDisplay class="hud" />
+      <PlayerDisplay
+        :name="playerStore.playerName"
+        :avatar-index="playerStore.avatarIndex"
+        :points="playerStore.points"
+        class="hud"
+      />
       <PixelCanvas
         :pixel-array="pixelData"
         :resolution="resolution"
@@ -16,7 +21,7 @@
       />
     </section>
     <section class="answer-section">
-      <h1>What is being displayed?</h1>
+      <h1>What is it?</h1>
       <div class="answer-buttons">
         <button
           class="btn-outline"
@@ -39,15 +44,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
-import { useGame } from "@/composables/useQuizData";
+import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import router from "@/router";
+import { useOnlineStore } from "@/stores/online";
 
 const playerStore = usePlayerStore();
+const onlineStore = useOnlineStore()
+const gameStore = useGameStore()
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -57,7 +65,10 @@ const timerDuration = 15;
 const timer = ref(timerDuration);
 let timerId = null;
 
-const { initGame, rounds, currentRoundIndex, nextRound, maxRounds } = useGame();
+const rounds = computed(() => gameStore.rounds)
+const currentRoundIndex = computed(() => gameStore.currentRoundIndex)
+
+const { nextRound, maxRounds } = useGameStore();
 
 const startTimer = () => {
   if (!pixelData.value || !pixelData.value[0]) return;
@@ -65,14 +76,17 @@ const startTimer = () => {
   if (timerId) clearInterval(timerId);
   timerId = setInterval(() => {
     timer.value--;
-    if (timer.value <= 0) clearInterval(timerId);
+    if (timer.value <= 0) {
+      clearInterval(timerId);
+      checkAnswer(null)
+    }
   }, 1000);
 };
 
 const setDrawing = (data) => {
   hasAnswered.value = false;
   isRevealing.value = true;
-  selectedAnswer.value = undefined
+  selectedAnswer.value = undefined;
   pixelData.value = data;
   resolution.value = Math.sqrt(data.length);
   timer.value = timerDuration;
@@ -119,13 +133,13 @@ const statusIcons = {
 };
 
 const checkAnswer = (answer, event) => {
-  event.currentTarget.blur();
-  selectedAnswer.value = answer.title;
-  pixelData.value = answer.isCorrect
-    ? statusIcons.success
-    : statusIcons.failure;
+  if (event) event.currentTarget.blur();
+  selectedAnswer.value = answer ? answer.title : null;
+  pixelData.value = (answer === null || !answer.isCorrect)
+    ? statusIcons.failure
+    : statusIcons.success;
   hasAnswered.value = true;
-  if (answer.isCorrect) playerStore.addPoints(timer.value);
+  if (answer && answer.isCorrect) playerStore.addPoints(timer.value);
   clearInterval(timerId);
   setTimeout(() => {
     isRevealing.value = false;
@@ -135,12 +149,13 @@ const checkAnswer = (answer, event) => {
     if (currentRoundIndex.value < maxRounds - 1) {
       nextRound();
       setDrawing(rounds.value[currentRoundIndex.value].data);
-    } else router.push("/gameover");
-    
+    } else {
+      onlineStore.broadcastScore()
+      router.push("/gameover");
+    }
   }, 3000);
 };
 
-initGame();
 setDrawing(rounds.value[currentRoundIndex.value].data);
 </script>
 

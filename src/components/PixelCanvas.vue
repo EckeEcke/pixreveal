@@ -168,6 +168,8 @@ onMounted(() => {
   border-radius: 8px;
   overflow: hidden;
   line-height: 0;
+  position: sticky;
+  top: 0;
 }
 
 canvas {
