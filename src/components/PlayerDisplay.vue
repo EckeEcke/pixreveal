@@ -3,9 +3,10 @@
     <div class="hud-avatar" :style="avatarStyle"></div>
 
     <div class="hud-info">
-      <span class="hud-username">{{ playerStore.playerName }}</span>
-      <span class="hud-points">Points: {{ playerStore.points }}</span>
+      <span class="hud-username">{{ name }}</span>
+      <span v-if="points" class="hud-points">Points: {{ points }}</span>
     </div>
+    <div class="finished-check" v-if="hasFinished">✅</div>
   </div>
 </template>
 
@@ -14,10 +15,17 @@ import { computed } from "vue";
 import { usePlayerStore } from "@/stores/player";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 
+const props = defineProps({
+  name: String,
+  avatarIndex: Number,
+  points: Number | undefined,
+  hasFinished: Boolean,
+})
+
 const playerStore = usePlayerStore();
 
 const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
+  const index = props.avatarIndex || 0;
   const col = index % 6;
   const row = Math.floor(index / 6);
 
@@ -44,6 +52,7 @@ const avatarStyle = computed(() => {
   border-left: 8px solid var(--neon-orange);
   border-radius: 4px;
   backdrop-filter: blur(5px);
+  min-width: 280px;
 }
 
 .hud-avatar {
@@ -65,5 +74,9 @@ const avatarStyle = computed(() => {
   font-size: 1rem;
   text-transform: uppercase;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.finished-check {
+  margin-left: auto;
 }
 </style>

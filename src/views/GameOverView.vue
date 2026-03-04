@@ -3,17 +3,53 @@
     <header>
       <h1 class="logo">GAME <span>OVER</span></h1>
     </header>
-    <div class="player-wrapper">
-      <div class="position">1.</div>
-      <PlayerDisplay />
+    <div>
+      <div v-if="isOnlinePlay">
+        <div
+          v-for="(player, index) in playersSortedByPoints"
+          :key="player.playerId"
+           class="player-wrapper"
+        >
+          <div class="position">{{ index + 1 }}.</div>
+          <PlayerDisplay
+            :name="player.username"
+            :avatar-index="player.avatarIndex"
+            :points="player.points"
+            :has-finished="player.hasFinished"
+          />
+        </div>
+      </div>
+      <PlayerDisplay
+        v-else
+        :name="playerStore.playerName"
+        :avatar-index="playerStore.avatarIndex"
+        :points="playerStore.points"
+      />
     </div>
     <button class="btn-outline" @click="playAgain">Play Again</button>
   </main>
 </template>
 
 <script setup>
+import { computed } from "vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
-import router from "@/router";
+import { useRouter } from "vue-router";
+import { useOnlineStore } from "@/stores/online";
+import { usePlayerStore } from "@/stores/player";
+
+const playerStore = usePlayerStore();
+const onlineStore = useOnlineStore();
+const router = useRouter();
+
+const playersOnline = computed(() => onlineStore.playersOnline);
+
+const playersSortedByPoints = computed(() => {
+  return [...playersOnline.value].sort((a, b) => b.points - a.points);
+});
+
+const isOnlinePlay = computed(
+  () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1,
+);
 
 const playAgain = () => router.push("/");
 </script>

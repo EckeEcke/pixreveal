@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import("../views/GameOverView.vue"),
     },
     {
+      path: "/lobby",
+      name: "lobby",
+      component: () => import("../views/LobbyView.vue"),
+    },
+    {
       // PATH GUARD: always put in the end
       path: "/:pathMatch(.*)*",
       redirect: "/",
