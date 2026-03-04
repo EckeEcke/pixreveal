@@ -8,7 +8,7 @@
         <div
           v-for="(player, index) in playersSortedByPoints"
           :key="player.playerId"
-           class="player-wrapper"
+          class="player-wrapper"
         >
           <div class="position">{{ index + 1 }}.</div>
           <PlayerDisplay
@@ -18,6 +18,9 @@
             :has-finished="player.hasFinished"
           />
         </div>
+        <div v-if="playersOnline.some((player) => !player.hasFinished)">
+          <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
+        </div>
       </div>
       <PlayerDisplay
         v-else
@@ -26,7 +29,13 @@
         :points="playerStore.points"
       />
     </div>
-    <button class="btn-outline" @click="playAgain">Play Again</button>
+    <button
+      v-if="!playersOnline.some((player) => !player.hasFinished)"
+      class="btn-outline"
+      @click="playAgain"
+    >
+      Play Again
+    </button>
   </main>
 </template>
 
@@ -36,6 +45,7 @@ import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
+import LoadingAnimation from "@/components/LoadingAnimation.vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -79,5 +89,9 @@ const playAgain = () => router.push("/");
   color: var(--neon-orange);
   font-weight: 700;
   font-size: 32px;
+}
+
+.btn-outline {
+  margin-top: 32px;
 }
 </style>
