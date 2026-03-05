@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useGameStore } from "./game";
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { generateRoomId } from "@/utils/crypto";
 import { createApinatorClient } from "@/services/apinator";
 import { useRouter } from "vue-router";
@@ -51,15 +51,30 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind("realtime:subscription_succeeded", (members: any) => {
       const hash = members.presence?.hash || {};
-      playersOnline.value = Object.keys(hash).map((id) => ({
-        playerId: id,
-        username: hash[id].name,
-        avatarIndex: hash[id].avatar,
-        isHost: id === myPlayerId,
-        points: 0,
-        hasFinished: false,
-      }));
-      router.push("/lobby");
+
+      Object.keys(hash).forEach((id) => {
+        const remotePlayerData = {
+          playerId: id,
+          username: hash[id].name,
+          avatarIndex: hash[id].avatar,
+          isHost: id === myPlayerId ? isHost.value : false,
+          points: 0,
+          hasFinished: false,
+        };
+
+        const existing = playersOnline.value.find((p) => p.playerId === id);
+
+        if (existing) {
+          existing.username = remotePlayerData.username;
+          existing.avatarIndex = remotePlayerData.avatarIndex;
+        } else {
+          playersOnline.value.push(remotePlayerData);
+        }
+      });
+
+      if (router.currentRoute.value.path === "/") {
+        router.push("/lobby");
+      }
     });
 
     channel.bind("realtime:member_added", (member: any) => {
@@ -162,6 +177,14 @@ export const useOnlineStore = defineStore("online", () => {
     client.value = null;
     currentRoomId.value = null;
   };
+
+  watch(
+    () => playersOnline.value.length,
+    (newLength) => {
+      console.log(`[DEBUG] Spieleranzahl geändert: ${newLength}`);
+      console.log("Aktuelle Spieler:", JSON.stringify(playersOnline.value));
+    },
+  );
 
   return {
     playersOnline,

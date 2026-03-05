@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
@@ -54,8 +54,8 @@ import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
 
 const playerStore = usePlayerStore();
-const onlineStore = useOnlineStore()
-const gameStore = useGameStore()
+const onlineStore = useOnlineStore();
+const gameStore = useGameStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -65,8 +65,8 @@ const timerDuration = 15;
 const timer = ref(timerDuration);
 let timerId = null;
 
-const rounds = computed(() => gameStore.rounds)
-const currentRoundIndex = computed(() => gameStore.currentRoundIndex)
+const rounds = computed(() => gameStore.rounds);
+const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
 
 const { nextRound, maxRounds } = useGameStore();
 
@@ -78,7 +78,7 @@ const startTimer = () => {
     timer.value--;
     if (timer.value <= 0) {
       clearInterval(timerId);
-      checkAnswer(null)
+      checkAnswer(null);
     }
   }, 1000);
 };
@@ -135,9 +135,10 @@ const statusIcons = {
 const checkAnswer = (answer, event) => {
   if (event) event.currentTarget.blur();
   selectedAnswer.value = answer ? answer.title : null;
-  pixelData.value = (answer === null || !answer.isCorrect)
-    ? statusIcons.failure
-    : statusIcons.success;
+  pixelData.value =
+    answer === null || !answer.isCorrect
+      ? statusIcons.failure
+      : statusIcons.success;
   hasAnswered.value = true;
   if (answer && answer.isCorrect) playerStore.addPoints(timer.value);
   clearInterval(timerId);
@@ -150,13 +151,35 @@ const checkAnswer = (answer, event) => {
       nextRound();
       setDrawing(rounds.value[currentRoundIndex.value].data);
     } else {
-      onlineStore.broadcastScore()
+      onlineStore.broadcastScore();
       router.push("/gameover");
     }
   }, 3000);
 };
 
 setDrawing(rounds.value[currentRoundIndex.value].data);
+
+const activeChannel = computed(() => onlineStore.ac)
+
+const heartbeat = setInterval(() => {
+  if (activeChannel.value) {
+    activeChannel.value.trigger("client-heartbeat", { timestamp: Date.now() });
+  }
+}, 20000);
+
+const requestWakeLock = async () => {
+  try {
+    const wakeLock = await navigator.wakeLock.request("screen");
+  } catch (err) {
+    console.log(`${err.name}, ${err.message}`);
+  }
+};
+
+onMounted(() => requestWakeLock());
+
+onUnmounted(() => {
+  clearInterval(heartbeat);
+});
 </script>
 
 <style>
