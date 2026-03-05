@@ -5,14 +5,16 @@
       ROOM ID:
       <span @click="copyToClipboard">{{ onlineStore.currentRoomId }}</span>
     </div>
-    <div v-if="showClipboardInfo" class="clipboard-info">COPIED ID TO CLIPBOARD ✅</div>
+    <div v-if="showClipboardInfo" class="clipboard-info">
+      COPIED ID TO CLIPBOARD ✅
+    </div>
     <PlayerDisplay
       v-for="player in players"
       :key="player.playerId"
       :name="player.username"
       :avatar-index="player.avatarIndex"
+      :is-host="player.isHost"
     />
-
     <button
       v-if="players && players.length > 1 && onlineStore.isHost"
       class="btn-outline"
@@ -71,7 +73,7 @@ onMounted(() => {
 }
 
 .clipboard-info {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .btn-outline {
