@@ -57,9 +57,6 @@
           </button>
           <input type="text" v-model="joinRoomId" placeholder="Room ID..." />
         </div>
-        <div v-if="playersOnline" style="color: white; margin-top: 10px">
-          Players Online: {{ playersOnline }}
-        </div>
       </section>
       <router-link to="/editor" class="editor-link">Open Editor</router-link>
     </main>
