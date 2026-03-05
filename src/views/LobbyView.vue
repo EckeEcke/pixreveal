@@ -73,4 +73,8 @@ onMounted(() => {
 .clipboard-info {
     margin-bottom: 16px;
 }
+
+.btn-outline {
+  margin-top: 32px;
+}
 </style>
