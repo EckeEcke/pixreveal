@@ -1,4 +1,4 @@
-import { ref, computed, type Ref } from "vue";
+import { ref, type Ref } from "vue";
 import { defineStore } from "pinia";
 
 type Player = {
@@ -10,6 +10,7 @@ export const usePlayerStore = defineStore("player", () => {
   const avatarIndex: Ref<number | undefined> = ref(undefined);
   const points: Ref<number> = ref(0);
   const playersOnline: Ref<Player[]> = ref([]);
+  const correctAnswers = ref(0)
 
   const setUser = (user: { username: string; avatar: number }) => {
     playerName.value = user.username;
@@ -25,6 +26,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   const addPoints = (earnedPoints: number) => {
     points.value += earnedPoints;
+    if (earnedPoints > 0) correctAnswers.value++
   };
 
   return {
@@ -32,6 +34,7 @@ export const usePlayerStore = defineStore("player", () => {
     avatarIndex,
     points,
     playersOnline,
+    correctAnswers,
     setUser,
     addPoints,
     removePlayer,

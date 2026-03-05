@@ -5,6 +5,9 @@
         :name="playerStore.playerName"
         :avatar-index="playerStore.avatarIndex"
         :points="playerStore.points"
+        :correct-answers="playerStore.correctAnswers"
+        :round-index="gameStore.currentRoundIndex + 1"
+        :max-rounds="gameStore.maxRounds"
         class="hud"
       />
       <PixelCanvas
@@ -52,10 +55,12 @@ import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
+import { useSoundStore } from "@/stores/sound";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
+const soundstore = useSoundStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -140,7 +145,10 @@ const checkAnswer = (answer, event) => {
       ? statusIcons.failure
       : statusIcons.success;
   hasAnswered.value = true;
-  if (answer && answer.isCorrect) playerStore.addPoints(timer.value);
+  if (answer && answer.isCorrect) {
+    playerStore.addPoints(timer.value);
+    soundstore.playSound("correct");
+  } else soundstore.playSound("incorrect");
   clearInterval(timerId);
   setTimeout(() => {
     isRevealing.value = false;
@@ -159,7 +167,7 @@ const checkAnswer = (answer, event) => {
 
 setDrawing(rounds.value[currentRoundIndex.value].data);
 
-const activeChannel = computed(() => onlineStore.ac)
+const activeChannel = computed(() => onlineStore.ac);
 
 const heartbeat = setInterval(() => {
   if (activeChannel.value) {
@@ -178,6 +186,7 @@ const requestWakeLock = async () => {
 onMounted(() => requestWakeLock());
 
 onUnmounted(() => {
+  clearInterval(timerId);
   clearInterval(heartbeat);
 });
 </script>

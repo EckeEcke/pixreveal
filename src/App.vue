@@ -5,11 +5,29 @@
         <component :is="Component" />
       </transition>
     </router-view>
+    <audio ref="audio" :src="musicUrl" loop></audio>
   </div>
 </template>
 
 <script setup>
+import { watch, ref } from "vue";
+import musicUrl from "@/assets/audio/music.mp3";
+import { useSoundStore } from "./stores/sound";
 
+const soundStore = useSoundStore();
+
+const audio = ref("audio");
+
+watch(
+  () => soundStore.isAudioEnabled,
+  (isEnabled) => {
+    if (isEnabled) {
+      audio.value.play();
+    } else {
+      audio.value.pause();
+    }
+  },
+);
 </script>
 
 <style>
@@ -27,5 +45,4 @@ body {
   min-height: calc(100vh - 4rem);
   padding: 2rem;
 }
-
 </style>

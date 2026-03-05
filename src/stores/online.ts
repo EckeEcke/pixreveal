@@ -18,6 +18,7 @@ export interface Player extends UserData {
   isOnline: boolean;
   points: number;
   hasFinished: boolean;
+  correctAnswers: number;
 }
 
 export const useOnlineStore = defineStore("online", () => {
@@ -42,7 +43,9 @@ export const useOnlineStore = defineStore("online", () => {
   };
 
   const removePlayer = (playerId: string) => {
-    const removedPlayer = playersOnline.value.find((p) => p.playerId === playerId);
+    const removedPlayer = playersOnline.value.find(
+      (p) => p.playerId === playerId,
+    );
     if (removedPlayer) removedPlayer.isOnline = false;
   };
 
@@ -54,7 +57,7 @@ export const useOnlineStore = defineStore("online", () => {
       const hash = members.presence?.hash || {};
 
       Object.keys(hash).forEach((id) => {
-        console.log(id, members)
+        console.log(id, members);
         const remotePlayerData = {
           playerId: id,
           username: hash[id].name,
@@ -63,6 +66,7 @@ export const useOnlineStore = defineStore("online", () => {
           isOnline: true,
           points: 0,
           hasFinished: false,
+          correctAnswers: 0,
         };
 
         const existing = playersOnline.value.find((p) => p.playerId === id);
@@ -91,6 +95,7 @@ export const useOnlineStore = defineStore("online", () => {
         isOnline: true,
         points: 0,
         hasFinished: false,
+        correctAnswers: 0,
       });
     });
 
@@ -105,13 +110,14 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind(
       "client-player-finished",
-      (data: { playerId: string; points: number }) => {
+      (data: { playerId: string; points: number; correctAnswers: number; }) => {
         const player = playersOnline.value.find(
           (p) => p.playerId === data.playerId,
         );
         if (player) {
           player.points = data.points;
           player.hasFinished = true;
+          player.correctAnswers = data.correctAnswers;
         }
       },
     );
@@ -159,16 +165,19 @@ export const useOnlineStore = defineStore("online", () => {
 
   const broadcastScore = () => {
     const points = playerStore.points;
+    const correctAnswers = playerStore.correctAnswers;
     if (activeChannel.value && client.value) {
       const me = playersOnline.value.find((p) => p.playerId === playerId.value);
       if (me) {
         me.points = points;
         me.hasFinished = true;
+        me.correctAnswers = correctAnswers;
       }
 
       activeChannel.value.trigger("client-player-finished", {
         playerId: playerId.value,
         points: points,
+        correctAnswers: correctAnswers
       });
     }
   };
