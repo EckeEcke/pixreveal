@@ -9,6 +9,7 @@ export const createApinatorClient = (userData: any) => {
       "x-player-username": encodeURIComponent(userData.username),
       "x-player-avatar": String(userData.avatarIndex),
       "x-player-id": userData.playerId,
+      "x-player-host": userData.isHost
     },
   });
 };

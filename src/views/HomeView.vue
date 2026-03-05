@@ -117,6 +117,7 @@ const hostGame = () => {
     playerId,
     username: username.value,
     avatarIndex: selectedAvatarIndex.value,
+    isHost: true,
   });
 };
 
@@ -133,6 +134,7 @@ const joinGame = () => {
       playerId,
       username: username.value,
       avatarIndex: selectedAvatarIndex.value,
+      isHost: false,
     },
     joinRoomId.value.toUpperCase().trim(),
   );

@@ -6,14 +6,14 @@
       <span class="hud-username">{{ name }}</span>
       <span v-if="points" class="hud-points">Points: {{ points }}</span>
     </div>
-    <div class="finished-check" v-if="hasFinished">✅</div>
-    <div v-if="isWinner">🏆</div>
+    <div v-if="isHost" class="host-info">HOST</div>
+    <div v-if="hasFinished" class="finished-check">✅</div>
+    <img v-if="isWinner" src="@/assets/trophy.gif" class="trophy">
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { usePlayerStore } from "@/stores/player";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 
 const props = defineProps({
@@ -21,10 +21,9 @@ const props = defineProps({
   avatarIndex: Number,
   points: Number | undefined,
   hasFinished: Boolean,
-  isWinner: Boolean
+  isWinner: Boolean,
+  isHost: Boolean
 })
-
-const playerStore = usePlayerStore();
 
 const avatarStyle = computed(() => {
   const index = props.avatarIndex || 0;
@@ -115,5 +114,19 @@ const avatarStyle = computed(() => {
 
 .finished-check {
   margin-left: auto;
+}
+
+.trophy {
+  margin-left: auto;
+  height: 40px;
+}
+
+.host-info {
+  margin-left: auto;
+  background: lightgray;
+  padding: 8px;
+  border-radius: 8px;
+  color: black;
+  font-size: 12px;
 }
 </style>

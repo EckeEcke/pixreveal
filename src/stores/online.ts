@@ -10,6 +10,7 @@ export interface UserData {
   playerId: string;
   username: string;
   avatarIndex: number;
+  isHost: boolean;
 }
 
 export interface Player extends UserData {
@@ -24,7 +25,7 @@ export const useOnlineStore = defineStore("online", () => {
   const activeChannel = shallowRef<any>(null);
   const client = shallowRef<any>(null);
   const currentRoomId = ref<string | null>(null);
-  const playerId = ref("fuck this");
+  const playerId = ref("");
   const router = useRouter();
   const isHost = ref(false);
   const playerStore = usePlayerStore();
@@ -53,11 +54,12 @@ export const useOnlineStore = defineStore("online", () => {
       const hash = members.presence?.hash || {};
 
       Object.keys(hash).forEach((id) => {
+        console.log(id, members)
         const remotePlayerData = {
           playerId: id,
           username: hash[id].name,
           avatarIndex: hash[id].avatar,
-          isHost: id === myPlayerId ? isHost.value : false,
+          isHost: hash[id].host,
           isOnline: true,
           points: 0,
           hasFinished: false,
@@ -85,7 +87,7 @@ export const useOnlineStore = defineStore("online", () => {
         playerId: member.user_id,
         username: member.user_info.name,
         avatarIndex: member.user_info.avatar,
-        isHost: false,
+        isHost: member.user_info.host,
         isOnline: true,
         points: 0,
         hasFinished: false,
