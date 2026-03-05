@@ -1,5 +1,5 @@
 <template>
-  <div class="player-hud">
+  <div class="player-hud" :class="{ winner: isWinner }">
     <div class="hud-avatar" :style="avatarStyle"></div>
 
     <div class="hud-info">
@@ -7,6 +7,7 @@
       <span v-if="points" class="hud-points">Points: {{ points }}</span>
     </div>
     <div class="finished-check" v-if="hasFinished">✅</div>
+    <div v-if="isWinner">🏆</div>
   </div>
 </template>
 
@@ -20,6 +21,7 @@ const props = defineProps({
   avatarIndex: Number,
   points: Number | undefined,
   hasFinished: Boolean,
+  isWinner: Boolean
 })
 
 const playerStore = usePlayerStore();
@@ -53,6 +55,41 @@ const avatarStyle = computed(() => {
   border-radius: 4px;
   backdrop-filter: blur(5px);
   min-width: 240px;
+}
+
+.player-hud.winner {
+  position: relative;
+  overflow: hidden;
+}
+
+.player-hud.winner::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+
+  background: linear-gradient(
+    120deg,
+    #ffae00,
+    #ffe600,
+    #ffae00,
+    #ff5e00
+  );
+
+  background-size: 300% 300%;
+  animation: winnerGlow 3s linear infinite;
+
+  z-index: -1;
+  filter: blur(8px);
+  opacity: 0.8;
+}
+
+@keyframes winnerGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
 }
 
 .hud-avatar {

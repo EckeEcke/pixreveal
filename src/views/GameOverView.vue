@@ -16,9 +16,10 @@
             :avatar-index="player.avatarIndex"
             :points="player.points"
             :has-finished="player.hasFinished"
+            :is-winner="!waitingForFinalResults && index === 0"
           />
         </div>
-        <div v-if="playersOnline.some((player) => !player.hasFinished)">
+        <div v-if="waitingForFinalResults">
           <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
         </div>
       </div>
@@ -30,7 +31,7 @@
       />
     </div>
     <button
-      v-if="!playersOnline.some((player) => !player.hasFinished)"
+      v-if="!waitingForFinalResults"
       class="btn-outline"
       @click="playAgain"
     >
@@ -56,6 +57,8 @@ const playersOnline = computed(() => onlineStore.playersOnline);
 const playersSortedByPoints = computed(() => {
   return [...playersOnline.value].sort((a, b) => b.points - a.points);
 });
+
+const waitingForFinalResults = computed(() => playersOnline.value.some((player) => !player.hasFinished))
 
 const isOnlinePlay = computed(
   () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1,
