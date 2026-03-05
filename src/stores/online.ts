@@ -14,6 +14,7 @@ export interface UserData {
 
 export interface Player extends UserData {
   isHost: boolean;
+  isOnline: boolean;
   points: number;
   hasFinished: boolean;
 }
@@ -40,9 +41,8 @@ export const useOnlineStore = defineStore("online", () => {
   };
 
   const removePlayer = (playerId: string) => {
-    playersOnline.value = playersOnline.value.filter(
-      (p) => p.playerId !== playerId,
-    );
+    const removedPlayer = playersOnline.value.find((p) => p.playerId === playerId);
+    if (removedPlayer) removedPlayer.isOnline = false;
   };
 
   const setupEvents = (myPlayerId: string) => {
@@ -58,6 +58,7 @@ export const useOnlineStore = defineStore("online", () => {
           username: hash[id].name,
           avatarIndex: hash[id].avatar,
           isHost: id === myPlayerId ? isHost.value : false,
+          isOnline: true,
           points: 0,
           hasFinished: false,
         };
@@ -67,6 +68,7 @@ export const useOnlineStore = defineStore("online", () => {
         if (existing) {
           existing.username = remotePlayerData.username;
           existing.avatarIndex = remotePlayerData.avatarIndex;
+          existing.isOnline = true;
         } else {
           playersOnline.value.push(remotePlayerData);
         }
@@ -84,6 +86,7 @@ export const useOnlineStore = defineStore("online", () => {
         username: member.user_info.name,
         avatarIndex: member.user_info.avatar,
         isHost: false,
+        isOnline: true,
         points: 0,
         hasFinished: false,
       });
