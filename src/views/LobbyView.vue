@@ -8,13 +8,15 @@
     <div v-if="showClipboardInfo" class="clipboard-info">
       COPIED ID TO CLIPBOARD ✅
     </div>
-    <PlayerDisplay
-      v-for="player in players"
-      :key="player.playerId"
-      :name="player.username"
-      :avatar-index="player.avatarIndex"
-      :is-host="player.isHost"
-    />
+    <div class="players-grid">
+      <PlayerDisplay
+        v-for="player in players"
+        :key="player.playerId"
+        :name="player.username"
+        :avatar-index="player.avatarIndex"
+        :is-host="player.isHost"
+      />
+    </div>
     <button
       v-if="players && players.length > 1 && onlineStore.isHost"
       class="btn-outline"
@@ -78,5 +80,11 @@ onMounted(() => {
 
 .btn-outline {
   margin-top: 32px;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 </style>
