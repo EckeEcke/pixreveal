@@ -1,16 +1,17 @@
 <template>
-  <div class="loading-wrapper">
-    <div>{{ text }}</div>
+  <div class="loading-wrapper" :class="{ small: size === 'small' }">
+    <div v-if="text && !size">{{ text }}</div>
     <div class="loader"></div>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps } from "vue";
 
 defineProps({
-    text: String
-})
+  text: String | undefined,
+  size: "small" | undefined,
+});
 </script>
 
 <style scoped>
@@ -21,6 +22,11 @@ defineProps({
   gap: 16px;
   margin: 64px 0;
 }
+
+.loading-wrapper.small {
+  gap: 0;
+}
+
 .loader {
   width: 60px;
   aspect-ratio: 2;
@@ -33,6 +39,11 @@ defineProps({
   background-size: calc(100% / 3) 50%;
   animation: l3 1s infinite linear;
 }
+
+.loading-wrapper.small .loader {
+  width: 40px;
+}
+
 @keyframes l3 {
   20% {
     background-position:

@@ -1,12 +1,17 @@
 <template>
   <div class="canvas-wrapper" ref="wrapper">
-    <canvas ref="canvasRef" :width="internalSize" :height="internalSize"></canvas>
+    <canvas
+      ref="canvasRef"
+      :width="internalSize"
+      :height="internalSize"
+    ></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onUnmounted } from "vue";
 import colorPalette from "../data/colorPalette";
+import { useSoundStore } from "@/stores/sound";
 
 const props = defineProps({
   pixelArray: Array,
@@ -16,6 +21,8 @@ const props = defineProps({
   timerDuration: Number | undefined,
 });
 
+const soundStore = useSoundStore();
+
 const timerDuration = props.timerDuration || 15;
 
 const canvasRef = ref(null);
@@ -24,6 +31,11 @@ const internalSize = 600;
 let intervalId = null;
 
 const startReveal = () => {
+  if (!props.isRevealing) {
+    render()
+    return
+  }
+
   if (intervalId) clearInterval(intervalId);
   if (animationFrame) cancelAnimationFrame(animationFrame);
 
@@ -42,7 +54,8 @@ const startReveal = () => {
   });
 
   const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
-  const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
+  const dynamicSpeed =
+    allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
 
   allVisible.sort(() => Math.random() - 0.5);
 
@@ -56,6 +69,7 @@ const startReveal = () => {
 
       const color = colorPalette[next.val] || "#fff";
       createParticles(next.x, next.y, color, cellSize);
+      soundStore.playSound("reveal");
     } else {
       clearInterval(intervalId);
       intervalId = null;
@@ -87,7 +101,9 @@ const render = () => {
   const canvas = canvasRef.value;
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  const pixelsToDraw = props.isRevealing ? displayedPixels.value : allPixelsFromProp();
+  const pixelsToDraw = props.isRevealing
+    ? displayedPixels.value
+    : allPixelsFromProp();
 
   const res = props.pixelArray.length;
   const cellSize = internalSize / res;
@@ -105,7 +121,7 @@ const render = () => {
       x * cellSize + gap,
       y * cellSize + gap,
       cellSize - gap * 2,
-      cellSize - gap * 2
+      cellSize - gap * 2,
     );
 
     if (val === 1) {
@@ -153,12 +169,14 @@ watch(
       startReveal();
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(() => {
   startReveal();
 });
+
+onUnmounted(() => clearInterval(intervalId));
 </script>
 
 <style scoped>

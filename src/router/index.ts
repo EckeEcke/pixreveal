@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { usePlayerStore } from "@/stores/player";
+import GameView from "@/views/GameView.vue";
+import GameOverView from "@/views/GameOverView.vue";
+import LobbyView from "@/views/LobbyView.vue";
+import EditorView from "@/views/EditorView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,22 +17,22 @@ const router = createRouter({
     {
       path: "/editor",
       name: "editor",
-      component: () => import("../views/EditorView.vue"),
+      component: EditorView,
     },
     {
       path: "/game",
       name: "game",
-      component: () => import("../views/GameView.vue"),
+      component: GameView,
     },
     {
       path: "/gameover",
       name: "gameover",
-      component: () => import("../views/GameOverView.vue"),
+      component: GameOverView,
     },
     {
       path: "/lobby",
       name: "lobby",
-      component: () => import("../views/LobbyView.vue"),
+      component: LobbyView,
     },
     {
       // PATH GUARD: always put in the end

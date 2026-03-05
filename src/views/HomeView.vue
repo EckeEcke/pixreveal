@@ -4,14 +4,16 @@
       <section class="setup-card">
         <h1 class="logo">Pix<span>Reveal</span></h1>
         <div class="avatar-selection">
-          <h3>Choose your Avatar</h3>
+          <div class="headline-wrapper">
+            <h2>Choose your Avatar</h2>
+          </div>
           <div class="avatar-grid">
             <div
               v-for="avatar in avatars"
               :key="avatar.id"
               class="avatar-slot"
               :class="{ active: selectedAvatarIndex === avatar.id }"
-              @click="selectedAvatarIndex = avatar.id"
+              @click="selectAvatar(avatar.id)"
             >
               <div
                 class="avatar-image"
@@ -57,6 +59,23 @@
           </button>
           <input type="text" v-model="joinRoomId" placeholder="Room ID..." />
         </div>
+        <div class="sound-control-zone">
+          <label class="sound-toggle-label">
+            <input
+              type="checkbox"
+              v-model="soundStore.isAudioEnabled"
+              @change="soundStore.playSound('confirm')"
+            />
+            <div class="pixel-box">
+              <span class="status-icon">{{
+                soundStore.isAudioEnabled ? "🔊" : "🔇"
+              }}</span>
+              <span class="status-text"
+                >SOUND {{ soundStore.isAudioEnabled ? "ON" : "OFF" }}</span
+              >
+            </div>
+          </label>
+        </div>
       </section>
       <router-link to="/editor" class="editor-link">Open Editor</router-link>
     </main>
@@ -70,10 +89,13 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
+import { useSoundStore } from "@/stores/sound";
 
 const router = useRouter();
 const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
+const gameStore = useGameStore();
+const soundStore = useSoundStore();
 
 const username = ref("");
 const joinRoomId = ref("");
@@ -95,6 +117,10 @@ const getAvatarStyle = (index) => {
   };
 };
 
+const selectAvatar = (id) => {
+  selectedAvatarIndex.value = id;
+  soundStore.playSound("click");
+};
 const setUser = () =>
   playerStore.setUser({
     username: username.value,
@@ -106,11 +132,13 @@ const startGame = () => {
     setUser();
     prepareGame();
     router.push("/game");
+    soundStore.playSound("click");
   }
 };
 
 const hostGame = () => {
   if (!username.value || selectedAvatarIndex.value === null) return;
+  soundStore.playSound("click");
   setUser();
   prepareGame();
   onlineStore.hostSession({
@@ -128,6 +156,7 @@ const joinGame = () => {
     !joinRoomId.value
   )
     return;
+  soundStore.playSound("click");
   setUser();
   onlineStore.joinSession(
     {
@@ -143,17 +172,28 @@ const joinGame = () => {
 const playersOnline = computed(() =>
   onlineStore.playersOnline ? onlineStore.playersOnline.length : 0,
 );
-
-const handleEnter = () => {
-  if (username.value && selectedAvatarIndex.value !== null) {
-    hostGame();
-  }
-};
 </script>
 
 <style scoped>
 h1 {
   margin-top: 0;
+}
+
+h2 {
+  margin-bottom: 0;
+}
+
+.headline-wrapper {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  align-items: center;
+  input {
+    accent-color: var(--neon-orange);
+  }
+  @media (min-width: 575px) {
+    flex-direction: row;
+  }
 }
 
 .home-content-wrapper {
@@ -166,7 +206,7 @@ h1 {
   letter-spacing: 4px;
   color: #fff;
   text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 2rem;
+  margin-bottom: 16px;
 }
 
 .logo span {
@@ -248,19 +288,6 @@ h1 {
   filter: contrast(2);
 }
 
-.avatar-number {
-  position: absolute;
-  bottom: 2px;
-  right: 3px;
-  font-size: 0.5rem;
-  font-family: monospace;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(0, 0, 0, 0.5);
-  padding: 1px 3px;
-  border-radius: 2px;
-  pointer-events: none;
-}
-
 .input-group {
   margin-bottom: 2rem;
 }
@@ -301,6 +328,61 @@ input[type="text"]:focus {
   gap: 8px;
   .btn-outline {
     margin: 0;
+  }
+}
+
+.sound-control-zone {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0 0;
+  width: 100%;
+}
+
+.sound-toggle-label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sound-toggle-label input {
+  display: none;
+}
+
+.pixel-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border: 4px solid #444;
+  background: #222;
+  transition: all 0.1s;
+  min-width: 180px;
+}
+
+.sound-toggle-label input:checked + .pixel-box {
+  border-color: #ff6600;
+  box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
+}
+
+.status-text {
+  font-size: 12px;
+  color: #888;
+}
+
+.sound-toggle-label input:checked + .pixel-box .status-text {
+  color: #ff6600;
+}
+
+@media (max-width: 480px) {
+  .pixel-box {
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+    min-width: 100px;
+  }
+
+  .status-text {
+    font-size: 9px;
   }
 }
 </style>

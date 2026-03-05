@@ -1,14 +1,23 @@
 <template>
-  <div class="player-hud" :class="{ winner: isWinner }">
+  <div class="player-hud" :class="{ winner: isWinner, pending: hasFinished === false }">
     <div class="hud-avatar" :style="avatarStyle"></div>
-
     <div class="hud-info">
       <span class="hud-username">{{ name }}</span>
-      <span v-if="points" class="hud-points">Points: {{ points }}</span>
+      <div class="hud-stats">
+        <span v-if="points || points === 0" class="hud-points"
+          >🪙 {{ points }}</span
+        >
+        <div v-if="roundIndex || roundIndex === 0">
+          🏁 {{ roundIndex }}/{{ maxRounds }}
+        </div>
+        <div v-if="correctAnswers || correctAnswers === 0">
+          ✅ {{ correctAnswers || 0 }}
+        </div>
+      </div>
     </div>
+
     <div v-if="isHost" class="host-info">HOST</div>
-    <div v-if="hasFinished" class="finished-check">✅</div>
-    <img v-if="isWinner" src="@/assets/trophy.gif" class="trophy">
+    <img v-if="isWinner" src="@/assets/trophy.gif" class="trophy" />
   </div>
 </template>
 
@@ -20,10 +29,13 @@ const props = defineProps({
   name: String,
   avatarIndex: Number,
   points: Number | undefined,
-  hasFinished: Boolean,
+  hasFinished: Boolean | undefined,
   isWinner: Boolean,
-  isHost: Boolean
-})
+  isHost: Boolean,
+  correctAnswers: Number | undefined,
+  roundIndex: Number | undefined,
+  maxRounds: Number | undefined,
+});
 
 const avatarStyle = computed(() => {
   const index = props.avatarIndex || 0;
@@ -66,13 +78,7 @@ const avatarStyle = computed(() => {
   position: absolute;
   inset: -2px;
 
-  background: linear-gradient(
-    120deg,
-    #ffae00,
-    #ffe600,
-    #ffae00,
-    #ff5e00
-  );
+  background: linear-gradient(120deg, #ffae00, #ffe600, #ffae00, #ff5e00);
 
   background-size: 300% 300%;
   animation: winnerGlow 3s linear infinite;
@@ -104,16 +110,19 @@ const avatarStyle = computed(() => {
   flex-direction: column;
 }
 
+.hud-stats {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+
 .hud-username {
   font-family: "Orbitron", sans-serif;
   color: #fff;
-  font-size: 1rem;
+  font-size: 16px;
+  font-weight: 700;
   text-transform: uppercase;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-}
-
-.finished-check {
-  margin-left: auto;
 }
 
 .trophy {
@@ -128,5 +137,9 @@ const avatarStyle = computed(() => {
   border-radius: 8px;
   color: black;
   font-size: 12px;
+}
+
+.pending {
+  opacity: 0.4;
 }
 </style>

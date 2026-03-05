@@ -29,6 +29,7 @@ export const useGameStore = defineStore("game", () => {
   const maxRounds = 10;
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
+  const playSound = ref(false);
 
   const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
 
@@ -79,6 +80,7 @@ export const useGameStore = defineStore("game", () => {
     maxRounds,
     selectedOption,
     isGameOver,
+    playSound,
     prepareGame,
     nextRound,
   };

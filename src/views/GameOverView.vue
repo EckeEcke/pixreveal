@@ -10,12 +10,14 @@
           :key="player.playerId"
           class="player-wrapper"
         >
-          <div class="position">{{ index + 1 }}.</div>
+          <div v-if="player.hasFinished" class="position">{{ index + 1 }}.</div>
+          <LoadingAnimation size="small" v-else />
           <PlayerDisplay
             :name="player.username"
             :avatar-index="player.avatarIndex"
             :points="player.points"
             :has-finished="player.hasFinished"
+            :correct-answers="player.correctAnswers"
             :is-winner="!waitingForFinalResults && index === 0"
           />
         </div>
@@ -23,12 +25,20 @@
           <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
         </div>
       </div>
-      <PlayerDisplay
-        v-else
-        :name="playerStore.playerName"
-        :avatar-index="playerStore.avatarIndex"
-        :points="playerStore.points"
-      />
+      <div v-else>
+        <div class="rank-text">
+          <div>YOUR RANK IS</div>
+          <div :class="getRankData(playerStore.points).class">
+            {{ getRankData(playerStore.points).title }}
+          </div>
+        </div>
+        <PlayerDisplay
+          :name="playerStore.playerName"
+          :avatar-index="playerStore.avatarIndex"
+          :points="playerStore.points"
+          :correct-answers="playerStore.correctAnswers"
+        />
+      </div>
     </div>
     <button
       v-if="!waitingForFinalResults"
@@ -47,9 +57,11 @@ import { useRouter } from "vue-router";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
+import { useSoundStore } from "@/stores/sound";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
+const soundStore = useSoundStore();
 const router = useRouter();
 
 const playersOnline = computed(() => onlineStore.playersOnline);
@@ -58,13 +70,28 @@ const playersSortedByPoints = computed(() => {
   return [...playersOnline.value].sort((a, b) => b.points - a.points);
 });
 
-const waitingForFinalResults = computed(() => playersOnline.value.some((player) => !player.hasFinished))
+const waitingForFinalResults = computed(() =>
+  playersOnline.value.some((player) => !player.hasFinished),
+);
 
 const isOnlinePlay = computed(
   () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1,
 );
 
-const playAgain = () => router.push("/");
+soundStore.playSound("complete");
+
+const getRankData = (score) => {
+  if (score > 120) return { title: "PIXEL PROPHET", class: "rank-prophet" };
+  if (score > 90) return { title: "EAGLE EYE", class: "rank-eagle" };
+  if (score > 60) return { title: "GRID GLITCHER", class: "rank-glitcher" };
+  if (score > 30) return { title: "BLURRY VISION", class: "rank-blurry" };
+  return { title: "AFK ARCHITECT", class: "rank-afk" };
+};
+
+const playAgain = () => {
+  soundStore.playSound("click");
+  router.push("/");
+};
 </script>
 
 <style scoped>
@@ -92,9 +119,107 @@ const playAgain = () => router.push("/");
   color: var(--neon-orange);
   font-weight: 700;
   font-size: 32px;
+  width: 40px;
 }
 
 .btn-outline {
   margin-top: 32px;
+}
+
+.rank-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.rank-prophet {
+  color: #ffcc00;
+  text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+  animation: floating 2s ease-in-out infinite;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.rank-eagle {
+  color: #00ffcc;
+  animation: sharp-pulse 1.5s ease-in-out infinite;
+  font-size: 24px;
+}
+
+.rank-glitcher {
+  color: #ff6600;
+  animation: glitch 0.2s infinite;
+  font-size: 24px;
+}
+
+.rank-blurry {
+  color: #888888;
+  animation: blur-fade 3s infinite;
+  font-size: 24px;
+}
+
+.rank-afk {
+  color: #ff0044;
+  animation: slow-blink 2s step-end infinite;
+  font-size: 24px;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes sharp-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(1px, 1px);
+  }
+  50% {
+    transform: translate(-1px, -1px);
+  }
+  100% {
+    transform: translate(1px, -1px);
+  }
+}
+
+@keyframes blur-fade {
+  0%,
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+  }
+  50% {
+    filter: blur(2px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes slow-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.3;
+  }
 }
 </style>

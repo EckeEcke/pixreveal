@@ -20,7 +20,7 @@
             ></div>
           </div>
 
-          <PixelCanvas :pixel-array="pixelData" :resolution="resolution" />
+          <PixelCanvas :pixel-array="pixelData" :resolution="resolution" :is-revealing="false" />
         </div>
       </section>
 

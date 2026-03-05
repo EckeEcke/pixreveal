@@ -20,7 +20,7 @@
     <button
       v-if="players && players.length > 1 && onlineStore.isHost"
       class="btn-outline"
-      @click="onlineStore.triggerGameStart(rounds)"
+      @click="startGame"
     >
       START GAME
     </button>
@@ -37,9 +37,11 @@ import { useOnlineStore } from "@/stores/online";
 import { useRouter } from "vue-router";
 import { useGameStore } from "@/stores/game";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
+import { useSoundStore } from "@/stores/sound";
 
 const { rounds } = useGameStore();
 
+const soundStore = useSoundStore();
 const onlineStore = useOnlineStore();
 const router = useRouter();
 const showClipboardInfo = ref(false);
@@ -54,6 +56,11 @@ const copyToClipboard = async () => {
       showClipboardInfo.value = false;
     }, 2000);
   } catch (err) {}
+};
+
+const startGame = () => {
+  soundStore.playSound("click");
+  onlineStore.triggerGameStart(rounds);
 };
 
 onMounted(() => {
