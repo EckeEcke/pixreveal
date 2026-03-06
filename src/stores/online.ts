@@ -31,6 +31,7 @@ export const useOnlineStore = defineStore("online", () => {
   const isHost = ref(false);
   const playerStore = usePlayerStore();
   const messages = ref<any[]>([]);
+  const isLoading = ref(false)
 
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
@@ -56,6 +57,15 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind("realtime:subscription_succeeded", (members: any) => {
       const hash = members.presence?.hash || {};
+      const totalMembers = Object.keys(hash).length;
+
+      if (!isHost.value && totalMembers <= 1) {
+        console.error("Kein Host gefunden. Raum ist leer.");
+        reset();
+        isLoading.value = false
+        router.push("/");
+        return;
+      }
 
       Object.keys(hash).forEach((id) => {
         console.log(id, members);
@@ -225,8 +235,8 @@ export const useOnlineStore = defineStore("online", () => {
   };
 
   const reset = () => {
-    if (activeChannel.value) {
-      activeChannel.value.unsubscribe();
+    if (client.value && currentRoomId.value) {
+      client.value.unsubscribe(`presence-pixreveal-${currentRoomId.value}`);
     }
     playersOnline.value = [];
     activeChannel.value = null;
@@ -250,6 +260,7 @@ export const useOnlineStore = defineStore("online", () => {
     isHost,
     playerId,
     messages,
+    isLoading,
     hostSession,
     joinSession,
     reset,

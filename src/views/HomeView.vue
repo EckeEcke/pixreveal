@@ -1,5 +1,6 @@
 <template>
   <div class="home-content-wrapper">
+    <LoadingOverlay :show="onlineStore.isLoading" :text="loadingText" />
     <main class="home-container">
       <section class="setup-card">
         <h1 class="logo">Pix<span>Reveal</span></h1>
@@ -102,7 +103,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { useOnlineStore } from "@/stores/online";
@@ -110,6 +111,7 @@ import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -124,6 +126,8 @@ const selectedAvatarIndex = ref(0);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
+
+const loadingText = ref("LOADING...");
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
 
@@ -163,6 +167,8 @@ const hostGame = () => {
   soundStore.playSound("click");
   setUser();
   prepareGame();
+  onlineStore.isLoading = true;
+  loadingText.value = "CREATING ONLINE GAME...";
   onlineStore.hostSession({
     playerId,
     username: playerStore.playerName,
@@ -175,6 +181,8 @@ const joinGame = () => {
   if (!joinRoomId.value) return;
   soundStore.playSound("click");
   setUser();
+  onlineStore.isLoading = true;
+  loadingText.value = "JOINING GAME...";
   onlineStore.joinSession(
     {
       playerId,
@@ -186,7 +194,7 @@ const joinGame = () => {
   );
 };
 
-onlineStore.reset()
+onlineStore.reset();
 </script>
 
 <style scoped>
