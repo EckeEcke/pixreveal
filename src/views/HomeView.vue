@@ -8,18 +8,20 @@
             <div class="headline-wrapper">
               <h2>Choose your Avatar</h2>
             </div>
-            <div class="avatar-grid">
-              <div
-                v-for="avatar in avatars"
-                :key="avatar.id"
-                class="avatar-slot"
-                :class="{ active: selectedAvatarIndex === avatar.id }"
-                @click="selectAvatar(avatar.id)"
-              >
+            <div class="mobile-scroll-container">
+              <div class="avatar-grid">
                 <div
-                  class="avatar-image"
-                  :style="getAvatarStyle(avatar.id)"
-                ></div>
+                  v-for="avatar in avatars"
+                  :key="avatar.id"
+                  class="avatar-slot"
+                  :class="{ active: selectedAvatarIndex === avatar.id }"
+                  @click="selectAvatar(avatar.id)"
+                >
+                  <div
+                    class="avatar-image"
+                    :style="getAvatarStyle(avatar.id)"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
@@ -33,6 +35,25 @@
                 placeholder="Enter Name..."
                 maxlength="15"
               />
+            </div>
+
+            <div class="rounds-selection">
+              <label class="selection-label">HOW MANY ROUNDS</label>
+              <div class="radio-group">
+                <label
+                  v-for="amount in [5, 10, 15, 20]"
+                  :key="amount"
+                  class="radio-item"
+                >
+                  <input
+                    type="radio"
+                    name="rounds"
+                    :value="amount"
+                    v-model="gameStore.maxRounds"
+                  />
+                  <span class="radio-button">{{ amount }}</span>
+                </label>
+              </div>
             </div>
 
             <button class="btn-outline" @click="startGame">PLAY GAME</button>
@@ -211,7 +232,7 @@ h2 {
   align-items: center;
   justify-content: center;
   min-height: 70vh;
-  padding: 20px;
+  padding: 0 20px 20px;
 }
 
 .setup-card {
@@ -365,6 +386,58 @@ input[type="text"]:focus {
   color: #ff6600;
 }
 
+.rounds-selection {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.selection-label {
+  font-size: 0.8rem;
+  color: var(--neon-orange);
+  text-transform: uppercase;
+}
+
+.radio-group {
+  display: flex;
+  gap: 10px;
+}
+
+.radio-item {
+  flex: 1;
+  cursor: pointer;
+}
+
+.radio-item input {
+  display: none;
+}
+
+.radio-button {
+  display: block;
+  text-align: center;
+  padding: 10px 0;
+  background: #1a1a1a;
+  border: 2px solid #333;
+  color: #fff;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.radio-item:hover .radio-button {
+  border-color: #666;
+  background: #222;
+}
+
+.radio-item input:checked + .radio-button {
+  background: var(--neon-orange);
+  border-color: var(--neon-orange);
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 0 10px var(--neon-orange);
+  transform: translateY(-2px);
+}
+
 @media (max-width: 480px) {
   .pixel-box {
     flex-direction: column;
@@ -388,6 +461,20 @@ input[type="text"]:focus {
     grid-template-columns: 1fr 1fr;
     gap: 64px;
     align-items: center;
+  }
+}
+
+@media (max-width: 575px) {
+  .avatar-grid {
+    margin: 0;
+  }
+
+  .mobile-scroll-container {
+    height: 150px;
+    overflow-y: scroll;
+    overflow-x: visible;
+    margin: 8px -20px 32px;
+    padding: 20px 20px;
   }
 }
 </style>

@@ -63,11 +63,15 @@ import { usePlayerStore } from "@/stores/player";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
+import { useGameStore } from "@/stores/game";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
+const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
+
+const isMe = (id) => id === onlineStore.playerId;
 
 const playersOnline = computed(() => onlineStore.playersOnline);
 
@@ -86,7 +90,8 @@ const isOnlinePlay = computed(
 soundStore.playSound("complete");
 
 const getRankData = (score) => {
-  if (score > 120) {
+  const adjustedScore = score / gameStore.maxRounds * 10
+  if (adjustedScore > 120) {
     return {
       title: "PIXEL PROPHET",
       class: "rank-prophet",
