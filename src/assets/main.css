@@ -11,7 +11,7 @@
   background: transparent;
   border: 1px solid var(--neon-orange);
   color: var(--neon-orange);
-  padding: 10px 20px;
+  padding: 10px;
   font-family: "Inter", sans-serif;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -48,8 +48,8 @@
   border: none;
   color: black;
   box-shadow:
-      0 0 20px var(--neon-success),
-      0 0 40px var(--neon-success);
+    0 0 20px var(--neon-success),
+    0 0 40px var(--neon-success);
 }
 
 .btn-outline.is-wrong {
@@ -58,8 +58,8 @@
   color: var(--text-main);
   border: none;
   box-shadow:
-      0 0 20px var(--neon-error),
-      0 0 40px var(--neon-error);
+    0 0 20px var(--neon-error),
+    0 0 40px var(--neon-error);
 }
 
 .fade-enter-from,
@@ -92,4 +92,23 @@
 
 h1 {
   text-align: center;
+  margin-top: 0;
+}
+
+.loading-text {
+  color: var(--neon-orange);
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }

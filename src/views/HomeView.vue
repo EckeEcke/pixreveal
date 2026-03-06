@@ -198,10 +198,6 @@ onlineStore.reset();
 </script>
 
 <style scoped>
-h1 {
-  margin-top: 0;
-}
-
 h2 {
   margin-bottom: 0;
 }

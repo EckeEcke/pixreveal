@@ -43,24 +43,6 @@ defineProps({
   gap: 20px;
 }
 
-.loading-text {
-  color: var(--neon-orange);
-  font-size: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

@@ -5,6 +5,7 @@ import GameView from "@/views/GameView.vue";
 import GameOverView from "@/views/GameOverView.vue";
 import LobbyView from "@/views/LobbyView.vue";
 import EditorView from "@/views/EditorView.vue";
+import { useGameStore } from "@/stores/game";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,13 +45,21 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const playerStore = usePlayerStore();
+  const gameStore = useGameStore();
 
   const protectedRoutes = ["/game", "/gameover"];
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {
-      return next('/');
+      return next("/");
     }
+  }
+
+  if (
+    to.path === "/game" &&
+    (!gameStore.rounds || gameStore.rounds.length <= 0)
+  ) {
+    return next("/");
   }
 
   next();

@@ -72,6 +72,13 @@ export const useGameStore = defineStore("game", () => {
     }
   };
 
+  const reset = () => {
+    rounds.value = [];
+    currentRoundIndex.value = 0;
+    selectedOption.value = null;
+    isGameOver.value = false;
+  };
+
   return {
     rounds,
     currentRound,
@@ -82,5 +89,6 @@ export const useGameStore = defineStore("game", () => {
     playSound,
     prepareGame,
     nextRound,
+    reset,
   };
 });

@@ -1,6 +1,6 @@
 <template>
   <div class="loading-wrapper" :class="{ small: size === 'small' }">
-    <div v-if="text && !size">{{ text }}</div>
+    <div v-if="text && !size" class="loading-text">{{ text }}</div>
     <div class="loader"></div>
   </div>
 </template>

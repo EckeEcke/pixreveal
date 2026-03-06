@@ -19,6 +19,7 @@
             :has-finished="player.hasFinished"
             :correct-answers="player.correctAnswers"
             :is-winner="!waitingForFinalResults && index === 0"
+            :show-you-indicator="isMe(player.playerId)"
           />
         </div>
         <div v-if="waitingForFinalResults">
@@ -131,6 +132,8 @@ const playAgain = () => {
   onlineStore.reset();
   router.push("/");
 };
+
+gameStore.reset()
 </script>
 
 <style scoped>
