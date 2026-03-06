@@ -176,6 +176,7 @@ export const useOnlineStore = defineStore("online", () => {
       activeChannel.value.trigger("client-game-started", {
         startedAt: new Date().toISOString(),
         rounds: useGameStore().rounds,
+        maxRounds: useGameStore().maxRounds,
       });
       router.push("/game");
     }

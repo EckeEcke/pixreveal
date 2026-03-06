@@ -7,7 +7,7 @@
         :points="playerStore.points"
         :correct-answers="playerStore.correctAnswers"
         :round-index="gameStore.currentRoundIndex + 1"
-        :max-rounds="gameStore.maxRounds"
+        :max-rounds="maxRounds"
         class="hud"
       />
       <PixelCanvas

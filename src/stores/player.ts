@@ -1,6 +1,5 @@
 import { ref, type Ref } from "vue";
 import { defineStore } from "pinia";
-import { useGameStore } from "./game";
 import { getRandomUserName } from "@/utils/random";
 
 type Player = {
@@ -12,7 +11,6 @@ export const usePlayerStore = defineStore("player", () => {
   const avatarIndex: Ref<number> = ref(0);
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
-  const gameStore = useGameStore();
 
   const setUser = (user: { username: string; avatar: number }) => {
     playerName.value =

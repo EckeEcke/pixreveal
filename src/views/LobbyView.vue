@@ -16,6 +16,7 @@
         :name="player.username"
         :avatar-index="player.avatarIndex"
         :is-host="player.isHost"
+        :show-you-indicator="isMe(player.playerId)"
       />
     </div>
     <button
@@ -52,6 +53,8 @@ const showClipboardInfo = ref(false);
 const inviteLink = `${window.location.host}?id=${onlineStore.currentRoomId}`;
 
 const players = computed(() => onlineStore.playersOnline);
+
+const isMe = (id) => id === onlineStore.playerId
 
 const copyToClipboard = async () => {
   try {

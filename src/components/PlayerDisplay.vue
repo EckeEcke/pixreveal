@@ -1,8 +1,12 @@
 <template>
-  <div class="player-hud" :class="{ winner: isWinner, pending: hasFinished === false }">
+  <div
+    class="player-hud"
+    :class="{ winner: isWinner, pending: hasFinished === false }"
+  >
     <div class="hud-avatar" :style="avatarStyle"></div>
     <div class="hud-info">
       <span class="hud-username">{{ name }}</span>
+      <span v-if="showYouIndicator"> (YOU)</span>
       <div class="hud-stats">
         <span v-if="points || points === 0" class="hud-points"
           >🪙 {{ points }}</span
@@ -35,6 +39,7 @@ const props = defineProps({
   correctAnswers: Number | undefined,
   roundIndex: Number | undefined,
   maxRounds: Number | undefined,
+  showYouIndicator: Boolean,
 });
 
 const avatarStyle = computed(() => {
@@ -103,12 +108,6 @@ const avatarStyle = computed(() => {
   background-color: #2d3748;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
-}
-
-.hud-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .hud-stats {

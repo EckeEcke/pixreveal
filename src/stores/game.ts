@@ -24,21 +24,20 @@ type Round = {
 export const useGameStore = defineStore("game", () => {
   const rounds = ref<any[]>([]);
   const currentRoundIndex = ref(0);
-  const maxRounds = 10;
+  const maxRounds = ref(10);
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
   const playSound = ref(false);
 
   const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
 
- 
-
   const prepareGame = (customRounds?: any[]) => {
     if (customRounds) {
       rounds.value = customRounds;
+      maxRounds.value = customRounds.length;
     } else {
       const shuffled = shuffle(drawings as unknown as Drawing[]);
-      const selectedDrawings = shuffled.slice(0, 10);
+      const selectedDrawings = shuffled.slice(0, maxRounds.value);
 
       rounds.value = selectedDrawings.map((drawing) => {
         const otherNames = (drawings as unknown as Drawing[])
