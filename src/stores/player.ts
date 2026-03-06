@@ -16,6 +16,7 @@ export const usePlayerStore = defineStore("player", () => {
     playerName.value = user.username;
     avatarIndex.value = user.avatar;
     points.value = 0;
+    correctAnswers.value = 0;
   };
 
   const removePlayer = (memberId: string) => {
