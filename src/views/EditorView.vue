@@ -81,7 +81,7 @@
           </div>
 
           <div class="drawings-list">
-            <h3>Presets</h3>
+            <h3>Presets ({{ drawings.length }})</h3>
             <div class="preset-grid">
               <button
                 v-for="drawing in drawings"
@@ -248,6 +248,8 @@ const copyToClipboard = async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  height: 200px;
+  overflow: auto;
 }
 
 .btn-preset {
