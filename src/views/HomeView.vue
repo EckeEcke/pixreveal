@@ -185,6 +185,8 @@ const joinGame = () => {
     joinRoomId.value.toUpperCase().trim(),
   );
 };
+
+onlineStore.reset()
 </script>
 
 <style scoped>
