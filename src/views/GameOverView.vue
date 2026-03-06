@@ -50,6 +50,7 @@
     >
       Play Again
     </button>
+    <LobbyChat v-if="isOnlinePlay" />
   </main>
 </template>
 
@@ -61,6 +62,7 @@ import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
+import LobbyChat from "@/components/LobbyChat.vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();

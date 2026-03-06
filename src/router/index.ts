@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
   const protectedRoutes = ["/game", "/gameover"];
 
   if (protectedRoutes.includes(to.path)) {
-    if (!playerStore.playerName || !playerStore.avatarIndex) {
+    if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {
       return next('/');
     }
   }

@@ -107,7 +107,7 @@ const render = () => {
 
   const res = props.pixelArray.length;
   const cellSize = internalSize / res;
-  const gap = cellSize * 0.15;
+  const gap = cellSize * 0.05;
 
   ctx.clearRect(0, 0, internalSize, internalSize);
 

@@ -35,28 +35,16 @@
               />
             </div>
 
-            <button
-              class="btn-outline"
-              :disabled="!username || selectedAvatarIndex === null"
-              @click="startGame"
-            >
-              PLAY GAME
-            </button>
+            <button class="btn-outline" @click="startGame">PLAY GAME</button>
 
-            <button
-              class="btn-outline"
-              :disabled="!username || selectedAvatarIndex === null"
-              @click="hostGame"
-            >
+            <button class="btn-outline" @click="hostGame">
               HOST ONLINE GAME
             </button>
 
             <div class="join-input-wrapper">
               <button
                 class="btn-outline"
-                :disabled="
-                  !username || selectedAvatarIndex === null || !joinRoomId
-                "
+                :disabled="!joinRoomId"
                 @click="joinGame"
               >
                 JOIN GAME
@@ -109,7 +97,7 @@ const soundStore = useSoundStore();
 
 const username = ref("");
 const joinRoomId = ref("");
-const selectedAvatarIndex = ref(null);
+const selectedAvatarIndex = ref(0);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
@@ -138,16 +126,13 @@ const setUser = () =>
   });
 
 const startGame = () => {
-  if (username.value && selectedAvatarIndex.value !== null) {
-    setUser();
-    prepareGame();
-    router.push("/game");
-    soundStore.playSound("click");
-  }
+  setUser();
+  prepareGame();
+  router.push("/game");
+  soundStore.playSound("click");
 };
 
 const hostGame = () => {
-  if (!username.value || selectedAvatarIndex.value === null) return;
   soundStore.playSound("click");
   setUser();
   prepareGame();
@@ -160,12 +145,7 @@ const hostGame = () => {
 };
 
 const joinGame = () => {
-  if (
-    !username.value ||
-    selectedAvatarIndex.value === null ||
-    !joinRoomId.value
-  )
-    return;
+  if (!joinRoomId.value) return;
   soundStore.playSound("click");
   setUser();
   onlineStore.joinSession(
@@ -179,9 +159,6 @@ const joinGame = () => {
   );
 };
 
-const playersOnline = computed(() =>
-  onlineStore.playersOnline ? onlineStore.playersOnline.length : 0,
-);
 </script>
 
 <style scoped>

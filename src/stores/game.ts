@@ -33,6 +33,11 @@ export const useGameStore = defineStore("game", () => {
 
   const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
 
+  const getRandomUserName = () => {
+    const shuffled = shuffle(drawings as unknown as Drawing[]);
+    return shuffled[0]?.name || "PLAYER";
+  };
+
   const prepareGame = (customRounds?: any[]) => {
     if (customRounds) {
       rounds.value = customRounds;
@@ -83,5 +88,6 @@ export const useGameStore = defineStore("game", () => {
     playSound,
     prepareGame,
     nextRound,
+    getRandomUserName,
   };
 });
