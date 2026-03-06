@@ -85,42 +85,43 @@ soundStore.playSound("complete");
 
 const getRankData = (score) => {
   if (score > 120) {
-    return { 
-      title: "PIXEL PROPHET", 
+    return {
+      title: "PIXEL PROPHET",
       class: "rank-prophet",
-      description: "You see the art before it even exists. Pure sorcery!" 
+      description: "You see the art before it even exists. Pure sorcery!",
     };
   }
   if (score > 90) {
-    return { 
-      title: "EAGLE EYE", 
+    return {
+      title: "EAGLE EYE",
       class: "rank-eagle",
-      description: "Sharp as a 4K monitor in a 720p world. Impressive!" 
+      description: "Sharp as a 4K monitor in a 720p world. Impressive!",
     };
   }
   if (score > 60) {
-    return { 
-      title: "GRID GLITCHER", 
+    return {
+      title: "GRID GLITCHER",
       class: "rank-glitcher",
-      description: "You're getting there. Not a total blur, but not HD yet." 
+      description: "You're getting there. Not a total blur, but not HD yet.",
     };
   }
   if (score > 30) {
-    return { 
-      title: "BLURRY VISION", 
+    return {
+      title: "BLURRY VISION",
       class: "rank-blurry",
-      description: "Were you squinting the whole time? Needs more focus." 
+      description: "Were you squinting the whole time? Needs more focus.",
     };
   }
-  return { 
-    title: "AFK ARCHITECT", 
+  return {
+    title: "AFK ARCHITECT",
     class: "rank-afk",
-    description: "Did you even turn your monitor on? Or are you a bot?" 
+    description: "Did you even turn your monitor on? Or are you a bot?",
   };
 };
 
 const playAgain = () => {
   soundStore.playSound("click");
+  onlineStore.reset();
   router.push("/");
 };
 </script>
