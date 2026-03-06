@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import drawings from "@/data/drawings.json";
+import { shuffle } from "@/utils/random";
 
 type PixelGrid = number[][];
 
-type Drawing = {
+export type Drawing = {
   name: string;
   data: PixelGrid;
 };
@@ -20,9 +21,6 @@ type Round = {
   options: RoundOption[];
 };
 
-const shuffle = <T>(array: readonly T[]): T[] =>
-  [...array].sort(() => Math.random() - 0.5);
-
 export const useGameStore = defineStore("game", () => {
   const rounds = ref<any[]>([]);
   const currentRoundIndex = ref(0);
@@ -33,10 +31,7 @@ export const useGameStore = defineStore("game", () => {
 
   const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
 
-  const getRandomUserName = () => {
-    const shuffled = shuffle(drawings as unknown as Drawing[]);
-    return shuffled[0]?.name || "PLAYER";
-  };
+ 
 
   const prepareGame = (customRounds?: any[]) => {
     if (customRounds) {
@@ -88,6 +83,5 @@ export const useGameStore = defineStore("game", () => {
     playSound,
     prepareGame,
     nextRound,
-    getRandomUserName,
   };
 });

@@ -1,3 +1,4 @@
+import { getRandomUserName } from "@/utils/random";
 import { Apinator } from "@apinator/client";
 
 export const createApinatorClient = (userData: any) => {
@@ -9,7 +10,7 @@ export const createApinatorClient = (userData: any) => {
       "x-player-username": encodeURIComponent(userData.username),
       "x-player-avatar": String(userData.avatarIndex),
       "x-player-id": userData.playerId,
-      "x-player-host": userData.isHost
+      "x-player-host": userData.isHost,
     },
   });
 };

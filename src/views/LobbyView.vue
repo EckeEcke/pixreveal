@@ -4,9 +4,10 @@
     <div class="room-id">
       ROOM ID:
       <span @click="copyToClipboard">{{ onlineStore.currentRoomId }}</span>
+      <button @click="copyLinkToClipboard" class="btn-outline">COPY INVITE LINK</button>
     </div>
     <div v-if="showClipboardInfo" class="clipboard-info">
-      COPIED ID TO CLIPBOARD ✅
+      COPIED TO CLIPBOARD ✅
     </div>
     <div class="players-grid">
       <PlayerDisplay
@@ -48,11 +49,23 @@ const onlineStore = useOnlineStore();
 const router = useRouter();
 const showClipboardInfo = ref(false);
 
+const inviteLink = `${window.location.host}?id=${onlineStore.currentRoomId}`;
+
 const players = computed(() => onlineStore.playersOnline);
 
 const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(onlineStore.currentRoomId);
+    showClipboardInfo.value = true;
+    setTimeout(() => {
+      showClipboardInfo.value = false;
+    }, 2000);
+  } catch (err) {}
+};
+
+const copyLinkToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(inviteLink);
     showClipboardInfo.value = true;
     setTimeout(() => {
       showClipboardInfo.value = false;

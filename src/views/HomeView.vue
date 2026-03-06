@@ -82,14 +82,16 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
+import { getRandomUserName } from "@/utils/random";
 
 const router = useRouter();
+const route = useRoute();
 const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
 const gameStore = useGameStore();
@@ -103,6 +105,10 @@ onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
+
+const roomIdFromQuery = route.query.id;
+
+if (roomIdFromQuery) joinRoomId.value = roomIdFromQuery;
 
 const getAvatarStyle = (index) => {
   const columns = 6;
@@ -121,7 +127,7 @@ const selectAvatar = (id) => {
 };
 const setUser = () =>
   playerStore.setUser({
-    username: username.value,
+    username: username.value || getRandomUserName(),
     avatar: selectedAvatarIndex.value,
   });
 
@@ -138,7 +144,7 @@ const hostGame = () => {
   prepareGame();
   onlineStore.hostSession({
     playerId,
-    username: username.value,
+    username: playerStore.playerName,
     avatarIndex: selectedAvatarIndex.value,
     isHost: true,
   });
@@ -151,14 +157,13 @@ const joinGame = () => {
   onlineStore.joinSession(
     {
       playerId,
-      username: username.value,
+      username: playerStore.playerName,
       avatarIndex: selectedAvatarIndex.value,
       isHost: false,
     },
     joinRoomId.value.toUpperCase().trim(),
   );
 };
-
 </script>
 
 <style scoped>
