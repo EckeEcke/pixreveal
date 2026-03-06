@@ -77,22 +77,37 @@
                 placeholder="Room ID..."
               />
             </div>
-            <div class="sound-control-zone">
-              <label class="sound-toggle-label">
-                <input
-                  type="checkbox"
-                  v-model="soundStore.isAudioEnabled"
-                  @change="soundStore.playSound('confirm')"
-                />
-                <div class="pixel-box">
-                  <span class="status-icon">{{
-                    soundStore.isAudioEnabled ? "🔊" : "🔇"
-                  }}</span>
-                  <span class="status-text"
-                    >SOUND {{ soundStore.isAudioEnabled ? "ON" : "OFF" }}</span
-                  >
-                </div>
-              </label>
+            <div class="config-buttons">
+              <div class="config-element">
+                <label class="config-label">
+                  <input
+                    type="checkbox"
+                    v-model="soundStore.isAudioEnabled"
+                    @change="soundStore.playSound('confirm')"
+                  />
+                  <div class="pixel-box">
+                    <span class="status-icon">{{
+                      soundStore.isAudioEnabled ? "🔊" : "🔇"
+                    }}</span>
+                    <span class="status-text">SOUND</span>
+                  </div>
+                </label>
+              </div>
+              <div class="config-element">
+                <label class="config-label">
+                  <input
+                    type="checkbox"
+                    v-model="isFullscreen"
+                    @change="toggleFullscreen"
+                  />
+                  <div class="pixel-box">
+                    <span class="status-icon">{{
+                      isFullscreen ? "✅" : "❌"
+                    }}</span>
+                    <span class="status-text">FULLSCREEN</span>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -119,7 +134,7 @@ const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
-
+const isFullscreen = ref(false);
 const username = ref("");
 const joinRoomId = ref("");
 const selectedAvatarIndex = ref(0);
@@ -192,6 +207,21 @@ const joinGame = () => {
     },
     joinRoomId.value.toUpperCase().trim(),
   );
+};
+
+const toggleFullscreen = () => {
+  const elem = document.documentElement;
+
+  if (!document.fullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+  } else {
+    document.exitFullscreen();
+    isFullscreen.value = false;
+  }
 };
 
 onlineStore.reset();
@@ -350,19 +380,26 @@ input[type="text"]:focus {
   }
 }
 
-.sound-control-zone {
+.config-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.config-element {
   display: flex;
   justify-content: center;
   margin: 32px 0 0;
   width: 100%;
 }
 
-.sound-toggle-label {
+.config-label {
   cursor: pointer;
   user-select: none;
+  width: 100%;
 }
 
-.sound-toggle-label input {
+.config-label input {
   display: none;
 }
 
@@ -371,14 +408,15 @@ input[type="text"]:focus {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 10px 20px;
+  padding: 10px;
   border: 4px solid #444;
   background: #222;
   transition: all 0.1s;
-  min-width: 180px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.sound-toggle-label input:checked + .pixel-box {
+.config-label input:checked + .pixel-box {
   border-color: #ff6600;
   box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
 }
@@ -388,7 +426,7 @@ input[type="text"]:focus {
   color: #888;
 }
 
-.sound-toggle-label input:checked + .pixel-box .status-text {
+.config-label input:checked + .pixel-box .status-text {
   color: #ff6600;
 }
 
