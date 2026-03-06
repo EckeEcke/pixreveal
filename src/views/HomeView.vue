@@ -3,78 +3,88 @@
     <main class="home-container">
       <section class="setup-card">
         <h1 class="logo">Pix<span>Reveal</span></h1>
-        <div class="avatar-selection">
-          <div class="headline-wrapper">
-            <h2>Choose your Avatar</h2>
-          </div>
-          <div class="avatar-grid">
-            <div
-              v-for="avatar in avatars"
-              :key="avatar.id"
-              class="avatar-slot"
-              :class="{ active: selectedAvatarIndex === avatar.id }"
-              @click="selectAvatar(avatar.id)"
-            >
+        <div class="content-wrapper">
+          <div class="avatar-selection">
+            <div class="headline-wrapper">
+              <h2>Choose your Avatar</h2>
+            </div>
+            <div class="avatar-grid">
               <div
-                class="avatar-image"
-                :style="getAvatarStyle(avatar.id)"
-              ></div>
+                v-for="avatar in avatars"
+                :key="avatar.id"
+                class="avatar-slot"
+                :class="{ active: selectedAvatarIndex === avatar.id }"
+                @click="selectAvatar(avatar.id)"
+              >
+                <div
+                  class="avatar-image"
+                  :style="getAvatarStyle(avatar.id)"
+                ></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="input-group" @keyup.enter="handleEnter">
-          <label for="username">Player Name</label>
-          <input
-            id="username"
-            v-model="username"
-            type="text"
-            placeholder="Enter Name..."
-            maxlength="15"
-          />
-        </div>
-
-        <button
-          class="btn-outline"
-          :disabled="!username || selectedAvatarIndex === null"
-          @click="startGame"
-        >
-          PLAY GAME
-        </button>
-
-        <button
-          class="btn-outline"
-          :disabled="!username || selectedAvatarIndex === null"
-          @click="hostGame"
-        >
-          HOST ONLINE GAME
-        </button>
-
-        <div class="join-input-wrapper">
-          <button
-            class="btn-outline"
-            :disabled="!username || selectedAvatarIndex === null || !joinRoomId"
-            @click="joinGame"
-          >
-            JOIN GAME
-          </button>
-          <input type="text" v-model="joinRoomId" placeholder="Room ID..." />
-        </div>
-        <div class="sound-control-zone">
-          <label class="sound-toggle-label">
-            <input
-              type="checkbox"
-              v-model="soundStore.isAudioEnabled"
-              @change="soundStore.playSound('confirm')"
-            />
-            <div class="pixel-box">
-              <span class="status-icon">{{
-                soundStore.isAudioEnabled ? "🔊" : "🔇"
-              }}</span>
-              <span class="status-text"
-                >SOUND {{ soundStore.isAudioEnabled ? "ON" : "OFF" }}</span
-              >
+          <div>
+            <div class="input-group" @keyup.enter="handleEnter">
+              <label for="username">Player Name</label>
+              <input
+                id="username"
+                v-model="username"
+                type="text"
+                placeholder="Enter Name..."
+                maxlength="15"
+              />
             </div>
-          </label>
+
+            <button
+              class="btn-outline"
+              :disabled="!username || selectedAvatarIndex === null"
+              @click="startGame"
+            >
+              PLAY GAME
+            </button>
+
+            <button
+              class="btn-outline"
+              :disabled="!username || selectedAvatarIndex === null"
+              @click="hostGame"
+            >
+              HOST ONLINE GAME
+            </button>
+
+            <div class="join-input-wrapper">
+              <button
+                class="btn-outline"
+                :disabled="
+                  !username || selectedAvatarIndex === null || !joinRoomId
+                "
+                @click="joinGame"
+              >
+                JOIN GAME
+              </button>
+              <input
+                type="text"
+                v-model="joinRoomId"
+                placeholder="Room ID..."
+              />
+            </div>
+            <div class="sound-control-zone">
+              <label class="sound-toggle-label">
+                <input
+                  type="checkbox"
+                  v-model="soundStore.isAudioEnabled"
+                  @change="soundStore.playSound('confirm')"
+                />
+                <div class="pixel-box">
+                  <span class="status-icon">{{
+                    soundStore.isAudioEnabled ? "🔊" : "🔇"
+                  }}</span>
+                  <span class="status-text"
+                    >SOUND {{ soundStore.isAudioEnabled ? "ON" : "OFF" }}</span
+                  >
+                </div>
+              </label>
+            </div>
+          </div>
         </div>
       </section>
       <router-link to="/editor" class="editor-link">Open Editor</router-link>
@@ -383,6 +393,19 @@ input[type="text"]:focus {
 
   .status-text {
     font-size: 9px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .setup-card {
+    max-width: 800px;
+  }
+
+  .content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
   }
 }
 </style>
