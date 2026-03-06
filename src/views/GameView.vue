@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onBeforeMount, onMounted, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
@@ -69,6 +69,8 @@ const isRevealing = ref(true);
 const timerDuration = 15;
 const timer = ref(timerDuration);
 let timerId = null;
+let revealTimeoutId = null;
+let nextRoundTimeoutId = null;
 
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
@@ -150,11 +152,11 @@ const checkAnswer = (answer, event) => {
     soundstore.playSound("correct");
   } else soundstore.playSound("incorrect");
   clearInterval(timerId);
-  setTimeout(() => {
+  revealTimeoutId = setTimeout(() => {
     isRevealing.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
   }, 1500);
-  setTimeout(() => {
+  nextRoundTimeoutId = setTimeout(() => {
     if (currentRoundIndex.value < maxRounds - 1) {
       nextRound();
       setDrawing(rounds.value[currentRoundIndex.value].data);
@@ -186,6 +188,8 @@ const requestWakeLock = async () => {
 onMounted(() => requestWakeLock());
 
 onUnmounted(() => {
+  clearTimeout(revealTimeoutId);
+  clearTimeout(nextRoundTimeoutId);
   clearInterval(timerId);
   clearInterval(heartbeat);
 });
@@ -232,10 +236,14 @@ body {
   flex-direction: column;
   justify-content: center;
 }
+
 .answer-buttons {
   display: grid;
-  grid-template-columns: repeat(1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  @media (min-width: 575px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .hud {

@@ -243,6 +243,7 @@ export const useOnlineStore = defineStore("online", () => {
     client.value = null;
     currentRoomId.value = null;
     messages.value = [];
+    isLoading.value = false
   };
 
   watch(

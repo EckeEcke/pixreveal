@@ -45,7 +45,7 @@ const formattedTime = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .timer-bar-container {
