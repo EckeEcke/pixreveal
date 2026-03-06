@@ -224,6 +224,8 @@ const toggleFullscreen = () => {
   }
 };
 
+if (document.fullscreenElement) isFullscreen.value = true
+
 onlineStore.reset();
 </script>
 
