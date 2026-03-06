@@ -30,6 +30,7 @@ export const useOnlineStore = defineStore("online", () => {
   const router = useRouter();
   const isHost = ref(false);
   const playerStore = usePlayerStore();
+  const messages = ref<any[]>([]);
 
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
@@ -97,6 +98,12 @@ export const useOnlineStore = defineStore("online", () => {
         hasFinished: false,
         correctAnswers: 0,
       });
+      messages.value.push({
+        id: `sys-${Date.now()}`,
+        username: "System",
+        text: `${member.user_info.name} joined the lobby`,
+        isSystem: true,
+      });
     });
 
     channel.bind("realtime:member_removed", (member: any) => {
@@ -110,7 +117,7 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind(
       "client-player-finished",
-      (data: { playerId: string; points: number; correctAnswers: number; }) => {
+      (data: { playerId: string; points: number; correctAnswers: number }) => {
         const player = playersOnline.value.find(
           (p) => p.playerId === data.playerId,
         );
@@ -121,6 +128,17 @@ export const useOnlineStore = defineStore("online", () => {
         }
       },
     );
+
+    channel.bind("client-chat-message", (data: any) => {
+      messages.value.push({
+        ...data,
+        isSystem: false,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      });
+    });
   };
 
   const hostSession = (userData: UserData) => {
@@ -177,9 +195,32 @@ export const useOnlineStore = defineStore("online", () => {
       activeChannel.value.trigger("client-player-finished", {
         playerId: playerId.value,
         points: points,
-        correctAnswers: correctAnswers
+        correctAnswers: correctAnswers,
       });
     }
+  };
+
+  const sendChatMessage = (text: string) => {
+    if (!activeChannel.value || text.trim() === "") return;
+
+    const messageData = {
+      id: `${playerId.value}-${Date.now()}`,
+      playerId: playerId.value,
+      username: playerStore.playerName,
+      text: text,
+      avatarIndex: playerStore.avatarIndex,
+    };
+
+    activeChannel.value.trigger("client-chat-message", messageData);
+
+    messages.value.push({
+      ...messageData,
+      isSystem: false,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
   };
 
   const reset = () => {
@@ -190,6 +231,7 @@ export const useOnlineStore = defineStore("online", () => {
     activeChannel.value = null;
     client.value = null;
     currentRoomId.value = null;
+    messages.value = [];
   };
 
   watch(
@@ -206,11 +248,13 @@ export const useOnlineStore = defineStore("online", () => {
     currentRoomId,
     isHost,
     playerId,
+    messages,
     hostSession,
     joinSession,
     reset,
     removePlayer,
     triggerGameStart,
     broadcastScore,
+    sendChatMessage,
   };
 });

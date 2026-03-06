@@ -27,6 +27,7 @@
     <LoadingAnimation
       :text="onlineStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
     />
+    <LobbyChat />
   </div>
 </template>
 
@@ -38,6 +39,7 @@ import { useRouter } from "vue-router";
 import { useGameStore } from "@/stores/game";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
+import LobbyChat from "@/components/LobbyChat.vue";
 
 const { rounds } = useGameStore();
 
