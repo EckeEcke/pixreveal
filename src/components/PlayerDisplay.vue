@@ -108,6 +108,7 @@ const avatarStyle = computed(() => {
 .hud-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .hud-stats {
