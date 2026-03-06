@@ -9,7 +9,6 @@ export const usePlayerStore = defineStore("player", () => {
   const playerName: Ref<string | undefined> = ref(undefined);
   const avatarIndex: Ref<number | undefined> = ref(undefined);
   const points: Ref<number> = ref(0);
-  const playersOnline: Ref<Player[]> = ref([]);
   const correctAnswers = ref(0)
 
   const setUser = (user: { username: string; avatar: number }) => {
@@ -18,12 +17,6 @@ export const usePlayerStore = defineStore("player", () => {
     points.value = 0;
     correctAnswers.value = 0;
   };
-
-  const removePlayer = (memberId: string) => {
-    playersOnline.value.filter((p) => p.playerId !== memberId);
-  };
-
-  const resetPlayersOnline = () => playersOnline.value = []
 
   const addPoints = (earnedPoints: number) => {
     points.value += earnedPoints;
@@ -34,11 +27,8 @@ export const usePlayerStore = defineStore("player", () => {
     playerName,
     avatarIndex,
     points,
-    playersOnline,
     correctAnswers,
     setUser,
     addPoints,
-    removePlayer,
-    resetPlayersOnline
   };
 });
