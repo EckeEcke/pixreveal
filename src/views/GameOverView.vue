@@ -31,6 +31,9 @@
           <div :class="getRankData(playerStore.points).class">
             {{ getRankData(playerStore.points).title }}
           </div>
+          <div class="rank-desc">
+            {{ getRankData(playerStore.points).description }}
+          </div>
         </div>
         <PlayerDisplay
           :name="playerStore.playerName"
@@ -81,11 +84,39 @@ const isOnlinePlay = computed(
 soundStore.playSound("complete");
 
 const getRankData = (score) => {
-  if (score > 120) return { title: "PIXEL PROPHET", class: "rank-prophet" };
-  if (score > 90) return { title: "EAGLE EYE", class: "rank-eagle" };
-  if (score > 60) return { title: "GRID GLITCHER", class: "rank-glitcher" };
-  if (score > 30) return { title: "BLURRY VISION", class: "rank-blurry" };
-  return { title: "AFK ARCHITECT", class: "rank-afk" };
+  if (score > 120) {
+    return { 
+      title: "PIXEL PROPHET", 
+      class: "rank-prophet",
+      description: "You see the art before it even exists. Pure sorcery!" 
+    };
+  }
+  if (score > 90) {
+    return { 
+      title: "EAGLE EYE", 
+      class: "rank-eagle",
+      description: "Sharp as a 4K monitor in a 720p world. Impressive!" 
+    };
+  }
+  if (score > 60) {
+    return { 
+      title: "GRID GLITCHER", 
+      class: "rank-glitcher",
+      description: "You're getting there. Not a total blur, but not HD yet." 
+    };
+  }
+  if (score > 30) {
+    return { 
+      title: "BLURRY VISION", 
+      class: "rank-blurry",
+      description: "Were you squinting the whole time? Needs more focus." 
+    };
+  }
+  return { 
+    title: "AFK ARCHITECT", 
+    class: "rank-afk",
+    description: "Did you even turn your monitor on? Or are you a bot?" 
+  };
 };
 
 const playAgain = () => {
@@ -132,6 +163,11 @@ const playAgain = () => {
   gap: 8px;
   text-align: center;
   margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.rank-desc {
+  margin: 32px;
 }
 
 .rank-prophet {
