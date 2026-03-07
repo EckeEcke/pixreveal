@@ -49,6 +49,7 @@
       class="btn-outline"
       @click="playAgain"
     >
+      <Icon icon="pixel:refresh-solid" />
       Play Again
     </button>
     <LobbyChat v-if="isOnlinePlay" />
@@ -65,6 +66,7 @@ import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
 import { useGameStore } from "@/stores/game";
+import { Icon } from "@iconify/vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -91,7 +93,7 @@ const isOnlinePlay = computed(
 soundStore.playSound("complete");
 
 const getRankData = (score) => {
-  const adjustedScore = score / gameStore.maxRounds * 10
+  const adjustedScore = (score / gameStore.maxRounds) * 10;
   if (adjustedScore > 120) {
     return {
       title: "PIXEL PROPHET",
@@ -133,7 +135,7 @@ const playAgain = () => {
   router.push("/");
 };
 
-gameStore.reset()
+gameStore.reset();
 </script>
 
 <style scoped>

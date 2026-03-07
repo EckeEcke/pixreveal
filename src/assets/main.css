@@ -5,6 +5,8 @@
   --text-main: #e0e0e0;
   --neon-success: #39ff14;
   --neon-error: #ff003c;
+  --neon-yellow: #ccff00;
+  --neon-blue: #00f3ff;
 }
 
 body {
@@ -28,6 +30,10 @@ body {
 }
 
 .btn-outline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   background: transparent;
   border: 1px solid var(--neon-orange);
   color: var(--neon-orange);

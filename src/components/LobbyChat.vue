@@ -1,6 +1,41 @@
+<template>
+  <div class="lobby-chat">
+    <div class="messages-area" ref="scrollContainer">
+      <div
+        v-for="msg in onlineStore.messages"
+        :key="msg.id"
+        :class="['chat-row', { 'system-msg': msg.isSystem }]"
+      >
+        <template v-if="!msg.isSystem">
+          <span class="chat-user">[{{ msg.username }}]:</span>
+          <span class="chat-text">{{ msg.text }}</span>
+        </template>
+        <template v-else>
+          <span class="chat-system-text">>> {{ msg.text }}</span>
+        </template>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input
+        v-model="chatInput"
+        @keyup.enter="handleSend"
+        type="text"
+        placeholder="Type a message..."
+        class="chat-input"
+      />
+      <button @click="handleSend" class="btn-outline">
+        <Icon icon="pixel:play-solid" />
+        SEND
+      </button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from "vue";
 import { useOnlineStore } from "@/stores/online";
+import { Icon } from "@iconify/vue";
 
 const onlineStore = useOnlineStore();
 const chatInput = ref("");
@@ -19,45 +54,17 @@ const handleSend = () => {
   chatInput.value = "";
 };
 
-watch(() => onlineStore.messages.length, () => {
-  scrollToBottom();
-});
+watch(
+  () => onlineStore.messages.length,
+  () => {
+    scrollToBottom();
+  },
+);
 
 onMounted(() => {
   scrollToBottom();
 });
 </script>
-
-<template>
-  <div class="lobby-chat">
-    <div class="messages-area" ref="scrollContainer">
-      <div 
-        v-for="msg in onlineStore.messages" 
-        :key="msg.id" 
-        :class="['chat-row', { 'system-msg': msg.isSystem }]"
-      >
-        <template v-if="!msg.isSystem">
-          <span class="chat-user">[{{ msg.username }}]:</span>
-          <span class="chat-text">{{ msg.text }}</span>
-        </template>
-        <template v-else>
-          <span class="chat-system-text">>> {{ msg.text }}</span>
-        </template>
-      </div>
-    </div>
-
-    <div class="chat-footer">
-      <input 
-        v-model="chatInput" 
-        @keyup.enter="handleSend" 
-        type="text" 
-        placeholder="Type a message..."
-        class="chat-input"
-      />
-      <button @click="handleSend" class="btn-outline">SEND</button>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .lobby-chat {
@@ -82,7 +89,7 @@ onMounted(() => {
 }
 
 .chat-row {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 13px;
   line-height: 1.4;
   word-break: break-all;

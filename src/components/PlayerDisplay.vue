@@ -8,19 +8,22 @@
       <span class="hud-username">{{ name }}</span>
       <span v-if="showYouIndicator"> (YOU)</span>
       <div class="hud-stats">
-        <span v-if="points || points === 0" class="hud-points"
-          >🪙 {{ points }}</span
-        >
+        <div v-if="points || points === 0" class="hud-points">
+          <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
+        </div>
         <div v-if="roundIndex || roundIndex === 0">
-          🏁 {{ roundIndex }}/{{ maxRounds }}
+          <Icon icon="pixel:image-solid" class="image-icon" /> {{ roundIndex }}/{{ maxRounds }}
         </div>
         <div v-if="correctAnswers || correctAnswers === 0">
-          ✅ {{ correctAnswers || 0 }}
+          <Icon icon="pixel:check-box-solid" class="check-icon" /> {{ correctAnswers || 0 }}
         </div>
       </div>
     </div>
 
-    <div v-if="isHost" class="host-info">HOST</div>
+    <div v-if="isHost" class="host-info">
+      <Icon icon="pixel:crown-solid" />
+      HOST
+    </div>
     <img v-if="isWinner" src="@/assets/trophy.gif" class="trophy" />
   </div>
 </template>
@@ -28,6 +31,7 @@
 <script setup>
 import { computed } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
+import { Icon } from "@iconify/vue";
 
 const props = defineProps({
   name: String,
@@ -102,6 +106,12 @@ const avatarStyle = computed(() => {
   }
 }
 
+.hud-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .hud-avatar {
   width: 42px;
   height: 42px;
@@ -114,6 +124,11 @@ const avatarStyle = computed(() => {
   display: flex;
   gap: 16px;
   align-items: baseline;
+  div {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+  }
 }
 
 .hud-username {
@@ -131,6 +146,10 @@ const avatarStyle = computed(() => {
 }
 
 .host-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
   margin-left: auto;
   background: lightgray;
   padding: 8px;
@@ -141,5 +160,20 @@ const avatarStyle = computed(() => {
 
 .pending {
   opacity: 0.4;
+}
+
+.star-icon {
+  color: var(--neon-yellow);
+  filter: drop-shadow(0 0 5px var(--neon-yellow));
+}
+
+.image-icon {
+  color: var(--neon-blue);
+  filter: drop-shadow(0 0 5px var(--neon-blue));
+}
+
+.check-icon {
+  color: var(--neon-success);
+  filter: drop-shadow(0 0 5px var(--neon-success));
 }
 </style>

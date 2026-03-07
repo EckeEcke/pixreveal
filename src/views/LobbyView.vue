@@ -4,10 +4,13 @@
     <div class="room-id">
       ROOM ID:
       <span @click="copyToClipboard">{{ onlineStore.currentRoomId }}</span>
-      <button @click="copyLinkToClipboard" class="btn-outline">COPY INVITE LINK</button>
+      <button @click="copyLinkToClipboard" class="btn-outline">
+        <Icon icon="pixel:link-solid" />
+        COPY INVITE LINK
+      </button>
     </div>
     <div v-if="showClipboardInfo" class="clipboard-info">
-      COPIED TO CLIPBOARD ✅
+      COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
     </div>
     <div class="players-grid">
       <PlayerDisplay
@@ -42,6 +45,7 @@ import { useGameStore } from "@/stores/game";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
+import { Icon } from "@iconify/vue";
 
 const { rounds } = useGameStore();
 
@@ -54,7 +58,7 @@ const inviteLink = `${window.location.host}?id=${onlineStore.currentRoomId}`;
 
 const players = computed(() => onlineStore.playersOnline);
 
-const isMe = (id) => id === onlineStore.playerId
+const isMe = (id) => id === onlineStore.playerId;
 
 const copyToClipboard = async () => {
   try {
@@ -100,7 +104,13 @@ onMounted(() => {
 }
 
 .clipboard-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 16px;
+  svg {
+    color: var(--neon-success);
+  }
 }
 
 .btn-outline {
