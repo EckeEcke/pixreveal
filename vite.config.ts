@@ -14,17 +14,17 @@ export default defineConfig({
       google: {
         families: [
           {
-            name: 'Rubik',
-            styles: 'wght@400',
-            defer: true
-          }
-        ]
-      }
-    })
+            name: "Rubik",
+            styles: "wght@400;500;700;900",
+            defer: true,
+          },
+        ],
+      },
+    }),
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-})
+});

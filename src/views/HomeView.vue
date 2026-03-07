@@ -512,6 +512,7 @@ input[type="text"]:focus {
   background: var(--neon-orange);
   border-color: var(--neon-orange);
   color: #000;
+  font-size: 13px;
   font-weight: 700;
   box-shadow: 0 0 10px var(--neon-orange);
   transform: translateY(-2px);
