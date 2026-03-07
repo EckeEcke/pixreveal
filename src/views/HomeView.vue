@@ -519,7 +519,7 @@ input[type="text"]:focus {
   }
 
   .mobile-scroll-container {
-    height: 150px;
+    height: 128px;
     overflow-y: scroll;
     overflow-x: visible;
     margin: 8px -20px 32px;
