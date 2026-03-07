@@ -42,6 +42,10 @@
           :points="playerStore.points"
           :correct-answers="playerStore.correctAnswers"
         />
+        <div class="share-section">
+          <h2>Challenge your friends!</h2>
+          <ShareIcons :msg="getShareMessage(playerStore.points)" />
+        </div>
       </div>
     </div>
     <button
@@ -67,6 +71,7 @@ import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
 import { useGameStore } from "@/stores/game";
 import { Icon } from "@iconify/vue";
+import ShareIcons from "@/components/ShareIcons.vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -127,6 +132,11 @@ const getRankData = (score) => {
     class: "rank-afk",
     description: "Did you even turn your monitor on? Or are you a bot?",
   };
+};
+
+const getShareMessage = (score) => {
+  const rankTitle = getRankData(score).title;
+  return `I earned the title ${rankTitle} in PIX REVEAL! Think you can beat that?`;
 };
 
 const playAgain = () => {
@@ -213,6 +223,13 @@ gameStore.reset();
   color: #ff0044;
   animation: slow-blink 2s step-end infinite;
   font-size: 24px;
+}
+
+.share-section {
+  h2 {
+    text-align: center;
+  }
+  margin: 64px auto;
 }
 
 @keyframes floating {

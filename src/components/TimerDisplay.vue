@@ -80,7 +80,6 @@ const formattedTime = computed(() => {
   justify-content: center;
   align-items: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
   font-size: 1.5rem;
   text-align: center;
   color: #fff;

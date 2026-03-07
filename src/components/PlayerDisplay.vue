@@ -132,7 +132,6 @@ const avatarStyle = computed(() => {
 }
 
 .hud-username {
-  font-family: "Orbitron", sans-serif;
   color: #fff;
   font-size: 16px;
   font-weight: 700;
