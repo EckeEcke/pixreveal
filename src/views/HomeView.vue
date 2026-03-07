@@ -35,6 +35,7 @@
                 type="text"
                 placeholder="Enter Name..."
                 maxlength="15"
+                @input="soundStore.playSound('click')"
               />
             </div>
 
@@ -51,6 +52,7 @@
                     name="rounds"
                     :value="amount"
                     v-model="gameStore.maxRounds"
+                    @change="soundStore.playSound('click')"
                   />
                   <span class="radio-button">{{ amount }}</span>
                 </label>
@@ -75,6 +77,7 @@
                 type="text"
                 v-model="joinRoomId"
                 placeholder="Room ID..."
+                @input="soundStore.playSound('click')"
               />
             </div>
             <div class="config-buttons">
@@ -224,7 +227,7 @@ const toggleFullscreen = () => {
   }
 };
 
-if (document.fullscreenElement) isFullscreen.value = true
+if (document.fullscreenElement) isFullscreen.value = true;
 
 onlineStore.reset();
 </script>
