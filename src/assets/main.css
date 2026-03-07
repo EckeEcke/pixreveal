@@ -7,13 +7,14 @@
   --neon-error: #ff003c;
   --neon-yellow: #ccff00;
   --neon-blue: #00f3ff;
+  --font-display: "Rubik", sans-serif;
 }
 
 body {
   margin: 0;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-display), "Inter", sans-serif;
 }
 
 .logo {
@@ -38,8 +39,8 @@ body {
   border: 1px solid var(--neon-orange);
   color: var(--neon-orange);
   padding: 10px;
-  font-family: "Inter", sans-serif;
   text-transform: uppercase;
+  font-family: inherit;
   letter-spacing: 2px;
   font-weight: 700;
   cursor: pointer;

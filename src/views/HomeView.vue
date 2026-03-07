@@ -139,6 +139,7 @@
           </div>
         </div>
       </section>
+      <ShareIcons />
       <router-link to="/editor" class="link">Open Editor</router-link>
     </main>
   </div>
@@ -155,6 +156,7 @@ import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
 import { Icon } from "@iconify/vue";
+import ShareIcons from "@/components/ShareIcons.vue";
 
 const router = useRouter();
 const route = useRoute();
