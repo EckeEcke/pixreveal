@@ -31,13 +31,6 @@ watch(
 </script>
 
 <style>
-body {
-  margin: 0;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  font-family: "Inter", sans-serif;
-}
-
 .app-container {
   display: flex;
   flex-direction: column;

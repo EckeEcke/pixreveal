@@ -39,7 +39,7 @@
               />
             </div>
 
-            <div class="rounds-selection">
+            <div v-if="!hasRoomIdFromQuery" class="rounds-selection">
               <label class="selection-label">HOW MANY ROUNDS</label>
               <div class="radio-group">
                 <label
@@ -59,9 +59,19 @@
               </div>
             </div>
 
-            <button class="btn-outline" @click="startGame">PLAY GAME</button>
+            <button
+              v-if="!hasRoomIdFromQuery"
+              class="btn-outline"
+              @click="startGame"
+            >
+              PLAY GAME
+            </button>
 
-            <button class="btn-outline" @click="hostGame">
+            <button
+              v-if="!hasRoomIdFromQuery"
+              class="btn-outline"
+              @click="hostGame"
+            >
               HOST ONLINE GAME
             </button>
 
@@ -80,6 +90,7 @@
                 @input="soundStore.playSound('click')"
               />
             </div>
+            <router-link v-if="hasRoomIdFromQuery" to="/" class="link">Back to main game</router-link>
             <div class="config-buttons">
               <div class="config-element">
                 <label class="config-label">
@@ -115,13 +126,13 @@
           </div>
         </div>
       </section>
-      <router-link to="/editor" class="editor-link">Open Editor</router-link>
+      <router-link to="/editor" class="link">Open Editor</router-link>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { useOnlineStore } from "@/stores/online";
@@ -149,9 +160,10 @@ const loadingText = ref("LOADING...");
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
 
-const roomIdFromQuery = route.query.id;
+const hasRoomIdFromQuery = computed(() => !!route.query.id)
+const roomIdFromQuery = route.query.id
 
-if (roomIdFromQuery) joinRoomId.value = roomIdFromQuery;
+if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
 
 const getAvatarStyle = (index) => {
   const columns = 6;
@@ -371,8 +383,10 @@ input[type="text"]:focus {
   border-color: var(--neon-orange);
 }
 
-.editor-link {
+.link {
+  display: block;
   color: white;
+  opacity: 0.8;
   margin-top: 32px;
 }
 
