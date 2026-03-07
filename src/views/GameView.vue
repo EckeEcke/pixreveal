@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
@@ -195,27 +195,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style>
-body {
-  margin: 0;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  font-family: "Inter", sans-serif;
-}
-
-.logo {
-  font-size: 2.5rem;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 2rem;
-}
-
-.logo span {
-  color: var(--neon-orange);
-}
-
+<style scoped>
 .game-layout {
   display: grid;
   grid-template-columns: 1fr;
