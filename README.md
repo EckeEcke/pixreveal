@@ -1,42 +1,45 @@
-# pix-reveal
+# PixReveal
 
-This template should help get you started developing with Vue 3 in Vite.
+PixReveal is a pixel-based image guessing game.  
+Play live at: https://pixreveal.vercel.app
 
-## Recommended IDE Setup
+## How It Works
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- An image is hidden and revealed one pixel at a time.
+- Players have 15 seconds per round to guess what the image is.
+- Each round offers 4 answer options.
+- The faster and more accurately you guess, the better your result.
 
-## Recommended Browser Setup
+## Multiplayer
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Online multiplayer is powered by [apinator.io](https://apinator.io).
+- Players can join a shared lobby before matches.
+- The game includes a lobby chat for real-time communication.
 
-## Type Support for `.vue` Imports in TS
+## Tech Stack
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Vue 3 + TypeScript
+- Vite
+- Pinia
+- Vue Router
+- Apinator client/server packages
+- Hosted on Vercel
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Local Development
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## Build
 
 ```sh
 npm run build
+```
+
+## Preview Production Build
+
+```sh
+npm run preview
 ```
