@@ -406,7 +406,7 @@ input[type="text"]:focus {
 
 .join-input-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 80px;
   gap: 8px;
   .btn-outline {
     margin: 0;
