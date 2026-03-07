@@ -76,6 +76,10 @@ const formattedTime = computed(() => {
 }
 
 .timer-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.5rem;
   text-align: center;

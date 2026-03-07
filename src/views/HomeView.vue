@@ -64,6 +64,7 @@
               class="btn-outline"
               @click="startGame"
             >
+              <Icon icon="pixel:user-solid" />
               PLAY GAME
             </button>
 
@@ -72,6 +73,7 @@
               class="btn-outline"
               @click="hostGame"
             >
+              <Icon icon="pixel:globe" />
               HOST ONLINE GAME
             </button>
 
@@ -81,6 +83,7 @@
                 :disabled="!joinRoomId"
                 @click="joinGame"
               >
+                <Icon icon="pixel:login" />
                 JOIN GAME
               </button>
               <input
@@ -90,7 +93,9 @@
                 @input="soundStore.playSound('click')"
               />
             </div>
-            <router-link v-if="hasRoomIdFromQuery" to="/" class="link">Back to main game</router-link>
+            <router-link v-if="hasRoomIdFromQuery" to="/" class="link"
+              >Back to main game</router-link
+            >
             <div class="config-buttons">
               <div class="config-element">
                 <label class="config-label">
@@ -100,9 +105,14 @@
                     @change="soundStore.playSound('confirm')"
                   />
                   <div class="pixel-box">
-                    <span class="status-icon">{{
-                      soundStore.isAudioEnabled ? "🔊" : "🔇"
-                    }}</span>
+                    <Icon
+                      class="status-icon"
+                      :icon="
+                        soundStore.isAudioEnabled
+                          ? 'pixel:sound-on-solid'
+                          : 'pixel:sound-mute-solid'
+                      "
+                    />
                     <span class="status-text">SOUND</span>
                   </div>
                 </label>
@@ -115,9 +125,12 @@
                     @change="toggleFullscreen"
                   />
                   <div class="pixel-box">
-                    <span class="status-icon">{{
-                      isFullscreen ? "✅" : "❌"
-                    }}</span>
+                    <Icon
+                      class="status-icon"
+                      :icon="
+                        isFullscreen ? 'pixel:expand-solid' : 'pixel:expand'
+                      "
+                    />
                     <span class="status-text">FULLSCREEN</span>
                   </div>
                 </label>
@@ -141,6 +154,7 @@ import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
+import { Icon } from "@iconify/vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -160,8 +174,8 @@ const loadingText = ref("LOADING...");
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
 
-const hasRoomIdFromQuery = computed(() => !!route.query.id)
-const roomIdFromQuery = route.query.id
+const hasRoomIdFromQuery = computed(() => !!route.query.id);
+const roomIdFromQuery = route.query.id;
 
 if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
 
