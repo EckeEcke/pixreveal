@@ -50,13 +50,13 @@ const share = (platform) => {
 .social-bar {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 16px;
+  margin-top: 24px;
 }
 
 .btn-outline {
   padding: 8px;
-  min-width: 45px;
+  width: unset;
   height: 45px;
   display: flex;
   align-items: center;
