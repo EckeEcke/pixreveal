@@ -96,35 +96,6 @@ const avatarStyle = computed(() => {
   }
 }
 
-.player-hud.winner {
-  position: relative;
-  overflow: hidden;
-}
-
-.player-hud.winner::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-
-  background: linear-gradient(120deg, #ffae00, #ffe600, #ffae00, #ff5e00);
-
-  background-size: 300% 300%;
-  animation: winnerGlow 3s linear infinite;
-
-  z-index: -1;
-  filter: blur(8px);
-  opacity: 0.8;
-}
-
-@keyframes winnerGlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 300% 50%;
-  }
-}
-
 .hud-info {
   display: flex;
   flex-direction: column;
@@ -156,11 +127,6 @@ const avatarStyle = computed(() => {
   font-weight: 700;
   text-transform: uppercase;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-}
-
-.trophy {
-  margin-left: auto;
-  height: 40px;
 }
 
 .host-info {

@@ -290,8 +290,14 @@ h2 {
 }
 
 .home-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
   width: 100%;
 }
+
 .logo {
   text-align: center;
   font-size: 2.5rem;
@@ -308,10 +314,8 @@ h2 {
 
 .home-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 70vh;
+  width: 100%;
   padding: 0 20px;
 }
 
