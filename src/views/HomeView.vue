@@ -141,6 +141,10 @@
       </section>
       <ShareIcons />
       <router-link to="/editor" class="link">Open Editor</router-link>
+      <footer>
+        <div>Music: Lo-Bit 13 by <a href="https://freemusicarchive.org/music/holiznapatreon/lo-bit-lofi-gamer-tracks" target="_blank">HoliznaPATREON</a></div>
+        <div>© 2026 PixReveal | Code & Design by Christian Eckardt</div>
+      </footer>
     </main>
   </div>
 </template>
@@ -541,6 +545,16 @@ input[type="text"]:focus {
     grid-template-columns: 1fr 1fr;
     gap: 64px;
     align-items: center;
+  }
+}
+
+footer {
+  display: grid;
+  gap: 16px;
+  text-align: center;
+  margin: 32px auto;
+  a {
+    color: inherit;
   }
 }
 
