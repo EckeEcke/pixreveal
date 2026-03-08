@@ -139,20 +139,20 @@
           </div>
         </div>
       </section>
-      <footer>
-        <ShareIcons />
-        <router-link to="/editor" class="link">Open Editor</router-link>
-        <div>
-          Music: Lo-Bit 13 by
-          <a
-            href="https://freemusicarchive.org/music/holiznapatreon/lo-bit-lofi-gamer-tracks"
-            target="_blank"
-            >HoliznaPATREON</a
-          >
-        </div>
-        <div>© 2026 PixReveal | Code & Design by Christian Eckardt</div>
-      </footer>
     </main>
+    <footer>
+      <ShareIcons />
+      <router-link to="/editor" class="link">Open Editor</router-link>
+      <div>
+        Music: Lo-Bit 13 by
+        <a
+          href="https://freemusicarchive.org/music/holiznapatreon/lo-bit-lofi-gamer-tracks"
+          target="_blank"
+          >HoliznaPATREON</a
+        >
+      </div>
+      <div>© 2026 PixReveal | Code & Design by Christian Eckardt</div>
+    </footer>
   </div>
 </template>
 
