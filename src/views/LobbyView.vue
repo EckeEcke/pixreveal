@@ -105,7 +105,7 @@ const shareNative = async () => {
     await navigator.share({
       title: "PixReveal",
       text: `${playerStore.playerName} invites you to play!`,
-      url: window.location.href,
+      url: inviteLink,
     });
   } catch (err) {
     console.log("Native share failed", err);
