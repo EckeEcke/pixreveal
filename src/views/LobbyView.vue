@@ -4,10 +4,21 @@
     <div class="room-id">
       ROOM ID:
       <span @click="copyToClipboard">{{ onlineStore.currentRoomId }}</span>
-      <button @click="copyLinkToClipboard" class="btn-outline">
-        <Icon icon="pixel:link-solid" />
-        COPY INVITE LINK
-      </button>
+      <div class="share-room-buttons">
+        <button @click="copyLinkToClipboard" class="btn-outline">
+          <Icon icon="pixel:link-solid" />
+          COPY INVITE LINK
+        </button>
+        <button
+          v-if="canNativeShare"
+          class="btn-outline"
+          @click="shareNative"
+          title="More sharing options"
+        >
+          <Icon icon="pixel:share" />
+          SHARE
+        </button>
+      </div>
     </div>
     <div v-if="showClipboardInfo" class="clipboard-info">
       COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
@@ -30,6 +41,7 @@
       START GAME
     </button>
     <LoadingAnimation
+      v-if="(onlineStore.isHost && players.length === 1) || !onlineStore.isHost"
       :text="onlineStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
     />
     <LobbyChat />
@@ -46,13 +58,16 @@ import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
 import { Icon } from "@iconify/vue";
+import { usePlayerStore } from "@/stores/player";
 
 const { rounds } = useGameStore();
 
 const soundStore = useSoundStore();
 const onlineStore = useOnlineStore();
+const playerStore = usePlayerStore();
 const router = useRouter();
 const showClipboardInfo = ref(false);
+const canNativeShare = ref(false);
 
 const inviteLink = `${window.location.host}?id=${onlineStore.currentRoomId}`;
 
@@ -85,14 +100,28 @@ const startGame = () => {
   onlineStore.triggerGameStart(rounds);
 };
 
+const shareNative = async () => {
+  try {
+    await navigator.share({
+      title: "PixReveal",
+      text: `${playerStore.playerName} invites you to play!`,
+      url: window.location.href,
+    });
+  } catch (err) {
+    console.log("Native share failed", err);
+  }
+};
+
 onMounted(() => {
   if (players.value.length <= 0) router.push("/");
+  canNativeShare.value = !!navigator.share;
 });
 </script>
 
 <style scoped>
 .room-id {
   margin: 32px 0;
+  text-align: center;
   span {
     border: 1px solid var(--neon-orange);
     padding: 8px;
@@ -115,6 +144,12 @@ onMounted(() => {
 
 .btn-outline {
   margin-top: 32px;
+}
+
+.share-room-buttons {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
 }
 
 .players-grid {
