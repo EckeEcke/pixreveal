@@ -3,7 +3,11 @@
     <h1>Lobby</h1>
     <div class="room-id">
       ROOM ID:
-      <span @click="copyToClipboard">{{ onlineStore.currentRoomId }}</span>
+      <span @click="copyToClipboard">
+        {{ onlineStore.currentRoomId }}
+        <Icon icon="pixel:copy" />
+      </span>
+
       <div class="share-room-buttons">
         <button @click="copyLinkToClipboard" class="btn-outline">
           <Icon icon="pixel:link-solid" />
@@ -123,6 +127,9 @@ onMounted(() => {
   margin: 32px 0;
   text-align: center;
   span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     border: 1px solid var(--neon-orange);
     padding: 8px;
     border-radius: 8px;
