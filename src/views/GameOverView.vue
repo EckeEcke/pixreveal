@@ -203,6 +203,7 @@ gameStore.reset();
   overflow: hidden;
   border: 1px solid var(--neon-orange);
   border-radius: 8px;
+  backdrop-filter: blur(4px);
   padding: 32px;
   text-align: center;
   margin-bottom: 32px;
