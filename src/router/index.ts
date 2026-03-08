@@ -62,6 +62,10 @@ router.beforeEach((to, from, next) => {
     return next("/");
   }
 
+  if (to.path === "/gameover" && from.path !== "/game") {
+    return next("/");
+  }
+
   next();
 });
 
