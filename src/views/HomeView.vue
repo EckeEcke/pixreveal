@@ -456,7 +456,7 @@ input[type="text"]:focus {
 }
 
 .config-label input:checked + .pixel-box {
-  border-color: #ff6600;
+  border-color: var(--neon-orange);
   box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
 }
 
@@ -466,7 +466,7 @@ input[type="text"]:focus {
 }
 
 .config-label input:checked + .pixel-box .status-text {
-  color: #ff6600;
+  color: var(--neon-orange);
 }
 
 .rounds-selection {
