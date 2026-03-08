@@ -15,10 +15,14 @@
     <button class="btn-outline" @click="share('reddit')" title="Share on Reddit">
       <Icon icon="pixel:reddit" />
     </button>
+    <button v-if="canNativeShare" class="btn-outline" @click="shareNative" title="More sharing options">
+      <Icon icon="pixel:share" />
+    </button>
   </div>
 </template>
 
 <script setup>
+import { onMounted, ref } from "vue"
 import { Icon } from "@iconify/vue"
 
 const props = defineProps({
@@ -42,6 +46,24 @@ const share = (platform) => {
 
   if (links[platform]) {
     window.open(links[platform], "_blank", "noopener,noreferrer")
+  }
+}
+
+const canNativeShare = ref(false)
+
+onMounted(() => {
+  canNativeShare.value = !!navigator.share
+})
+
+const shareNative = async () => {
+  try {
+    await navigator.share({
+      title: "PixReveal",
+      text: props.msg,
+      url: window.location.origin
+    })
+  } catch (err) {
+    console.log("Native share failed", err)
   }
 }
 </script>
