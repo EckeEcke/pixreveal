@@ -312,7 +312,7 @@ h2 {
   align-items: center;
   justify-content: center;
   min-height: 70vh;
-  padding: 0 20px 20px;
+  padding: 0 20px;
 }
 
 .setup-card {
@@ -558,7 +558,7 @@ footer {
   display: grid;
   gap: 32px;
   text-align: center;
-  margin: 32px auto;
+  margin: 32px auto 0;
   a {
     color: inherit;
   }

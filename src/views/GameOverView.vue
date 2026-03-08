@@ -41,6 +41,7 @@
           :avatar-index="playerStore.avatarIndex"
           :points="playerStore.points"
           :correct-answers="playerStore.correctAnswers"
+          minimalistic
         />
         <div class="share-section">
           <h2>Challenge your friends!</h2>
