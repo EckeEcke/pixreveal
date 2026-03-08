@@ -100,6 +100,7 @@ const avatarStyle = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  text-align: left;
 }
 
 .hud-avatar {

@@ -22,65 +22,14 @@ const props = defineProps({
 });
 
 const soundStore = useSoundStore();
-
 const timerDuration = props.timerDuration || 15;
 
 const canvasRef = ref(null);
 const internalSize = 600;
 
-let intervalId = null;
-
-const startReveal = () => {
-  if (!props.isRevealing) {
-    render()
-    return
-  }
-
-  if (intervalId) clearInterval(intervalId);
-  if (animationFrame) cancelAnimationFrame(animationFrame);
-
-  displayedPixels.value = [];
-  particles.value = [];
-
-  if (!props.pixelArray || !props.pixelArray[0]) return;
-
-  const allVisible = [];
-  props.pixelArray.forEach((row, y) => {
-    if (Array.isArray(row)) {
-      row.forEach((val, x) => {
-        if (val !== 0) allVisible.push({ x, y, val });
-      });
-    }
-  });
-
-  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
-  const dynamicSpeed =
-    allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
-
-  allVisible.sort(() => Math.random() - 0.5);
-
-  intervalId = setInterval(() => {
-    if (allVisible.length > 0) {
-      const next = allVisible.pop();
-      displayedPixels.value.push(next);
-
-      const res = props.pixelArray.length;
-      const cellSize = internalSize / res;
-
-      const color = colorPalette[next.val] || "#fff";
-      createParticles(next.x, next.y, color, cellSize);
-      soundStore.playSound("reveal");
-    } else {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
-  }, dynamicSpeed);
-
-  render();
-};
-
 const displayedPixels = ref([]);
 const particles = ref([]);
+let intervalId = null;
 let animationFrame = null;
 
 const createParticles = (x, y, color, cellSize) => {
@@ -97,37 +46,101 @@ const createParticles = (x, y, color, cellSize) => {
   }
 };
 
+const allPixelsFromProp = () => {
+  const list = [];
+  if (!props.pixelArray) return list;
+  props.pixelArray.forEach((row, y) => {
+    if (Array.isArray(row)) {
+      row.forEach((val, x) => {
+        if (val !== 0) list.push({ x, y, val });
+      });
+    }
+  });
+  return list;
+};
+
+const startReveal = () => {
+  if (intervalId) clearInterval(intervalId);
+  
+  displayedPixels.value = [];
+  particles.value = [];
+
+  if (!props.pixelArray || !props.pixelArray[0]) return;
+
+  const allVisible = allPixelsFromProp();
+
+  if (!props.isRevealing) {
+    displayedPixels.value = allVisible;
+    if (!animationFrame) render();
+    return;
+  }
+
+  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
+  const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
+
+  allVisible.sort(() => Math.random() - 0.5);
+
+  intervalId = setInterval(() => {
+    if (allVisible.length > 0) {
+      const next = allVisible.pop();
+      displayedPixels.value.push({ ...next, createdAt: Date.now() });
+      const res = props.pixelArray.length;
+      const cellSize = internalSize / res;
+      const color = colorPalette[next.val] || "#fff";
+      
+      createParticles(next.x, next.y, color, cellSize);
+      soundStore.playSound("reveal");
+    } else {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  }, dynamicSpeed);
+
+  if (!animationFrame) render();
+};
+
 const render = () => {
   const canvas = canvasRef.value;
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  const pixelsToDraw = props.isRevealing
-    ? displayedPixels.value
-    : allPixelsFromProp();
 
+  const pixelsToDraw = props.isRevealing ? displayedPixels.value : allPixelsFromProp();
   const res = props.pixelArray.length;
   const cellSize = internalSize / res;
   const gap = cellSize * 0.05;
+  const baseSize = cellSize - gap * 2;
 
   ctx.clearRect(0, 0, internalSize, internalSize);
 
-  pixelsToDraw.forEach(({ x, y, val }) => {
-    const color = colorPalette[val];
+  const now = Date.now();
+
+  pixelsToDraw.forEach((p) => {
+    const color = colorPalette[p.val];
+    
+    let scale = 1;
+    if (props.isRevealing && p.createdAt) {
+      const elapsed = now - p.createdAt;
+      scale = Math.min(1, elapsed / 100);
+    }
+
+    const currentSize = baseSize * scale;
+    const offset = (baseSize - currentSize) / 2;
+
     ctx.shadowColor = color;
-    ctx.shadowBlur = 15;
+    ctx.shadowBlur = 15 * scale;
     ctx.fillStyle = color;
 
     ctx.fillRect(
-      x * cellSize + gap,
-      y * cellSize + gap,
-      cellSize - gap * 2,
-      cellSize - gap * 2,
+      p.x * cellSize + gap + offset,
+      p.y * cellSize + gap + offset,
+      currentSize,
+      currentSize
     );
 
-    if (val === 1) {
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    if (p.val === 1) {
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * scale})`;
       ctx.lineWidth = 1;
-      ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      ctx.strokeRect(p.x * cellSize, p.y * cellSize, cellSize, cellSize);
     }
   });
 
@@ -152,16 +165,6 @@ const render = () => {
   animationFrame = requestAnimationFrame(render);
 };
 
-const allPixelsFromProp = () => {
-  const list = [];
-  props.pixelArray.forEach((row, y) => {
-    row.forEach((val, x) => {
-      if (val !== 0) list.push({ x, y, val });
-    });
-  });
-  return list;
-};
-
 watch(
   () => props.pixelArray,
   () => {
@@ -169,14 +172,17 @@ watch(
       startReveal();
     }
   },
-  { deep: true },
+  { deep: true }
 );
 
 onMounted(() => {
   startReveal();
 });
 
-onUnmounted(() => clearInterval(intervalId));
+onUnmounted(() => {
+  clearInterval(intervalId);
+  if (animationFrame) cancelAnimationFrame(animationFrame);
+});
 </script>
 
 <style scoped>
@@ -193,9 +199,5 @@ onUnmounted(() => clearInterval(intervalId));
 canvas {
   max-width: 100%;
   height: auto;
-}
-
-.is-hidden {
-  opacity: 0;
 }
 </style>
