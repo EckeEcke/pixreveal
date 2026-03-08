@@ -51,42 +51,32 @@ watch(
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
 }
 
 .grid-lines {
   position: absolute;
-  bottom: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background-image:
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  
+  background-image: 
     linear-gradient(to right, rgba(255, 77, 0, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 77, 0, 0.1) 1px, transparent 1px);
-  background-size: 50px 40px;
-  transform: perspective(500px) rotateX(45deg) rotateZ(-15deg);
+  background-size: 45px 45px;
+  
+  -webkit-mask-image: 
+    linear-gradient(to right, transparent 0%, black 100%),
+    linear-gradient(to bottom, transparent 0%, black 100%);
+  
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  
   animation: grid-move 20s linear infinite;
 }
 
-.grid-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(to right, #0a0a0a 20%, transparent 80%),
-    linear-gradient(to bottom, #0a0a0a 20%, transparent 80%);
-  z-index: 1;
-}
-
 @keyframes grid-move {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 0 40px;
-  }
+  from { background-position: 0 0 }
+  to { background-position: 45px 45px }
 }
 </style>

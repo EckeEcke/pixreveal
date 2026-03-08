@@ -1,10 +1,30 @@
 <template>
   <main>
-    <header>
-      <h1 class="logo">GAME <span>OVER</span></h1>
-    </header>
+    <header></header>
     <div>
       <div v-if="isOnlinePlay">
+        <h1 class="logo">GAME <span>OVER</span></h1>
+        <div v-if="!waitingForFinalResults" class="results-card">
+          <h2 class="rank-prophet">
+            {{
+              isMe(playersSortedByPoints[0].playerId)
+                ? "YOU WIN!"
+                : `${playersSortedByPoints[0].username.toUpperCase()} WINS!`
+            }}
+          </h2>
+          <PlayerDisplay
+            :name="playersSortedByPoints[0].username"
+            :avatar-index="playersSortedByPoints[0].avatarIndex"
+            :points="playersSortedByPoints[0].points"
+            :has-finished="playersSortedByPoints[0].hasFinished"
+            :correct-answers="playersSortedByPoints[0].correctAnswers"
+            minimalistic
+          />
+          <button class="btn-outline" @click="playAgain">
+            <Icon icon="pixel:refresh-solid" />
+            Play Again
+          </button>
+        </div>
         <div
           v-for="(player, index) in playersSortedByPoints"
           :key="player.playerId"
@@ -18,7 +38,6 @@
             :points="player.points"
             :has-finished="player.hasFinished"
             :correct-answers="player.correctAnswers"
-            :is-winner="!waitingForFinalResults && index === 0"
             :show-you-indicator="isMe(player.playerId)"
           />
         </div>
@@ -26,7 +45,15 @@
           <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
         </div>
       </div>
-      <div v-else>
+      <div v-else class="results-card">
+        <h1 class="logo">GAME <span>OVER</span></h1>
+        <PlayerDisplay
+          :name="playerStore.playerName"
+          :avatar-index="playerStore.avatarIndex"
+          :points="playerStore.points"
+          :correct-answers="playerStore.correctAnswers"
+          minimalistic
+        />
         <div class="rank-text">
           <div>YOUR RANK IS</div>
           <div :class="getRankData(playerStore.points).class">
@@ -36,27 +63,17 @@
             {{ getRankData(playerStore.points).description }}
           </div>
         </div>
-        <PlayerDisplay
-          :name="playerStore.playerName"
-          :avatar-index="playerStore.avatarIndex"
-          :points="playerStore.points"
-          :correct-answers="playerStore.correctAnswers"
-          minimalistic
-        />
+
         <div class="share-section">
           <h2>Challenge your friends!</h2>
           <ShareIcons :msg="getShareMessage(playerStore.points)" />
         </div>
+        <button class="btn-outline" @click="playAgain">
+          <Icon icon="pixel:refresh-solid" />
+          Play Again
+        </button>
       </div>
     </div>
-    <button
-      v-if="!waitingForFinalResults"
-      class="btn-outline"
-      @click="playAgain"
-    >
-      <Icon icon="pixel:refresh-solid" />
-      Play Again
-    </button>
     <LobbyChat v-if="isOnlinePlay" />
   </main>
 </template>
@@ -181,17 +198,31 @@ gameStore.reset();
   margin-top: 32px;
 }
 
+.results-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--neon-orange);
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 32px;
+  box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+  .rank-prophet {
+    margin: 0 auto 16px;
+  }
+}
+
 .rank-text {
   display: flex;
   flex-direction: column;
   gap: 8px;
   text-align: center;
-  margin-bottom: 16px;
+  margin-top: 16px;
   font-weight: 700;
 }
 
 .rank-desc {
-  margin: 32px;
+  margin: 16px;
 }
 
 .rank-prophet {
@@ -230,7 +261,7 @@ gameStore.reset();
   h2 {
     text-align: center;
   }
-  margin: 64px auto;
+  margin: 32px auto 0;
 }
 
 @keyframes floating {
@@ -287,6 +318,30 @@ gameStore.reset();
   50%,
   100% {
     opacity: 0.3;
+  }
+}
+
+.results-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  animation: shine 4s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -60%;
+  }
+  20% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
   }
 }
 </style>

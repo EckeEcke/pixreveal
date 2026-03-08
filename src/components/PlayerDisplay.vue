@@ -1,12 +1,13 @@
 <template>
   <div
     class="player-hud"
-    :class="{ winner: isWinner, pending: hasFinished === false, minimalistic: minimalistic }"
+    :class="{ pending: hasFinished === false, minimalistic: minimalistic }"
   >
     <div class="hud-avatar" :style="avatarStyle"></div>
     <div class="hud-info">
-      <span class="hud-username">{{ name }}</span>
-      <span v-if="showYouIndicator"> (YOU)</span>
+      <span class="hud-username">
+        {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
+      </span>
       <div class="hud-stats">
         <div v-if="points || points === 0" class="hud-points">
           <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
@@ -24,7 +25,6 @@
       <Icon icon="pixel:crown-solid" />
       HOST
     </div>
-    <img v-if="isWinner" src="@/assets/trophy.gif" class="trophy" />
   </div>
 </template>
 
@@ -38,7 +38,6 @@ const props = defineProps({
   avatarIndex: Number,
   points: Number | undefined,
   hasFinished: Boolean | undefined,
-  isWinner: Boolean,
   isHost: Boolean,
   correctAnswers: Number | undefined,
   roundIndex: Number | undefined,
