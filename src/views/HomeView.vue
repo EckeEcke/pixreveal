@@ -550,7 +550,7 @@ input[type="text"]:focus {
 
 footer {
   display: grid;
-  gap: 16px;
+  gap: 32px;
   text-align: center;
   margin: 32px auto;
   a {
