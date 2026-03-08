@@ -75,7 +75,9 @@ watch(
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 80% 80%, transparent 0%, #0a0a0a 70%);
+  background:
+    linear-gradient(to right, #0a0a0a 20%, transparent 80%),
+    linear-gradient(to bottom, #0a0a0a 20%, transparent 80%);
   z-index: 1;
 }
 
