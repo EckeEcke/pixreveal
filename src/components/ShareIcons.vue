@@ -73,7 +73,7 @@ const shareNative = async () => {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .btn-outline {
