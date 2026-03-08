@@ -266,7 +266,7 @@ onlineStore.reset();
 
 <style scoped>
 h2 {
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .headline-wrapper {
@@ -292,7 +292,7 @@ h2 {
   letter-spacing: 4px;
   color: #fff;
   text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 16px;
+  margin-bottom: 32px;
 }
 
 .logo span {
@@ -326,7 +326,7 @@ h2 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 8px;
-  margin: 1rem 0 2rem;
+  margin-top: 16px;
   padding-right: 5px;
 }
 
