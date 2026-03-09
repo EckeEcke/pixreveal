@@ -204,7 +204,11 @@ const avatarStyle = computed(() => {
 }
 
 .float-bonus-enter-active {
-  animation: float-up 1s ease-out forwards;
+  animation: float-up 0.8s ease-out forwards;
+}
+
+.float-bonus-leave-active {
+  transition: opacity 0s
 }
 
 @keyframes float-up {
