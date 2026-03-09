@@ -21,6 +21,8 @@
         :class="{ 'is-hidden': !isRevealing || hasAnswered }"
         :count="timer"
         :max="timerDuration"
+        :is-correct="hasAnsweredCorrectly"
+        :is-incorrect="hasAnswered && !hasAnsweredCorrectly"
       />
     </section>
     <section class="answer-section">
@@ -71,6 +73,7 @@ const timer = ref(timerDuration);
 let timerId = null;
 let revealTimeoutId = null;
 let nextRoundTimeoutId = null;
+const hasAnsweredCorrectly = ref(false);
 
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
@@ -96,6 +99,7 @@ const setDrawing = (data) => {
   selectedAnswer.value = undefined;
   pixelData.value = data;
   resolution.value = Math.sqrt(data.length);
+  hasAnsweredCorrectly.value = false;
   timer.value = timerDuration;
   startTimer();
 };
@@ -146,6 +150,7 @@ const checkAnswer = (answer, event) => {
     answer === null || !answer.isCorrect
       ? statusIcons.failure
       : statusIcons.success;
+  if (answer && answer.isCorrect) hasAnsweredCorrectly.value = true;
   hasAnswered.value = true;
   if (answer && answer.isCorrect) {
     playerStore.addPoints(timer.value);
@@ -202,9 +207,9 @@ onUnmounted(() => {
   gap: 0;
   max-width: calc(1000px + 2rem);
   width: 100%;
-  @media (min-width: 512px) {
+  @media (min-width: 769px) {
     grid-template-columns: 1fr 300px;
-    gap: 2rem;
+    gap: 64px;
   }
   @media (min-width: 768px) {
     grid-template-columns: 1fr 400px;
@@ -220,13 +225,24 @@ onUnmounted(() => {
 .answer-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  @media (min-width: 575px) {
+  gap: 16px;
+  @media (min-width: 769px) {
     grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 32px;
+  }
+}
+
+.btn-outline {
+  box-shadow: 0 0 8px var(--neon-orange);
+  @media (min-width: 769px) {
+    padding: 16px;
+
   }
 }
 
 .hud {
   margin-bottom: 16px;
 }
+
 </style>

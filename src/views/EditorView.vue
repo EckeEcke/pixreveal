@@ -170,9 +170,8 @@ const copyToClipboard = async () => {
 
 <style scoped>
 .canvas-wrapper {
+  width: 100%;
   position: relative;
-  width: 512px;
-  height: 512px;
   background: #000;
 }
 

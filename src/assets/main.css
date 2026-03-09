@@ -7,7 +7,7 @@
   --neon-error: #ff003c;
   --neon-yellow: #ccff00;
   --neon-blue: #00f3ff;
-  --font-display: "Rubik", sans-serif;
+  --font-display: "Chakra Petch", "Rubik", sans-serif;
 }
 
 body {
@@ -78,6 +78,9 @@ body {
   box-shadow:
     0 0 20px var(--neon-success),
     0 0 40px var(--neon-success);
+  animation:
+    sharp-pulse 1s infinite,
+    floating 1s infinite;
 }
 
 .btn-outline.is-wrong {
@@ -109,12 +112,12 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
-  max-width: 100vw;
+  max-width: 500px;
   width: 100%;
   @media (min-width: 768px) {
     max-width: calc(1000px + 2rem);
     grid-template-columns: 1fr 400px;
-    gap: 32px;
+    gap: 64px;
   }
 }
 
@@ -138,5 +141,27 @@ h1 {
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes sharp-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
   }
 }

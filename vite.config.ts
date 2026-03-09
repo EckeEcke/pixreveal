@@ -14,6 +14,11 @@ export default defineConfig({
       google: {
         families: [
           {
+            name: "Chakra Petch",
+            styles: "wght@400;500;700;900",
+            defer: true,
+          },
+          {
             name: "Rubik",
             styles: "wght@400;500;700;900",
             defer: true,
