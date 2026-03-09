@@ -23,6 +23,7 @@
         type="text"
         placeholder="Type a message..."
         class="chat-input"
+        @input="soundStore.playSound('click')"
       />
       <button @click="handleSend" class="btn-outline">
         <Icon icon="pixel:play-solid" />
@@ -36,8 +37,10 @@
 import { ref, onMounted, nextTick, watch } from "vue";
 import { useOnlineStore } from "@/stores/online";
 import { Icon } from "@iconify/vue";
+import { useSoundStore } from "@/stores/sound";
 
 const onlineStore = useOnlineStore();
+const soundStore = useSoundStore();
 const chatInput = ref("");
 const scrollContainer = ref<HTMLElement | null>(null);
 
@@ -51,6 +54,7 @@ const scrollToBottom = async () => {
 const handleSend = () => {
   if (chatInput.value.trim() === "") return;
   onlineStore.sendChatMessage(chatInput.value);
+  soundStore.playSound('click')
   chatInput.value = "";
 };
 
