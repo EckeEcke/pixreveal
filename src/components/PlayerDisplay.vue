@@ -10,13 +10,40 @@
       </span>
       <div class="hud-stats">
         <div v-if="points || points === 0" class="hud-points">
-          <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
+          <transition name="score-pop" mode="out-in">
+            <div :key="points" class="score-wrapper">
+              <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
+            </div>
+          </transition>
+          <transition name="float-bonus">
+            <span v-if="showBonus" class="hud-bonus-popup"
+              >+{{ lastBonus }}</span
+            >
+          </transition>
         </div>
-        <div v-if="roundIndex || roundIndex === 0">
-          <Icon icon="pixel:image-solid" class="image-icon" /> {{ roundIndex }}/{{ maxRounds }}
+
+        <div v-if="roundIndex || roundIndex === 0" class="hud-rounds">
+          <Icon icon="pixel:image-solid" class="image-icon" />
+          <div class="round-counter-view">
+            <transition name="slide-up" mode="out-in">
+              <span :key="roundIndex">{{ roundIndex }}</span>
+            </transition>
+            <span>/{{ maxRounds }}</span>
+          </div>
         </div>
-        <div v-if="correctAnswers || correctAnswers === 0">
-          <Icon icon="pixel:check-box-solid" class="check-icon" /> {{ correctAnswers || 0 }}
+
+        <div v-if="correctAnswers || correctAnswers === 0" class="hud-correct">
+          <transition name="score-pop" mode="out-in">
+            <div :key="correctAnswers" class="score-wrapper">
+              <Icon icon="pixel:check-box-solid" class="check-icon" />
+              {{ correctAnswers }}
+            </div>
+          </transition>
+          <transition name="float-bonus">
+            <span v-if="showCorrectBonus" class="hud-bonus-popup success"
+              >+1</span
+            >
+          </transition>
         </div>
       </div>
     </div>
@@ -29,7 +56,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 import { Icon } from "@iconify/vue";
 
@@ -46,14 +73,41 @@ const props = defineProps({
   minimalistic: Boolean,
 });
 
+const showBonus = ref(false);
+const lastBonus = ref(0);
+const showCorrectBonus = ref(false);
+
+watch(
+  () => props.points,
+  (newVal, oldVal) => {
+    if (newVal > oldVal) {
+      lastBonus.value = newVal - oldVal;
+      showBonus.value = true;
+      setTimeout(() => {
+        showBonus.value = false;
+      }, 1000);
+    }
+  },
+);
+
+watch(
+  () => props.correctAnswers,
+  (newVal, oldVal) => {
+    if (newVal > oldVal) {
+      showCorrectBonus.value = true;
+      setTimeout(() => {
+        showCorrectBonus.value = false;
+      }, 1000);
+    }
+  },
+);
+
 const avatarStyle = computed(() => {
   const index = props.avatarIndex || 0;
   const col = index % 6;
   const row = Math.floor(index / 6);
-
   const x = col * 20;
   const y = row * 20;
-
   return {
     backgroundImage: `url(${avatarSheet})`,
     backgroundPosition: `${x}% ${y}%`,
@@ -64,6 +118,116 @@ const avatarStyle = computed(() => {
 </script>
 
 <style scoped>
+.hud-points {
+  position: relative;
+}
+
+.score-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.score-pop-enter-active {
+  animation: score-bump 0.3s ease-out;
+}
+
+@keyframes score-bump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+    color: var(--neon-yellow);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hud-bonus-popup {
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  color: var(--neon-success);
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.float-bonus-enter-active {
+  animation: float-up 1s ease-out forwards;
+}
+
+.hud-points, .hud-correct {
+  position: relative;
+}
+
+.round-counter-view {
+  display: flex;
+  overflow: hidden;
+  height: 1.2em;
+}
+
+.slide-up-enter-active, .slide-up-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.slide-up-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.slide-up-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.score-pop-enter-active {
+  animation: score-bump 0.3s ease-out;
+}
+
+@keyframes score-bump {
+  0% { transform: scale(1) }
+  50% { transform: scale(1.4) }
+  100% { transform: scale(1) }
+}
+
+/* Bonus Popup */
+.hud-bonus-popup {
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  color: var(--neon-success);
+  font-weight: bold;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.float-bonus-enter-active {
+  animation: float-up 1s ease-out forwards;
+}
+
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(10px) }
+  20% { opacity: 1; transform: translateY(0) }
+  100% { opacity: 0; transform: translateY(-30px) }
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
 .player-hud {
   display: flex;
   align-items: center;
@@ -87,10 +251,10 @@ const avatarStyle = computed(() => {
   .hud-avatar {
     height: 66px;
     width: 66px;
-  };
+  }
   .hud-username {
     font-size: 24px;
-  };
+  }
   .hud-info {
     gap: 8px;
   }
