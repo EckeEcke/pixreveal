@@ -2,41 +2,40 @@
   <div class="timer-wrapper">
     <div class="timer-bar-container">
       <div class="timer-glow"></div>
-      
-      <div 
-        class="timer-bar-fill" 
+
+      <div
+        class="timer-bar-fill"
         :class="{ 'is-empty': count <= 0, 'is-warning': count < 5 }"
         :style="{ width: progressWidth + '%' }"
       ></div>
-    </div>
-    
-    <div class="timer-text" :class="{ 'text-danger': count <= 0 }">
-      {{ formattedTime }}
+      <div class="timer-text" :class="{ 'text-danger': count <= 0 }">
+        <span v-if="props.count > 0"
+          >{{ props.count }} <Icon icon="pixel:star-solid"
+        /></span>
+        <span v-else>TIME UP</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
+import { Icon } from "@iconify/vue";
 
 const props = defineProps({
   count: {
     type: Number,
-    required: true
+    required: true,
   },
   max: {
     type: Number,
-    default: 15
-  }
-})
+    default: 15,
+  },
+});
 
 const progressWidth = computed(() => {
-  return Math.max(0, Math.min(100, (props.count / props.max) * 100))
-})
-
-const formattedTime = computed(() => {
-  return props.count > 0 ? props.count + 's' : 'TIME UP'
-})
+  return Math.max(0, Math.min(100, (props.count / props.max) * 100));
+});
 </script>
 
 <style scoped>
@@ -49,8 +48,9 @@ const formattedTime = computed(() => {
 }
 
 .timer-bar-container {
+  margin-top: 16px;
   position: relative;
-  height: 12px;
+  height: 24px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 2px;
   overflow: hidden;
@@ -61,7 +61,9 @@ const formattedTime = computed(() => {
   height: 100%;
   background: var(--neon-orange);
   box-shadow: 0 0 15px var(--neon-orange);
-  transition: width 0.1s linear, background-color 0.3s ease;
+  transition:
+    width 0.1s linear,
+    background-color 0.3s ease;
 }
 
 .is-warning {
@@ -76,15 +78,29 @@ const formattedTime = computed(() => {
 }
 
 .timer-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  font-size: 1.5rem;
+  font-size: 16px;
+  font-weight: 700;
   text-align: center;
   color: #fff;
   text-shadow: 0 0 10px var(--neon-orange);
   letter-spacing: 2px;
+  span {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    svg {
+      color: var(--neon-yellow);
+      filter: drop-shadow(0 0 5px var(--neon-yellow));
+    }
+  }
 }
 
 .text-danger {
@@ -94,7 +110,11 @@ const formattedTime = computed(() => {
 }
 
 @keyframes blink {
-  from { opacity: 1 }
-  to { opacity: 0.5 }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
 }
 </style>

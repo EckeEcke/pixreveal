@@ -20,7 +20,7 @@ import { useSoundStore } from "./stores/sound";
 
 const soundStore = useSoundStore();
 
-const audio = ref("audio");
+const audio = ref(null);
 
 watch(
   () => soundStore.isAudioEnabled,
@@ -59,24 +59,40 @@ watch(
   right: 0;
   width: 100%;
   height: 100%;
-  
-  background-image: 
+
+  background-image:
     linear-gradient(to right, rgba(255, 77, 0, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 77, 0, 0.1) 1px, transparent 1px);
   background-size: 45px 45px;
-  
-  -webkit-mask-image: 
+
+  -webkit-mask-image:
     linear-gradient(to right, transparent 0%, black 100%),
     linear-gradient(to bottom, transparent 0%, black 100%);
-  
+
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
-  
-  animation: grid-move 20s linear infinite;
+
+  animation:
+    grid-move 20s linear infinite,
+    grid-breathe 8s ease-in-out infinite;
 }
 
 @keyframes grid-move {
-  from { background-position: 0 0 }
-  to { background-position: 45px 45px }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 45px 45px;
+  }
+}
+
+@keyframes grid-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 </style>
