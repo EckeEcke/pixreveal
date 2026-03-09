@@ -8,7 +8,14 @@
         :class="{ 'is-empty': count <= 0, 'is-warning': count < 5 }"
         :style="{ width: progressWidth + '%' }"
       ></div>
-      <div class="timer-text" :class="{ 'text-danger': count <= 0 }">
+      <div
+        :key="count"
+        class="timer-text"
+        :class="{
+          'text-danger': count <= 0,
+          'is-shaking': count > 0 && count <= 3,
+        }"
+      >
         <span v-if="props.count > 0"
           >{{ props.count }} <Icon icon="pixel:star-solid"
         /></span>
@@ -55,12 +62,14 @@ const progressWidth = computed(() => {
   border-radius: 2px;
   overflow: hidden;
   border: 1px solid rgba(255, 77, 0, 0.2);
+  border-radius: 4px;
 }
 
 .timer-bar-fill {
   height: 100%;
   background: var(--neon-orange);
   box-shadow: 0 0 15px var(--neon-orange);
+  border-radius: 4px;
   transition:
     width 0.1s linear,
     background-color 0.3s ease;
@@ -107,6 +116,30 @@ const progressWidth = computed(() => {
   color: #ff0044;
   text-shadow: 0 0 15px #ff0044;
   animation: blink 0.5s infinite alternate;
+}
+
+.is-shaking {
+  animation: shake-impact 0.4s ease-out;
+  color: #ff0044;
+  text-shadow: 0 0 15px #ff0044;
+}
+
+@keyframes shake-impact {
+  0% {
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+  20% {
+    transform: translate(-50%, -50%) translateX(-4px) rotate(-2deg);
+  }
+  40% {
+    transform: translate(-50%, -50%) translateX(4px) rotate(2deg);
+  }
+  60% {
+    transform: translate(-50%, -50%) translateX(-2px);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 @keyframes blink {
