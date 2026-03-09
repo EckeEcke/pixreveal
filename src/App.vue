@@ -61,8 +61,8 @@ watch(
   height: 100%;
 
   background-image:
-    linear-gradient(to right, rgba(255, 77, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 77, 0, 0.1) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 77, 0, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 77, 0, 0.15) 1px, transparent 1px);
   background-size: 45px 45px;
 
   -webkit-mask-image:

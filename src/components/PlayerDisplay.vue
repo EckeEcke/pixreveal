@@ -297,6 +297,7 @@ const avatarStyle = computed(() => {
   display: flex;
   gap: 16px;
   align-items: baseline;
+  font-weight: 700;
   div {
     display: flex;
     gap: 4px;

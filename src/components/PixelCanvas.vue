@@ -189,7 +189,7 @@ onUnmounted(() => {
 .canvas-wrapper {
   background: #000;
   border: 2px solid #1a1c26;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   line-height: 0;
   position: sticky;
