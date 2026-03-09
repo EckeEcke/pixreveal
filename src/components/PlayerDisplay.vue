@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 import { Icon } from "@iconify/vue";
 
@@ -82,10 +82,13 @@ watch(
   (newVal, oldVal) => {
     if (newVal > oldVal) {
       lastBonus.value = newVal - oldVal;
-      showBonus.value = true;
-      setTimeout(() => {
-        showBonus.value = false;
-      }, 1000);
+      showBonus.value = false;
+      nextTick(() => {
+        showBonus.value = true;
+        setTimeout(() => {
+          showBonus.value = false;
+        }, 800);
+      });
     }
   },
 );
@@ -94,10 +97,14 @@ watch(
   () => props.correctAnswers,
   (newVal, oldVal) => {
     if (newVal > oldVal) {
-      showCorrectBonus.value = true;
-      setTimeout(() => {
-        showCorrectBonus.value = false;
-      }, 1000);
+      showCorrectBonus.value = false;
+
+      nextTick(() => {
+        showCorrectBonus.value = true;
+        setTimeout(() => {
+          showCorrectBonus.value = false;
+        }, 800);
+      });
     }
   },
 );
@@ -128,8 +135,41 @@ const avatarStyle = computed(() => {
   gap: 4px;
 }
 
+.hud-points,
+.hud-correct {
+  position: relative;
+}
+
+.round-counter-view {
+  display: flex;
+  overflow: hidden;
+  height: 1.2em;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+.slide-up-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.slide-up-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.score-pop-enter-from {
+  opacity: 0;
+}
+
 .score-pop-enter-active {
   animation: score-bump 0.3s ease-out;
+}
+.score-pop-leave-active {
+  animation: score-bump-out 0.15s ease-in forwards;
 }
 
 @keyframes score-bump {
@@ -145,51 +185,15 @@ const avatarStyle = computed(() => {
   }
 }
 
-.hud-bonus-popup {
-  position: absolute;
-  top: -20px;
-  left: 20px;
-  color: var(--neon-success);
-  font-weight: bold;
-  font-size: 14px;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-}
-
-.float-bonus-enter-active {
-  animation: float-up 1s ease-out forwards;
-}
-
-.hud-points, .hud-correct {
-  position: relative;
-}
-
-.round-counter-view {
-  display: flex;
-  overflow: hidden;
-  height: 1.2em;
-}
-
-.slide-up-enter-active, .slide-up-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.slide-up-enter-from {
-  transform: translateY(100%);
-  opacity: 0;
-}
-.slide-up-leave-to {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-.score-pop-enter-active {
-  animation: score-bump 0.3s ease-out;
-}
-
-@keyframes score-bump {
-  0% { transform: scale(1) }
-  50% { transform: scale(1.4) }
-  100% { transform: scale(1) }
+@keyframes score-bump-out {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
 }
 
 /* Bonus Popup */
@@ -207,14 +211,21 @@ const avatarStyle = computed(() => {
   animation: float-up 0.8s ease-out forwards;
 }
 
-.float-bonus-leave-active {
-  transition: opacity 0s
+.float-bonus-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
-@keyframes float-up {
-  0% { opacity: 0; transform: translateY(10px) }
-  20% { opacity: 1; transform: translateY(0) }
-  100% { opacity: 0; transform: translateY(-30px) }
+.float-bonus-leave-active {
+  display: none;
+}
+
+.float-bonus-leave-to {
+  opacity: 0;
+}
+
+.float-bonus-leave-active {
+  display: none;
 }
 
 @keyframes float-up {
@@ -225,6 +236,9 @@ const avatarStyle = computed(() => {
   20% {
     opacity: 1;
     transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
   }
   100% {
     opacity: 0;
