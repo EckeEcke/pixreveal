@@ -39,7 +39,7 @@
     </div>
     <button
       v-if="players && players.length > 1 && onlineStore.isHost"
-      class="btn-outline"
+      class="btn-outline pulse-btn"
       @click="startGame"
     >
       START GAME
