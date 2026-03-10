@@ -11,7 +11,7 @@
   --card-bg: #161821;
   --primary: #ff3562;
   --neon-social: #cc00ff;
-  --white: #F9F4F5;
+  --white: #f9f4f5;
   --text-main: #e0e0e0;
   --neon-success: #32cd32;
   --neon-error: #ff003c;
@@ -97,6 +97,10 @@ body {
 .btn-outline:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.pulse-btn {
+  animation: pulse 2s infinite;
 }
 
 .fade-enter-from,

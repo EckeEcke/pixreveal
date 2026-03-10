@@ -68,7 +68,7 @@
           <h2>Challenge your friends!</h2>
           <ShareIcons :msg="getShareMessage(playerStore.points)" />
         </div>
-        <button class="btn-outline" @click="playAgain">
+        <button class="btn-outline pulse-btn" @click="playAgain">
           <Icon icon="pixel:refresh-solid" />
           Play Again
         </button>
