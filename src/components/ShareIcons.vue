@@ -103,13 +103,13 @@ const shareNative = async () => {
   justify-content: center;
   font-size: 32px;
   border: none;
-  color: var(--neon-social);
+  color: var(--white);
   filter: drop-shadow(0 0 8px var(--neon-social));
   opacity: 0.8;
 }
 
 .social-bar .btn-outline:hover {
   background: var(--neon-social);
-  box-shadow: 0 0 20px var(--neon-social);
+  box-shadow: 0 0 20px var(--white);
 }
 </style>
