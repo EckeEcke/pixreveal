@@ -165,7 +165,8 @@ onMounted(() => {
 .share-room-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  row-gap: 8px;
+  column-gap: 16px;
   .btn-outline {
     width: auto;
     flex-grow: 1;
