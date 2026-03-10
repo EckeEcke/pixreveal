@@ -54,7 +54,7 @@ const scrollToBottom = async () => {
 const handleSend = () => {
   if (chatInput.value.trim() === "") return;
   onlineStore.sendChatMessage(chatInput.value);
-  soundStore.playSound('click')
+  soundStore.playSound("click");
   chatInput.value = "";
 };
 
@@ -100,7 +100,7 @@ onMounted(() => {
 }
 
 .chat-user {
-  color: var(--neon-orange);
+  color: var(--primary);
   font-weight: bold;
   margin-right: 8px;
 }

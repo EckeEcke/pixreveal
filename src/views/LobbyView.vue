@@ -130,11 +130,11 @@ onMounted(() => {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: 1px solid var(--neon-orange);
+    border: 2px solid var(--primary);
     padding: 8px;
     border-radius: 8px;
     margin-left: 8px;
-    color: var(--neon-orange);
+    color: var(--primary);
     font-weight: 700;
   }
 }

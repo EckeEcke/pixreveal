@@ -20,7 +20,11 @@
             ></div>
           </div>
 
-          <PixelCanvas :pixel-array="pixelData" :resolution="resolution" :is-revealing="false" />
+          <PixelCanvas
+            :pixel-array="pixelData"
+            :resolution="resolution"
+            :is-revealing="false"
+          />
         </div>
       </section>
 
@@ -193,7 +197,7 @@ const copyToClipboard = async () => {
 
 .pixel-cell:hover {
   background: rgba(255, 255, 255, 0.1);
-  outline: 1px solid var(--neon-orange);
+  outline: 1px solid var(--primary);
   z-index: 11;
 }
 
@@ -219,7 +223,7 @@ const copyToClipboard = async () => {
 .color-flag {
   height: 16px;
   width: 16px;
-  border: 1px solid white;
+  border: 1px solid var(--white);
 }
 
 .color-palette-item {
@@ -234,7 +238,7 @@ const copyToClipboard = async () => {
 }
 
 .color-palette-item.active {
-  border-color: var(--neon-orange);
+  border-color: var(--primary);
   background: rgba(255, 77, 0, 0.15);
 }
 
@@ -254,14 +258,14 @@ const copyToClipboard = async () => {
 .btn-preset {
   background: #2a2d3e;
   border: 1px solid #3f4257;
-  color: white;
+  color: var(--white);
   padding: 4px 12px;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .btn-preset:hover {
-  border-color: var(--neon-orange);
+  border-color: var(--primary);
 }
 
 .action-buttons {
@@ -291,15 +295,15 @@ textarea {
 .btn-secondary {
   margin-top: 1rem;
   background: transparent;
-  border: 1px solid var(--neon-orange);
-  color: var(--neon-orange);
+  border: 1px solid var(--primary);
+  color: var(--primary);
   padding: 8px 16px;
   cursor: pointer;
   border-radius: 4px;
 }
 
 .btn-secondary:hover {
-  background: var(--neon-orange);
-  color: white;
+  background: var(--primary);
+  color: var(--white);
 }
 </style>

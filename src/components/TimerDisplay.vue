@@ -87,10 +87,10 @@ const progressWidth = computed(() => {
 .timer-bar-container {
   position: relative;
   height: 24px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.9);
   border-radius: 2px;
   overflow: hidden;
-  border: 1px solid #1a1c26;
+  border: 2px solid #1a1c26;
   border-radius: 4px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -135,7 +135,7 @@ const progressWidth = computed(() => {
   font-weight: 700;
   text-align: center;
   color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
+  text-shadow: 0 0 10px var(--primary);
   letter-spacing: 2px;
   span {
     display: flex;
