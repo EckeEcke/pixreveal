@@ -1,6 +1,6 @@
 <template>
   <div class="timer-wrapper">
-    <div class="timer-bar-container" :class="{ 'border-success': isCorrect }">
+    <div class="timer-bar-container">
       <div class="timer-glow"></div>
 
       <div
@@ -239,10 +239,6 @@ const progressWidth = computed(() => {
     transform: translateY(-20px);
     opacity: 0;
   }
-}
-
-.border-success {
-  border-color: var(--neon-success) !important;
 }
 
 .timer-glow-sweep {

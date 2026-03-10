@@ -15,7 +15,7 @@
                   v-for="avatar in avatars"
                   :key="avatar.id"
                   class="avatar-slot"
-                  :class="{ active: selectedAvatarIndex === avatar.id }"
+                  :class="{ active: playerStore.avatarIndex === avatar.id }"
                   @click="selectAvatar(avatar.id)"
                 >
                   <div
@@ -31,7 +31,7 @@
               <label for="username">Player Name</label>
               <input
                 id="username"
-                v-model="username"
+                v-model="playerStore.playerName"
                 type="text"
                 placeholder="Enter Name..."
                 maxlength="15"
@@ -176,9 +176,7 @@ const playerStore = usePlayerStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(false);
-const username = ref("");
 const joinRoomId = ref("");
-const selectedAvatarIndex = ref(0);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
@@ -204,13 +202,13 @@ const getAvatarStyle = (index) => {
 };
 
 const selectAvatar = (id) => {
-  selectedAvatarIndex.value = id;
+  playerStore.avatarIndex = id;
   soundStore.playSound("click");
 };
 const setUser = () =>
   playerStore.setUser({
-    username: username.value || getRandomUserName(),
-    avatar: selectedAvatarIndex.value,
+    username: playerStore.playerName || getRandomUserName(),
+    avatar: playerStore.avatarIndex,
   });
 
 const startGame = () => {
@@ -229,7 +227,7 @@ const hostGame = () => {
   onlineStore.hostSession({
     playerId,
     username: playerStore.playerName,
-    avatarIndex: selectedAvatarIndex.value,
+    avatarIndex: playerStore.avatarIndex,
     isHost: true,
     rounds: gameStore.maxRounds
   });
@@ -245,7 +243,7 @@ const joinGame = () => {
     {
       playerId,
       username: playerStore.playerName,
-      avatarIndex: selectedAvatarIndex.value,
+      avatarIndex: playerStore.avatarIndex,
       isHost: false,
     },
     joinRoomId.value.toUpperCase().trim(),
