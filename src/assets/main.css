@@ -4,29 +4,34 @@
   --card-bg: #161821;
   --neon-orange: #ff4d00;
   --text-main: #e0e0e0;
-  --neon-success: #32CD32;
+  --neon-success: #32cd32;
   --neon-error: #ff003c;
 
-  --neon-pink: #FF1493;
+  --neon-pink: #ff1493;
   --pink-glow: rgba(255, 20, 147, 0.4);
   --pink-bg: rgba(255, 20, 147, 0.05);
 
-  --neon-blue: #1E90FF;
+  --neon-blue: #1e90ff;
   --blue-glow: rgba(30, 144, 255, 0.4);
   --blue-bg: rgba(30, 144, 255, 0.05);
 
-  --neon-purple: #9D50BB;
+  --neon-purple: #9d50bb;
   --purple-glow: rgba(157, 80, 187, 0.4);
   --purple-bg: rgba(157, 80, 187, 0.05);
 
-  --neon-yellow: #FFB000;
+  --neon-yellow: #ffb000;
   --yellow-glow: rgba(255, 176, 0, 0.4);
   --yellow-bg: rgba(255, 176, 0, 0.05);
 }
 
+html,
 body {
+  width: 100%;
+  height: 100%;
   margin: 0;
-  background-color: var(--bg-dark);
+  padding: 0;
+  background: var(--bg-dark);
+  overflow: hidden;
   color: var(--text-main);
   font-family: var(--font-display), "Inter", sans-serif;
 }

@@ -252,8 +252,7 @@ const avatarStyle = computed(() => {
   gap: 12px;
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--neon-orange);
-  border-left: 8px solid var(--neon-orange);
+  border: 2px solid #1a1c26;
   border-radius: 4px;
   backdrop-filter: blur(5px);
   min-width: 240px;
