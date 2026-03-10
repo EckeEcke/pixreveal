@@ -51,7 +51,7 @@ watch(
 }
 
 .pixelCon {
-  position: absolute;
+  position: fixed;
   width: 120%;
   height: 120%;
   top: 50%;

@@ -26,7 +26,7 @@
       />
     </section>
     <section class="answer-section">
-      <h1>What is it?</h1>
+      <h1>guess it</h1>
       <div class="answer-buttons">
         <button
           class="answer-btn"

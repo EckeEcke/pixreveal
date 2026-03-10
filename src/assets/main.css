@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "8bit";
+  src: url("@/assets/8-BIT_WO.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --font-display: "Chakra Petch", "Rubik", sans-serif;
   --bg-dark: #0d0e14;
@@ -31,7 +38,6 @@ body {
   margin: 0;
   padding: 0;
   background: var(--bg-dark);
-  overflow: hidden;
   color: var(--text-main);
   font-family: var(--font-display), "Inter", sans-serif;
 }
@@ -119,6 +125,7 @@ h1 {
   text-align: center;
   margin-top: 0;
   text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+  font-family: "8bit";
 }
 
 .loading-text {
