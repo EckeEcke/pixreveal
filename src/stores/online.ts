@@ -32,6 +32,7 @@ export const useOnlineStore = defineStore("online", () => {
   const playerStore = usePlayerStore();
   const messages = ref<any[]>([]);
   const isLoading = ref(false)
+  const gameStore = useGameStore()
 
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
@@ -79,6 +80,8 @@ export const useOnlineStore = defineStore("online", () => {
           hasFinished: false,
           correctAnswers: 0,
         };
+
+        if (hash[id].rounds) gameStore.maxRounds = hash[id].rounds
 
         const existing = playersOnline.value.find((p) => p.playerId === id);
 

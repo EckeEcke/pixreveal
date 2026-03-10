@@ -1,32 +1,35 @@
 <template>
   <div>
-    <h1>Lobby</h1>
-    <div class="room-id">
-      ROOM ID:
-      <span @click="copyToClipboard">
-        {{ onlineStore.currentRoomId }}
-        <Icon icon="pixel:copy" />
-      </span>
-
+    <div class="lobby-card">
+      <h1>Lobby</h1>
+      <div>ROUNDS TO PLAY: {{ useGameStore().maxRounds }}</div>
+      <div class="room-id">
+        ROOM ID:
+        <span @click="copyToClipboard">
+          {{ onlineStore.currentRoomId }}
+          <Icon icon="pixel:copy" />
+        </span>
+      </div>
       <div class="share-room-buttons">
-        <button @click="copyLinkToClipboard" class="btn-outline">
-          <Icon icon="pixel:link-solid" />
-          COPY INVITE LINK
-        </button>
-        <button
-          v-if="canNativeShare"
-          class="btn-outline"
-          @click="shareNative"
-          title="More sharing options"
-        >
-          <Icon icon="pixel:share" />
-          SHARE
-        </button>
+          <button @click="copyLinkToClipboard" class="btn-outline">
+            <Icon icon="pixel:link-solid" />
+            COPY INVITE LINK
+          </button>
+          <button
+            v-if="canNativeShare"
+            class="btn-outline"
+            @click="shareNative"
+            title="More sharing options"
+          >
+            <Icon icon="pixel:share" />
+            SHARE
+          </button>
+        </div>
+      <div v-if="showClipboardInfo" class="clipboard-info">
+        COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
       </div>
     </div>
-    <div v-if="showClipboardInfo" class="clipboard-info">
-      COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
-    </div>
+
     <div class="players-grid">
       <PlayerDisplay
         v-for="player in players"
@@ -123,16 +126,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.lobby-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--card-bg);
+  border: 2px solid var(--primary);
+  padding: 2rem;
+  margin-bottom: 32px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+  box-sizing: border-box;
+}
+
 .room-id {
-  margin: 32px 0;
-  text-align: center;
   span {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: 2px solid var(--primary);
-    padding: 8px;
-    border-radius: 8px;
     margin-left: 8px;
     color: var(--primary);
     font-weight: 700;
@@ -143,25 +156,26 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 16px;
+  margin-top: 16px;
   svg {
     color: var(--neon-success);
   }
 }
 
-.btn-outline {
-  margin-top: 32px;
-}
-
 .share-room-buttons {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  .btn-outline {
+    width: auto;
+    flex-grow: 1;
+  }
 }
 
 .players-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
+  margin-bottom: 32px;
 }
 </style>

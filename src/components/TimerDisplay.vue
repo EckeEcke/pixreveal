@@ -100,7 +100,6 @@ const progressWidth = computed(() => {
   height: 100%;
   background: var(--neon-success);
   box-shadow: 0 0 15px var(--neon-success);
-  border-radius: 4px;
   transition:
     width 0.1s linear,
     background-color 0.3s ease;

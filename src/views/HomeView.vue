@@ -231,6 +231,7 @@ const hostGame = () => {
     username: playerStore.playerName,
     avatarIndex: selectedAvatarIndex.value,
     isHost: true,
+    rounds: gameStore.maxRounds
   });
 };
 
