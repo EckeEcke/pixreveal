@@ -69,4 +69,14 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
+router.afterEach((to) => {
+  if ((window as any).goatcounter && (window as any).goatcounter?.count) {
+    (window as any).goatcounter.count({
+      path: to.fullPath,
+      title: to.name || to.path,
+      event: false,
+    });
+  }
+});
+
 export default router;

@@ -196,15 +196,15 @@ const avatarStyle = computed(() => {
   }
 }
 
-/* Bonus Popup */
 .hud-bonus-popup {
   position: absolute;
   top: -20px;
   left: 20px;
   color: var(--neon-success);
   font-weight: bold;
-  font-size: 14px;
+  font-size: 18px;
   pointer-events: none;
+  z-index: 1;
 }
 
 .float-bonus-enter-active {

@@ -225,6 +225,7 @@ h1 {
   letter-spacing: 2px;
   color: #fff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: pulse 1s forwards;
 }
 
 .answer-section {
