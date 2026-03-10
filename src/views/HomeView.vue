@@ -312,7 +312,7 @@ h2 {
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
 }
 
 .btn-outline {

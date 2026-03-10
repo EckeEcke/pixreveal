@@ -1,7 +1,11 @@
 <template>
-  <div class="app-background">
-    <div class="grid-overlay"></div>
-    <div class="grid-lines"></div>
+  <div class="pixelCon">
+    <div
+      v-for="n in 80"
+      :key="n"
+      class="pixel"
+      :style="{ animationDelay: Math.random() * 5000 + 'ms' }"
+    ></div>
   </div>
   <div class="app-container">
     <router-view v-slot="{ Component }">
@@ -42,57 +46,43 @@ watch(
   justify-content: center;
   min-height: calc(100vh - 4rem);
   padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
-.app-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-}
-
-.grid-lines {
+.pixelCon {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-
-  background-image:
-    linear-gradient(to right, rgba(255, 77, 0, 0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 77, 0, 0.15) 1px, transparent 1px);
-  background-size: 45px 45px;
-
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, var(--bg-dark) 100%),
-    linear-gradient(to bottom, transparent 0%, var(--bg-dark) 100%);
-
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-
-  animation:
-    grid-move 20s linear infinite,
-    grid-breathe 8s ease-in-out infinite;
+  width: 120%;
+  height: 120%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  opacity: 0.9;
 }
 
-@keyframes grid-move {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 45px 45px;
-  }
+.pixel {
+  background: var(--purple-glow);
+  width: 10%;
+  padding-top: 10%;
+  float: left;
+  opacity: 0;
+  animation: blink 10s infinite;
+  filter: blur(1px);
 }
 
-@keyframes grid-breathe {
-  0%,
-  100% {
-    opacity: 0.5;
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.4;
   }
   50% {
-    opacity: 1;
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
   }
 }
 </style>
