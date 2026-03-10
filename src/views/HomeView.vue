@@ -298,20 +298,6 @@ h2 {
   width: 100%;
 }
 
-.logo {
-  text-align: center;
-  font-size: 2.5rem;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 32px;
-}
-
-.logo span {
-  color: var(--neon-orange);
-}
-
 .home-container {
   display: flex;
   justify-content: center;

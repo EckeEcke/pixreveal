@@ -167,19 +167,6 @@ gameStore.reset();
 </script>
 
 <style scoped>
-.logo {
-  font-size: 2.5rem;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
-  margin-bottom: 2rem;
-}
-
-.logo span {
-  color: var(--neon-orange);
-}
-
 .player-wrapper {
   display: flex;
   gap: 16px;
@@ -336,13 +323,13 @@ gameStore.reset();
 
 @keyframes shine {
   0% {
-    left: -60%;
+    left: -100%;
   }
   20% {
-    left: 120%;
+    left: 100%;
   }
   100% {
-    left: 120%;
+    left: 150%;
   }
 }
 </style>

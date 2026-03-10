@@ -66,8 +66,8 @@ watch(
   background-size: 45px 45px;
 
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, black 100%),
-    linear-gradient(to bottom, transparent 0%, black 100%);
+    linear-gradient(to right, transparent 0%, var(--bg-dark) 100%),
+    linear-gradient(to bottom, transparent 0%, var(--bg-dark) 100%);
 
   -webkit-mask-composite: source-in;
   mask-composite: intersect;

@@ -81,24 +81,25 @@ const progressWidth = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 32px;
 }
 
 .timer-bar-container {
-  margin-top: 16px;
   position: relative;
   height: 24px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 2px;
   overflow: hidden;
-  border: 1px solid rgba(255, 77, 0, 0.2);
+  border: 1px solid #1a1c26;
   border-radius: 4px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .timer-bar-fill {
   height: 100%;
-  background: var(--neon-orange);
-  box-shadow: 0 0 15px var(--neon-orange);
+  background: var(--neon-success);
+  box-shadow: 0 0 15px var(--neon-success);
   border-radius: 4px;
   transition:
     width 0.1s linear,
@@ -128,7 +129,7 @@ const progressWidth = computed(() => {
   transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
@@ -138,7 +139,7 @@ const progressWidth = computed(() => {
   letter-spacing: 2px;
   span {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
     svg {
       color: var(--neon-yellow);
