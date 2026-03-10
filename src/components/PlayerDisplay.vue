@@ -301,7 +301,7 @@ const avatarStyle = computed(() => {
   div {
     display: flex;
     gap: 4px;
-    align-items: flex-start;
+    align-items: center;
   }
 }
 

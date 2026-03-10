@@ -1,13 +1,27 @@
 :root {
+  --font-display: "Chakra Petch", "Rubik", sans-serif;
   --bg-dark: #0d0e14;
   --card-bg: #161821;
   --neon-orange: #ff4d00;
   --text-main: #e0e0e0;
-  --neon-success: #39ff14;
+  --neon-success: #32CD32;
   --neon-error: #ff003c;
-  --neon-yellow: #ccff00;
-  --neon-blue: #00f3ff;
-  --font-display: "Chakra Petch", "Rubik", sans-serif;
+
+  --neon-pink: #FF1493;
+  --pink-glow: rgba(255, 20, 147, 0.4);
+  --pink-bg: rgba(255, 20, 147, 0.05);
+
+  --neon-blue: #1E90FF;
+  --blue-glow: rgba(30, 144, 255, 0.4);
+  --blue-bg: rgba(30, 144, 255, 0.05);
+
+  --neon-purple: #9D50BB;
+  --purple-glow: rgba(157, 80, 187, 0.4);
+  --purple-bg: rgba(157, 80, 187, 0.05);
+
+  --neon-yellow: #FFB000;
+  --yellow-glow: rgba(255, 176, 0, 0.4);
+  --yellow-bg: rgba(255, 176, 0, 0.05);
 }
 
 body {
@@ -22,7 +36,6 @@ body {
   text-transform: uppercase;
   letter-spacing: 4px;
   color: #fff;
-  text-shadow: 0 0 10px var(--neon-orange);
   margin-bottom: 2rem;
 }
 
@@ -43,7 +56,7 @@ body {
   text-transform: uppercase;
   font-family: inherit;
   letter-spacing: 2px;
-  font-weight: 700;
+  font-weight: 900;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -67,30 +80,6 @@ body {
 .btn-outline:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-}
-
-.btn-outline.is-correct {
-  background-color: var(--neon-success);
-  opacity: 1;
-  color: var(--text-main);
-  border: none;
-  color: black;
-  box-shadow:
-    0 0 20px var(--neon-success),
-    0 0 40px var(--neon-success);
-  animation:
-    sharp-pulse 1s infinite,
-    floating 1s infinite;
-}
-
-.btn-outline.is-wrong {
-  background-color: var(--neon-error);
-  opacity: 1;
-  color: var(--text-main);
-  border: none;
-  box-shadow:
-    0 0 20px var(--neon-error),
-    0 0 40px var(--neon-error);
 }
 
 .fade-enter-from,
@@ -124,6 +113,7 @@ body {
 h1 {
   text-align: center;
   margin-top: 0;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
 }
 
 .loading-text {

@@ -61,7 +61,7 @@ const allPixelsFromProp = () => {
 
 const startReveal = () => {
   if (intervalId) clearInterval(intervalId);
-  
+
   displayedPixels.value = [];
   particles.value = [];
 
@@ -76,7 +76,8 @@ const startReveal = () => {
   }
 
   const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
-  const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
+  const dynamicSpeed =
+    allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
 
   allVisible.sort(() => Math.random() - 0.5);
 
@@ -87,7 +88,7 @@ const startReveal = () => {
       const res = props.pixelArray.length;
       const cellSize = internalSize / res;
       const color = colorPalette[next.val] || "#fff";
-      
+
       createParticles(next.x, next.y, color, cellSize);
       soundStore.playSound("reveal");
     } else {
@@ -104,7 +105,9 @@ const render = () => {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
-  const pixelsToDraw = props.isRevealing ? displayedPixels.value : allPixelsFromProp();
+  const pixelsToDraw = props.isRevealing
+    ? displayedPixels.value
+    : allPixelsFromProp();
   const res = props.pixelArray.length;
   const cellSize = internalSize / res;
   const gap = cellSize * 0.05;
@@ -116,7 +119,7 @@ const render = () => {
 
   pixelsToDraw.forEach((p) => {
     const color = colorPalette[p.val];
-    
+
     let scale = 1;
     if (props.isRevealing && p.createdAt) {
       const elapsed = now - p.createdAt;
@@ -134,7 +137,7 @@ const render = () => {
       p.x * cellSize + gap + offset,
       p.y * cellSize + gap + offset,
       currentSize,
-      currentSize
+      currentSize,
     );
 
     if (p.val === 1) {
@@ -172,7 +175,7 @@ watch(
       startReveal();
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(() => {
@@ -190,6 +193,8 @@ onUnmounted(() => {
   background: #000;
   border: 2px solid #1a1c26;
   border-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   overflow: hidden;
   line-height: 0;
   position: sticky;
