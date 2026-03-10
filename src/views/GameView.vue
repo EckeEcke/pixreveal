@@ -306,7 +306,7 @@ h1 {
   opacity: 1;
   color: var(--text-main);
   border: none;
-  color: white;
+  color: var(--white);
   box-shadow:
     0 0 20px var(--neon-success),
     0 0 40px var(--neon-success);

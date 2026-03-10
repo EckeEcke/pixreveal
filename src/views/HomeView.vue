@@ -282,7 +282,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   input {
-    accent-color: var(--neon-orange);
+    accent-color: var(--primary);
   }
   @media (min-width: 575px) {
     flex-direction: row;
@@ -307,7 +307,7 @@ h2 {
 
 .setup-card {
   background: var(--card-bg);
-  border: 1px solid rgba(255, 77, 0, 0.3);
+  border: 2px solid var(--primary);
   padding: 2rem;
   border-radius: 8px;
   width: 100%;
@@ -331,7 +331,7 @@ h2 {
   width: 4px;
 }
 .avatar-grid::-webkit-scrollbar-thumb {
-  background: var(--neon-orange);
+  background: var(--primary);
   border-radius: 2px;
 }
 
@@ -363,7 +363,7 @@ h2 {
 }
 
 .avatar-slot.active {
-  border-color: var(--neon-orange);
+  border-color: var(--primary);
   background-color: rgba(255, 77, 0, 0.1);
   box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
   transform: scale(1.5);
@@ -378,7 +378,7 @@ h2 {
 .input-group label {
   display: block;
   font-size: 0.8rem;
-  color: var(--neon-orange);
+  color: var(--primary);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
 }
@@ -387,7 +387,7 @@ input[type="text"] {
   width: 100%;
   background: rgba(0, 0, 0, 0.3);
   border: none;
-  border-bottom: 2px solid rgba(255, 77, 0, 0.5);
+  border-bottom: 2px solid var(--primary);
   padding: 10px;
   color: #fff;
   font-family: inherit;
@@ -397,12 +397,12 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-  border-color: var(--neon-orange);
+  border-color: var(--primary);
 }
 
 .link {
   display: block;
-  color: white;
+  color: var(--white);
   opacity: 0.8;
 }
 
@@ -452,7 +452,7 @@ input[type="text"]:focus {
 }
 
 .config-label input:checked + .pixel-box {
-  border-color: var(--neon-orange);
+  border-color: var(--primary);
   box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
 }
 
@@ -462,7 +462,7 @@ input[type="text"]:focus {
 }
 
 .config-label input:checked + .pixel-box .status-text {
-  color: var(--neon-orange);
+  color: var(--primary);
 }
 
 .rounds-selection {
@@ -474,7 +474,7 @@ input[type="text"]:focus {
 
 .selection-label {
   font-size: 0.8rem;
-  color: var(--neon-orange);
+  color: var(--primary);
   text-transform: uppercase;
 }
 
@@ -509,12 +509,12 @@ input[type="text"]:focus {
 }
 
 .radio-item input:checked + .radio-button {
-  background: var(--neon-orange);
-  border-color: var(--neon-orange);
+  background: var(--primary);
+  border-color: var(--primary);
   color: #000;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 0 10px var(--neon-orange);
+  box-shadow: 0 0 10px var(--primary);
   transform: translateY(-2px);
 }
 

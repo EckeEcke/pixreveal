@@ -175,7 +175,7 @@ gameStore.reset();
 }
 
 .position {
-  color: var(--neon-orange);
+  color: var(--primary);
   font-weight: 700;
   font-size: 32px;
   width: 40px;
@@ -188,7 +188,7 @@ gameStore.reset();
 .results-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--neon-orange);
+  border: 2px solid var(--primary);
   border-radius: 8px;
   backdrop-filter: blur(20px);
   background: var(--card-bg);

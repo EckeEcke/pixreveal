@@ -31,7 +31,7 @@ defineProps({
   width: 60px;
   aspect-ratio: 2;
   --_g: no-repeat
-    radial-gradient(circle closest-side, var(--neon-orange) 90%, #0000);
+    radial-gradient(circle closest-side, var(--primary) 90%, #0000);
   background:
     var(--_g) 0% 50%,
     var(--_g) 50% 50%,

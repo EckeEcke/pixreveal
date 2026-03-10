@@ -7,9 +7,11 @@
 
 :root {
   --font-display: "Chakra Petch", "Rubik", sans-serif;
-  --bg-dark: #0d0e14;
+  --bg-dark: #220033;
   --card-bg: #161821;
-  --neon-orange: #ff4d00;
+  --primary: #ff3562;
+  --neon-social: #cc00ff;
+  --white: #F9F4F5;
   --text-main: #e0e0e0;
   --neon-success: #32cd32;
   --neon-error: #ff003c;
@@ -37,7 +39,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: var(--bg-dark);
+  background: radial-gradient(circle, #4a1d63 0%, #0a0510 100%);
   color: var(--text-main);
   font-family: var(--font-display), "Inter", sans-serif;
 }
@@ -55,7 +57,7 @@ body {
 }
 
 .logo span {
-  color: var(--neon-orange);
+  color: var(--primary);
 }
 
 .btn-outline {
@@ -65,8 +67,8 @@ body {
   gap: 8px;
   background: transparent;
   backdrop-filter: blur(4px);
-  border: 1px solid var(--neon-orange);
-  color: var(--neon-orange);
+  border: 2px solid var(--primary);
+  color: var(--primary);
   padding: 10px;
   text-transform: uppercase;
   font-family: inherit;
@@ -83,11 +85,11 @@ body {
 
 @media (hover: hover) {
   .btn-outline:not(:disabled):hover {
-    background: var(--neon-orange);
+    background: var(--primary);
     color: #fff;
     box-shadow:
-      0 0 20px var(--neon-orange),
-      0 0 40px var(--neon-orange);
+      0 0 20px var(--primary),
+      0 0 40px var(--primary);
     transform: translateY(-2px);
   }
 }
@@ -130,10 +132,11 @@ h1 {
   margin-top: 0;
   text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
   font-family: "8bit";
+  text-transform: uppercase;
 }
 
 .loading-text {
-  color: var(--neon-orange);
+  color: var(--primary);
   font-size: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
