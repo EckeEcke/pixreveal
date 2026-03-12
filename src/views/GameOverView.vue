@@ -65,7 +65,9 @@
         </div>
 
         <div
-          v-if="survivalStore.newHighscore"
+          v-if="
+            playerStore.gameMode === 'survival' && survivalStore.newHighscore
+          "
           class="rank-prophet highscore-message"
         >
           NEW HIGHSCORE!
@@ -170,7 +172,7 @@ const getShareMessage = (score, mode) => {
   if (mode === "survival")
     return `I scored ${survivalStore.solvedCount} in Survival mode on PIX REVEAL! Think you can beat that?`;
 
-  return "Play PIX REVEAL!"
+  return "Play PIX REVEAL!";
 };
 
 const playAgain = () => {
