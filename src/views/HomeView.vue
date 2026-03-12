@@ -1,53 +1,14 @@
 <template>
   <div class="home-content-wrapper">
+    <WelcomeOverlay v-if="showWelcomeModal" @close="showWelcomeModal = false" />
     <LoadingOverlay :show="onlineStore.isLoading" :text="loadingText" />
     <main class="home-container">
       <section class="setup-card">
         <header>
           <h1 class="logo">Pix<span>Reveal</span></h1>
           <div class="config">
-            <div class="config-buttons">
-              <div class="config-element">
-                <label class="config-label">
-                  <input
-                    type="checkbox"
-                    v-model="soundStore.isAudioEnabled"
-                    @change="soundStore.playSound('confirm')"
-                  />
-                  <div class="pixel-box">
-                    <Icon
-                      class="status-icon"
-                      :icon="
-                        soundStore.isAudioEnabled
-                          ? 'pixel:sound-on-solid'
-                          : 'pixel:sound-mute-solid'
-                      "
-                    />
-                  </div>
-                </label>
-              </div>
-              <div class="config-element">
-                <label class="config-label">
-                  <input
-                    type="checkbox"
-                    v-model="isFullscreen"
-                    @change="toggleFullscreen"
-                  />
-                  <div class="pixel-box">
-                    <Icon
-                      class="status-icon"
-                      :icon="
-                        isFullscreen ? 'pixel:expand-solid' : 'pixel:expand'
-                      "
-                    />
-                  </div>
-                </label>
-              </div>
-            </div>
             <div class="player-info" @click="showAvatarModal = true">
-              <div class="player-avatar" :style="avatarStyle">
-                <Icon icon="pixel:pencil" class="edit-btn" />
-              </div>
+              <div class="player-avatar" :style="avatarStyle"></div>
               <div class="player-name">
                 {{ playerStore.playerName || "UNKNOWN" }}
               </div>
@@ -163,7 +124,7 @@
               <button
                 v-if="!hasRoomIdFromQuery"
                 class="neon-btn special editor"
-                @click="router.push('/editor')"
+                @click="openEditor"
               >
                 <div class="glow-layer"></div>
                 <div class="btn-content">
@@ -212,6 +173,7 @@ import ShareIcons from "@/components/ShareIcons.vue";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
 import JoinModal from "@/components/JoinModal.vue";
 import SettingsModal from "@/components/SettingsModal.vue";
+import WelcomeOverlay from "@/components/WelcomeOverlay.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -220,6 +182,7 @@ const playerStore = usePlayerStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
+const showWelcomeModal = ref(!playerStore.playerName);
 const showAvatarModal = ref(false);
 const showJoinModal = ref(false);
 const showSettingsModal = ref(false);
@@ -263,9 +226,15 @@ const startGame = () => {
 };
 
 const startSurvival = () => {
-   setUser();
+  setUser();
   playerStore.gameMode = "survival";
+  soundStore.playSound("click");
   router.push("/survival");
+};
+
+const openEditor = () => {
+  soundStore.playSound("click");
+  router.push("/editor");
 };
 
 const hostGame = () => {
@@ -284,11 +253,11 @@ const hostGame = () => {
 };
 
 const joinGame = () => {
+  soundStore.playSound("click");
   if (!hasRoomIdFromQuery.value) {
     showJoinModal.value = true;
     return;
   }
-  soundStore.playSound("click");
   setUser();
   onlineStore.isLoading = true;
   loadingText.value = "JOINING GAME...";
@@ -301,21 +270,6 @@ const joinGame = () => {
     },
     joinRoomId.value.toUpperCase().trim(),
   );
-};
-
-const toggleFullscreen = () => {
-  const elem = document.documentElement;
-
-  if (!document.fullscreenElement) {
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    }
-  } else {
-    document.exitFullscreen();
-    isFullscreen.value = false;
-  }
 };
 
 if (document.fullscreenElement) isFullscreen.value = true;
@@ -337,7 +291,8 @@ onUnmounted(() =>
 
 <style scoped>
 h1 {
-  margin-bottom: 32px;
+  margin-bottom: 0;
+  font-size: 24px;
 }
 
 h2 {
@@ -345,6 +300,13 @@ h2 {
   margin: 0;
   margin-bottom: 32px;
   text-align: center;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .headline-wrapper {
@@ -373,17 +335,17 @@ h2 {
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 16px;
 }
 
 .setup-card {
   position: relative;
   background: var(--card-bg);
   border: 2px solid #334155;
-  padding: 2rem;
+  padding: 16px 32px 32px;
   border-radius: 8px;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -414,74 +376,11 @@ h2 {
   justify-content: center;
 }
 
-.config-buttons {
-  display: grid;
-  grid-template-columns: 44px 44px;
-  gap: 16px;
-}
-
-.config-element {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.config-label {
-  cursor: pointer;
-  user-select: none;
-  width: 100%;
-  text-align: center;
-}
-
-.config-label input {
-  display: none;
-}
-
-.pixel-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 10px;
-  border: 2px solid #444;
-  border-radius: 4px;
-  background: #222;
-  transition: all 0.1s;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.config-label input:checked + .pixel-box {
-  border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
-}
-
-.status-text {
-  font-size: 12px;
-  color: #888;
-}
-
-.config-label input:checked + .pixel-box .status-text {
-  color: var(--primary);
-}
-
 .content-wrapper {
-  margin: 32px -32px -32px;
+  margin: 16px -32px -32px;
   display: grid;
   grid-template-columns: 1fr;
   border-top: 2px solid #33415522;
-}
-
-@media (max-width: 480px) {
-  .pixel-box {
-    flex-direction: column;
-    gap: 5px;
-    padding: 8px;
-  }
-
-  .status-text {
-    font-size: 9px;
-  }
 }
 
 @media (min-width: 1024px) {
@@ -503,13 +402,6 @@ h2 {
   .content-wrapper {
     grid-template-columns: 1fr 1fr;
   }
-
-  .config {
-    position: absolute;
-    top: 12px;
-    right: 24px;
-    flex-direction: row;
-  }
 }
 
 footer {
@@ -524,42 +416,56 @@ footer {
 
 .player-info {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 12px;
   text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  @media (min-width: 575px) {
+    background: rgba(15, 23, 42, 0.6);
+    padding-right: 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(236, 72, 153, 0.3);
+  }
+}
+
+.player-info:hover {
+  background: rgba(236, 72, 153, 0.1);
+  border-color: #ec4899;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2);
 }
 
 .player-avatar {
-  position: relative;
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   background-color: #2d3748;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
+  @media (min-width: 575px) {
+    width: 56px;
+    height: 56px;
+  }
 }
 
 .player-name {
   text-transform: uppercase;
   font-weight: 900;
-}
-
-.edit-btn {
-  position: absolute;
-  right: -16px;
-  bottom: -4px;
-  background: var(--primary);
-  border-radius: 50%;
-  padding: 4px;
-  font-size: 18px;
+  display: none;
+  @media (min-width: 575px) {
+    display: block;
+  }
 }
 
 .mode-section {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  padding: 64px 32px;
+  padding: 32px;
+  padding-top: 48px;
 }
 
 .mode-section.classic {
@@ -638,8 +544,8 @@ footer {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-15deg);
-  
-  font-family: '8bit', sans-serif;
+
+  font-family: "8bit", sans-serif;
   font-size: 14px;
   color: #fbbf24;
   background-color: rgba(0, 0, 0, 0.8);
@@ -648,7 +554,6 @@ footer {
   white-space: nowrap;
   z-index: 10;
   box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
-
 }
 
 .glow-layer {

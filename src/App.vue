@@ -44,8 +44,8 @@ watch(
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 4rem);
-  padding: 2rem;
+  min-height: calc(100vh - 32px);
+  padding: 16px;
   position: relative;
   z-index: 1;
 }
