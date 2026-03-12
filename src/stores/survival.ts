@@ -69,6 +69,7 @@ export const useSurvivalStore = defineStore("survival", () => {
       if (timeLeft.value > 0) {
         if (hasAnswered.value) return;
         timeLeft.value -= 1;
+        if (timeLeft.value === 0) triggerGameOver
       } else {
         triggerGameOver();
       }
