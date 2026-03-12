@@ -293,6 +293,9 @@ onUnmounted(() =>
 h1 {
   margin-bottom: 0;
   font-size: 24px;
+  @media (max-width: 360px) {
+    font-size: 18px;
+  }
 }
 
 h2 {
