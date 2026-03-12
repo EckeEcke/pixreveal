@@ -192,7 +192,6 @@ onUnmounted(() => {
 .canvas-wrapper {
   background: #000;
   border: 2px solid #1a1c26;
-  border-radius: 4px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   overflow: hidden;

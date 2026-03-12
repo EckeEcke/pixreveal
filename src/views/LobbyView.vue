@@ -131,13 +131,13 @@ onMounted(() => {
   flex-direction: column;
   gap: 16px;
   background: var(--card-bg);
-  border: 2px solid var(--primary);
+  border: 2px solid #334155;
   padding: 2rem;
   margin-bottom: 32px;
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
 }
 

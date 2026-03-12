@@ -7,7 +7,7 @@
 
 :root {
   --font-display: "Chakra Petch", "Rubik", sans-serif;
-  --bg-dark: #220033;
+  --bg-dark: #0a0a0c;
   --card-bg: #161821;
   --primary: #ff3562;
   --neon-social: #cc00ff;
@@ -50,7 +50,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 4px;
   color: #fff;
-  margin-bottom: 2rem;
+  margin-bottom: 64px;
   @media (min-width: 1024px) {
     font-size: 32px;
   }
@@ -145,6 +145,34 @@ h1 {
   letter-spacing: 2px;
   text-transform: uppercase;
   animation: pulse 1.5s infinite;
+}
+
+.input-group {
+  margin-bottom: 2rem;
+}
+
+.input-group label {
+  display: block;
+  color: var(--primary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+input[type="text"] {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  border-bottom: 2px solid var(--primary);
+  padding: 10px;
+  color: #fff;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+  border-color: var(--primary);
 }
 
 @keyframes pulse {

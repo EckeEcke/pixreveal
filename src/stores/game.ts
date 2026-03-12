@@ -8,6 +8,7 @@ type PixelGrid = number[][];
 export type Drawing = {
   name: string;
   data: PixelGrid;
+  options: Object[] | undefined;
 };
 
 type RoundOption = {

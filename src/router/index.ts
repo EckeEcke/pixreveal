@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { usePlayerStore } from "@/stores/player";
 import GameView from "@/views/GameView.vue";
+import SurvivalView from "@/views/SurvivalView.vue";
 import GameOverView from "@/views/GameOverView.vue";
 import LobbyView from "@/views/LobbyView.vue";
 import EditorView from "@/views/EditorView.vue";
@@ -26,6 +27,11 @@ const router = createRouter({
       component: GameView,
     },
     {
+      path: "/survival",
+      name: "survival",
+      component: SurvivalView,
+    },
+    {
       path: "/gameover",
       name: "gameover",
       component: GameOverView,
@@ -47,7 +53,8 @@ router.beforeEach((to, from, next) => {
   const playerStore = usePlayerStore();
   const gameStore = useGameStore();
 
-  const protectedRoutes = ["/game", "/gameover"];
+  const protectedRoutes = ["/game", "/gameover", "/survival"];
+  const validPathsForGameOver = ["/game", "/survival"]
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {
@@ -62,7 +69,7 @@ router.beforeEach((to, from, next) => {
     return next("/");
   }
 
-  if (to.path === "/gameover" && from.path !== "/game") {
+  if (to.path === "/gameover" && !validPathsForGameOver.includes(from.path)) {
     return next("/");
   }
 

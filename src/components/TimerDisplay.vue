@@ -37,8 +37,9 @@
         }"
       >
         <span v-if="count > 0"
-          >{{ count }} <Icon icon="pixel:star-solid"
-        /></span>
+          >{{ showSeconds ? count + 's' : count }} 
+          <Icon v-if="!showSeconds" icon="pixel:star-solid"/>
+        </span>
         <span v-else>TIME UP</span>
       </div>
     </div>
@@ -66,6 +67,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showSeconds: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const showIncorrect = computed(() => props.isIncorrect && props.count > 0);

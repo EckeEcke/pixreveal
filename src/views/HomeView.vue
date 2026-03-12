@@ -3,99 +3,9 @@
     <LoadingOverlay :show="onlineStore.isLoading" :text="loadingText" />
     <main class="home-container">
       <section class="setup-card">
-        <h1 class="logo">Pix<span>Reveal</span></h1>
-        <div class="content-wrapper">
-          <div class="avatar-selection">
-            <div class="headline-wrapper">
-              <h2>Choose your Avatar</h2>
-            </div>
-            <div class="mobile-scroll-container">
-              <div class="avatar-grid">
-                <div
-                  v-for="avatar in avatars"
-                  :key="avatar.id"
-                  class="avatar-slot"
-                  :class="{ active: playerStore.avatarIndex === avatar.id }"
-                  @click="selectAvatar(avatar.id)"
-                >
-                  <div
-                    class="avatar-image"
-                    :style="getAvatarStyle(avatar.id)"
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="input-group" @keyup.enter="handleEnter">
-              <label for="username">Player Name</label>
-              <input
-                id="username"
-                v-model="playerStore.playerName"
-                type="text"
-                placeholder="Enter Name..."
-                maxlength="15"
-                @input="soundStore.playSound('click')"
-              />
-            </div>
-
-            <div v-if="!hasRoomIdFromQuery" class="rounds-selection">
-              <label class="selection-label">HOW MANY ROUNDS</label>
-              <div class="radio-group">
-                <label
-                  v-for="amount in [5, 10, 15, 20]"
-                  :key="amount"
-                  class="radio-item"
-                >
-                  <input
-                    type="radio"
-                    name="rounds"
-                    :value="amount"
-                    v-model="gameStore.maxRounds"
-                    @change="soundStore.playSound('click')"
-                  />
-                  <span class="radio-button">{{ amount }}</span>
-                </label>
-              </div>
-            </div>
-
-            <button
-              v-if="!hasRoomIdFromQuery"
-              class="btn-outline"
-              @click="startGame"
-            >
-              <Icon icon="pixel:user-solid" />
-              PLAY GAME
-            </button>
-
-            <button
-              v-if="!hasRoomIdFromQuery"
-              class="btn-outline"
-              @click="hostGame"
-            >
-              <Icon icon="pixel:globe" />
-              HOST ONLINE GAME
-            </button>
-
-            <div class="join-input-wrapper">
-              <button
-                class="btn-outline"
-                :disabled="!joinRoomId"
-                @click="joinGame"
-              >
-                <Icon icon="pixel:login" />
-                JOIN GAME
-              </button>
-              <input
-                type="text"
-                v-model="joinRoomId"
-                placeholder="Room ID..."
-                @input="soundStore.playSound('click')"
-              />
-            </div>
-            <router-link v-if="hasRoomIdFromQuery" to="/" class="link"
-              >Back to main game</router-link
-            >
+        <header>
+          <h1 class="logo">Pix<span>Reveal</span></h1>
+          <div class="config">
             <div class="config-buttons">
               <div class="config-element">
                 <label class="config-label">
@@ -113,7 +23,6 @@
                           : 'pixel:sound-mute-solid'
                       "
                     />
-                    <span class="status-text">SOUND</span>
                   </div>
                 </label>
               </div>
@@ -131,10 +40,137 @@
                         isFullscreen ? 'pixel:expand-solid' : 'pixel:expand'
                       "
                     />
-                    <span class="status-text">FULLSCREEN</span>
                   </div>
                 </label>
               </div>
+            </div>
+            <div class="player-info" @click="showAvatarModal = true">
+              <div class="player-avatar" :style="avatarStyle">
+                <Icon icon="pixel:pencil" class="edit-btn" />
+              </div>
+              <div class="player-name">
+                {{ playerStore.playerName || "UNKNOWN" }}
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="content-wrapper">
+          <div class="mode-section classic">
+            <div class="section-header">
+              <h2>CLASSIC</h2>
+            </div>
+
+            <div class="classic-mode-buttons">
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn classic"
+                @click="startGame"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:user-solid" class="btn-icon" />
+                  <span class="btn-text">SOLO PLAY</span>
+                </div>
+              </button>
+
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn host"
+                @click="hostGame"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:globe" class="btn-icon" />
+                  <span class="btn-text">HOST GAME</span>
+                </div>
+              </button>
+
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn join"
+                @click="joinGame"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:login" class="btn-icon" />
+                  <span class="btn-text">JOIN GAME</span>
+                </div>
+              </button>
+
+              <button
+                class="neon-btn settings"
+                @click="showSettingsModal = true"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon
+                    icon="streamline-pixel:interface-essential-setting-cog"
+                    class="btn-icon"
+                  />
+                  <span class="btn-text">SETTINGS</span>
+                </div>
+              </button>
+            </div>
+
+            <router-link v-if="hasRoomIdFromQuery" to="/" class="link"
+              >Back to main game</router-link
+            >
+          </div>
+
+          <div class="mode-section special">
+            <div class="section-header">
+              <h2>SPECIAL</h2>
+            </div>
+            <div class="classic-mode-buttons">
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn special"
+                @click="startSurvival"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
+                  <span class="btn-text">SURVIVAL</span>
+                </div>
+              </button>
+
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn special"
+                @click="hostGame"
+                disabled
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:bluesky" class="btn-icon" />
+                  <span class="btn-text">COZY</span>
+                </div>
+              </button>
+
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn special"
+                @click="hostGame"
+                disabled
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:calender-solid" class="btn-icon" />
+                  <span class="btn-text">DAILY CHALLENGE</span>
+                </div>
+              </button>
+
+              <button
+                v-if="!hasRoomIdFromQuery"
+                class="neon-btn special editor"
+                @click="router.push('/editor')"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:image-solid" class="btn-icon" />
+                  <span class="btn-text">EDITOR</span>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -142,7 +178,6 @@
     </main>
     <footer>
       <ShareIcons />
-      <router-link to="/editor" class="link">Open Editor</router-link>
       <div>
         Music: Lo-Bit 13 by
         <a
@@ -153,11 +188,17 @@
       </div>
       <div>© 2026 PixReveal | Code & Design by Christian Eckardt</div>
     </footer>
+    <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
+    <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
+    <SettingsModal
+      v-if="showSettingsModal"
+      @close="showSettingsModal = false"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { useOnlineStore } from "@/stores/online";
@@ -168,6 +209,9 @@ import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
 import { Icon } from "@iconify/vue";
 import ShareIcons from "@/components/ShareIcons.vue";
+import PlayerEditModal from "@/components/PlayerEditModal.vue";
+import JoinModal from "@/components/JoinModal.vue";
+import SettingsModal from "@/components/SettingsModal.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -175,36 +219,35 @@ const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
-const isFullscreen = ref(false);
-const joinRoomId = ref("");
+const isFullscreen = ref(!!document.documentElement.fullscreenElement);
+const showAvatarModal = ref(false);
+const showJoinModal = ref(false);
+const showSettingsModal = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
 
 const loadingText = ref("LOADING...");
 
-const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
-
 const hasRoomIdFromQuery = computed(() => !!route.query.id);
 const roomIdFromQuery = route.query.id;
 
 if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
 
-const getAvatarStyle = (index) => {
-  const columns = 6;
-  const x = index % columns;
-  const y = Math.floor(index / columns);
+const avatarStyle = computed(() => {
+  const index = playerStore.avatarIndex || 0;
+  const col = index % 6;
+  const row = Math.floor(index / 6);
+  const x = col * 20;
+  const y = row * 20;
   return {
     backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${x * 20}% ${y * 20}%`,
+    backgroundPosition: `${x}% ${y}%`,
     backgroundSize: "600%",
+    imageRendering: "pixelated",
   };
-};
+});
 
-const selectAvatar = (id) => {
-  playerStore.avatarIndex = id;
-  soundStore.playSound("click");
-};
 const setUser = () =>
   playerStore.setUser({
     username: playerStore.playerName || getRandomUserName(),
@@ -214,8 +257,15 @@ const setUser = () =>
 const startGame = () => {
   setUser();
   prepareGame();
-  router.push("/game");
+  playerStore.gameMode = "classic";
   soundStore.playSound("click");
+  router.push("/game");
+};
+
+const startSurvival = () => {
+   setUser();
+  playerStore.gameMode = "survival";
+  router.push("/survival");
 };
 
 const hostGame = () => {
@@ -229,12 +279,15 @@ const hostGame = () => {
     username: playerStore.playerName,
     avatarIndex: playerStore.avatarIndex,
     isHost: true,
-    rounds: gameStore.maxRounds
+    rounds: gameStore.maxRounds,
   });
 };
 
 const joinGame = () => {
-  if (!joinRoomId.value) return;
+  if (!hasRoomIdFromQuery.value) {
+    showJoinModal.value = true;
+    return;
+  }
   soundStore.playSound("click");
   setUser();
   onlineStore.isLoading = true;
@@ -268,11 +321,30 @@ const toggleFullscreen = () => {
 if (document.fullscreenElement) isFullscreen.value = true;
 
 onlineStore.reset();
+
+const updateFullscreenStatus = () => {
+  isFullscreen.value = !!document.fullscreenElement;
+};
+
+onMounted(() =>
+  document.addEventListener("fullscreenchange", updateFullscreenStatus),
+);
+
+onUnmounted(() =>
+  document.removeEventListener("fullscreenchange", updateFullscreenStatus),
+);
 </script>
 
 <style scoped>
+h1 {
+  margin-bottom: 32px;
+}
+
 h2 {
+  font-family: "8bit";
   margin: 0;
+  margin-bottom: 32px;
+  text-align: center;
 }
 
 .headline-wrapper {
@@ -305,98 +377,18 @@ h2 {
 }
 
 .setup-card {
+  position: relative;
   background: var(--card-bg);
-  border: 2px solid var(--primary);
+  border: 2px solid #334155;
   padding: 2rem;
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-outline {
   margin: 0 auto 16px;
-}
-
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  margin-top: 16px;
-  padding-right: 5px;
-}
-
-.avatar-grid::-webkit-scrollbar {
-  width: 4px;
-}
-.avatar-grid::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 2px;
-}
-
-.avatar-slot {
-  aspect-ratio: 1;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  overflow: hidden;
-  opacity: 0.5;
-}
-
-.avatar-image {
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
-
-.avatar-slot:hover {
-  border-color: rgba(255, 77, 0, 0.5);
-  transform: scale(1.25);
-  z-index: 1;
-  opacity: 1;
-}
-
-.avatar-slot.active {
-  border-color: var(--primary);
-  background-color: rgba(255, 77, 0, 0.1);
-  box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
-  transform: scale(1.5);
-  opacity: 1;
-  filter: contrast(2);
-}
-
-.input-group {
-  margin-bottom: 2rem;
-}
-
-.input-group label {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-}
-
-input[type="text"] {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border: none;
-  border-bottom: 2px solid var(--primary);
-  padding: 10px;
-  color: #fff;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-
-input[type="text"]:focus {
-  border-color: var(--primary);
 }
 
 .link {
@@ -414,16 +406,23 @@ input[type="text"]:focus {
   }
 }
 
+.config {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-direction: row-reverse;
+  justify-content: center;
+}
+
 .config-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: 44px 44px;
+  gap: 16px;
 }
 
 .config-element {
   display: flex;
   justify-content: center;
-  margin: 32px 0 0;
   width: 100%;
 }
 
@@ -431,6 +430,7 @@ input[type="text"]:focus {
   cursor: pointer;
   user-select: none;
   width: 100%;
+  text-align: center;
 }
 
 .config-label input {
@@ -443,7 +443,8 @@ input[type="text"]:focus {
   justify-content: center;
   gap: 12px;
   padding: 10px;
-  border: 4px solid #444;
+  border: 2px solid #444;
+  border-radius: 4px;
   background: #222;
   transition: all 0.1s;
   width: 100%;
@@ -464,57 +465,11 @@ input[type="text"]:focus {
   color: var(--primary);
 }
 
-.rounds-selection {
-  margin: 20px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.selection-label {
-  font-size: 0.8rem;
-  color: var(--primary);
-  text-transform: uppercase;
-}
-
-.radio-group {
-  display: flex;
-  gap: 10px;
-}
-
-.radio-item {
-  flex: 1;
-  cursor: pointer;
-}
-
-.radio-item input {
-  display: none;
-}
-
-.radio-button {
-  display: block;
-  text-align: center;
-  padding: 10px 0;
-  background: #1a1a1a;
-  border: 2px solid #333;
-  color: #fff;
-  font-size: 12px;
-  transition: all 0.2s ease;
-}
-
-.radio-item:hover .radio-button {
-  border-color: #666;
-  background: #222;
-}
-
-.radio-item input:checked + .radio-button {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #000;
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: 0 0 10px var(--primary);
-  transform: translateY(-2px);
+.content-wrapper {
+  margin: 32px -32px -32px;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 2px solid #33415522;
 }
 
 @media (max-width: 480px) {
@@ -522,7 +477,6 @@ input[type="text"]:focus {
     flex-direction: column;
     gap: 5px;
     padding: 8px;
-    min-width: 100px;
   }
 
   .status-text {
@@ -531,15 +485,30 @@ input[type="text"]:focus {
 }
 
 @media (min-width: 1024px) {
+  h1 {
+    margin: 0;
+  }
   .setup-card {
     max-width: 800px;
   }
 
+  .mode-section.classic {
+    border-bottom-left-radius: 8px;
+  }
+
+  .mode-section.special {
+    border-bottom-left-radius: 0;
+  }
+
   .content-wrapper {
-    display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
+  }
+
+  .config {
+    position: absolute;
+    top: 12px;
+    right: 24px;
+    flex-direction: row;
   }
 }
 
@@ -553,17 +522,240 @@ footer {
   }
 }
 
-@media (max-width: 575px) {
-  .avatar-grid {
-    margin: 0;
-  }
+.player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
 
-  .mobile-scroll-container {
-    height: 128px;
-    overflow-y: scroll;
-    overflow-x: visible;
-    margin: 8px -20px 32px;
-    padding: 20px 20px;
+.player-avatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  background-color: #2d3748;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.player-name {
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.edit-btn {
+  position: absolute;
+  right: -16px;
+  bottom: -4px;
+  background: var(--primary);
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 18px;
+}
+
+.mode-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 64px 32px;
+}
+
+.mode-section.classic {
+  background: radial-gradient(
+    circle at center,
+    rgba(168, 85, 247, 0.12) 0%,
+    rgba(40, 10, 60, 0.5) 60%,
+    rgba(15, 5, 25, 0.9) 100%
+  );
+  background-color: #ff356222;
+  h2 {
+    color: var(--white);
+  }
+}
+
+.mode-section.special {
+  background: radial-gradient(
+    circle at center,
+    rgba(6, 182, 212, 0.1) 0%,
+    rgba(10, 40, 60, 0.5) 60%,
+    rgba(5, 15, 25, 0.9) 100%
+  );
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  h2 {
+    color: var(--white);
+  }
+}
+
+.classic-mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.neon-btn {
+  position: relative;
+  background: #1a1a1e;
+  border: 2px solid var(--neon-purple);
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 140px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.neon-btn.classic {
+  --btn-color: var(--neon-purple);
+}
+.neon-btn.survival {
+  --btn-color: var(--neon-purple);
+  border-color: var(--neon-purple);
+}
+
+.neon-btn:disabled {
+  opacity: 0.3;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.neon-btn:disabled:after {
+  content: "COMING SOON";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  
+  font-family: '8bit', sans-serif;
+  font-size: 14px;
+  color: #fbbf24;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 8px 16px;
+  border: 2px solid #fbbf24;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+
+}
+
+.glow-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    var(--btn-color) 0%,
+    transparent 70%
+  );
+  opacity: 0.1;
+  transition: opacity 0.3s ease;
+}
+
+.btn-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  font-size: 40px;
+  color: var(--btn-color);
+  filter: drop-shadow(0 0 2px var(--btn-color));
+}
+
+.btn-text {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.neon-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px var(--btn-color);
+}
+
+.neon-btn:hover .glow-layer {
+  opacity: 0.3;
+}
+
+.neon-btn:active {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
+
+.neon-btn.settings,
+.neon-btn.editor {
+  --btn-color: #94a3b8;
+  border-color: #94a3b8;
+  box-shadow: 0 0 15px #94a3b822;
+}
+
+.neon-btn.host {
+  --btn-color: var(--neon-purple);
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 15px var(--purple-glow);
+}
+.neon-btn.host .btn-icon {
+  color: var(--neon-purple);
+  filter: drop-shadow(0 0 2px var(--neon-purple));
+}
+
+.neon-btn.join {
+  --btn-color: var(--neon-purple);
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 15px var(--purple-glow);
+}
+.neon-btn.join .btn-icon {
+  color: var(--neon-purple);
+  filter: drop-shadow(0 0 2px var(--neon-purple));
+}
+
+.neon-btn.special {
+  --btn-color: #00f2ff;
+  border-color: #00f2ff;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+.neon-btn.special .btn-icon {
+  color: #00f2ff;
+  filter: drop-shadow(0 0 2px #00f2ff);
+}
+
+.neon-btn.daily {
+  --btn-color: var(--neon-yellow);
+  border-color: var(--neon-yellow);
+  box-shadow: 0 0 15px var(--yellow-glow);
+}
+.neon-btn.daily .btn-icon {
+  color: var(--neon-yellow);
+  filter: drop-shadow(0 0 2px var(--neon-yellow));
+}
+
+@media (max-width: 480px) {
+  .btn-icon {
+    font-size: 32px;
+  }
+  .btn-text {
+    font-size: 0.7rem;
   }
 }
 </style>
