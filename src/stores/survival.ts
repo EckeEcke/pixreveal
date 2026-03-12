@@ -7,7 +7,7 @@ import allDrawings from "@/data/drawings.json";
 export const useSurvivalStore = defineStore("survival", () => {
   const drawings: Ref<Drawing[]> = ref([]);
   const currentDrawing: Ref<Drawing | undefined> = ref(undefined);
-  const highscore = ref(0);
+  const highscore = ref(localStorage.getItem("survival_highscore") || "0");
   const solvedCount = ref(0);
   const timeLeft = ref(15);
   const maxTime = ref(30);

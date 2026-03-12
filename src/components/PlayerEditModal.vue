@@ -37,6 +37,7 @@
           </div>
         </div>
       </div>
+      <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
     </div>
   </div>
 </template>
@@ -46,7 +47,6 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
-
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
@@ -79,7 +79,7 @@ const selectAvatar = (id) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 32px;
+  padding: 16px;
   z-index: 99;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
@@ -162,6 +162,18 @@ h3 {
   border: none;
   color: var(--primary);
   font-size: 36px;
+}
+
+.confirm-btn {
+  background: var(--primary);
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 32px;
 }
 
 @media (max-width: 575px) {

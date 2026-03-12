@@ -67,13 +67,14 @@
             </div>
           </div>
         </div>
+        <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import { useGameStore } from "@/stores/game";
@@ -82,8 +83,6 @@ const soundStore = useSoundStore();
 const gameStore = useGameStore();
 
 const isFullscreen = ref(!!document.fullscreenElement)
-
-console.log(document.fullscreenElement, isFullscreen.value)
 
 const toggleFullscreen = () => {
   const elem = document.documentElement;
@@ -146,6 +145,18 @@ h2 {
   border: none;
   color: var(--primary);
   font-size: 36px;
+  cursor: pointer;
+}
+
+.confirm-btn {
+  background: var(--primary);
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .modal-content {

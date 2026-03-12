@@ -1,142 +1,147 @@
 <template>
   <div class="home-content-wrapper">
-    <WelcomeOverlay v-if="showWelcomeModal" @close="showWelcomeModal = false" />
     <LoadingOverlay :show="onlineStore.isLoading" :text="loadingText" />
-    <main class="home-container">
-      <section class="setup-card">
-        <header>
-          <h1 class="logo">Pix<span>Reveal</span></h1>
-          <div class="config">
-            <div class="player-info" @click="showAvatarModal = true">
-              <div class="player-avatar" :style="avatarStyle"></div>
-              <div class="player-name">
-                {{ playerStore.playerName || "UNKNOWN" }}
+    <transition name="fade" mode="default">
+      <WelcomeOverlay
+        v-if="showWelcomeModal"
+        @close="showWelcomeModal = false"
+      />
+      <main v-else class="home-container">
+        <section class="setup-card">
+          <header>
+            <h1 class="logo">Pix<span>Reveal</span></h1>
+            <div class="config">
+              <div class="player-info" @click="showAvatarModal = true">
+                <div class="player-avatar" :style="avatarStyle"></div>
+                <div class="player-name">
+                  {{ playerStore.playerName || "UNKNOWN" }}
+                </div>
+              </div>
+            </div>
+          </header>
+          <div class="content-wrapper">
+            <div class="mode-section classic">
+              <div class="section-header">
+                <h2>CLASSIC</h2>
+              </div>
+
+              <div class="classic-mode-buttons">
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn classic"
+                  @click="startGame"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:user-solid" class="btn-icon" />
+                    <span class="btn-text">SOLO PLAY</span>
+                  </div>
+                </button>
+
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn host"
+                  @click="hostGame"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:globe" class="btn-icon" />
+                    <span class="btn-text">HOST GAME</span>
+                  </div>
+                </button>
+
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn join"
+                  @click="joinGame"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:login" class="btn-icon" />
+                    <span class="btn-text">JOIN GAME</span>
+                  </div>
+                </button>
+
+                <button
+                  class="neon-btn settings"
+                  @click="showSettingsModal = true"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon
+                      icon="streamline-pixel:interface-essential-setting-cog"
+                      class="btn-icon"
+                    />
+                    <span class="btn-text">SETTINGS</span>
+                  </div>
+                </button>
+              </div>
+
+              <router-link v-if="hasRoomIdFromQuery" to="/" class="link"
+                >Back to main game</router-link
+              >
+            </div>
+
+            <div class="mode-section special">
+              <div class="section-header">
+                <h2>SPECIAL</h2>
+              </div>
+              <div class="classic-mode-buttons">
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn special"
+                  @click="startSurvival"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
+                    <span class="btn-text">SURVIVAL</span>
+                  </div>
+                </button>
+
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn special"
+                  @click="hostGame"
+                  disabled
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:bluesky" class="btn-icon" />
+                    <span class="btn-text">COZY</span>
+                  </div>
+                </button>
+
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn special"
+                  @click="hostGame"
+                  disabled
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:calender-solid" class="btn-icon" />
+                    <span class="btn-text">DAILY CHALLENGE</span>
+                  </div>
+                </button>
+
+                <button
+                  v-if="!hasRoomIdFromQuery"
+                  class="neon-btn special editor"
+                  @click="openEditor"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:image-solid" class="btn-icon" />
+                    <span class="btn-text">EDITOR</span>
+                  </div>
+                </button>
               </div>
             </div>
           </div>
-        </header>
-        <div class="content-wrapper">
-          <div class="mode-section classic">
-            <div class="section-header">
-              <h2>CLASSIC</h2>
-            </div>
-
-            <div class="classic-mode-buttons">
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn classic"
-                @click="startGame"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:user-solid" class="btn-icon" />
-                  <span class="btn-text">SOLO PLAY</span>
-                </div>
-              </button>
-
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn host"
-                @click="hostGame"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:globe" class="btn-icon" />
-                  <span class="btn-text">HOST GAME</span>
-                </div>
-              </button>
-
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn join"
-                @click="joinGame"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:login" class="btn-icon" />
-                  <span class="btn-text">JOIN GAME</span>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn settings"
-                @click="showSettingsModal = true"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon
-                    icon="streamline-pixel:interface-essential-setting-cog"
-                    class="btn-icon"
-                  />
-                  <span class="btn-text">SETTINGS</span>
-                </div>
-              </button>
-            </div>
-
-            <router-link v-if="hasRoomIdFromQuery" to="/" class="link"
-              >Back to main game</router-link
-            >
-          </div>
-
-          <div class="mode-section special">
-            <div class="section-header">
-              <h2>SPECIAL</h2>
-            </div>
-            <div class="classic-mode-buttons">
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn special"
-                @click="startSurvival"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
-                  <span class="btn-text">SURVIVAL</span>
-                </div>
-              </button>
-
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn special"
-                @click="hostGame"
-                disabled
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:bluesky" class="btn-icon" />
-                  <span class="btn-text">COZY</span>
-                </div>
-              </button>
-
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn special"
-                @click="hostGame"
-                disabled
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:calender-solid" class="btn-icon" />
-                  <span class="btn-text">DAILY CHALLENGE</span>
-                </div>
-              </button>
-
-              <button
-                v-if="!hasRoomIdFromQuery"
-                class="neon-btn special editor"
-                @click="openEditor"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:image-solid" class="btn-icon" />
-                  <span class="btn-text">EDITOR</span>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </transition>
     <footer>
       <ShareIcons />
       <div>
@@ -352,23 +357,10 @@ header {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-.btn-outline {
-  margin: 0 auto 16px;
-}
-
 .link {
   display: block;
   color: var(--white);
   opacity: 0.8;
-}
-
-.join-input-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 80px;
-  gap: 8px;
-  .btn-outline {
-    margin: 0;
-  }
 }
 
 .config {
