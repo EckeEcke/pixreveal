@@ -140,8 +140,6 @@ onUnmounted(() => {
 .welcome-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 10, 15, 0.95);
-  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
