@@ -78,9 +78,9 @@ export const useSurvivalStore = defineStore("survival", () => {
 
   const handleCorrectAnswer = () => {
     solvedCount.value++;
-    if (solvedCount.value > highscore.value) {
+    if (solvedCount.value > Number(highscore.value)) {
       newHighscore.value = true;
-      highscore.value = solvedCount.value;
+      highscore.value = solvedCount.value.toString();
     }
     addTime(3);
   };
