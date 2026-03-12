@@ -13,27 +13,41 @@
         <component :is="Component" />
       </transition>
     </router-view>
-    <audio ref="audio" :src="musicUrl" loop></audio>
+    <audio ref="audio" loop></audio>
   </div>
 </template>
 
 <script setup>
 import { watch, ref } from "vue";
-import musicUrl from "@/assets/audio/music.mp3";
 import { useSoundStore } from "./stores/sound";
 
 const soundStore = useSoundStore();
 
 const audio = ref(null);
 
+const handleAudioState = async (isEnabled) => {
+  if (!audio.value) return;
+
+  if (isEnabled) {
+    if (!audio.value.src) {
+      const musicPath = new URL("./assets/audio/music.mp3", import.meta.url)
+        .href;
+      audio.value.src = musicPath;
+    }
+
+    try {
+      await audio.value.play();
+    } catch (err) {
+      console.warn("Autoplay blocked. Waiting for user interaction.");
+    }
+  } else {
+    audio.value.pause();
+  }
+};
 watch(
   () => soundStore.isAudioEnabled,
   (isEnabled) => {
-    if (isEnabled) {
-      audio.value.play();
-    } else {
-      audio.value.pause();
-    }
+    handleAudioState(isEnabled);
   },
 );
 </script>
