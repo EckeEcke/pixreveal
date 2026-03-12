@@ -260,13 +260,12 @@ onUnmounted(() => {
   background: var(--primary);
   color: #000;
   border: none;
-  padding: 20px;
+  padding: 16px;
   border-radius: 4px;
   font-family: "8bit", sans-serif;
   font-weight: bold;
   font-size: 1.2rem;
   cursor: pointer;
-  margin-top: 1rem;
   animation: arcadeBlink 1.4s infinite;
   transition: all 0.3s;
 }
