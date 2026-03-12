@@ -128,7 +128,6 @@ onMounted(() => {
 }
 
 .chat-input {
-  flex: 1;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid #444;
   padding: 6px 12px;
@@ -143,6 +142,7 @@ onMounted(() => {
 
 .btn-outline {
   background: #000;
+  width: 130px;
 }
 
 .messages-area::-webkit-scrollbar {

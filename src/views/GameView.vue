@@ -209,14 +209,12 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
-  max-width: calc(1000px + 2rem);
+  max-width: 500px;
   width: 100%;
-  @media (min-width: 769px) {
-    grid-template-columns: 1fr 300px;
-    gap: 64px;
-  }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     grid-template-columns: 1fr 400px;
+    gap: 64px;
+    max-width: calc(950px + 2rem);
   }
 }
 
@@ -239,7 +237,7 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  @media (min-width: 769px) {
+  @media (min-width: 1024px) {
     grid-template-columns: 1fr;
     gap: 32px;
     margin-top: 32px;
@@ -253,10 +251,6 @@ h1 {
   }
 }
 
-.hud {
-  margin-bottom: 32px;
-}
-
 .btn-pink {
   color: var(--neon-pink);
   border: 2px solid var(--neon-pink);
@@ -264,7 +258,7 @@ h1 {
   box-shadow:
     0 0 10px var(--pink-glow),
     inset 0 0 5px var(--pink-glow);
-  text-shadow: 0 0 5px var(--neon-pink);
+  text-shadow: 0 0 5px var(--pink-glow);
 }
 
 .btn-yellow {
@@ -332,6 +326,7 @@ h1 {
   justify-content: center;
   align-items: center;
   gap: 8px;
+  background: #222222AA;
   backdrop-filter: blur(20px);
   padding: 10px;
   text-transform: uppercase;

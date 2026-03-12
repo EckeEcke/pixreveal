@@ -50,11 +50,11 @@
         <PlayerDisplay
           :name="playerStore.playerName"
           :avatar-index="playerStore.avatarIndex"
-          :points="playerStore.points"
+          :points="playerStore.points || survivalStore.solvedCount"
           :correct-answers="playerStore.correctAnswers"
           minimalistic
         />
-        <div class="rank-text">
+        <div v-if="playerStore.gameMode === 'classic'" class="rank-text">
           <div>YOUR RANK IS</div>
           <div :class="getRankData(playerStore.points).class">
             {{ getRankData(playerStore.points).title }}
@@ -62,6 +62,13 @@
           <div class="rank-desc">
             {{ getRankData(playerStore.points).description }}
           </div>
+        </div>
+
+        <div
+          v-if="survivalStore.newHighscore"
+          class="rank-prophet highscore-message"
+        >
+          NEW HIGHSCORE!
         </div>
 
         <div class="share-section">
@@ -90,8 +97,10 @@ import LobbyChat from "@/components/LobbyChat.vue";
 import { useGameStore } from "@/stores/game";
 import { Icon } from "@iconify/vue";
 import ShareIcons from "@/components/ShareIcons.vue";
+import { useSurvivalStore } from "@/stores/survival";
 
 const playerStore = usePlayerStore();
+const survivalStore = useSurvivalStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
@@ -152,9 +161,16 @@ const getRankData = (score) => {
   };
 };
 
-const getShareMessage = (score) => {
-  const rankTitle = getRankData(score).title;
-  return `I earned the title ${rankTitle} in PIX REVEAL! Think you can beat that?`;
+const getShareMessage = (score, mode) => {
+  if (mode === "classic") {
+    const rankTitle = getRankData(score).title;
+    return `I earned the title ${rankTitle} in PIX REVEAL! Think you can beat that?`;
+  }
+
+  if (mode === "survival")
+    return `I scored ${survivalStore.solvedCount} in Survival mode on PIX REVEAL! Think you can beat that?`;
+
+  return "Play PIX REVEAL!"
 };
 
 const playAgain = () => {
@@ -188,17 +204,21 @@ gameStore.reset();
 .results-card {
   position: relative;
   overflow: hidden;
-  border: 2px solid var(--primary);
+  border: 2px solid #334155;
   border-radius: 8px;
   backdrop-filter: blur(20px);
   background: var(--card-bg);
   padding: 32px;
   text-align: center;
   margin-bottom: 32px;
-  box-shadow: 0 0 20px rgba(255, 77, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   .rank-prophet {
     margin: 0 auto 16px;
   }
+}
+
+.rank-prophet.highscore-message {
+  margin: 32px 0;
 }
 
 .rank-text {

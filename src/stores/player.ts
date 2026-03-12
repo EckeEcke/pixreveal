@@ -11,6 +11,7 @@ export const usePlayerStore = defineStore("player", () => {
   const avatarIndex: Ref<number> = ref(0);
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
+  const gameMode: Ref<'classic' | 'survival' | undefined> = ref(undefined)
 
   const setUser = (user: { username: string; avatar: number }) => {
     playerName.value =

@@ -4,47 +4,49 @@
     :class="{ pending: hasFinished === false, minimalistic: minimalistic }"
   >
     <div class="hud-avatar" :style="avatarStyle"></div>
-    <div class="hud-info">
-      <span class="hud-username">
+    <div>
+      <div class="hud-username">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
-      </span>
-      <div class="hud-stats">
-        <div v-if="points || points === 0" class="hud-points">
-          <transition name="score-pop" mode="out-in">
-            <div :key="points" class="score-wrapper">
-              <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
-            </div>
-          </transition>
-          <transition name="float-bonus">
-            <span v-if="showBonus" class="hud-bonus-popup"
-              >+{{ lastBonus }}</span
-            >
-          </transition>
-        </div>
+      </div>
+    </div>
 
-        <div v-if="roundIndex || roundIndex === 0" class="hud-rounds">
-          <Icon icon="pixel:image-solid" class="image-icon" />
-          <div class="round-counter-view">
-            <transition name="slide-up" mode="out-in">
-              <span :key="roundIndex">{{ roundIndex }}</span>
-            </transition>
-            <span>/{{ maxRounds }}</span>
+    <div
+      v-if="
+        roundIndex ||
+        roundIndex === 0 ||
+        highscore ||
+        highscore === 0 ||
+        points ||
+        points === 0
+      "
+      class="elements-right"
+    >
+      <div v-if="roundIndex || roundIndex === 0" class="hud-rounds">
+        <Icon icon="pixel:image-solid" class="image-icon" />
+        <div class="round-counter-view">
+          <transition name="slide-up" mode="out-in">
+            <span :key="roundIndex">{{ roundIndex }}</span>
+          </transition>
+          <span>/{{ maxRounds }}</span>
+        </div>
+      </div>
+      <div v-if="highscore || highscore === 0" class="hud-highscore">
+        <transition name="score-pop" mode="out-in">
+          <div :key="highscore" class="highscore-wrapper">
+            <Icon icon="pixel:crown-solid" class="star-icon" />
+            {{ highscore }}
           </div>
-        </div>
-
-        <div v-if="correctAnswers || correctAnswers === 0" class="hud-correct">
-          <transition name="score-pop" mode="out-in">
-            <div :key="correctAnswers" class="score-wrapper">
-              <Icon icon="pixel:check-box-solid" class="check-icon" />
-              {{ correctAnswers }}
-            </div>
-          </transition>
-          <transition name="float-bonus">
-            <span v-if="showCorrectBonus" class="hud-bonus-popup success"
-              >+1</span
-            >
-          </transition>
-        </div>
+        </transition>
+      </div>
+      <div v-if="points || points === 0" class="hud-points">
+        <transition name="score-pop" mode="out-in">
+          <div :key="points" class="score-wrapper">
+            <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
+          </div>
+        </transition>
+        <transition name="float-bonus">
+          <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
+        </transition>
       </div>
     </div>
 
@@ -64,6 +66,7 @@ const props = defineProps({
   name: String,
   avatarIndex: Number,
   points: Number | undefined,
+  highscore: Number | undefined,
   hasFinished: Boolean | undefined,
   isHost: Boolean,
   correctAnswers: Number | undefined,
@@ -87,7 +90,7 @@ watch(
         showBonus.value = true;
         setTimeout(() => {
           showBonus.value = false;
-        }, 800);
+        }, 750);
       });
     }
   },
@@ -125,11 +128,32 @@ const avatarStyle = computed(() => {
 </script>
 
 <style scoped>
-.hud-points {
-  position: relative;
+.elements-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+  margin-left: auto;
 }
 
-.score-wrapper {
+.hud-points,
+.hud-rounds,
+.hud-highscore {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  position: relative;
+  padding: 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.score-wrapper,
+.highscore-wrapper {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -247,15 +271,62 @@ const avatarStyle = computed(() => {
 }
 
 .player-hud {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 15px;
-  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  background: var(--card-bg);
   border: 2px solid #1a1c26;
   border-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   backdrop-filter: blur(5px);
   min-width: 240px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background-image: radial-gradient(
+    circle at 2px 2px,
+    rgba(255, 255, 255, 0.15) 1px,
+    transparent 0
+  );
+  background-size: 100% 4px;
+  background: rgba(15, 15, 25, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.player-hud::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.05) 0px,
+    rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+}
+
+.player-hud::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    transparent 60%
+  );
+  pointer-events: none;
 }
 
 .player-hud.minimalistic {
@@ -268,6 +339,7 @@ const avatarStyle = computed(() => {
   .hud-avatar {
     height: 66px;
     width: 66px;
+    flex-shrink: 0;
   }
   .hud-username {
     font-size: 24px;
@@ -285,8 +357,8 @@ const avatarStyle = computed(() => {
 }
 
 .hud-avatar {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   background-color: #2d3748;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
@@ -306,7 +378,7 @@ const avatarStyle = computed(() => {
 
 .hud-username {
   color: #fff;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
@@ -337,10 +409,17 @@ const avatarStyle = computed(() => {
 .image-icon {
   color: var(--neon-blue);
   filter: drop-shadow(0 0 5px var(--neon-blue));
+  height: 24px;
 }
 
 .check-icon {
   color: var(--neon-success);
   filter: drop-shadow(0 0 5px var(--neon-success));
+}
+
+@media (max-width: 420px) {
+  .hud-username {
+    display: none;
+  }
 }
 </style>
