@@ -6,6 +6,7 @@ import clickSound from "@/assets/audio/click.mp3";
 import revealSound from "@/assets/audio/click.mp3";
 import completeSound from "@/assets/audio/complete.mp3";
 import buzzSound from "@/assets/audio/buzz.wav";
+import timerSound from "@/assets/audio/timer.wav"
 
 
 export const useSoundStore = defineStore("sound", () => {
@@ -18,6 +19,7 @@ export const useSoundStore = defineStore("sound", () => {
     reveal: new Audio(revealSound),
     complete: new Audio(completeSound),
     buzz: new Audio(buzzSound),
+    timer: new Audio(timerSound),
   };
 
   sounds.reveal.volume = 0.4;

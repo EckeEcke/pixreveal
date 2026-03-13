@@ -3,6 +3,7 @@ import type { Ref } from "vue";
 import { defineStore } from "pinia";
 import type { Drawing } from "./game";
 import allDrawings from "@/data/drawings.json";
+import { useSoundStore } from "./sound";
 
 export const useSurvivalStore = defineStore("survival", () => {
   const drawings: Ref<Drawing[]> = ref([]);
@@ -68,8 +69,9 @@ export const useSurvivalStore = defineStore("survival", () => {
     timerInterval.value = setInterval(() => {
       if (timeLeft.value > 0) {
         if (hasAnswered.value) return;
-        timeLeft.value -= 1;
-        if (timeLeft.value === 0) triggerGameOver
+        timeLeft.value--;
+        if (timeLeft.value <= 3) useSoundStore().playSound("timer");
+        if (timeLeft.value === 0) triggerGameOver;
       } else {
         triggerGameOver();
       }
