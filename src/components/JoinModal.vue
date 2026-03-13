@@ -1,29 +1,23 @@
 <template>
-  <div class="modal-wrapper" @click.self="$emit('close')">
-    <div class="join-modal">
-      <button @click="$emit('close')" class="close-btn">
-        <Icon icon="pixel:window-close-solid" />
-      </button>
-      <h2>JOIN GAME</h2>
-      <div class="join-container">
-        <div class="join-terminal">
-          <input
-            v-model="joinRoomId"
-            placeholder="ENTER ROOM ID"
-            class="terminal-input"
-          />
-          <button
-            class="terminal-btn"
-            :disabled="!joinRoomId"
-            @click="joinGame"
-          >
-            JOIN
-            <Icon icon="pixel:login" class="btn-icon" />
-          </button>
-        </div>
+  <ModalWrapper>
+    <button @click="$emit('close')" class="close-btn">
+      <Icon icon="pixel:window-close-solid" />
+    </button>
+    <h2>JOIN GAME</h2>
+    <div class="join-container">
+      <div class="join-terminal">
+        <input
+          v-model="joinRoomId"
+          placeholder="ENTER ROOM ID"
+          class="terminal-input"
+        />
+        <button class="terminal-btn" :disabled="!joinRoomId" @click="joinGame">
+          JOIN
+          <Icon icon="pixel:login" class="btn-icon" />
+        </button>
       </div>
     </div>
-  </div>
+  </ModalWrapper>
 </template>
 
 <script setup>
@@ -31,6 +25,7 @@ import { ref } from "vue";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
+import ModalWrapper from "./ModalWrapper.vue";
 
 const joinRoomId = ref("");
 
@@ -56,35 +51,6 @@ const joinGame = () => {
 </script>
 
 <style scoped>
-.modal-wrapper {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 32px;
-  z-index: 99;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  box-sizing: border-box;
-}
-
-.join-modal {
-  position: relative;
-  background: var(--card-bg);
-  border: 2px solid var(--primary);
-  padding: 2rem;
-  border-radius: 8px;
-  width: 100%;
-  height: auto;
-  overflow: auto;
-  max-width: 400px;
-  box-sizing: border-box;
-}
-
 h2 {
   font-family: "8bit";
   margin-bottom: 32px;

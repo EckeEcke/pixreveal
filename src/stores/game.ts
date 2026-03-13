@@ -48,8 +48,8 @@ export const useGameStore = defineStore("game", () => {
         const distractors = shuffle(otherNames).slice(0, 3);
 
         const options = shuffle([
-          { title: drawing.name, isCorrect: true },
-          ...distractors.map((name) => ({ title: name, isCorrect: false })),
+          { name: drawing.name, isCorrect: true },
+          ...distractors.map((name) => ({ name: name, isCorrect: false })),
         ]);
 
         return {

@@ -211,9 +211,9 @@ onUnmounted(() => {
 }
 
 .player-name {
-  font-family: "8bit", sans-serif;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 700;
   color: #fff;
 }
 
@@ -252,8 +252,8 @@ onUnmounted(() => {
 }
 
 .btn-text {
-  font-family: "8bit", sans-serif;
-  font-size: 9px;
+  font-size: 12px;
+  font-weight: 700;
   color: #fff;
 }
 
