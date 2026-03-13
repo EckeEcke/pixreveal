@@ -96,6 +96,8 @@ const selectAvatar = (id) => {
   height: auto;
   overflow: auto;
   max-width: 400px;
+  max-height: 90vh;
+  overflow: auto;
   box-sizing: border-box;
 }
 

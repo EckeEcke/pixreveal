@@ -154,6 +154,8 @@ onUnmounted(() => {
   border-radius: 12px;
   width: 90%;
   max-width: 420px;
+  max-height: 90vh;
+  overflow: auto;
   text-align: center;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
 }
