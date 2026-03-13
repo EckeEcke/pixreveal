@@ -56,6 +56,7 @@ import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
+import { useSoundStore } from "@/stores/sound";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -107,6 +108,7 @@ const handleBuzzerPress = () => {
   showAnswers.value = true;
   timer.value = 5;
   pauseReveal.value = true;
+  useSoundStore().playSound("buzz");
 };
 
 const handleAnswer = (isCorrect) => {

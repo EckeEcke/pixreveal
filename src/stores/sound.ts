@@ -5,6 +5,8 @@ import incorrectSound from "@/assets/audio/incorrect.mp3";
 import clickSound from "@/assets/audio/click.mp3";
 import revealSound from "@/assets/audio/click.mp3";
 import completeSound from "@/assets/audio/complete.mp3";
+import buzzSound from "@/assets/audio/buzz.wav";
+
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(false);
@@ -15,6 +17,7 @@ export const useSoundStore = defineStore("sound", () => {
     click: new Audio(clickSound),
     reveal: new Audio(revealSound),
     complete: new Audio(completeSound),
+    buzz: new Audio(buzzSound),
   };
 
   sounds.reveal.volume = 0.4;
@@ -26,7 +29,7 @@ export const useSoundStore = defineStore("sound", () => {
     if (audio) {
       audio.currentTime = 0;
       audio.play().catch((err) => {
-        console.warn("Audio konnte nicht abgespielt werden:", err);
+        console.warn("Audio could not be played:", err);
       });
     }
   };

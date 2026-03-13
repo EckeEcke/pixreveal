@@ -83,6 +83,7 @@ const startReveal = () => {
   allVisible.sort(() => Math.random() - 0.5);
 
   intervalId = setInterval(() => {
+    if (props.pauseReveal) return
     if (allVisible.length > 0) {
       const next = allVisible.pop();
       displayedPixels.value.push({ ...next, createdAt: Date.now() });
