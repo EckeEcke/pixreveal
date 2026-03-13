@@ -6,6 +6,7 @@ import SurvivalView from "@/views/SurvivalView.vue";
 import GameOverView from "@/views/GameOverView.vue";
 import LobbyView from "@/views/LobbyView.vue";
 import EditorView from "@/views/EditorView.vue";
+import BuzzerView from "@/views/BuzzerView.vue";
 import { useGameStore } from "@/stores/game";
 
 const router = createRouter({
@@ -32,6 +33,11 @@ const router = createRouter({
       component: SurvivalView,
     },
     {
+      path: "/buzzer",
+      name: "buzzer",
+      component: BuzzerView,
+    },
+    {
       path: "/gameover",
       name: "gameover",
       component: GameOverView,
@@ -53,8 +59,8 @@ router.beforeEach((to, from, next) => {
   const playerStore = usePlayerStore();
   const gameStore = useGameStore();
 
-  const protectedRoutes = ["/game", "/gameover", "/survival"];
-  const validPathsForGameOver = ["/game", "/survival"]
+  const protectedRoutes = ["/game", "/gameover", "/survival", "/buzzer"];
+  const validPathsForGameOver = ["/game", "/survival", "/buzzer"]
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {

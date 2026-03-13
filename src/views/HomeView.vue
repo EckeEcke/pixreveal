@@ -26,10 +26,7 @@
               </div>
 
               <div class="classic-mode-buttons">
-                <button
-                  class="neon-btn classic"
-                  @click="startGame"
-                >
+                <button class="neon-btn classic" @click="startGame">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:user-solid" class="btn-icon" />
@@ -37,10 +34,7 @@
                   </div>
                 </button>
 
-                <button
-                  class="neon-btn host"
-                  @click="hostGame"
-                >
+                <button class="neon-btn host" @click="hostGame">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:globe" class="btn-icon" />
@@ -48,10 +42,7 @@
                   </div>
                 </button>
 
-                <button
-                  class="neon-btn join"
-                  @click="joinGame"
-                >
+                <button class="neon-btn join" @click="joinGame">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:login" class="btn-icon" />
@@ -80,10 +71,7 @@
                 <h2>SPECIAL</h2>
               </div>
               <div class="classic-mode-buttons">
-                <button
-                  class="neon-btn special"
-                  @click="startSurvival"
-                >
+                <button class="neon-btn special" @click="startSurvival">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
@@ -91,23 +79,15 @@
                   </div>
                 </button>
 
-                <button
-                  class="neon-btn special"
-                  @click="hostGame"
-                  disabled
-                >
+                <button class="neon-btn special" @click="startBuzzer">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
-                    <Icon icon="pixel:bluesky" class="btn-icon" />
-                    <span class="btn-text">COZY</span>
+                    <Icon icon="pixel:question" class="btn-icon" />
+                    <span class="btn-text">BUZZER</span>
                   </div>
                 </button>
 
-                <button
-                  class="neon-btn special"
-                  @click="hostGame"
-                  disabled
-                >
+                <button class="neon-btn special" @click="hostGame" disabled>
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:calender-solid" class="btn-icon" />
@@ -115,10 +95,7 @@
                   </div>
                 </button>
 
-                <button
-                  class="neon-btn special editor"
-                  @click="openEditor"
-                >
+                <button class="neon-btn special editor" @click="openEditor">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:image-solid" class="btn-icon" />
@@ -189,7 +166,7 @@ const hasRoomIdFromQuery = computed(() => !!route.query.id);
 const roomIdFromQuery = route.query.id;
 const showJoinModal = ref(hasRoomIdFromQuery.value);
 
-const joinRoomId = ref(undefined)
+const joinRoomId = ref(undefined);
 
 if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
 
@@ -219,6 +196,14 @@ const startGame = () => {
   playerStore.gameMode = "classic";
   soundStore.playSound("click");
   router.push("/game");
+};
+
+const startBuzzer = () => {
+  setUser();
+  prepareGame();
+  playerStore.gameMode = "classic";
+  soundStore.playSound("click");
+  router.push("/buzzer");
 };
 
 const startSurvival = () => {

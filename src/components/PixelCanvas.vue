@@ -19,6 +19,7 @@ const props = defineProps({
   isRevealing: Boolean,
   isStatusIcon: Boolean,
   timerDuration: Number | undefined,
+  pauseReveal: Boolean | undefined,
 });
 
 const soundStore = useSoundStore();
@@ -101,6 +102,10 @@ const startReveal = () => {
 };
 
 const render = () => {
+  if (props.pauseReveal) {
+    animationFrame = requestAnimationFrame(render);
+    return;
+  }
   const canvas = canvasRef.value;
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
@@ -196,8 +201,6 @@ onUnmounted(() => {
   border-bottom-right-radius: 0;
   overflow: hidden;
   line-height: 0;
-  position: sticky;
-  top: 0;
 }
 
 canvas {
