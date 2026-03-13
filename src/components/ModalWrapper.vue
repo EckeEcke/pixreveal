@@ -1,7 +1,9 @@
 <template>
   <div class="modal-wrapper" @click.self="$emit('close')">
     <div class="modal">
-      <slot></slot>
+      <div class="modal-content">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -33,6 +35,12 @@
   height: auto;
   overflow: auto;
   max-width: 400px;
+  max-height: 95vh;
   box-sizing: border-box;
+}
+
+.modal-content {
+    height: 100%;
+    overflow: auto;
 }
 </style>
