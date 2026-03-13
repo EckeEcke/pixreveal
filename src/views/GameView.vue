@@ -27,26 +27,11 @@
     </section>
     <section class="answer-section">
       <h1>guess it</h1>
-      <div class="answer-buttons">
-        <button
-          class="answer-btn"
-          v-for="(answer, index) in rounds[currentRoundIndex].options"
-          :disabled="hasAnswered"
-          :class="[
-            buttonColors[index % buttonColors.length],
-            {
-              'is-wrong':
-                hasAnswered &&
-                selectedAnswer === answer.title &&
-                !answer.isCorrect,
-              'is-correct': hasAnswered && answer.isCorrect,
-            },
-          ]"
-          @click="checkAnswer(answer, $event)"
-        >
-          {{ answer.title }}
-        </button>
-      </div>
+      <AnswerButtons
+        :hasAnswered="hasAnswered"
+        :answers="rounds[currentRoundIndex].options"
+        @answered="handleAnswer"
+      />
     </section>
   </main>
 </template>
@@ -60,16 +45,15 @@ import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
-import { useSoundStore } from "@/stores/sound";
+import { statusIcons } from "@/data/statusIcons";
+import AnswerButtons from "@/components/AnswerButtons.vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
-const soundstore = useSoundStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
-const selectedAnswer = ref(undefined);
 const isRevealing = ref(true);
 const timerDuration = 15;
 const timer = ref(timerDuration);
@@ -77,7 +61,6 @@ let timerId = null;
 let revealTimeoutId = null;
 let nextRoundTimeoutId = null;
 const hasAnsweredCorrectly = ref(false);
-const buttonColors = ["btn-pink", "btn-blue", "btn-purple", "btn-yellow"];
 
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
@@ -92,7 +75,7 @@ const startTimer = () => {
     timer.value--;
     if (timer.value <= 0) {
       clearInterval(timerId);
-      checkAnswer(null);
+      handleAnswer(false);
     }
   }, 1000);
 };
@@ -100,7 +83,6 @@ const startTimer = () => {
 const setDrawing = (data) => {
   hasAnswered.value = false;
   isRevealing.value = true;
-  selectedAnswer.value = undefined;
   pixelData.value = data;
   resolution.value = Math.sqrt(data.length);
   hasAnsweredCorrectly.value = false;
@@ -108,58 +90,16 @@ const setDrawing = (data) => {
   startTimer();
 };
 
-const statusIcons = {
-  success: [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 0, 0, 0, 0],
-    [0, 9, 9, 0, 0, 0, 0, 0, 9, 9, 0, 0, 0, 0, 0, 0],
-    [0, 0, 9, 9, 0, 0, 0, 9, 9, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 9, 9, 0, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ],
-  failure: [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0],
-    [0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0],
-    [0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0],
-    [0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 5, 5, 0, 0, 5, 5, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 5, 5, 0, 0, 5, 5, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0],
-    [0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0],
-    [0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0],
-    [0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ],
-};
-
-const checkAnswer = (answer, event) => {
-  if (event) event.currentTarget.blur();
-  selectedAnswer.value = answer ? answer.title : null;
-  pixelData.value =
-    answer === null || !answer.isCorrect
-      ? statusIcons.failure
-      : statusIcons.success;
-  if (answer && answer.isCorrect) hasAnsweredCorrectly.value = true;
+const handleAnswer = (isCorrect) => {
   hasAnswered.value = true;
-  if (answer && answer.isCorrect) {
+  if (!isCorrect) {
+    pixelData.value = statusIcons.failure;
+  } else {
+    pixelData.value = statusIcons.success;
+    hasAnsweredCorrectly.value = true;
     playerStore.addPoints(timer.value);
-    soundstore.playSound("correct");
-  } else soundstore.playSound("incorrect");
+  }
+
   clearInterval(timerId);
   revealTimeoutId = setTimeout(() => {
     isRevealing.value = false;
@@ -326,7 +266,7 @@ h1 {
   justify-content: center;
   align-items: center;
   gap: 8px;
-  background: #222222AA;
+  background: #222222aa;
   backdrop-filter: blur(20px);
   padding: 10px;
   text-transform: uppercase;

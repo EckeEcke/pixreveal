@@ -1,45 +1,40 @@
 <template>
-  <div class="modal-wrapper" @click.self="$emit('close')">
-    <div class="edit-player-modal">
-      <button @click="$emit('close')" class="close-btn">
-        <Icon icon="pixel:window-close-solid" />
-      </button>
-      <h2>EDIT PLAYER</h2>
-      <div class="input-group" @keyup.enter="handleEnter">
-        <h3>Player Name</h3>
-        <input
-          id="username"
-          v-model="playerStore.playerName"
-          type="text"
-          placeholder="Enter Name..."
-          maxlength="10"
-          @input="soundStore.playSound('click')"
-        />
+  <ModalWrapper>
+    <button @click="$emit('close')" class="close-btn">
+      <Icon icon="pixel:window-close-solid" />
+    </button>
+    <h2>EDIT PLAYER</h2>
+    <div class="input-group" @keyup.enter="handleEnter">
+      <h3>Player Name</h3>
+      <input
+        id="username"
+        v-model="playerStore.playerName"
+        type="text"
+        placeholder="Enter Name..."
+        maxlength="10"
+        @input="soundStore.playSound('click')"
+      />
+    </div>
+    <div class="avatar-selection">
+      <div class="headline-wrapper">
+        <h3>Choose your Avatar</h3>
       </div>
-      <div class="avatar-selection">
-        <div class="headline-wrapper">
-          <h3>Choose your Avatar</h3>
-        </div>
-        <div>
-          <div class="avatar-grid">
-            <div
-              v-for="avatar in avatars"
-              :key="avatar.id"
-              class="avatar-slot"
-              :class="{ active: playerStore.avatarIndex === avatar.id }"
-              @click="selectAvatar(avatar.id)"
-            >
-              <div
-                class="avatar-image"
-                :style="getAvatarStyle(avatar.id)"
-              ></div>
-            </div>
+      <div>
+        <div class="avatar-grid">
+          <div
+            v-for="avatar in avatars"
+            :key="avatar.id"
+            class="avatar-slot"
+            :class="{ active: playerStore.avatarIndex === avatar.id }"
+            @click="selectAvatar(avatar.id)"
+          >
+            <div class="avatar-image" :style="getAvatarStyle(avatar.id)"></div>
           </div>
         </div>
       </div>
-      <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
     </div>
-  </div>
+    <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
+  </ModalWrapper>
 </template>
 
 <script setup>
@@ -47,6 +42,7 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
+import ModalWrapper from "./ModalWrapper.vue";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
@@ -70,37 +66,6 @@ const selectAvatar = (id) => {
 </script>
 
 <style scoped>
-.modal-wrapper {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  z-index: 99;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  box-sizing: border-box;
-}
-
-.edit-player-modal {
-  position: relative;
-  background: var(--card-bg);
-  border: 2px solid var(--primary);
-  padding: 2rem;
-  border-radius: 8px;
-  width: 100%;
-  height: auto;
-  overflow: auto;
-  max-width: 400px;
-  max-height: 90vh;
-  overflow: auto;
-  box-sizing: border-box;
-}
-
 h2 {
   font-family: "8bit";
 }

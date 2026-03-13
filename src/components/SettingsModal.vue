@@ -1,76 +1,74 @@
 <template>
-  <div class="modal-wrapper" @click.self="$emit('close')">
-    <div class="settings-modal">
-      <button @click="$emit('close')" class="close-btn">
-        <Icon icon="pixel:window-close-solid" />
-      </button>
-      <h2>SETTINGS</h2>
-      <div class="modal-content">
-        <div class="rounds-selection">
-          <label class="selection-label">HOW MANY ROUNDS</label>
-          <div class="radio-group">
-            <label
-              v-for="amount in [5, 10, 15, 20]"
-              :key="amount"
-              class="radio-item"
-            >
+  <ModalWrapper>
+    <button @click="$emit('close')" class="close-btn">
+      <Icon icon="pixel:window-close-solid" />
+    </button>
+    <h2>SETTINGS</h2>
+    <div class="modal-content">
+      <div class="rounds-selection">
+        <label class="selection-label">HOW MANY ROUNDS</label>
+        <div class="radio-group">
+          <label
+            v-for="amount in [5, 10, 15, 20]"
+            :key="amount"
+            class="radio-item"
+          >
+            <input
+              type="radio"
+              name="rounds"
+              :value="amount"
+              v-model="gameStore.maxRounds"
+              @change="soundStore.playSound('click')"
+            />
+            <span class="radio-button">{{ amount }}</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <label class="selection-label">DISPLAY & AUDIO</label>
+
+        <div class="config-buttons">
+          <div class="config-element">
+            <label class="config-label">
               <input
-                type="radio"
-                name="rounds"
-                :value="amount"
-                v-model="gameStore.maxRounds"
-                @change="soundStore.playSound('click')"
+                type="checkbox"
+                v-model="soundStore.isAudioEnabled"
+                @change="soundStore.playSound('confirm')"
               />
-              <span class="radio-button">{{ amount }}</span>
+              <div class="pixel-box">
+                <Icon
+                  class="status-icon"
+                  :icon="
+                    soundStore.isAudioEnabled
+                      ? 'pixel:sound-on-solid'
+                      : 'pixel:sound-mute-solid'
+                  "
+                />
+                <span class="status-text">SOUND</span>
+              </div>
+            </label>
+          </div>
+          <div class="config-element">
+            <label class="config-label">
+              <input
+                type="checkbox"
+                v-model="isFullscreen"
+                @change="toggleFullscreen"
+              />
+              <div class="pixel-box">
+                <Icon
+                  class="status-icon"
+                  :icon="isFullscreen ? 'pixel:expand-solid' : 'pixel:expand'"
+                />
+                <span class="status-text">FULLSCREEN</span>
+              </div>
             </label>
           </div>
         </div>
-        <div>
-          <label class="selection-label">DISPLAY & AUDIO</label>
-
-          <div class="config-buttons">
-            <div class="config-element">
-              <label class="config-label">
-                <input
-                  type="checkbox"
-                  v-model="soundStore.isAudioEnabled"
-                  @change="soundStore.playSound('confirm')"
-                />
-                <div class="pixel-box">
-                  <Icon
-                    class="status-icon"
-                    :icon="
-                      soundStore.isAudioEnabled
-                        ? 'pixel:sound-on-solid'
-                        : 'pixel:sound-mute-solid'
-                    "
-                  />
-                  <span class="status-text">SOUND</span>
-                </div>
-              </label>
-            </div>
-            <div class="config-element">
-              <label class="config-label">
-                <input
-                  type="checkbox"
-                  v-model="isFullscreen"
-                  @change="toggleFullscreen"
-                />
-                <div class="pixel-box">
-                  <Icon
-                    class="status-icon"
-                    :icon="isFullscreen ? 'pixel:expand-solid' : 'pixel:expand'"
-                  />
-                  <span class="status-text">FULLSCREEN</span>
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
-        <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
       </div>
+      <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
     </div>
-  </div>
+  </ModalWrapper>
 </template>
 
 <script setup>
@@ -78,11 +76,12 @@ import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import { useGameStore } from "@/stores/game";
+import ModalWrapper from "./ModalWrapper.vue";
 
 const soundStore = useSoundStore();
 const gameStore = useGameStore();
 
-const isFullscreen = ref(!!document.fullscreenElement)
+const isFullscreen = ref(!!document.fullscreenElement);
 
 const toggleFullscreen = () => {
   const elem = document.documentElement;
@@ -98,41 +97,9 @@ const toggleFullscreen = () => {
     isFullscreen.value = false;
   }
 };
-
 </script>
 
 <style scoped>
-.modal-wrapper {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 32px;
-  z-index: 99;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  box-sizing: border-box;
-}
-
-.settings-modal {
-  position: relative;
-  background: var(--card-bg);
-  border: 2px solid var(--primary);
-  padding: 2rem;
-  border-radius: 8px;
-  width: 100%;
-  height: auto;
-  overflow: auto;
-  max-width: 400px;
-  max-height: 90vh;
-  overflow: auto;
-  box-sizing: border-box;
-}
-
 h2 {
   font-family: "8bit";
   margin-bottom: 32px;
