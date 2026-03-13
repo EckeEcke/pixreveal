@@ -27,7 +27,6 @@
 
               <div class="classic-mode-buttons">
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn classic"
                   @click="startGame"
                 >
@@ -39,7 +38,6 @@
                 </button>
 
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn host"
                   @click="hostGame"
                 >
@@ -51,7 +49,6 @@
                 </button>
 
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn join"
                   @click="joinGame"
                 >
@@ -76,10 +73,6 @@
                   </div>
                 </button>
               </div>
-
-              <router-link v-if="hasRoomIdFromQuery" to="/" class="link"
-                >Back to main game</router-link
-              >
             </div>
 
             <div class="mode-section special">
@@ -88,7 +81,6 @@
               </div>
               <div class="classic-mode-buttons">
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn special"
                   @click="startSurvival"
                 >
@@ -100,7 +92,6 @@
                 </button>
 
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn special"
                   @click="hostGame"
                   disabled
@@ -113,7 +104,6 @@
                 </button>
 
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn special"
                   @click="hostGame"
                   disabled
@@ -126,7 +116,6 @@
                 </button>
 
                 <button
-                  v-if="!hasRoomIdFromQuery"
                   class="neon-btn special editor"
                   @click="openEditor"
                 >
@@ -189,7 +178,6 @@ const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 const showWelcomeModal = ref(!playerStore.playerName);
 const showAvatarModal = ref(false);
-const showJoinModal = ref(false);
 const showSettingsModal = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
@@ -199,6 +187,9 @@ const loadingText = ref("LOADING...");
 
 const hasRoomIdFromQuery = computed(() => !!route.query.id);
 const roomIdFromQuery = route.query.id;
+const showJoinModal = ref(hasRoomIdFromQuery.value);
+
+const joinRoomId = ref(undefined)
 
 if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
 
