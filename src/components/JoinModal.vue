@@ -26,8 +26,10 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "./ModalWrapper.vue";
+import { useRoute } from "vue-router";
 
-const joinRoomId = ref("");
+const route = useRoute();
+const joinRoomId = ref(route.query.id ?? "");
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
