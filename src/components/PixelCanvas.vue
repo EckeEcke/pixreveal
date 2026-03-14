@@ -4,6 +4,8 @@
       ref="canvasRef"
       :width="internalSize"
       :height="internalSize"
+      @mousemove="$emit('mousemove', $event)"
+      @touchmove-prevent="$emit('touchmove', $event)"
     ></canvas>
   </div>
 </template>
@@ -20,7 +22,11 @@ const props = defineProps({
   isStatusIcon: Boolean,
   timerDuration: Number | undefined,
   pauseReveal: Boolean | undefined,
+  mousePos: Object,
+  isMagnifierMode: Boolean,
 });
+
+defineEmits(["mousemove", "touchmove"]);
 
 const soundStore = useSoundStore();
 const timerDuration = props.timerDuration || 15;
@@ -83,7 +89,7 @@ const startReveal = () => {
   allVisible.sort(() => Math.random() - 0.5);
 
   intervalId = setInterval(() => {
-    if (props.pauseReveal) return
+    if (props.pauseReveal) return;
     if (allVisible.length > 0) {
       const next = allVisible.pop();
       displayedPixels.value.push({ ...next, createdAt: Date.now() });
@@ -111,49 +117,72 @@ const render = () => {
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
-  const pixelsToDraw = props.isRevealing
-    ? displayedPixels.value
-    : allPixelsFromProp();
   const res = props.pixelArray.length;
   const cellSize = internalSize / res;
   const gap = cellSize * 0.05;
   const baseSize = cellSize - gap * 2;
+  const now = Date.now();
+
+  const drawPixels = () => {
+    const pixelsToDraw = props.isRevealing
+      ? displayedPixels.value
+      : allPixelsFromProp();
+
+    pixelsToDraw.forEach((p) => {
+      const color = colorPalette[p.val];
+      let scale = 1;
+      if (props.isRevealing && p.createdAt) {
+        const elapsed = now - p.createdAt;
+        scale = Math.min(1, elapsed / 100);
+      }
+
+      const currentSize = baseSize * scale;
+      const offset = (baseSize - currentSize) / 2;
+
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 15 * scale;
+      ctx.fillStyle = color;
+
+      ctx.fillRect(
+        p.x * cellSize + gap + offset,
+        p.y * cellSize + gap + offset,
+        currentSize,
+        currentSize,
+      );
+
+      if (p.val === 1) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * scale})`;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(p.x * cellSize, p.y * cellSize, cellSize, cellSize);
+      }
+    });
+  };
 
   ctx.clearRect(0, 0, internalSize, internalSize);
 
-  const now = Date.now();
+  if (props.isMagnifierMode && !props.isStatusIcon) {
+    ctx.save();
 
-  pixelsToDraw.forEach((p) => {
-    const color = colorPalette[p.val];
+    ctx.beginPath();
+    ctx.arc(props.mousePos.x, props.mousePos.y, 60, 0, Math.PI * 2);
+    ctx.clip();
 
-    let scale = 1;
-    if (props.isRevealing && p.createdAt) {
-      const elapsed = now - p.createdAt;
-      scale = Math.min(1, elapsed / 100);
-    }
+    drawPixels();
 
-    const currentSize = baseSize * scale;
-    const offset = (baseSize - currentSize) / 2;
+    ctx.restore();
 
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 15 * scale;
-    ctx.fillStyle = color;
+    ctx.strokeStyle = "#ec4899";
+    ctx.lineWidth = 3;
+    ctx.shadowColor = "#ec4899";
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(props.mousePos.x, props.mousePos.y, 60, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  } else {
+    drawPixels();
+  }
 
-    ctx.fillRect(
-      p.x * cellSize + gap + offset,
-      p.y * cellSize + gap + offset,
-      currentSize,
-      currentSize,
-    );
-
-    if (p.val === 1) {
-      ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * scale})`;
-      ctx.lineWidth = 1;
-      ctx.strokeRect(p.x * cellSize, p.y * cellSize, cellSize, cellSize);
-    }
-  });
-
-  ctx.shadowBlur = 0;
   for (let i = particles.value.length - 1; i >= 0; i--) {
     const p = particles.value[i];
     p.x += p.vx;
