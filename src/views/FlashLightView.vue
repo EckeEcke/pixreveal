@@ -153,6 +153,7 @@ const updateMousePos = (event) => {
 };
 
 const updateTouchPos = (event) => {
+  if (event.cancelable) event.preventDefault();
   const touch = event.touches[0];
   const rect = event.target.getBoundingClientRect();
   const scaleX = 600 / rect.width;
