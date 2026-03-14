@@ -57,7 +57,7 @@
         <div
           v-if="
             playerStore.gameMode === 'classic' ||
-            playerStore.gameMode === 'flashlight'
+            playerStore.gameMode === 'flashLight'
           "
           class="rank-text"
         >
