@@ -31,7 +31,7 @@
       />
     </section>
     <section class="answer-section">
-      <h1>guess it</h1>
+      <h1>inspect <Icon icon="pixel:search" /></h1>
       <AnswerButtons
         :hasAnswered="hasAnswered"
         :answers="rounds[currentRoundIndex].options"
@@ -53,6 +53,7 @@ import { useOnlineStore } from "@/stores/online";
 import { useSoundStore } from "@/stores/sound";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
+import { Icon } from "@iconify/vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -141,7 +142,7 @@ const requestWakeLock = async () => {
   }
 };
 
-const mousePos = ref({ x: -1000, y: -1000 });
+const mousePos = ref({ x: 300, y: 300 });
 
 const updateMousePos = (event) => {
   const rect = event.target.getBoundingClientRect();
