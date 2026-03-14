@@ -90,7 +90,7 @@
                 <button class="neon-btn special" @click="startFlashLight">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
-                    <Icon icon="pixel:calender-solid" class="btn-icon" />
+                    <Icon icon="pixel:lightbulb-solid" class="btn-icon" />
                     <span class="btn-text">FLASHLIGHT</span>
                   </div>
                 </button>
