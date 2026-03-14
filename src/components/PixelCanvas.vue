@@ -236,7 +236,8 @@ onUnmounted(() => {
 canvas {
   max-width: 100%;
   height: auto;
-    touch-action: none;
+  touch-action: none !important;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 </style>
