@@ -75,7 +75,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (
-    to.path === "/game" &&
+    (to.path === "/game" || to.path === "/flashlight") &&
     (!gameStore.rounds || gameStore.rounds.length <= 0)
   ) {
     return next("/");
