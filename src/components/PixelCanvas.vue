@@ -6,6 +6,7 @@
       :height="internalSize"
       @mousemove="$emit('mousemove', $event)"
       @touchmove-prevent="$emit('touchmove', $event)"
+      @touchmove.prevent="$emit('touchmove', $event)"
     ></canvas>
   </div>
 </template>
@@ -26,7 +27,7 @@ const props = defineProps({
   isMagnifierMode: Boolean,
 });
 
-defineEmits(["mousemove", "touchmove"]);
+const emit = defineEmits(["mousemove", "touchstart", "touchmove"]);
 
 const soundStore = useSoundStore();
 const timerDuration = props.timerDuration || 15;
