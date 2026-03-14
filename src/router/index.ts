@@ -7,6 +7,7 @@ import GameOverView from "@/views/GameOverView.vue";
 import LobbyView from "@/views/LobbyView.vue";
 import EditorView from "@/views/EditorView.vue";
 import BuzzerView from "@/views/BuzzerView.vue";
+import FlashLightView from "@/views/FlashLightView.vue";
 import { useGameStore } from "@/stores/game";
 
 const router = createRouter({
@@ -36,6 +37,11 @@ const router = createRouter({
       path: "/buzzer",
       name: "buzzer",
       component: BuzzerView,
+    },
+    {
+      path: "/flashlight",
+      name: "flashlight",
+      component: FlashLightView,
     },
     {
       path: "/gameover",

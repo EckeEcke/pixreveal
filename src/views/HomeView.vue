@@ -87,11 +87,11 @@
                   </div>
                 </button>
 
-                <button class="neon-btn special" @click="hostGame" disabled>
+                <button class="neon-btn special" @click="startFlashLight">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:calender-solid" class="btn-icon" />
-                    <span class="btn-text">DAILY CHALLENGE</span>
+                    <span class="btn-text">FLASHLIGHT</span>
                   </div>
                 </button>
 
@@ -204,6 +204,14 @@ const startBuzzer = () => {
   playerStore.gameMode = "classic";
   soundStore.playSound("click");
   router.push("/buzzer");
+};
+
+const startFlashLight = () => {
+  setUser();
+  prepareGame();
+  playerStore.gameMode = "flashLight";
+  soundStore.playSound("click");
+  router.push("/flashlight");
 };
 
 const startSurvival = () => {
