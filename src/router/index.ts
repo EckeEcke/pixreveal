@@ -65,8 +65,8 @@ router.beforeEach((to, from, next) => {
   const playerStore = usePlayerStore();
   const gameStore = useGameStore();
 
-  const protectedRoutes = ["/game", "/gameover", "/survival", "/buzzer"];
-  const validPathsForGameOver = ["/game", "/survival", "/buzzer"]
+  const protectedRoutes = ["/game", "/gameover", "/survival", "/buzzer", "/flashlight"];
+  const validPathsForGameOver = ["/game", "/survival", "/buzzer", "/flashlight"]
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {
