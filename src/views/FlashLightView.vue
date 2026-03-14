@@ -18,8 +18,9 @@
         :timer-duration="timerDuration"
         :is-magnifier-mode="true"
         :mouse-pos="mousePos"
-        @mousemove="updateMousePos"
-        @touchmove="updateTouchPos"
+        @mousemove="$emit('mousemove', $event)"
+        @touchstart="$emit('touchmove', $event)"
+        @touchmove.prevent="$emit('touchmove', $event)"
       />
       <TimerDisplay
         :class="{ 'is-hidden': !isRevealing || hasAnswered }"
@@ -154,10 +155,17 @@ const updateMousePos = (event) => {
 
 const updateTouchPos = (event) => {
   if (event.cancelable) event.preventDefault();
+
   const touch = event.touches[0];
-  const rect = event.target.getBoundingClientRect();
+  const canvasElement = event.currentTarget.$el 
+    ? event.currentTarget.$el.querySelector('canvas') 
+    : event.target;
+    
+  const rect = canvasElement.getBoundingClientRect();
+  
   const scaleX = 600 / rect.width;
   const scaleY = 600 / rect.height;
+
   mousePos.value = {
     x: (touch.clientX - rect.left) * scaleX,
     y: (touch.clientY - rect.top) * scaleY,
