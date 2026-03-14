@@ -54,7 +54,13 @@
           :correct-answers="playerStore.correctAnswers"
           minimalistic
         />
-        <div v-if="playerStore.gameMode === 'classic'" class="rank-text">
+        <div
+          v-if="
+            playerStore.gameMode === 'classic' ||
+            playerStore.gameMode === 'flashlight'
+          "
+          class="rank-text"
+        >
           <div>YOUR RANK IS</div>
           <div :class="getRankData(playerStore.points).class">
             {{ getRankData(playerStore.points).title }}
