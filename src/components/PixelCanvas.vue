@@ -5,7 +5,7 @@
       :width="internalSize"
       :height="internalSize"
       @mousemove="$emit('mousemove', $event)"
-      @touchmove-prevent="$emit('touchmove', $event)"
+      @touchstart.prevent="$emit('touchstart', $event)"
       @touchmove.prevent="$emit('touchmove', $event)"
     ></canvas>
   </div>
@@ -69,14 +69,11 @@ const allPixelsFromProp = () => {
 
 const startReveal = () => {
   if (intervalId) clearInterval(intervalId);
-
   displayedPixels.value = [];
   particles.value = [];
-
   if (!props.pixelArray || !props.pixelArray[0]) return;
 
   const allVisible = allPixelsFromProp();
-
   if (!props.isRevealing) {
     displayedPixels.value = allVisible;
     if (!animationFrame) render();
@@ -86,7 +83,6 @@ const startReveal = () => {
   const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
   const dynamicSpeed =
     allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
-
   allVisible.sort(() => Math.random() - 0.5);
 
   intervalId = setInterval(() => {
@@ -97,7 +93,6 @@ const startReveal = () => {
       const res = props.pixelArray.length;
       const cellSize = internalSize / res;
       const color = colorPalette[next.val] || "#fff";
-
       createParticles(next.x, next.y, color, cellSize);
       soundStore.playSound("reveal");
     } else {
@@ -128,7 +123,6 @@ const render = () => {
     const pixelsToDraw = props.isRevealing
       ? displayedPixels.value
       : allPixelsFromProp();
-
     pixelsToDraw.forEach((p) => {
       const color = colorPalette[p.val];
       let scale = 1;
@@ -136,88 +130,83 @@ const render = () => {
         const elapsed = now - p.createdAt;
         scale = Math.min(1, elapsed / 100);
       }
-
       const currentSize = baseSize * scale;
-      const offset = (baseSize - currentSize) / 2;
-
+      const offsetPos = (baseSize - currentSize) / 2;
       ctx.shadowColor = color;
       ctx.shadowBlur = 15 * scale;
       ctx.fillStyle = color;
-
       ctx.fillRect(
-        p.x * cellSize + gap + offset,
-        p.y * cellSize + gap + offset,
+        p.x * cellSize + gap + offsetPos,
+        p.y * cellSize + gap + offsetPos,
         currentSize,
         currentSize,
       );
-
-      if (p.val === 1) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * scale})`;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(p.x * cellSize, p.y * cellSize, cellSize, cellSize);
-      }
     });
   };
 
   ctx.clearRect(0, 0, internalSize, internalSize);
 
   if (props.isMagnifierMode && !props.isStatusIcon) {
+    const radius = 70;
+    const offset = 90;
+    const viewX = props.mousePos.x - offset;
+    const viewY = props.mousePos.y - offset;
+
     ctx.save();
-
     ctx.beginPath();
-    ctx.arc(props.mousePos.x, props.mousePos.y, 60, 0, Math.PI * 2);
+    ctx.arc(viewX, viewY, radius, 0, Math.PI * 2);
     ctx.clip();
-
     drawPixels();
-
     ctx.restore();
 
     ctx.strokeStyle = "#ec4899";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 20;
     ctx.shadowColor = "#ec4899";
     ctx.shadowBlur = 10;
-    ctx.beginPath();
-    ctx.arc(props.mousePos.x, props.mousePos.y, 60, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.shadowBlur = 0;
+
+    const angle = Math.atan2(
+      props.mousePos.y - viewY,
+      props.mousePos.x - viewX,
+    );
+    const startX = viewX + Math.cos(angle) * radius;
+    const startY = viewY + Math.sin(angle) * radius;
+
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(props.mousePos.x, props.mousePos.y);
+    ctx.stroke();
+    ctx.fill();
   } else {
     drawPixels();
   }
 
+  // Partikel;
   for (let i = particles.value.length - 1; i >= 0; i--) {
     const p = particles.value[i];
     p.x += p.vx;
     p.y += p.vy;
     p.life -= 0.02;
-
     if (p.life <= 0) {
       particles.value.splice(i, 1);
       continue;
     }
-
     ctx.globalAlpha = p.life;
     ctx.fillStyle = p.color;
     ctx.fillRect(p.x, p.y, 3, 3);
   }
   ctx.globalAlpha = 1.0;
-
   animationFrame = requestAnimationFrame(render);
 };
 
 watch(
   () => props.pixelArray,
   () => {
-    if (props.pixelArray && props.pixelArray.length > 0) {
-      startReveal();
-    }
+    if (props.pixelArray?.length > 0) startReveal();
   },
   { deep: true },
 );
-
-onMounted(() => {
-  startReveal();
-});
-
+onMounted(() => startReveal());
 onUnmounted(() => {
   clearInterval(intervalId);
   if (animationFrame) cancelAnimationFrame(animationFrame);
@@ -228,17 +217,13 @@ onUnmounted(() => {
 .canvas-wrapper {
   background: #000;
   border: 2px solid #1a1c26;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
   overflow: hidden;
   line-height: 0;
+  touch-action: none;
 }
-
 canvas {
   max-width: 100%;
   height: auto;
-  touch-action: none !important;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
+  cursor: none;
 }
 </style>
