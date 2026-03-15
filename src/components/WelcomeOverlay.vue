@@ -1,6 +1,7 @@
 <template>
   <div class="welcome-overlay">
-    <div class="setup-card">
+    <GameManual v-show="showManual" @close="showManual = false" />
+    <div v-show="!showManual" class="setup-card">
       <h1 class="logo">Pix<span>Reveal</span></h1>
 
       <div class="setup-section">
@@ -56,6 +57,9 @@
       </div>
 
       <button class="start-btn" @click="handleStart">PRESS TO START</button>
+      <button class="how-to-play-link" @click="showManual = true">
+        HOW TO PLAY
+      </button>
     </div>
 
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
@@ -70,11 +74,13 @@ import { Icon } from "@iconify/vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
 import { getRandomUserName } from "@/utils/random";
+import GameManual from "./GameManual.vue";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
 const showAvatarModal = ref(false);
 const isFullscreen = ref(!!document.fullscreenElement);
+const showManual = ref(false);
 
 const emit = defineEmits(["start"]);
 
@@ -280,6 +286,14 @@ onUnmounted(() => {
 .start-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px 0 #b45309;
+}
+
+.how-to-play-link {
+  background: none;
+  color: var(--white);
+  margin-top: 32px;
+  border: none;
+  text-decoration: underline;
 }
 
 @keyframes arcadeBlink {
