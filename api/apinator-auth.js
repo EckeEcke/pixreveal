@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     const playerId = req.headers["x-player-id"] || "anon";
     const isHost = req.headers["x-player-host"] === "true";
     const rounds = req.headers["x-player-rounds"] || null
+    const duration = req.headers["x-player-duration"] || 15;
 
     const appKey = process.env.VITE_APINATOR_KEY;
     const appSecret = process.env.APINATOR_SECRET;
@@ -23,7 +24,8 @@ export default async function handler(req, res) {
         name: String(username),
         avatar: Number(avatarIndex),
         host: isHost,
-        rounds
+        rounds,
+        duration
       },
     });
 

@@ -27,17 +27,21 @@ import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "./ModalWrapper.vue";
 import { useRoute } from "vue-router";
+import { useOnlineStore } from "@/stores/online";
 
 const route = useRoute();
 const joinRoomId = ref(route.query.id ?? "");
+const loadingText = ref("LOADING...");
+const playerId = Math.random().toString(36).substring(2, 9);
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
+const onlineStore = useOnlineStore();
 
 const joinGame = () => {
   if (!joinRoomId.value) return;
   soundStore.playSound("click");
-  setUser();
+  playerStore.setUser();
   onlineStore.isLoading = true;
   loadingText.value = "JOINING GAME...";
   onlineStore.joinSession(

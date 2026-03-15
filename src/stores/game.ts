@@ -29,13 +29,15 @@ export const useGameStore = defineStore("game", () => {
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
   const playSound = ref(false);
+  const revealTime = ref(15);
 
   const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
 
-  const prepareGame = (customRounds?: any[]) => {
+  const prepareGame = (customRevealTime: number, customRounds?: any[]) => {
     if (customRounds) {
       rounds.value = customRounds;
       maxRounds.value = customRounds.length;
+      revealTime.value = customRevealTime
     } else {
       const shuffled = shuffle(drawings as unknown as Drawing[]);
       const selectedDrawings = shuffled.slice(0, maxRounds.value);
@@ -88,6 +90,7 @@ export const useGameStore = defineStore("game", () => {
     selectedOption,
     isGameOver,
     playSound,
+    revealTime,
     prepareGame,
     nextRound,
     reset,

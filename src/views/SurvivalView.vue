@@ -13,7 +13,7 @@
         :resolution="resolution"
         :is-revealing="isRevealing"
         :is-status-icon="store.hasAnswered"
-        :timer-duration="15"
+        :timer-duration="timerDuration"
       />
       <TimerDisplay :count="store.timeLeft" :max="store.maxTime" showSeconds />
     </section>
@@ -39,13 +39,16 @@ import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
+import { useGameStore } from "@/stores/game";
 
 const store = useSurvivalStore();
 const playerStore = usePlayerStore();
+const gameStore = useGameStore()
 
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const isRevealing = ref(true);
+const revealTime = gameStore.revealTime
 
 const setDrawing = () => {
   if (store.currentDrawing) {

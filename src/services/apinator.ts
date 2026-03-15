@@ -10,7 +10,8 @@ export const createApinatorClient = (userData: any) => {
       "x-player-avatar": String(userData.avatarIndex),
       "x-player-id": userData.playerId,
       "x-player-host": userData.isHost,
-      "x-player-rounds": userData.rounds
+      "x-player-rounds": userData.rounds,
+      "x-player-duration": userData.revealTime
     },
   });
 };

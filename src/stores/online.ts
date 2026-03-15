@@ -31,8 +31,8 @@ export const useOnlineStore = defineStore("online", () => {
   const isHost = ref(false);
   const playerStore = usePlayerStore();
   const messages = ref<any[]>([]);
-  const isLoading = ref(false)
-  const gameStore = useGameStore()
+  const isLoading = ref(false);
+  const gameStore = useGameStore();
 
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
@@ -63,7 +63,7 @@ export const useOnlineStore = defineStore("online", () => {
       if (!isHost.value && totalMembers <= 1) {
         console.error("Kein Host gefunden. Raum ist leer.");
         reset();
-        isLoading.value = false
+        isLoading.value = false;
         router.push("/");
         return;
       }
@@ -81,7 +81,13 @@ export const useOnlineStore = defineStore("online", () => {
           correctAnswers: 0,
         };
 
-        if (hash[id].rounds) gameStore.maxRounds = hash[id].rounds
+        console.log(hash[id].host && hash[id].rounds, hash[id]);
+
+        if (hash[id].host && hash[id].rounds)
+          gameStore.maxRounds = hash[id].rounds;
+
+        if (hash[id].host && hash[id].duration)
+          gameStore.revealTime = hash[id].duration;
 
         const existing = playersOnline.value.find((p) => p.playerId === id);
 
@@ -124,7 +130,7 @@ export const useOnlineStore = defineStore("online", () => {
     });
 
     channel.bind("client-game-started", (data: any) => {
-      useGameStore().prepareGame(data.rounds);
+      useGameStore().prepareGame(data.revealTime, data.rounds);
       router.push("/game");
     });
 
@@ -190,6 +196,7 @@ export const useOnlineStore = defineStore("online", () => {
         startedAt: new Date().toISOString(),
         rounds: useGameStore().rounds,
         maxRounds: useGameStore().maxRounds,
+        revealTime: useGameStore().revealTime,
       });
       router.push("/game");
     }
@@ -246,7 +253,7 @@ export const useOnlineStore = defineStore("online", () => {
     client.value = null;
     currentRoomId.value = null;
     messages.value = [];
-    isLoading.value = false
+    isLoading.value = false;
   };
 
   watch(

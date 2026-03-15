@@ -67,6 +67,7 @@ router.beforeEach((to, from, next) => {
 
   const protectedRoutes = ["/game", "/gameover", "/survival", "/buzzer", "/flashlight"];
   const validPathsForGameOver = ["/game", "/survival", "/buzzer", "/flashlight"]
+  const needRounds = ["/game", "/buzzer", "/flashlight"];
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {
@@ -75,7 +76,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (
-    (to.path === "/game" || to.path === "/flashlight") &&
+    (needRounds.includes(to.path)) &&
     (!gameStore.rounds || gameStore.rounds.length <= 0)
   ) {
     return next("/");

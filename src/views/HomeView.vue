@@ -192,7 +192,7 @@ const setUser = () =>
 
 const startGame = () => {
   setUser();
-  prepareGame();
+  prepareGame(gameStore.revealTime);
   playerStore.gameMode = "classic";
   soundStore.playSound("click");
   router.push("/game");
@@ -200,7 +200,7 @@ const startGame = () => {
 
 const startBuzzer = () => {
   setUser();
-  prepareGame();
+  prepareGame(gameStore.revealTime);
   playerStore.gameMode = "classic";
   soundStore.playSound("click");
   router.push("/buzzer");
@@ -208,7 +208,7 @@ const startBuzzer = () => {
 
 const startFlashLight = () => {
   setUser();
-  prepareGame();
+  prepareGame(gameStore.revealTime);
   playerStore.gameMode = "flashLight";
   soundStore.playSound("click");
   router.push("/flashlight");
@@ -229,7 +229,7 @@ const openEditor = () => {
 const hostGame = () => {
   soundStore.playSound("click");
   setUser();
-  prepareGame();
+  prepareGame(gameStore.revealTime);
   onlineStore.isLoading = true;
   loadingText.value = "CREATING ONLINE GAME...";
   onlineStore.hostSession({
@@ -238,6 +238,7 @@ const hostGame = () => {
     avatarIndex: playerStore.avatarIndex,
     isHost: true,
     rounds: gameStore.maxRounds,
+    revealTime: gameStore.revealTime
   });
 };
 

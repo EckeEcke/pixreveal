@@ -3,6 +3,7 @@
     <div class="lobby-card">
       <h1>Lobby</h1>
       <div>ROUNDS TO PLAY: {{ useGameStore().maxRounds }}</div>
+      <div>ROUND DURATION: {{ useGameStore().revealTime }}</div>
       <div class="room-id">
         ROOM ID:
         <span @click="copyToClipboard">
