@@ -81,8 +81,6 @@ export const useOnlineStore = defineStore("online", () => {
           correctAnswers: 0,
         };
 
-        console.log(hash[id].host && hash[id].rounds, hash[id]);
-
         if (hash[id].host && hash[id].rounds)
           gameStore.maxRounds = hash[id].rounds;
 
