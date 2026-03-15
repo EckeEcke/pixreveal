@@ -37,8 +37,8 @@
         }"
       >
         <span v-if="count > 0"
-          >{{ showSeconds ? count + 's' : count }} 
-          <Icon v-if="!showSeconds" icon="pixel:star-solid"/>
+          >{{ showSeconds ? count + "s" : count }}
+          <Icon v-if="!showSeconds" icon="pixel:star-solid" />
         </span>
         <span v-else>TIME UP</span>
       </div>
@@ -70,7 +70,7 @@ const props = defineProps({
   showSeconds: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 
 const showIncorrect = computed(() => props.isIncorrect && props.count > 0);
@@ -153,7 +153,6 @@ const progressWidth = computed(() => {
 }
 
 .text-danger {
-  color: #ff0044;
   text-shadow: 0 0 15px #ff0044;
   animation: blink 0.5s infinite alternate;
 }

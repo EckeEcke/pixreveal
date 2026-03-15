@@ -1,4 +1,5 @@
 <template>
+  <Analytics />
   <div class="pixelCon">
     <div
       v-for="n in 80"
@@ -20,6 +21,7 @@
 <script setup>
 import { watch, ref } from "vue";
 import { useSoundStore } from "./stores/sound";
+import { Analytics } from "@vercel/analytics/vue";
 
 const soundStore = useSoundStore();
 
