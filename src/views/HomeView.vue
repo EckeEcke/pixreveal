@@ -118,7 +118,16 @@
           >HoliznaPATREON</a
         >
       </div>
-      <div>© 2026 PixReveal | Code & Design by <a href="https://eckeecke.github.io" target="_blank" class="website-link">Christian Eckardt</a></div>
+      <div>
+        © 2026 PixReveal | Code & Design by
+        <a
+          href="https://eckeecke.github.io"
+          target="_blank"
+          rel="noopener"
+          class="website-link"
+          >Christian Eckardt</a
+        >
+      </div>
     </footer>
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
@@ -238,7 +247,7 @@ const hostGame = () => {
     avatarIndex: playerStore.avatarIndex,
     isHost: true,
     rounds: gameStore.maxRounds,
-    revealTime: gameStore.revealTime
+    revealTime: gameStore.revealTime,
   });
 };
 
