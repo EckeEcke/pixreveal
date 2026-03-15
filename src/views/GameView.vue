@@ -43,6 +43,8 @@ import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import TimerDisplay from "@/components/TimerDisplay.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
+import { useSoundStore } from "@/stores/sound";
+
 import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
@@ -55,7 +57,7 @@ const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const isRevealing = ref(true);
-const timerDuration = 15;
+const timerDuration = gameStore.revealTime;
 const timer = ref(timerDuration);
 let timerId = null;
 let revealTimeoutId = null;

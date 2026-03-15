@@ -24,6 +24,25 @@
           </label>
         </div>
       </div>
+      <div class="rounds-selection">
+        <label class="selection-label">SET ROUND LENGTH</label>
+        <div class="radio-group">
+          <label
+            v-for="duration in [5, 10, 15, 20]"
+            :key="duration"
+            class="radio-item"
+          >
+            <input
+              type="radio"
+              name="duration"
+              :value="duration"
+              v-model="gameStore.revealTime"
+              @change="soundStore.playSound('click')"
+            />
+            <span class="radio-button">{{ duration }}</span>
+          </label>
+        </div>
+      </div>
       <div>
         <label class="selection-label">DISPLAY & AUDIO</label>
 

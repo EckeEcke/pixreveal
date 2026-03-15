@@ -12,11 +12,12 @@ export const usePlayerStore = defineStore("player", () => {
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const gameMode: Ref<'classic' | 'survival' | undefined> = ref(undefined)
+  
 
   const setUser = (user: { username: string; avatar: number }) => {
     playerName.value =
-      user.username.length > 0 ? user.username : getRandomUserName();
-    avatarIndex.value = user.avatar;
+      user && user.username.length > 0 ? user.username : getRandomUserName();
+    avatarIndex.value = user ? user.avatar : 0;
     points.value = 0;
     correctAnswers.value = 0;
   };

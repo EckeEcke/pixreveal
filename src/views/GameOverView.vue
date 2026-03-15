@@ -133,7 +133,7 @@ const isOnlinePlay = computed(
 soundStore.playSound("complete");
 
 const getRankData = (score) => {
-  const adjustedScore = (score / gameStore.maxRounds) * 10;
+  const adjustedScore = (score / gameStore.maxRounds) * (15 / gameStore.revealTime) * 10;
   if (adjustedScore > 120) {
     return {
       title: "PIXEL PROPHET",
