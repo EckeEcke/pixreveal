@@ -109,7 +109,7 @@
       </main>
     </transition>
     <footer>
-      <ShareIcons />
+      <PlatformBar />
       <div>
         Music: Lo-Bit 13 by
         <a
@@ -118,7 +118,7 @@
           >HoliznaPATREON</a
         >
       </div>
-      <div>© 2026 PixReveal | Code & Design by Christian Eckardt</div>
+      <div>© 2026 PixReveal | Code & Design by <a href="https://eckeecke.github.io" target="_blank" class="website-link">Christian Eckardt</a></div>
     </footer>
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
@@ -140,11 +140,11 @@ import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
 import { Icon } from "@iconify/vue";
-import ShareIcons from "@/components/ShareIcons.vue";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
 import JoinModal from "@/components/JoinModal.vue";
 import SettingsModal from "@/components/SettingsModal.vue";
 import WelcomeOverlay from "@/components/WelcomeOverlay.vue";
+import PlatformBar from "@/components/PlatformBar.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -361,6 +361,11 @@ header {
   display: grid;
   grid-template-columns: 1fr;
   border-top: 2px solid #33415522;
+}
+
+.website-link {
+  text-decoration: none;
+  cursor: pointer;
 }
 
 @media (min-width: 1024px) {
