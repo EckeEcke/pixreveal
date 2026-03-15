@@ -1,7 +1,7 @@
 # PixReveal
 
 PixReveal is a pixel-based image guessing game.  
-Play live at: https://pixreveal.vercel.app
+Play live at: https://pixreveal.com
 
 ## How It Works
 
