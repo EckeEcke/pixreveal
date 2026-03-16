@@ -209,8 +209,11 @@ h2 {
 
 .config-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
+  @media (min-width: 375px) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .config-element {
