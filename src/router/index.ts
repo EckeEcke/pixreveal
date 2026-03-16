@@ -8,6 +8,7 @@ import LobbyView from "@/views/LobbyView.vue";
 import EditorView from "@/views/EditorView.vue";
 import BuzzerView from "@/views/BuzzerView.vue";
 import FlashLightView from "@/views/FlashLightView.vue";
+import NotFoundView from "@/views/NotFoundView.vue";
 import { useGameStore } from "@/stores/game";
 
 const router = createRouter({
@@ -17,46 +18,55 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      meta: { robots: "index, follow" },
     },
     {
       path: "/editor",
       name: "editor",
       component: EditorView,
+      meta: { robots: "index, follow" },
     },
     {
       path: "/game",
       name: "game",
       component: GameView,
+      meta: { robots: "noindex" },
     },
     {
       path: "/survival",
       name: "survival",
       component: SurvivalView,
+      meta: { robots: "noindex" },
     },
     {
       path: "/buzzer",
       name: "buzzer",
       component: BuzzerView,
+      meta: { robots: "noindex" },
     },
     {
       path: "/flashlight",
       name: "flashlight",
       component: FlashLightView,
+      meta: { robots: "noindex" },
     },
     {
       path: "/gameover",
       name: "gameover",
       component: GameOverView,
+      meta: { robots: "noindex" },
     },
     {
       path: "/lobby",
       name: "lobby",
       component: LobbyView,
+      meta: { robots: "noindex" },
     },
     {
       // PATH GUARD: always put in the end
       path: "/:pathMatch(.*)*",
-      redirect: "/",
+      component: NotFoundView,
+      meta: { robots: "noindex" },
     },
   ],
 });
