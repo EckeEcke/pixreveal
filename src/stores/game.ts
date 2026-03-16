@@ -7,8 +7,9 @@ type PixelGrid = number[][];
 
 export type Drawing = {
   name: string;
+  categories: String[];
   data: PixelGrid;
-  options: Object[] | undefined;
+  options?: Object[];
 };
 
 type RoundOption = {
@@ -37,7 +38,7 @@ export const useGameStore = defineStore("game", () => {
     if (customRounds) {
       rounds.value = customRounds;
       maxRounds.value = customRounds.length;
-      revealTime.value = customRevealTime
+      revealTime.value = customRevealTime;
     } else {
       const shuffled = shuffle(drawings as unknown as Drawing[]);
       const selectedDrawings = shuffled.slice(0, maxRounds.value);
