@@ -14,6 +14,7 @@
 <script setup>
 import { ref, onMounted, watch, onUnmounted } from "vue";
 import colorPalette from "../data/colorPalette";
+import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 
 const props = defineProps({
@@ -34,6 +35,21 @@ const timerDuration = props.timerDuration || 15;
 
 const canvasRef = ref(null);
 const internalSize = 600;
+
+const playerStore = usePlayerStore();
+let autoAngle = 0;
+const offset = 90
+
+const getAutoMousePos = () => {
+  autoAngle += 0.035;
+  const centerX = internalSize / 2 + offset;
+  const centerY = internalSize / 2 + offset;
+
+  return {
+    x: centerX + Math.sin(autoAngle) * 200,
+    y: centerY + Math.cos(autoAngle * 0.5) * 200,
+  };
+};
 
 const displayedPixels = ref([]);
 const particles = ref([]);
@@ -147,10 +163,13 @@ const render = () => {
   ctx.clearRect(0, 0, internalSize, internalSize);
 
   if (props.isMagnifierMode && !props.isStatusIcon) {
+    const activePos = playerStore.isCreatorMode
+      ? getAutoMousePos()
+      : props.mousePos;
     const radius = 70;
     const offset = 90;
-    const viewX = props.mousePos.x - offset;
-    const viewY = props.mousePos.y - offset;
+    const viewX = activePos.x - offset;
+    const viewY = activePos.y - offset;
 
     ctx.save();
     ctx.beginPath();
@@ -165,16 +184,13 @@ const render = () => {
     ctx.shadowBlur = 10;
     ctx.stroke();
 
-    const angle = Math.atan2(
-      props.mousePos.y - viewY,
-      props.mousePos.x - viewX,
-    );
+    const angle = Math.atan2(activePos.y - viewY, activePos.x - viewX);
     const startX = viewX + Math.cos(angle) * radius;
     const startY = viewY + Math.sin(angle) * radius;
 
     ctx.beginPath();
     ctx.moveTo(startX, startY);
-    ctx.lineTo(props.mousePos.x, props.mousePos.y);
+    ctx.lineTo(activePos.x, activePos.y);
     ctx.stroke();
     ctx.fill();
   } else {

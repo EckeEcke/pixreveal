@@ -2,6 +2,7 @@
   <main class="game-layout">
     <section class="canvas-section">
       <PlayerDisplay
+        v-if="!playerStore.isCreatorMode"
         :name="playerStore.playerName"
         :avatar-index="playerStore.avatarIndex"
         :points="playerStore.points"
@@ -33,7 +34,7 @@
     <section class="answer-section">
       <h1>inspect <Icon icon="pixel:search" /></h1>
       <AnswerButtons
-        :hasAnswered="hasAnswered"
+        :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
         :answers="rounds[currentRoundIndex].options"
         @answered="handleAnswer"
       />
@@ -100,7 +101,10 @@ const setDrawing = (data) => {
 
 const handleAnswer = (isCorrect) => {
   hasAnswered.value = true;
-  if (!isCorrect) {
+  if (playerStore.isCreatorMode) {
+    pixelData.value = statusIcons.question;
+  }
+  else if (!isCorrect) {
     pixelData.value = statusIcons.failure;
   } else {
     pixelData.value = statusIcons.success;
