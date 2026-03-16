@@ -2,6 +2,7 @@
   <main class="game-layout">
     <section class="canvas-section">
       <PlayerDisplay
+        v-if="!playerStore.isCreatorMode"
         :name="playerStore.playerName"
         :avatar-index="playerStore.avatarIndex"
         :points="playerStore.points"
@@ -28,7 +29,7 @@
     <section class="answer-section">
       <h1>guess it</h1>
       <AnswerButtons
-        :hasAnswered="hasAnswered"
+        :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
         :answers="rounds[currentRoundIndex].options"
         @answered="handleAnswer"
       />
@@ -75,7 +76,7 @@ const startTimer = () => {
   if (timerId) clearInterval(timerId);
   timerId = setInterval(() => {
     timer.value--;
-    if (timer.value <= 3) useSoundStore().playSound("timer") 
+    if (timer.value <= 3) useSoundStore().playSound("timer");
     if (timer.value <= 0) {
       clearInterval(timerId);
       handleAnswer(false);
@@ -94,8 +95,12 @@ const setDrawing = (data) => {
 };
 
 const handleAnswer = (isCorrect) => {
-  hasAnswered.value = true;
-  if (!isCorrect) {
+  hasAnswered.value = true
+  if (playerStore.isCreatorMode) {
+    pixelData.value = statusIcons.question;
+  }
+
+  else if (!isCorrect) {
     pixelData.value = statusIcons.failure;
   } else {
     pixelData.value = statusIcons.success;
