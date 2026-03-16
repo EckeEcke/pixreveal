@@ -21,7 +21,7 @@
         NICE!
       </div>
       <div
-        v-else-if="showIncorrect"
+        v-else-if="showIncorrect && !usePlayerStore().isCreatorMode"
         class="text-success-msg timer-text"
         key="incorrect"
       >
@@ -49,6 +49,7 @@
 <script setup>
 import { computed } from "vue";
 import { Icon } from "@iconify/vue";
+import { usePlayerStore } from "@/stores/player";
 
 const props = defineProps({
   count: {

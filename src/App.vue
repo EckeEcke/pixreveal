@@ -18,8 +18,11 @@
 </template>
 
 <script setup>
-import { watch, ref } from "vue";
+import { watch, ref, onMounted } from "vue";
 import { useSoundStore } from "./stores/sound";
+import { usePlayerStore } from "./stores/player";
+
+const playerStore = usePlayerStore();
 
 const soundStore = useSoundStore();
 
@@ -50,6 +53,13 @@ watch(
     handleAudioState(isEnabled);
   },
 );
+
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get('creator') === 'true') {
+    playerStore.isCreatorMode = true;
+  }
+});
 </script>
 
 <style>
