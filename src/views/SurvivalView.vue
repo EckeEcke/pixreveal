@@ -120,6 +120,7 @@ h1 {
   color: #fff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   animation: pulse 1s forwards;
+  margin-bottom: 48px;
   @media (min-width: 1024px) {
     margin-bottom: 32px;
   }
