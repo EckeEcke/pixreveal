@@ -18,6 +18,8 @@ const colorPalette = {
   16: "#F78BC2",
   17: "#6a2501",
   18: "#FFA000",
+  19: "#18F1D9",
+  20: "#CA895D",
 };
 
 export default colorPalette;

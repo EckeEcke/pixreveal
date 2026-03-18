@@ -29,7 +29,7 @@ const soundStore = useSoundStore();
 const audio = ref(null);
 
 const handleAudioState = async (isEnabled) => {
-  if (!audio.value) return;
+  if (!audio.value || playerStore.isCreatorMode) return;
 
   if (isEnabled) {
     if (!audio.value.src) {
