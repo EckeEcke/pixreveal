@@ -103,8 +103,7 @@ const handleAnswer = (isCorrect) => {
   hasAnswered.value = true;
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
-  }
-  else if (!isCorrect) {
+  } else if (!isCorrect) {
     pixelData.value = statusIcons.failure;
   } else {
     pixelData.value = statusIcons.success;
@@ -207,6 +206,9 @@ h1 {
   color: #fff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   animation: pulse 1s forwards;
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+  }
 }
 
 .answer-section {
