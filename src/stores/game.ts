@@ -9,6 +9,7 @@ export type Drawing = {
   name: string;
   categories: String[];
   data: PixelGrid;
+  primaryColor: number;
   options?: Object[];
 };
 
@@ -44,15 +45,52 @@ export const useGameStore = defineStore("game", () => {
       const selectedDrawings = shuffled.slice(0, maxRounds.value);
 
       rounds.value = selectedDrawings.map((drawing) => {
-        const otherNames = (drawings as unknown as Drawing[])
-          .filter((d: Drawing) => d.name !== drawing.name)
-          .map((d: Drawing) => d.name);
+        // 1. Initialer Pool (alles außer das aktuelle Bild) - direkt shufflen
+        const pool = shuffle(
+          (drawings as unknown as Drawing[]).filter(
+            (d: Drawing) => d.name !== drawing.name,
+          ),
+        );
 
-        const distractors = shuffle(otherNames).slice(0, 3);
+        // 2. STRIKTE PRIORISIERUNG
+
+        // Prio 1: Gleiche Farbe
+        const colorMatches = pool.filter(
+          (d: Drawing) => d.primaryColor === drawing.primaryColor,
+        );
+
+        // Prio 2: Gleiche Kategorien (nur die nehmen, die noch nicht in Prio 1 sind)
+        const categoryMatches = pool.filter(
+          (d: Drawing) =>
+            !colorMatches.includes(d) &&
+            d.categories.some((cat: string) =>
+              drawing.categories.includes(cat),
+            ),
+        );
+
+        // Rest: Alles andere (Fallback)
+        const fallbackMatches = pool.filter(
+          (d: Drawing) =>
+            !colorMatches.includes(d) && !categoryMatches.includes(d),
+        );
+
+        // 3. Ergebnisse der Reihe nach zusammenführen
+        // Da pool bereits geshuffelt war, sind auch die Untergruppen geshuffelt
+        const prioritizedPool = [
+          ...colorMatches,
+          ...categoryMatches,
+          ...fallbackMatches,
+        ];
+
+        // 4. Einfach die ersten 3 nehmen
+        const finalDistractors = prioritizedPool.slice(0, 3);
 
         const options = shuffle([
           { name: drawing.name, isCorrect: true },
-          ...distractors.map((name) => ({ name: name, isCorrect: false })),
+          ...finalDistractors.map((d: Drawing) => ({
+            name: d.name,
+            isCorrect: false,
+          })),
         ]);
 
         return {
