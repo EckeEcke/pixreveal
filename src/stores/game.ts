@@ -63,7 +63,7 @@ export const useGameStore = defineStore("game", () => {
         const categoryMatches = pool.filter(
           (d: Drawing) =>
             !colorMatches.includes(d) &&
-            d.categories.some((cat: string) =>
+            d.categories.some((cat: String) =>
               drawing.categories.includes(cat),
             ),
         );
