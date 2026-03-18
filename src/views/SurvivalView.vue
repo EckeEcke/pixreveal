@@ -43,12 +43,12 @@ import { useGameStore } from "@/stores/game";
 
 const store = useSurvivalStore();
 const playerStore = usePlayerStore();
-const gameStore = useGameStore()
+const gameStore = useGameStore();
 
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const isRevealing = ref(true);
-const revealTime = gameStore.revealTime
+const revealTime = gameStore.revealTime;
 
 const setDrawing = () => {
   if (store.currentDrawing) {
@@ -120,6 +120,9 @@ h1 {
   color: #fff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   animation: pulse 1s forwards;
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+  }
 }
 
 .answer-section {
