@@ -157,6 +157,16 @@ const render = () => {
         currentSize,
         currentSize,
       );
+      if (p.val === 1) {
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = "rgba(155, 155, 155, 0.5)";
+        ctx.strokeRect(
+          p.x * cellSize + gap,
+          p.y * cellSize + gap,
+          baseSize,
+          baseSize,
+        );
+      }
     });
   };
 
@@ -231,10 +241,12 @@ onUnmounted(() => {
 
 <style scoped>
 .canvas-wrapper {
-  background-color: #262d3d;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(
+    circle at center,
+    #1a1c26 0%,
+    /* Ein sehr dunkles Navy-Grau in der Mitte */ #0a0b10 60%,
+    /* Übergang */ #000000 100% /* Tiefschwarz am Rand */
+  );
   border: 2px solid #1a1c26;
   overflow: hidden;
   line-height: 0;
