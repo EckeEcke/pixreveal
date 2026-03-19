@@ -81,8 +81,9 @@ const startTimer = () => {
   if (timerId) clearInterval(timerId);
   timerId = setInterval(() => {
     timer.value--;
-    if (timer.value <= 3) useSoundStore().playSound("timer");
+    if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
     if (timer.value <= 0) {
+      useSoundStore().playSound("incorrect");
       clearInterval(timerId);
       handleAnswer(false);
     }

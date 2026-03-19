@@ -38,7 +38,7 @@ const internalSize = 600;
 
 const playerStore = usePlayerStore();
 let autoAngle = 0;
-const offset = 90
+const offset = 90;
 
 const getAutoMousePos = () => {
   autoAngle += 0.035;
@@ -231,7 +231,10 @@ onUnmounted(() => {
 
 <style scoped>
 .canvas-wrapper {
-  background: #000;
+  background-color: #262d3d;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   border: 2px solid #1a1c26;
   overflow: hidden;
   line-height: 0;
