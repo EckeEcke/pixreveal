@@ -76,8 +76,9 @@ const startTimer = () => {
   if (timerId) clearInterval(timerId);
   timerId = setInterval(() => {
     timer.value--;
-    if (timer.value <= 3) useSoundStore().playSound("timer");
+    if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
     if (timer.value <= 0) {
+      useSoundStore().playSound("incorrect");
       clearInterval(timerId);
       handleAnswer(false);
     }
@@ -95,12 +96,10 @@ const setDrawing = (data) => {
 };
 
 const handleAnswer = (isCorrect) => {
-  hasAnswered.value = true
+  hasAnswered.value = true;
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
-  }
-
-  else if (!isCorrect) {
+  } else if (!isCorrect) {
     pixelData.value = statusIcons.failure;
   } else {
     pixelData.value = statusIcons.success;

@@ -1,6 +1,6 @@
 const colorPalette = {
   0: "transparent",
-  1: "#1a202c",
+  1: "#111111",
   2: "#ffffff",
   3: "#4b4b4b",
   4: "#fff000",
