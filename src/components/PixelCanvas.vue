@@ -159,7 +159,7 @@ const render = () => {
       );
       if (p.val === 1) {
         ctx.shadowBlur = 0;
-        ctx.strokeStyle = "rgba(125, 125, 125, 0.5)";
+        ctx.strokeStyle = "rgba(175, 175, 175, 0.5)";
         ctx.lineWidth = 0.5;
         ctx.strokeRect(
           p.x * cellSize + gap,
