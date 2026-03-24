@@ -41,11 +41,11 @@
         drawings can you solve before the time runs out?
       </p>
 
-      <h3>Flashlight</h3>
+      <h3>Inspect</h3>
       <p>
         The drawing is fully complete but shrouded in darkness. Use your
         <strong>magnifying glass</strong>
-        (flashlight) to inspect sections and uncover the hidden pixelart.
+        (search lens) to inspect sections and uncover the hidden pixelart.
       </p>
 
       <h2>Free Online Multiplayer</h2>

@@ -5,7 +5,7 @@ Disallow: /game
 Disallow: /gameover
 Disallow: /survival
 Disallow: /buzzer
-Disallow: /flashlight
+Disallow: /inspect
 Disallow: /lobby
 
 Sitemap: https://pixreveal.com/sitemap.xml
