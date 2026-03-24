@@ -32,7 +32,6 @@
       />
     </section>
     <section class="answer-section">
-      <h1>inspect <Icon icon="pixel:search" /></h1>
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
         :answers="rounds[currentRoundIndex].options"
@@ -54,7 +53,6 @@ import { useOnlineStore } from "@/stores/online";
 import { useSoundStore } from "@/stores/sound";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
-import { Icon } from "@iconify/vue";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -201,22 +199,10 @@ onUnmounted(() => {
   }
 }
 
-h1 {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  animation: pulse 1s forwards;
-  margin-bottom: 48px;
-  @media (min-width: 1024px) {
-    margin-bottom: 32px;
-  }
-}
-
 .answer-section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 32px 0;
+  margin: 16px 0 32px;
 }
 </style>

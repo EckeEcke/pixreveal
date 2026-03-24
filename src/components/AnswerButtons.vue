@@ -62,6 +62,7 @@ const checkAnswer = (answer, event) => {
 }
 
 .answer-btn {
+  font-weight: 900;
   @media (min-width: 769px) {
     padding: 16px;
     font-size: 18px;

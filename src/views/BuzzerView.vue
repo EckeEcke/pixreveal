@@ -28,7 +28,6 @@
       />
     </section>
     <section class="answer-section">
-      <h1>guess it</h1>
       <AnswerButtons
         v-if="showAnswers"
         :hasAnswered="hasAnswered"
@@ -183,19 +182,11 @@ onUnmounted(() => {
   }
 }
 
-h1 {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  animation: pulse 1s forwards;
-}
-
 .answer-section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 32px 0;
+  margin: 16px 0 32px;
 }
 
 .buzzer-container {
