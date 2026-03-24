@@ -22,8 +22,6 @@ export const useSoundStore = defineStore("sound", () => {
     timer: new Audio(timerSound),
   };
 
-  sounds.reveal.volume = 0.4;
-
   const playSound = (name: keyof typeof sounds) => {
     if (!isAudioEnabled.value) return;
 
