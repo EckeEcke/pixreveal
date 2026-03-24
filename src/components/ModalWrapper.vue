@@ -42,5 +42,7 @@
 .modal-content {
     height: 100%;
     overflow: auto;
+    margin: -10px;
+    padding: 10px;
 }
 </style>

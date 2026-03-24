@@ -19,7 +19,6 @@
     </section>
 
     <section class="answer-section">
-      <h1>SURVIVAL</h1>
       <AnswerButtons
         :hasAnswered="store.hasAnswered"
         :answers="store.currentDrawing?.options"
@@ -114,22 +113,10 @@ onUnmounted(() => {
   }
 }
 
-h1 {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  animation: pulse 1s forwards;
-  margin-bottom: 48px;
-  @media (min-width: 1024px) {
-    margin-bottom: 32px;
-  }
-}
-
 .answer-section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 32px 0;
+  margin: 16px 0 32px;
 }
 </style>
