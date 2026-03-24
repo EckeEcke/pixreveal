@@ -7,7 +7,7 @@ import GameOverView from "@/views/GameOverView.vue";
 import LobbyView from "@/views/LobbyView.vue";
 import EditorView from "@/views/EditorView.vue";
 import BuzzerView from "@/views/BuzzerView.vue";
-import FlashLightView from "@/views/FlashLightView.vue";
+import InspectView from "@/views/InspectView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import { useGameStore } from "@/stores/game";
 
@@ -45,9 +45,9 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
-      path: "/flashlight",
-      name: "flashlight",
-      component: FlashLightView,
+      path: "/inspect",
+      name: "inspect",
+      component: InspectView,
       meta: { robots: "noindex" },
     },
     {
@@ -80,15 +80,15 @@ router.beforeEach((to, from, next) => {
     "/gameover",
     "/survival",
     "/buzzer",
-    "/flashlight",
+    "/inspect",
   ];
   const validPathsForGameOver = [
     "/game",
     "/survival",
     "/buzzer",
-    "/flashlight",
+    "/inspect",
   ];
-  const needRounds = ["/game", "/buzzer", "/flashlight"];
+  const needRounds = ["/game", "/buzzer", "/inspect"];
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {

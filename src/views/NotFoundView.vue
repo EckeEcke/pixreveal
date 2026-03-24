@@ -4,8 +4,8 @@
       <Icon icon="pixel:exclamation-triangle" />
     </div>
     <h2>[ERROR_404]</h2>
-    <p>Area not found. Even our flashlight couldn't reveal this page.</p>
-    <router-link to="/" class="btn-primary"> RETURN TO BASE </router-link>
+    <p>Area not found. Sorry about that.</p>
+    <router-link to="/" class="btn-primary"> RETURN TO GAME </router-link>
   </div>
 </template>
 

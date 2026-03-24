@@ -87,11 +87,11 @@
                   </div>
                 </button>
 
-                <button class="neon-btn special" @click="startFlashLight">
+                <button class="neon-btn special" @click="startInspect">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
-                    <Icon icon="pixel:lightbulb-solid" class="btn-icon" />
-                    <span class="btn-text">FLASHLIGHT</span>
+                    <Icon icon="pixel:search" class="btn-icon" />
+                    <span class="btn-text">INSPECT</span>
                   </div>
                 </button>
 
@@ -215,12 +215,12 @@ const startBuzzer = () => {
   router.push("/buzzer");
 };
 
-const startFlashLight = () => {
+const startInspect = () => {
   setUser();
   prepareGame(gameStore.revealTime);
-  playerStore.gameMode = "flashLight";
+  playerStore.gameMode = "inspect";
   soundStore.playSound("click");
-  router.push("/flashlight");
+  router.push("/inspect");
 };
 
 const startSurvival = () => {
