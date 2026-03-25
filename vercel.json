@@ -1,21 +1,37 @@
 {
     "cleanUrls": true,
+    "redirects": [
+        {
+            "source": "/wp-admin/(.*)",
+            "permanent": true,
+            "destination": "https://www.google.com"
+        },
+        {
+            "source": "/wp-login/(.*)",
+            "permanent": true,
+            "destination": "https://www.google.com"
+        },
+        {
+            "source": "/wp-content/(.*)",
+            "permanent": true,
+            "destination": "https://www.google.com"
+        },
+        {
+            "source": "/wp-includes/(.*)",
+            "permanent": true,
+            "destination": "https://www.google.com"
+        },
+        {
+            "source": "/(.*).php",
+            "permanent": true,
+            "destination": "https://www.google.com"
+        }
+    ],
     "rewrites": [
         {
             "source": "/api/:path*",
             "destination": "/api/:path*"
         },
-        {
-            "source": "/(wp-admin|wp-login|wp-content|wp-includes|.*\\.php).*",
-            "destination": "https://http.cat/404"
-        },
         { "source": "/:path", "destination": "/index.html" }
-    ],
-    "redirects": [
-        {
-            "source": "/(wp-admin|wp-login|wp-content|wp-includes|.*\\.php).*",
-            "permanent": true,
-            "destination": "https://www.google.com"
-        }
     ]
 }
