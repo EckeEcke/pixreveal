@@ -1,9 +1,21 @@
 {
+    "cleanUrls": true,
     "rewrites": [
         {
             "source": "/api/:path*",
             "destination": "/api/:path*"
         },
+        {
+            "source": "/(wp-admin|wp-login|wp-content|wp-includes|.*\\.php).*",
+            "destination": "https://http.cat/404"
+        },
         { "source": "/:path", "destination": "/index.html" }
+    ],
+    "redirects": [
+        {
+            "source": "/(wp-admin|wp-login|wp-content|wp-includes|.*\\.php).*",
+            "permanent": true,
+            "destination": "https://www.google.com"
+        }
     ]
 }
