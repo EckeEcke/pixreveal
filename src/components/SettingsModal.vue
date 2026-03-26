@@ -300,7 +300,8 @@ h2 {
   display: flex;
   overflow-x: auto;
   gap: 20px;
-  padding: 5px 0;
+  padding: 5px 32px;
+  margin: 0 -32px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
