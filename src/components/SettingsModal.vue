@@ -90,7 +90,7 @@
         <label class="selection-label">SET Categories</label>
         <div class="filter-container">
           <div
-            v-for="cat in CATEGORIES"
+            v-for="cat in configStore.categoriesWithCounts"
             :key="cat.name"
             class="title-card"
             :class="{ active: configStore.isCategorySelected(cat.name) }"
@@ -102,6 +102,7 @@
           >
             <span class="icon">{{ cat.icon }}</span>
             <span class="label">{{ cat.name }}</span>
+            <span class="count">({{ cat.count }})</span>
           </div>
         </div>
       </div>
@@ -115,7 +116,7 @@ import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "./ModalWrapper.vue";
-import { CATEGORIES, useConfigStore } from "@/stores/config";
+import { useConfigStore } from "@/stores/config";
 
 const soundStore = useSoundStore();
 const configStore = useConfigStore();
@@ -351,5 +352,11 @@ h2 {
   color: #fff;
   text-align: center;
   padding: 0 5px;
+}
+
+.title-card .count {
+  font-size: 12px;
+  margin-top: 4px;
+  opacity: 0.8;
 }
 </style>
