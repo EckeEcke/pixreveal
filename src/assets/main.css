@@ -31,6 +31,7 @@
   --neon-yellow: #ffb000;
   --yellow-glow: rgba(255, 176, 0, 0.4);
   --yellow-bg: rgba(255, 176, 0, 0.05);
+  --toastify-font-family: "Chakra Petch", "Rubik", sans-serif;
 }
 
 html,
