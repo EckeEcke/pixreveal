@@ -1,22 +1,5 @@
 {
     "cleanUrls": true,
-    "redirects": [
-        {
-            "source": "/(.*)wp-(.*)",
-            "permanent": true,
-            "destination": "https://www.google.com"
-        },
-        {
-            "source": "/(.*).php",
-            "permanent": true,
-            "destination": "https://www.google.com"
-        },
-        {
-            "source": "/xmlrpc(.*)",
-            "permanent": true,
-            "destination": "https://www.google.com"
-        }
-    ],
     "rewrites": [
         {
             "source": "/api/:path*",

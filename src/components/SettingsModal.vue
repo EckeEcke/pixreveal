@@ -325,6 +325,8 @@ h2 {
   transition: all 0.2s ease;
   opacity: 0.4;
   filter: grayscale(0.8);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .title-card.active {
