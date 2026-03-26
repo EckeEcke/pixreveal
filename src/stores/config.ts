@@ -98,7 +98,18 @@ export const useConfigStore = defineStore("config", () => {
     },
   });
 
+  const categoriesWithCounts = computed(() => {
+    return CATEGORIES.map((category) => {
+      const count = drawings.filter((d) => d.category === category.name).length;
+      return {
+        ...category,
+        count,
+      };
+    });
+  });
+
   return {
+    categoriesWithCounts,
     revealTime,
     selectedCategories,
     isCategorySelected,
