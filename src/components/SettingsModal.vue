@@ -301,7 +301,7 @@ h2 {
   overflow-x: auto;
   gap: 20px;
   padding: 5px 32px;
-  margin: 0 -32px;
+  margin: 0 -32px 0 0;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
