@@ -56,6 +56,7 @@ import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
 import { useSoundStore } from "@/stores/sound";
+import { useConfigStore } from "@/stores/config";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -64,7 +65,7 @@ const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const isRevealing = ref(true);
-const timerDuration = gameStore.revealTime;
+const timerDuration = configStore.revealTime;
 const timer = ref(timerDuration);
 let timerId = null;
 let revealTimeoutId = null;
@@ -77,7 +78,8 @@ const pauseReveal = ref(false);
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
 
-const { nextRound, maxRounds } = useGameStore();
+const nextRound = useGameStore().nextRound;
+const maxRounds = useConfigStore().maxRounds;
 
 const startTimer = () => {
   if (!pixelData.value || !pixelData.value[0]) return;
@@ -87,7 +89,7 @@ const startTimer = () => {
     timer.value--;
     if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
     if (timer.value <= 0) {
-      useSoundStore().playSound("incorrect")
+      useSoundStore().playSound("incorrect");
       clearInterval(timerId);
       handleAnswer(false);
     }

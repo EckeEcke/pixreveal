@@ -1,7 +1,7 @@
 ﻿[
   {
     "name": "Space Invader",
-    "categories": [ "Gaming" ],
+    "category": "Gaming",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -24,7 +24,7 @@
   },
   {
     "name": "Heart",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -47,7 +47,7 @@
   },
   {
     "name": "Chicken",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -70,7 +70,7 @@
   },
   {
     "name": "Snowman",
-    "categories": [ "Nature", "Objects" ],
+    "category": "Animals & Nature",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -93,7 +93,7 @@
   },
   {
     "name": "Mario",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -116,7 +116,7 @@
   },
   {
     "name": "Pokeball",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -139,7 +139,7 @@
   },
   {
     "name": "Watermelon",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -162,7 +162,7 @@
   },
   {
     "name": "Pacman",
-    "categories": [ "Gaming" ],
+    "category": "Gaming",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -185,7 +185,7 @@
   },
   {
     "name": "Pikachu",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -208,7 +208,7 @@
   },
   {
     "name": "Sword",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0 ],
@@ -231,7 +231,7 @@
   },
   {
     "name": "Coffee cup",
-    "categories": [ "Food", "Objects" ],
+    "category": "Food",
     "primaryColor": 11,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -254,7 +254,7 @@
   },
   {
     "name": "Superman",
-    "categories": [ "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
@@ -277,7 +277,7 @@
   },
   {
     "name": "Batman",
-    "categories": [ "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 ],
@@ -300,7 +300,7 @@
   },
   {
     "name": "Spiderman",
-    "categories": [ "Disney", "Marvel", "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
@@ -323,7 +323,7 @@
   },
   {
     "name": "Sun",
-    "categories": [ "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -346,7 +346,7 @@
   },
   {
     "name": "Moon",
-    "categories": [ "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -369,7 +369,7 @@
   },
   {
     "name": "House",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -392,7 +392,7 @@
   },
   {
     "name": "Apple",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -415,7 +415,7 @@
   },
   {
     "name": "Pizzaslice",
-    "categories": [ "Food" ],
+    "category": "Food",
     "primaryColor": 1,
     "data": [
       [ 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -438,7 +438,7 @@
   },
   {
     "name": "Burger",
-    "categories": [ "Food" ],
+    "category": "Food",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -461,7 +461,7 @@
   },
   {
     "name": "Rocket",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0 ],
@@ -484,7 +484,7 @@
   },
   {
     "name": "Penguin",
-    "categories": [ "Animals", "Nature", "Sea" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -507,7 +507,7 @@
   },
   {
     "name": "Gameboy",
-    "categories": [ "Gaming", "Nintendo", "Objects" ],
+    "category": "Gaming",
     "primaryColor": 14,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -530,7 +530,7 @@
   },
   {
     "name": "Smurf",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0 ],
@@ -553,7 +553,7 @@
   },
   {
     "name": "Eric Cartman",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 13,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -576,7 +576,7 @@
   },
   {
     "name": "Dog",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -599,7 +599,7 @@
   },
   {
     "name": "Santa",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -622,7 +622,7 @@
   },
   {
     "name": "Bart Simpson",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 4, 0, 4, 0, 4, 0, 4, 0, 4, 0, 0, 0, 0 ],
@@ -645,7 +645,7 @@
   },
   {
     "name": "Bomb",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 5, 0, 4, 0, 5, 0, 0, 0, 0 ],
@@ -668,7 +668,7 @@
   },
   {
     "name": "Sonic",
-    "categories": [ "Gaming", "Movies & TV" ],
+    "category": "Gaming",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -691,7 +691,7 @@
   },
   {
     "name": "Fox",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 ],
@@ -714,7 +714,7 @@
   },
   {
     "name": "Snail",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -737,7 +737,7 @@
   },
   {
     "name": "Hello Kitty",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0 ],
@@ -760,7 +760,7 @@
   },
   {
     "name": "Cactus",
-    "categories": [ "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 1, 5, 1, 0, 0, 0, 0, 0, 0 ],
@@ -783,7 +783,7 @@
   },
   {
     "name": "Mouse",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 14,
     "data": [
       [ 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0 ],
@@ -806,7 +806,7 @@
   },
   {
     "name": "Parrot",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -829,7 +829,7 @@
   },
   {
     "name": "Mushroom",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
@@ -852,7 +852,7 @@
   },
   {
     "name": "Pineapple",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 0, 0, 0, 0, 0 ],
@@ -875,7 +875,7 @@
   },
   {
     "name": "Spongebob",
-    "categories": [ "Movies & TV", "Sea" ],
+    "category": "Movies & TV",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -898,7 +898,7 @@
   },
   {
     "name": "Captain America",
-    "categories": [ "Disney", "Marvel", "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -921,7 +921,7 @@
   },
   {
     "name": "Crab",
-    "categories": [ "Sea", "Animals" ],
+    "category": "Animals & Nature",
     "primaryColor": 5,
     "data": [
       [ 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0 ],
@@ -944,7 +944,7 @@
   },
   {
     "name": "Ice Cream",
-    "categories": [ "Food" ],
+    "category": "Food",
     "primaryColor": 13,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -967,7 +967,7 @@
   },
   {
     "name": "Apple Tree",
-    "categories": [ "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 0, 0, 0, 0, 0 ],
@@ -990,7 +990,7 @@
   },
   {
     "name": "Poop Emoji",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1013,7 +1013,7 @@
   },
   {
     "name": "Monkey",
-    "categories": [ "Animals" ],
+    "category": "Animals & Nature",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1036,7 +1036,7 @@
   },
   {
     "name": "Bow & Arrow",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1059,7 +1059,7 @@
   },
   {
     "name": "Among Us",
-    "categories": [ "Gaming" ],
+    "category": "Gaming",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1082,7 +1082,7 @@
   },
   {
     "name": "Wrist Watch",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0, 0 ],
@@ -1105,7 +1105,7 @@
   },
   {
     "name": "Chocolate Cookie",
-    "categories": [ "Food" ],
+    "category": "Food",
     "primaryColor": 13,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1128,7 +1128,7 @@
   },
   {
     "name": "Light Bulb",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0 ],
@@ -1151,7 +1151,7 @@
   },
   {
     "name": "Link",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 0, 0, 0 ],
@@ -1174,7 +1174,7 @@
   },
   {
     "name": "Lighthouse",
-    "categories": [ "Objects", "Sea" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 14, 14, 0, 0, 0, 0, 0, 0 ],
@@ -1197,7 +1197,7 @@
   },
   {
     "name": "Scissors",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 ],
@@ -1220,7 +1220,7 @@
   },
   {
     "name": "Trophy",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1243,7 +1243,7 @@
   },
   {
     "name": "Rabbit",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1266,7 +1266,7 @@
   },
   {
     "name": "Envelope",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1289,7 +1289,7 @@
   },
   {
     "name": "Gamepad",
-    "categories": [ "Gaming", "Objects" ],
+    "category": "Gaming",
     "primaryColor": 14,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1312,7 +1312,7 @@
   },
   {
     "name": "Whale",
-    "categories": [ "Animals", "Sea" ],
+    "category": "Animals & Nature",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1335,7 +1335,7 @@
   },
   {
     "name": "Christmas tree",
-    "categories": [ "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1358,7 +1358,7 @@
   },
   {
     "name": "Iron Man",
-    "categories": [ "Disney", "Marvel", "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0 ],
@@ -1381,7 +1381,7 @@
   },
   {
     "name": "Wolverine",
-    "categories": [ "Disney", "Marvel", "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1404,7 +1404,7 @@
   },
   {
     "name": "Hulk",
-    "categories": [ "Disney", "Marvel", "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1427,7 +1427,7 @@
   },
   {
     "name": "Shrek",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1450,7 +1450,7 @@
   },
   {
     "name": "Hammer",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 14,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1473,7 +1473,7 @@
   },
   {
     "name": "Kenny",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 5,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1496,7 +1496,7 @@
   },
   {
     "name": "Mickey Mouse",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1519,7 +1519,7 @@
   },
   {
     "name": "Donald Duck",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1542,7 +1542,7 @@
   },
   {
     "name": "Crown",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1565,7 +1565,7 @@
   },
   {
     "name": "Rubber duck",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1588,7 +1588,7 @@
   },
   {
     "name": "R2D2",
-    "categories": [ "Disney", "Star Wars", "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1611,7 +1611,7 @@
   },
   {
     "name": "Buzz Lightyear",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1634,7 +1634,7 @@
   },
   {
     "name": "Leonardo (Turtles)",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1657,7 +1657,7 @@
   },
   {
     "name": "Minnie Mouse",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1680,7 +1680,7 @@
   },
   {
     "name": "Giraffe",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 13,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1703,7 +1703,7 @@
   },
   {
     "name": "Carrot",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 5,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1726,7 +1726,7 @@
   },
   {
     "name": "Ladybug",
-    "categories": [ "Animals" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1749,7 +1749,7 @@
   },
   {
     "name": "Elmo",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1772,7 +1772,7 @@
   },
   {
     "name": "Sunflower",
-    "categories": [ "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1795,7 +1795,7 @@
   },
   {
     "name": "Cow",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1818,7 +1818,7 @@
   },
   {
     "name": "Goofy",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1841,7 +1841,7 @@
   },
   {
     "name": "Dolphin",
-    "categories": [ "Animals", "Sea" ],
+    "category": "Animals & Nature",
     "primaryColor": 11,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1864,7 +1864,7 @@
   },
   {
     "name": "Reindeer",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1887,7 +1887,7 @@
   },
   {
     "name": "Gecko",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1910,7 +1910,7 @@
   },
   {
     "name": "Teddy",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1933,7 +1933,7 @@
   },
   {
     "name": "Traffic Light",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 3,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1956,7 +1956,7 @@
   },
   {
     "name": "Arielle",
-    "categories": [ "Disney", "Movies & TV", "Sea" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 5,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -1979,7 +1979,7 @@
   },
   {
     "name": "Turtle",
-    "categories": [ "Animals", "Nature", "Sea" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2002,7 +2002,7 @@
   },
   {
     "name": "Elephant",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 3,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2025,7 +2025,7 @@
   },
   {
     "name": "Tractor",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 15,
     "data": [
       [ 0, 15, 15, 15, 15, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2048,7 +2048,7 @@
   },
   {
     "name": "Football",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2071,7 +2071,7 @@
   },
   {
     "name": "Snoopy",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0 ],
@@ -2094,7 +2094,7 @@
   },
   {
     "name": "Ghostbusters",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2117,7 +2117,7 @@
   },
   {
     "name": "Bullet Bill",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2140,7 +2140,7 @@
   },
   {
     "name": "Goomba",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
@@ -2163,7 +2163,7 @@
   },
   {
     "name": "Deadpool",
-    "categories": [ "Disney", "Marvel", "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2186,7 +2186,7 @@
   },
   {
     "name": "Beer",
-    "categories": [ "Food" ],
+    "category": "Food",
     "primaryColor": 14,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2209,7 +2209,7 @@
   },
   {
     "name": "Ace of Hearts",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ],
@@ -2232,7 +2232,7 @@
   },
   {
     "name": "Cookie Monster",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2255,7 +2255,7 @@
   },
   {
     "name": "Joker",
-    "categories": [ "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2278,7 +2278,7 @@
   },
   {
     "name": "Luigi",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 9,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2301,7 +2301,7 @@
   },
   {
     "name": "Snowwhite",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2324,7 +2324,7 @@
   },
   {
     "name": "Cinderella",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2347,7 +2347,7 @@
   },
   {
     "name": "Daisy Duck",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2370,7 +2370,7 @@
   },
   {
     "name": "Present",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 ],
@@ -2393,7 +2393,7 @@
   },
   {
     "name": "Shin Chan",
-    "categories": [ "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2416,7 +2416,7 @@
   },
   {
     "name": "Maggie Simpson",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2439,7 +2439,7 @@
   },
   {
     "name": "Bert",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2462,7 +2462,7 @@
   },
   {
     "name": "Pencil",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2485,7 +2485,7 @@
   },
   {
     "name": "Yoshi",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0 ],
@@ -2508,7 +2508,7 @@
   },
   {
     "name": "Ying & Yang",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
@@ -2531,7 +2531,7 @@
   },
   {
     "name": "Toad",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2554,7 +2554,7 @@
   },
   {
     "name": "Basketball Hoop",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2577,7 +2577,7 @@
   },
   {
     "name": "Goose",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2600,7 +2600,7 @@
   },
   {
     "name": "Duck",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2623,7 +2623,7 @@
   },
   {
     "name": "Minion",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0 ],
@@ -2646,7 +2646,7 @@
   },
   {
     "name": "Google Logo",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2669,7 +2669,7 @@
   },
   {
     "name": "Ninja",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 3,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2692,7 +2692,7 @@
   },
   {
     "name": "Kirby",
-    "categories": [ "Gaming", "Nintendo" ],
+    "category": "Gaming",
     "primaryColor": 7,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2715,7 +2715,7 @@
   },
   {
     "name": "Nintendo Switch",
-    "categories": [ "Gaming", "Nintendo", "Objects" ],
+    "category": "Gaming",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2738,7 +2738,7 @@
   },
   {
     "name": "Skull",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2761,7 +2761,7 @@
   },
   {
     "name": "Donkey",
-    "categories": [ "Animals" ],
+    "category": "Animals & Nature",
     "primaryColor": 3,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2784,7 +2784,7 @@
   },
   {
     "name": "Wonderwoman",
-    "categories": [ "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2807,7 +2807,7 @@
   },
   {
     "name": "Bee",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2830,7 +2830,7 @@
   },
   {
     "name": "Cool Emoji",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2853,7 +2853,7 @@
   },
   {
     "name": "Ash Ketchum",
-    "categories": [ "Gaming", "Nintendo", "Movies & TV" ],
+    "category": "Gaming",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ],
@@ -2876,7 +2876,7 @@
   },
   {
     "name": "Keyboard",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 10,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2899,7 +2899,7 @@
   },
   {
     "name": "Lemon",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2922,7 +2922,7 @@
   },
   {
     "name": "Strawberry",
-    "categories": [ "Food", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -2945,7 +2945,7 @@
   },
   {
     "name": "Ghost",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 ],
@@ -2968,7 +2968,7 @@
   },
   {
     "name": "Goldfish",
-    "categories": [ "Animals", "Nature", "Sea" ],
+    "category": "Animals & Nature",
     "primaryColor": 1,
     "data": [
       [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
@@ -2991,7 +2991,7 @@
   },
   {
     "name": "Yoda",
-    "categories": [ "Disney", "Star Wars", "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3014,7 +3014,7 @@
   },
   {
     "name": "Naruto",
-    "categories": [ "Movies & TV", "Anime" ],
+    "category": "Movies & TV",
     "primaryColor": 13,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0 ],
@@ -3037,7 +3037,7 @@
   },
   {
     "name": "Flamingo",
-    "categories": [ "Animals", "Nature", "Sea" ],
+    "category": "Animals & Nature",
     "primaryColor": 7,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 0, 0, 0 ],
@@ -3060,7 +3060,7 @@
   },
   {
     "name": "Sailor Moon",
-    "categories": [ "Anime", "Movies & TV", "Superheroes" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3083,7 +3083,7 @@
   },
   {
     "name": "Draco Malfoy",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 2,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3106,7 +3106,7 @@
   },
   {
     "name": "Ron Weasley",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 5,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3129,7 +3129,7 @@
   },
   {
     "name": "Harry Potter",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3152,7 +3152,7 @@
   },
   {
     "name": "Hermione Granger",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 12,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3175,7 +3175,7 @@
   },
   {
     "name": "Flash",
-    "categories": [ "Movies & TV", "Superheroes" ],
+    "category": "Superheroes",
     "primaryColor": 6,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3198,7 +3198,7 @@
   },
   {
     "name": "Finn",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 ],
@@ -3221,7 +3221,7 @@
   },
   {
     "name": "French Fries",
-    "categories": [ "Food", "Objects" ],
+    "category": "Food",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3244,7 +3244,7 @@
   },
   {
     "name": "Candy Cane",
-    "categories": [ "Food", "Objects" ],
+    "category": "Food",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3267,7 +3267,7 @@
   },
   {
     "name": "Woody",
-    "categories": [ "Disney", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 17,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3290,7 +3290,7 @@
   },
   {
     "name": "Son Goku",
-    "categories": [ "Anime", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3313,7 +3313,7 @@
   },
   {
     "name": "Vegeta",
-    "categories": [ "Anime", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3336,7 +3336,7 @@
   },
   {
     "name": "One Piece",
-    "categories": [ "Anime", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 1,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3359,7 +3359,7 @@
   },
   {
     "name": "Luffy",
-    "categories": [ "Anime", "Movies & TV" ],
+    "category": "Anime & Cartoons",
     "primaryColor": 18,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 18, 18, 18, 18, 18, 0, 0, 0, 0, 0 ],
@@ -3382,7 +3382,7 @@
   },
   {
     "name": "Lara Croft",
-    "categories": [ "Gaming" ],
+    "category": "Gaming",
     "primaryColor": 13,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 17, 17, 0, 0, 0, 0, 0, 0 ],
@@ -3405,55 +3405,191 @@
   },
   {
     "name": "Pig",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 16,
-    "data": [ [ 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0 ], [ 0, 1, 16, 16, 16, 1, 1, 1, 1, 1, 1, 1, 16, 16, 16, 1 ], [ 0, 1, 16, 16, 1, 1, 16, 16, 16, 16, 16, 1, 1, 16, 16, 1 ], [ 0, 0, 1, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 1, 0 ], [ 0, 0, 1, 16, 1, 1, 16, 16, 16, 16, 16, 1, 1, 16, 1, 0 ], [ 0, 1, 16, 16, 1, 1, 16, 16, 16, 16, 16, 1, 1, 16, 16, 1 ], [ 0, 1, 16, 16, 16, 16, 1, 1, 1, 1, 1, 16, 16, 16, 16, 1 ], [ 0, 1, 16, 16, 16, 1, 7, 7, 7, 7, 7, 1, 16, 16, 16, 1 ], [ 0, 1, 16, 16, 16, 1, 7, 1, 7, 1, 7, 1, 16, 16, 16, 1 ], [ 0, 1, 16, 16, 16, 1, 7, 7, 7, 7, 7, 1, 16, 16, 16, 1 ], [ 0, 0, 1, 16, 16, 16, 1, 1, 1, 1, 1, 16, 16, 16, 1, 0 ], [ 0, 0, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 0 ], [ 0, 0, 0, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 0, 0 ], [ 0, 0, 0, 1, 16, 1, 16, 16, 16, 16, 16, 1, 16, 1, 0, 0 ], [ 0, 0, 0, 1, 16, 16, 1, 1, 1, 1, 1, 16, 16, 1, 0, 0 ], [ 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0 ],
+      [ 0, 1, 16, 16, 16, 1, 1, 1, 1, 1, 1, 1, 16, 16, 16, 1 ],
+      [ 0, 1, 16, 16, 1, 1, 16, 16, 16, 16, 16, 1, 1, 16, 16, 1 ],
+      [ 0, 0, 1, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 1, 0 ],
+      [ 0, 0, 1, 16, 1, 1, 16, 16, 16, 16, 16, 1, 1, 16, 1, 0 ],
+      [ 0, 1, 16, 16, 1, 1, 16, 16, 16, 16, 16, 1, 1, 16, 16, 1 ],
+      [ 0, 1, 16, 16, 16, 16, 1, 1, 1, 1, 1, 16, 16, 16, 16, 1 ],
+      [ 0, 1, 16, 16, 16, 1, 7, 7, 7, 7, 7, 1, 16, 16, 16, 1 ],
+      [ 0, 1, 16, 16, 16, 1, 7, 1, 7, 1, 7, 1, 16, 16, 16, 1 ],
+      [ 0, 1, 16, 16, 16, 1, 7, 7, 7, 7, 7, 1, 16, 16, 16, 1 ],
+      [ 0, 0, 1, 16, 16, 16, 1, 1, 1, 1, 1, 16, 16, 16, 1, 0 ],
+      [ 0, 0, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 0 ],
+      [ 0, 0, 0, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 0, 0 ],
+      [ 0, 0, 0, 1, 16, 1, 16, 16, 16, 16, 16, 1, 16, 1, 0, 0 ],
+      [ 0, 0, 0, 1, 16, 16, 1, 1, 1, 1, 1, 16, 16, 1, 0, 0 ],
+      [ 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0 ]
+    ]
   },
   {
     "name": "Minecraft Steve",
-    "categories": [ "Gaming" ],
+    "category": "Gaming",
     "primaryColor": 13,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 17, 17, 17, 17, 17, 17, 17, 17, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 17, 17, 17, 17, 17, 17, 17, 17, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 17, 13, 13, 13, 13, 13, 13, 17, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 13, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 13, 2, 1, 13, 13, 1, 2, 13, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 13, 13, 13, 20, 20, 13, 13, 13, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 13, 13, 17, 13, 13, 17, 13, 13, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 13, 13, 17, 17, 17, 17, 13, 13, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 17, 17, 17, 17, 17, 17, 17, 17, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 17, 17, 17, 17, 17, 17, 17, 17, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 17, 13, 13, 13, 13, 13, 13, 17, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 13, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 13, 2, 1, 13, 13, 1, 2, 13, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 13, 13, 13, 20, 20, 13, 13, 13, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 13, 13, 17, 13, 13, 17, 13, 13, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 13, 13, 17, 17, 17, 17, 13, 13, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ]
   },
   {
     "name": "Weightlifter",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 13,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 17, 17, 17, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 3, 0, 0, 0, 13, 13, 13, 0, 0, 0, 3, 0, 0 ], [ 0, 0, 0, 3, 14, 13, 14, 13, 13, 13, 14, 13, 14, 3, 0, 0 ], [ 0, 0, 0, 3, 0, 13, 0, 0, 13, 0, 0, 13, 0, 3, 0, 0 ], [ 0, 0, 0, 0, 0, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 10, 10, 10, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 10, 1, 0, 1, 10, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 13, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 17, 17, 17, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 3, 0, 0, 0, 13, 13, 13, 0, 0, 0, 3, 0, 0 ],
+      [ 0, 0, 0, 3, 14, 13, 14, 13, 13, 13, 14, 13, 14, 3, 0, 0 ],
+      [ 0, 0, 0, 3, 0, 13, 0, 0, 13, 0, 0, 13, 0, 3, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 10, 10, 10, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 10, 1, 0, 1, 10, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 13, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0, 0, 0 ]
+    ]
   },
   {
     "name": "Soccer Player",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 13,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 17, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 13, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 13, 13, 17, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 6, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 6, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 13, 13, 13, 6, 0, 1, 1, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 6, 6, 10, 10, 2, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 10, 10, 10, 10, 13, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 1, 2, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 2, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 17, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 13, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 13, 13, 17, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 6, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 6, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 13, 13, 13, 6, 0, 1, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 6, 6, 10, 10, 2, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 10, 10, 10, 10, 13, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 1, 2, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 2, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ]
   },
   {
     "name": "Snake",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 1, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 1, 9, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0, 0 ], [ 0, 0, 1, 9, 1, 9, 9, 9, 1, 9, 1, 0, 0, 0, 0, 0 ], [ 0, 0, 1, 9, 1, 9, 9, 9, 1, 9, 9, 1, 0, 0, 0, 0 ], [ 0, 0, 1, 9, 9, 9, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0 ], [ 0, 0, 0, 1, 9, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ], [ 0, 0, 1, 1, 9, 9, 1, 9, 9, 9, 1, 1, 0, 0, 0, 0 ], [ 0, 1, 9, 9, 9, 1, 9, 9, 9, 9, 1, 9, 1, 0, 0, 0 ], [ 1, 9, 9, 1, 9, 9, 9, 9, 9, 1, 9, 9, 9, 1, 0, 0 ], [ 1, 9, 9, 9, 1, 1, 1, 1, 1, 9, 9, 9, 1, 9, 1, 0 ], [ 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 1, 0 ], [ 0, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 1, 9, 1, 0 ], [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 9, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 1, 9, 1, 9, 9, 9, 1, 9, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 1, 9, 1, 9, 9, 9, 1, 9, 9, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 1, 9, 9, 9, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 9, 9, 9, 9, 9, 9, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 1, 1, 9, 9, 1, 9, 9, 9, 1, 1, 0, 0, 0, 0 ],
+      [ 0, 1, 9, 9, 9, 1, 9, 9, 9, 9, 1, 9, 1, 0, 0, 0 ],
+      [ 1, 9, 9, 1, 9, 9, 9, 9, 9, 1, 9, 9, 9, 1, 0, 0 ],
+      [ 1, 9, 9, 9, 1, 1, 1, 1, 1, 9, 9, 9, 1, 9, 1, 0 ],
+      [ 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 1, 0 ],
+      [ 0, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 1, 9, 1, 0 ],
+      [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0 ]
+    ]
   },
   {
     "name": "Painter",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 10,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 17, 17, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 17, 17, 17, 2, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 17, 13, 13, 1, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 17, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 17, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 10, 16, 0, 0, 0, 18, 14, 9, 0, 0, 0, 0, 0, 0 ], [ 0, 16, 16, 10, 0, 13, 18, 18, 14, 9, 0, 0, 0, 0, 0, 0 ], [ 0, 16, 16, 16, 16, 13, 0, 18, 14, 9, 0, 0, 0, 0, 0, 0 ], [ 0, 10, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 10, 10, 10, 0, 0, 0, 0, 9, 9, 9, 9, 0, 0, 0, 0 ], [ 0, 10, 10, 10, 0, 0, 0, 0, 14, 14, 9, 14, 0, 0, 0, 0 ], [ 0, 0, 10, 10, 0, 0, 0, 0, 14, 14, 14, 14, 0, 0, 0, 0 ], [ 0, 0, 10, 10, 0, 0, 0, 0, 14, 14, 14, 3, 0, 0, 0, 0 ], [ 0, 0, 17, 17, 17, 0, 0, 0, 14, 14, 3, 3, 0, 0, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 17, 17, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 17, 17, 17, 2, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 17, 13, 13, 1, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 17, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 17, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 10, 16, 0, 0, 0, 18, 14, 9, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 16, 16, 10, 0, 13, 18, 18, 14, 9, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 16, 16, 16, 16, 13, 0, 18, 14, 9, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 10, 16, 16, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 10, 10, 10, 0, 0, 0, 0, 9, 9, 9, 9, 0, 0, 0, 0 ],
+      [ 0, 10, 10, 10, 0, 0, 0, 0, 14, 14, 9, 14, 0, 0, 0, 0 ],
+      [ 0, 0, 10, 10, 0, 0, 0, 0, 14, 14, 14, 14, 0, 0, 0, 0 ],
+      [ 0, 0, 10, 10, 0, 0, 0, 0, 14, 14, 14, 3, 0, 0, 0, 0 ],
+      [ 0, 0, 17, 17, 17, 0, 0, 0, 14, 14, 3, 3, 0, 0, 0, 0 ]
+    ]
   },
   {
     "name": "Frog",
-    "categories": [ "Animals", "Nature" ],
+    "category": "Animals & Nature",
     "primaryColor": 9,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 15, 15, 0, 15, 15, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 15, 2, 2, 15, 2, 2, 15, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 15, 2, 1, 9, 1, 2, 15, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 15, 9, 2, 1, 9, 1, 2, 9, 15, 0, 0, 0, 0 ], [ 0, 0, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 15, 0, 0, 0 ], [ 0, 0, 15, 9, 9, 15, 9, 9, 9, 15, 9, 9, 15, 0, 0, 0 ], [ 0, 0, 0, 15, 9, 9, 15, 15, 15, 9, 9, 15, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 15, 9, 9, 9, 9, 9, 15, 0, 0, 0, 0, 0 ], [ 0, 0, 15, 15, 0, 15, 9, 9, 9, 15, 0, 15, 15, 0, 0, 0 ], [ 0, 0, 15, 9, 15, 9, 9, 9, 9, 9, 15, 9, 15, 0, 0, 0 ], [ 0, 0, 0, 15, 9, 9, 15, 9, 15, 9, 9, 15, 0, 0, 0, 0 ], [ 0, 0, 0, 15, 9, 9, 15, 9, 15, 9, 9, 15, 0, 0, 0, 0 ], [ 0, 0, 15, 15, 15, 9, 15, 15, 15, 9, 15, 15, 15, 0, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 15, 15, 0, 15, 15, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 15, 2, 2, 15, 2, 2, 15, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 15, 2, 1, 9, 1, 2, 15, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 15, 9, 2, 1, 9, 1, 2, 9, 15, 0, 0, 0, 0 ],
+      [ 0, 0, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 15, 0, 0, 0 ],
+      [ 0, 0, 15, 9, 9, 15, 9, 9, 9, 15, 9, 9, 15, 0, 0, 0 ],
+      [ 0, 0, 0, 15, 9, 9, 15, 15, 15, 9, 9, 15, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 15, 9, 9, 9, 9, 9, 15, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 15, 15, 0, 15, 9, 9, 9, 15, 0, 15, 15, 0, 0, 0 ],
+      [ 0, 0, 15, 9, 15, 9, 9, 9, 9, 9, 15, 9, 15, 0, 0, 0 ],
+      [ 0, 0, 0, 15, 9, 9, 15, 9, 15, 9, 9, 15, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 15, 9, 9, 15, 9, 15, 9, 9, 15, 0, 0, 0, 0 ],
+      [ 0, 0, 15, 15, 15, 9, 15, 15, 15, 9, 15, 15, 15, 0, 0, 0 ]
+    ]
   },
   {
     "name": "Alarm Clock",
-    "categories": [ "Objects" ],
+    "category": "Objects & People",
     "primaryColor": 2,
-    "data": [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 4, 4, 0, 3, 0, 4, 4, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 4, 0, 6, 6, 6, 0, 4, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 6, 2, 2, 2, 6, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 6, 2, 2, 2, 1, 2, 6, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 6, 2, 2, 1, 2, 2, 6, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 6, 2, 2, 1, 2, 2, 6, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 6, 2, 2, 2, 6, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 3, 0, 6, 6, 6, 0, 3, 0, 0, 0, 0, 0 ] ]
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 4, 4, 0, 3, 0, 4, 4, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 4, 0, 6, 6, 6, 0, 4, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 6, 2, 2, 2, 6, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 6, 2, 2, 2, 1, 2, 6, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 6, 2, 2, 1, 2, 2, 6, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 6, 2, 2, 1, 2, 2, 6, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 6, 2, 2, 2, 6, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 3, 0, 6, 6, 6, 0, 3, 0, 0, 0, 0, 0 ]
+    ]
   },
   {
     "name": "Tweety",
-    "categories": [ "Movies & TV" ],
+    "category": "Movies & TV",
     "primaryColor": 4,
     "data": [
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -3476,25 +3612,140 @@
   },
   {
     "name": "Princess Peach",
-    "categories":["Gaming", "Nintendo"],
+    "category": "Gaming",
     "primaryColor": 7,
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 11, 4, 11, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 4, 4, 6, 4, 4, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 4, 13, 13, 13, 13, 13, 4, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 4, 4, 13, 11, 13, 11, 13, 4, 4, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 4, 11, 13, 13, 13, 13, 13, 11, 4, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 4, 13, 13, 13, 13, 13, 4, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 4, 4, 2, 7, 11, 7, 2, 4, 4, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 4, 2, 7, 7, 7, 2, 4, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0 ]
+    ]
+  },
+  {
+    "name": "Chocolate",
+    "category": "Food",
+    "primaryColor": 17,
+    "data": [
+      [ 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 17, 17, 1, 17, 17, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 17, 17, 1, 17, 17, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 17, 17, 1, 17, 17, 1, 17, 1, 0, 0, 0 ],
+      [ 0, 1, 1, 1, 1, 17, 17, 1, 17, 17, 1, 17, 17, 1, 1, 1 ],
+      [ 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2 ],
+      [ 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1 ],
+      [ 0, 0, 1, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 1, 0, 0 ],
+      [ 0, 0, 1, 16, 1, 16, 0, 1, 16, 1, 1, 2, 16, 1, 0, 0 ],
+      [ 0, 0, 1, 16, 2, 16, 2, 16, 16, 2, 16, 2, 16, 1, 0, 0 ],
+      [ 0, 0, 1, 16, 2, 16, 2, 2, 2, 2, 16, 2, 16, 1, 0, 0 ],
+      [ 0, 0, 1, 16, 2, 16, 16, 16, 16, 16, 16, 2, 16, 1, 0, 0 ],
+      [ 0, 0, 1, 16, 2, 2, 2, 2, 2, 2, 2, 2, 16, 1, 0, 0 ],
+      [ 0, 0, 1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 1, 0, 0 ],
+      [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 ]
+    ]
+  },
+  {
+    "name": "Sushi",
+    "category": "Food",
+    "primaryColor": 1,
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 0, 0, 0 ],
+      [ 0, 0, 1, 1, 2, 2, 5, 15, 18, 16, 2, 2, 1, 1, 0, 0 ],
+      [ 0, 0, 1, 2, 2, 4, 5, 15, 18, 1, 16, 2, 2, 1, 0, 0 ],
+      [ 0, 0, 1, 1, 2, 2, 5, 15, 6, 16, 2, 2, 1, 1, 0, 0 ],
+      [ 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0 ],
+      [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 ],
+      [ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 ],
+      [ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 ]
+    ]
+  },
+  {
+    "name": "Cupcake",
+    "category": "Food",
+    "primaryColor": 16,
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 16, 16, 16, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 16, 16, 16, 16, 16, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 16, 16, 16, 16, 16, 16, 16, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 17, 17, 17, 17, 17, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 17, 17, 17, 17, 17, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 17, 17, 17, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ]
+  },
+  {
+    "name": "Fried Egg",
+    "category": "Food",
+    "primaryColor": 2,
+    "data": [
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 2, 2, 2, 4, 4, 18, 2, 2, 2, 1, 0, 0 ],
+      [ 0, 0, 1, 2, 2, 2, 18, 4, 18, 18, 18, 2, 2, 2, 1, 0 ],
+      [ 0, 1, 2, 2, 2, 2, 18, 18, 18, 18, 18, 2, 2, 2, 2, 1 ],
+      [ 0, 1, 2, 2, 2, 2, 18, 18, 18, 18, 18, 2, 2, 2, 2, 1 ],
+      [ 0, 0, 1, 2, 2, 2, 2, 18, 18, 18, 2, 2, 2, 1, 1, 0 ],
+      [ 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 ]
+    ]
+  },
+  {
+    "name": "Cherries",
+    "category": "Food",
+    "primaryColor": 6,
     "data": [ 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0 ], 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 15, 15, 1, 0 ], 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 15, 15, 1 ], 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 15, 1 ], 
+      [ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1 ], 
+      [ 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 ], 
+      [ 0, 0, 0, 1, 6, 6, 6, 1, 0, 0, 0, 1, 0, 0, 0, 0 ], 
+      [ 0, 0, 1, 6, 6, 6, 6, 6, 1, 0, 1, 1, 1, 0, 0, 0 ], 
+      [ 0, 0, 1, 6, 6, 6, 6, 6, 1, 1, 6, 6, 6, 1, 0, 0 ], 
+      [ 0, 0, 1, 6, 6, 6, 6, 6, 1, 6, 6, 6, 6, 6, 1, 0 ], 
+      [ 0, 0, 0, 1, 6, 6, 6, 1, 1, 6, 6, 6, 6, 6, 1, 0 ], 
+      [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 6, 6, 6, 6, 6, 1, 0 ], 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 6, 6, 1, 0, 0 ], 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 ], 
       [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 0, 11, 4, 11, 0, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 4, 4, 6, 4, 4, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 4, 13, 13, 13, 13, 13, 4, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 4, 4, 13, 11, 13, 11, 13, 4, 4, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 4, 11, 13, 13, 13, 13, 13, 11, 4, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 4, 13, 13, 13, 13, 13, 4, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 4, 4, 2, 7, 11, 7, 2, 4, 4, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 4, 2, 7, 7, 7, 2, 4, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 0, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0 ], 
-      [ 0, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0 ] 
+      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] 
     ]
   }
 ]

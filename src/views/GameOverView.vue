@@ -106,9 +106,11 @@ import { useGameStore } from "@/stores/game";
 import { Icon } from "@iconify/vue";
 import ShareIcons from "@/components/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
+import { useConfigStore } from "@/stores/config";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
+const configStore = useConfigStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
@@ -133,7 +135,8 @@ const isOnlinePlay = computed(
 soundStore.playSound("complete");
 
 const getRankData = (score) => {
-  const adjustedScore = (score / gameStore.maxRounds) * (15 / gameStore.revealTime) * 10;
+  const adjustedScore =
+    (score / configStore.maxRounds) * (15 / configStore.revealTime) * 10;
   if (adjustedScore > 120) {
     return {
       title: "PIXEL PROPHET",

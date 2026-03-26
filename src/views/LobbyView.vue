@@ -2,8 +2,8 @@
   <div>
     <div class="lobby-card">
       <h1>Lobby</h1>
-      <div>ROUNDS TO PLAY: {{ useGameStore().maxRounds }}</div>
-      <div>ROUND DURATION: {{ useGameStore().revealTime }}</div>
+      <div>ROUNDS TO PLAY: {{ useConfigStore().maxRounds }}</div>
+      <div>ROUND DURATION: {{ useConfigStore().revealTime }}</div>
       <div class="room-id">
         ROOM ID:
         <span @click="copyToClipboard">
@@ -12,20 +12,20 @@
         </span>
       </div>
       <div class="share-room-buttons">
-          <button @click="copyLinkToClipboard" class="btn-outline">
-            <Icon icon="pixel:link-solid" />
-            COPY INVITE LINK
-          </button>
-          <button
-            v-if="canNativeShare"
-            class="btn-outline"
-            @click="shareNative"
-            title="More sharing options"
-          >
-            <Icon icon="pixel:share" />
-            SHARE
-          </button>
-        </div>
+        <button @click="copyLinkToClipboard" class="btn-outline">
+          <Icon icon="pixel:link-solid" />
+          COPY INVITE LINK
+        </button>
+        <button
+          v-if="canNativeShare"
+          class="btn-outline"
+          @click="shareNative"
+          title="More sharing options"
+        >
+          <Icon icon="pixel:share" />
+          SHARE
+        </button>
+      </div>
       <div v-if="showClipboardInfo" class="clipboard-info">
         COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
       </div>
