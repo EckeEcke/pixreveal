@@ -304,6 +304,7 @@ h2 {
   margin: 0 -32px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  scroll-snap-type: x mandatory;
 }
 
 .filter-container::-webkit-scrollbar {
