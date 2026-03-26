@@ -2,8 +2,8 @@
   <div>
     <div class="lobby-card">
       <h1>Lobby</h1>
-      <div>ROUNDS TO PLAY: {{ useConfigStore().maxRounds }}</div>
-      <div>ROUND DURATION: {{ useConfigStore().revealTime }}</div>
+      <div>ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
+      <div>ROUND DURATION: {{ configStore.revealTime }}</div>
       <div class="room-id">
         ROOM ID:
         <span @click="copyToClipboard">
@@ -67,12 +67,14 @@ import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
 import { Icon } from "@iconify/vue";
 import { usePlayerStore } from "@/stores/player";
+import { useConfigStore } from "@/stores/config";
 
 const { rounds } = useGameStore();
 
 const soundStore = useSoundStore();
 const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
+const configStore = useConfigStore();
 const router = useRouter();
 const showClipboardInfo = ref(false);
 const canNativeShare = ref(false);
