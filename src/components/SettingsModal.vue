@@ -299,7 +299,7 @@ h2 {
 .filter-container {
   display: flex;
   overflow-x: auto;
-  gap: 20px;
+  gap: 16px;
   padding: 5px 32px;
   margin: 0 -32px 0 0;
   -webkit-overflow-scrolling: touch;

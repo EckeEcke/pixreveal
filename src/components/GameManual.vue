@@ -64,7 +64,9 @@
         you want <strong>action-packed 5-second blitz rounds</strong> for a
         quick adrenaline rush, or a
         <strong>relaxed 20-second marathon</strong> with 20 drawings to test
-        your long-term recognition skills.
+        your long-term recognition skills. Customize your experience by
+        selecting your favorite <strong>Categories</strong>. You can combine as
+        many as you like to increase the total pool of drawings.
       </p>
     </article>
   </div>
