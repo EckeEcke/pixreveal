@@ -641,16 +641,6 @@ footer {
   filter: drop-shadow(0 0 2px #00f2ff);
 }
 
-.neon-btn.daily {
-  --btn-color: var(--neon-yellow);
-  border-color: var(--neon-yellow);
-  box-shadow: 0 0 15px var(--yellow-glow);
-}
-.neon-btn.daily .btn-icon {
-  color: var(--neon-yellow);
-  filter: drop-shadow(0 0 2px var(--neon-yellow));
-}
-
 @media (max-width: 480px) {
   .btn-icon {
     font-size: 32px;
