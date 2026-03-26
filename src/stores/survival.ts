@@ -3,6 +3,7 @@ import type { Ref } from "vue";
 import { defineStore } from "pinia";
 import type { Drawing } from "./game";
 import allDrawings from "@/data/drawings.json";
+import { useConfigStore } from "./config";
 import { useSoundStore } from "./sound";
 
 export const useSurvivalStore = defineStore("survival", () => {
@@ -23,9 +24,21 @@ export const useSurvivalStore = defineStore("survival", () => {
   );
 
   const startSurvival = () => {
-    drawings.value = [...(allDrawings as Drawing[])].sort(
-      () => Math.random() - 0.5,
+    const configStore = useConfigStore();
+
+    const preferred = (allDrawings as Drawing[]).filter((d) =>
+      configStore.selectedCategories.includes(d.category),
     );
+
+    const remaining = (allDrawings as Drawing[]).filter(
+      (d) => !configStore.selectedCategories.includes(d.category),
+    );
+
+    const shuffledPreferred = [...preferred].sort(() => Math.random() - 0.5);
+    const shuffledRemaining = [...remaining].sort(() => Math.random() - 0.5);
+
+    drawings.value = [...shuffledPreferred, ...shuffledRemaining];
+
     solvedCount.value = 0;
     timeLeft.value = 30;
     isGameOver.value = false;

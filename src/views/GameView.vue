@@ -49,15 +49,17 @@ import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
+import { useConfigStore } from "@/stores/config";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
+const configStore = useConfigStore();
 const gameStore = useGameStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const isRevealing = ref(true);
-const timerDuration = gameStore.revealTime;
+const timerDuration = configStore.revealTime;
 const timer = ref(timerDuration);
 let timerId = null;
 let revealTimeoutId = null;
@@ -67,7 +69,8 @@ const hasAnsweredCorrectly = ref(false);
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
 
-const { nextRound, maxRounds } = useGameStore();
+const nextRound = useGameStore().nextRound;
+const maxRounds = useConfigStore().maxRounds;
 
 const startTimer = () => {
   if (!pixelData.value || !pixelData.value[0]) return;

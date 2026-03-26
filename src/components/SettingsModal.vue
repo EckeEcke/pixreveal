@@ -17,7 +17,8 @@
               type="radio"
               name="rounds"
               :value="amount"
-              v-model="gameStore.maxRounds"
+              v-model="configStore.maxRounds"
+              :disabled="configStore.filteredDrawings.length < amount * 4"
               @change="soundStore.playSound('click')"
             />
             <span class="radio-button">{{ amount }}</span>
@@ -36,14 +37,14 @@
               type="radio"
               name="duration"
               :value="duration"
-              v-model="gameStore.revealTime"
+              v-model="configStore.revealTime"
               @change="soundStore.playSound('click')"
             />
             <span class="radio-button">{{ duration }}</span>
           </label>
         </div>
       </div>
-      <div>
+      <div class="general-settings">
         <label class="selection-label">DISPLAY & AUDIO</label>
 
         <div class="config-buttons">
@@ -85,6 +86,25 @@
           </div>
         </div>
       </div>
+      <div class="filter-settings">
+        <label class="selection-label">SET Categories</label>
+        <div class="filter-container">
+          <div
+            v-for="cat in CATEGORIES"
+            :key="cat.name"
+            class="title-card"
+            :class="{ active: configStore.isCategorySelected(cat.name) }"
+            :style="{
+              '--cat-color': cat.color,
+              '--cat-color-alpha': cat.color + '33',
+            }"
+            @click="configStore.toggleCategory(cat.name)"
+          >
+            <span class="icon">{{ cat.icon }}</span>
+            <span class="label">{{ cat.name }}</span>
+          </div>
+        </div>
+      </div>
       <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
     </div>
   </ModalWrapper>
@@ -94,11 +114,11 @@
 import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
-import { useGameStore } from "@/stores/game";
 import ModalWrapper from "./ModalWrapper.vue";
+import { CATEGORIES, useConfigStore } from "@/stores/config";
 
 const soundStore = useSoundStore();
-const gameStore = useGameStore();
+const configStore = useConfigStore();
 
 const isFullscreen = ref(!!document.fullscreenElement);
 
@@ -153,7 +173,9 @@ h2 {
   gap: 32px;
 }
 
-.rounds-selection {
+.rounds-selection,
+.general-settings,
+.filter-settings {
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -207,6 +229,20 @@ h2 {
   transform: translateY(-2px);
 }
 
+.radio-item input:disabled + .radio-button {
+  cursor: not-allowed;
+  opacity: 0.2;
+  filter: grayscale(1);
+  border-style: dotted;
+  background: #0a0a0a;
+  transform: none;
+  box-shadow: none;
+}
+
+.radio-item:has(input:disabled) {
+  cursor: not-allowed;
+}
+
 .config-buttons {
   display: grid;
   grid-template-columns: 1fr;
@@ -258,5 +294,58 @@ h2 {
 
 .config-label input:checked + .pixel-box .status-text {
   color: var(--primary);
+}
+
+.filter-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 5px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filter-container::-webkit-scrollbar {
+  display: none;
+}
+
+.title-card {
+  flex: 0 0 120px;
+  height: 130px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.4;
+  filter: grayscale(0.8);
+}
+
+.title-card.active {
+  opacity: 1;
+  filter: grayscale(0);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--cat-color);
+  box-shadow: 0 0 20px var(--cat-color-alpha);
+  transform: translateY(-4px);
+}
+
+.title-card .icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.title-card .label {
+  font-family: "Rajdhani", sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #fff;
+  text-align: center;
+  padding: 0 5px;
 }
 </style>

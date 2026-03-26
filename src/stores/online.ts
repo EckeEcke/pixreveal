@@ -5,6 +5,7 @@ import { generateRoomId } from "@/utils/crypto";
 import { createApinatorClient } from "@/services/apinator";
 import { useRouter } from "vue-router";
 import { usePlayerStore } from "./player";
+import { useConfigStore } from "./config";
 
 export interface UserData {
   playerId: string;
@@ -30,6 +31,7 @@ export const useOnlineStore = defineStore("online", () => {
   const router = useRouter();
   const isHost = ref(false);
   const playerStore = usePlayerStore();
+  const configStore = useConfigStore();
   const messages = ref<any[]>([]);
   const isLoading = ref(false);
   const gameStore = useGameStore();
@@ -82,10 +84,10 @@ export const useOnlineStore = defineStore("online", () => {
         };
 
         if (hash[id].host && hash[id].rounds)
-          gameStore.maxRounds = hash[id].rounds;
+          configStore.maxRounds = hash[id].rounds;
 
         if (hash[id].host && hash[id].duration)
-          gameStore.revealTime = hash[id].duration;
+          configStore.revealTime = hash[id].duration;
 
         const existing = playersOnline.value.find((p) => p.playerId === id);
 
@@ -193,7 +195,7 @@ export const useOnlineStore = defineStore("online", () => {
       activeChannel.value.trigger("client-game-started", {
         startedAt: new Date().toISOString(),
         rounds: useGameStore().rounds,
-        maxRounds: useGameStore().maxRounds,
+        maxRounds: useConfigStore().maxRounds,
         revealTime: useGameStore().revealTime,
       });
       router.push("/game");

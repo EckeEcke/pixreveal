@@ -154,11 +154,13 @@ import JoinModal from "@/components/JoinModal.vue";
 import SettingsModal from "@/components/SettingsModal.vue";
 import WelcomeOverlay from "@/components/WelcomeOverlay.vue";
 import PlatformBar from "@/components/PlatformBar.vue";
+import { useConfigStore } from "@/stores/config";
 
 const router = useRouter();
 const route = useRoute();
 const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
+const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
@@ -201,7 +203,7 @@ const setUser = () =>
 
 const startGame = () => {
   setUser();
-  prepareGame(gameStore.revealTime);
+  prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
   soundStore.playSound("click");
   router.push("/game");
@@ -209,7 +211,7 @@ const startGame = () => {
 
 const startBuzzer = () => {
   setUser();
-  prepareGame(gameStore.revealTime);
+  prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
   soundStore.playSound("click");
   router.push("/buzzer");
@@ -217,7 +219,7 @@ const startBuzzer = () => {
 
 const startInspect = () => {
   setUser();
-  prepareGame(gameStore.revealTime);
+  prepareGame(configStore.revealTime);
   playerStore.gameMode = "inspect";
   soundStore.playSound("click");
   router.push("/inspect");
@@ -238,7 +240,7 @@ const openEditor = () => {
 const hostGame = () => {
   soundStore.playSound("click");
   setUser();
-  prepareGame(gameStore.revealTime);
+  prepareGame(configStore.revealTime);
   onlineStore.isLoading = true;
   loadingText.value = "CREATING ONLINE GAME...";
   onlineStore.hostSession({
@@ -246,8 +248,8 @@ const hostGame = () => {
     username: playerStore.playerName,
     avatarIndex: playerStore.avatarIndex,
     isHost: true,
-    rounds: gameStore.maxRounds,
-    revealTime: gameStore.revealTime,
+    rounds: configStore.maxRounds,
+    revealTime: configStore.revealTime,
   });
 };
 
@@ -402,7 +404,7 @@ footer {
   display: grid;
   gap: 32px;
   text-align: center;
-  margin: 32px auto 0;
+  margin: 16px auto 0;
   a {
     color: inherit;
   }
