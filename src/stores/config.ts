@@ -70,6 +70,9 @@ export const useConfigStore = defineStore("config", () => {
       } else {
         toast.error(`NOT ENOUGH DRAWINGS! Need ${maxRounds.value * 4} items.`, {
           icon: "🚫",
+          style: {
+            fontFamily: "8bit",
+          },
         });
         useSoundStore().playSound("incorrect");
       }
