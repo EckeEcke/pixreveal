@@ -35,7 +35,7 @@
   height: auto;
   overflow: auto;
   max-width: 400px;
-  max-height: 95vh;
+  max-height: 90vh;
   box-sizing: border-box;
 }
 
