@@ -61,6 +61,7 @@ import { useConfigStore } from "@/stores/config";
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
+const configStore = useConfigStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -78,8 +79,8 @@ const pauseReveal = ref(false);
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
 
-const nextRound = useGameStore().nextRound;
-const maxRounds = useConfigStore().maxRounds;
+const nextRound = gameStore.nextRound;
+const maxRounds = configStore.maxRounds;
 
 const startTimer = () => {
   if (!pixelData.value || !pixelData.value[0]) return;
