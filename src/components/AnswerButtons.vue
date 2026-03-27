@@ -25,7 +25,7 @@ import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
 
 const props = defineProps({
-  answers: [],
+  answers: Array,
   hasAnswered: Boolean,
 });
 const buttonColors = ["btn-pink", "btn-blue", "btn-purple", "btn-yellow"];

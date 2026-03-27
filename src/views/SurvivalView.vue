@@ -1,11 +1,11 @@
 <template>
   <main class="game-layout">
     <section class="canvas-section">
-      <PlayerDisplay
-        :name="playerStore.playerName"
-        :avatar-index="playerStore.avatarIndex"
-        :points="store.solvedCount"
-        class="hud"
+      <GameHeader
+        :max="store.maxTime"
+        :count="store.timeLeft"
+        :total-score="store.solvedCount"
+        :is-survival="true"
         :highscore="store.highscore"
       />
       <PixelCanvas
@@ -13,9 +13,8 @@
         :resolution="resolution"
         :is-revealing="isRevealing"
         :is-status-icon="store.hasAnswered"
-        :timer-duration="timerDuration"
+        :timer-duration="useConfigStore().revealTime"
       />
-      <TimerDisplay :count="store.timeLeft" :max="store.maxTime" showSeconds />
     </section>
 
     <section class="answer-section">
@@ -34,10 +33,10 @@ import { useSurvivalStore } from "@/stores/survival";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import router from "@/router";
 import { usePlayerStore } from "@/stores/player";
-import PlayerDisplay from "@/components/PlayerDisplay.vue";
-import TimerDisplay from "@/components/TimerDisplay.vue";
+import GameHeader from "@/components/GameHeader.vue";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
+import { useConfigStore } from "@/stores/config";
 
 const store = useSurvivalStore();
 const playerStore = usePlayerStore();
@@ -68,7 +67,6 @@ const handleAnswer = (isCorrect) => {
 
   setTimeout(() => {
     isRevealing.value = false;
-    store.hasAnswered = false;
     pixelData.value = store.currentDrawing.data;
     setTimeout(() => {
       isRevealing.value = true;
@@ -76,6 +74,7 @@ const handleAnswer = (isCorrect) => {
       pixelData.value = store.currentDrawing.data;
       setDrawing();
     }, 1000);
+    store.hasAnswered = false;
   }, 1000);
 };
 
