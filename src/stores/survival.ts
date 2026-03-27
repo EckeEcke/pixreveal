@@ -9,7 +9,9 @@ import { useSoundStore } from "./sound";
 export const useSurvivalStore = defineStore("survival", () => {
   const drawings: Ref<Drawing[]> = ref([]);
   const currentDrawing: Ref<Drawing | undefined> = ref(undefined);
-  const highscore = ref(localStorage.getItem("survival_highscore") || "0");
+  const highscore = ref(
+    Number(localStorage.getItem("survival_highscore") || "0"),
+  );
   const solvedCount = ref(0);
   const timeLeft = ref(15);
   const maxTime = ref(30);
@@ -95,7 +97,7 @@ export const useSurvivalStore = defineStore("survival", () => {
     solvedCount.value++;
     if (solvedCount.value > Number(highscore.value)) {
       newHighscore.value = true;
-      highscore.value = solvedCount.value.toString();
+      highscore.value = solvedCount.value;
     }
     addTime(3);
   };

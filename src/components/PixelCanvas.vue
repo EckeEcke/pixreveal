@@ -245,13 +245,14 @@ onUnmounted(() => {
   background-image: radial-gradient(
     circle at center,
     #1a1c26 0%,
-    /* Ein sehr dunkles Navy-Grau in der Mitte */ #0a0b10 60%,
-    /* Übergang */ #000000 100% /* Tiefschwarz am Rand */
+    #0a0b10 60%,
+    #000000 100%
   );
   border: 2px solid #1a1c26;
   overflow: hidden;
   line-height: 0;
   touch-action: none;
+  padding: 16px 0;
 }
 canvas {
   max-width: 100%;

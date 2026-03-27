@@ -1,15 +1,15 @@
 <template>
   <main class="game-layout">
     <section class="canvas-section">
-      <PlayerDisplay
-        v-if="!playerStore.isCreatorMode"
-        :name="playerStore.playerName"
-        :avatar-index="playerStore.avatarIndex"
-        :points="playerStore.points"
-        :correct-answers="playerStore.correctAnswers"
-        :round-index="gameStore.currentRoundIndex + 1"
+      <GameHeader
+        :max="timerDuration"
+        :count="timer"
+        :is-correct="hasAnsweredCorrectly"
+        :is-incorrect="hasAnswered && !hasAnsweredCorrectly"
+        :total-score="playerStore.points"
+        :currentRound="gameStore.currentRoundIndex + 1"
         :max-rounds="maxRounds"
-        class="hud"
+        :is-survival="false"
       />
       <PixelCanvas
         :pixel-array="pixelData"
@@ -22,13 +22,6 @@
         @mousemove="updateMousePos"
         @touchstart="updateTouchPos"
         @touchmove="updateTouchPos"
-      />
-      <TimerDisplay
-        :class="{ 'is-hidden': !isRevealing || hasAnswered }"
-        :count="timer"
-        :max="timerDuration"
-        :is-correct="hasAnsweredCorrectly"
-        :is-incorrect="hasAnswered && !hasAnsweredCorrectly"
       />
     </section>
     <section class="answer-section">
@@ -44,8 +37,7 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
-import PlayerDisplay from "@/components/PlayerDisplay.vue";
-import TimerDisplay from "@/components/TimerDisplay.vue";
+import GameHeader from "@/components/GameHeader.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import router from "@/router";
