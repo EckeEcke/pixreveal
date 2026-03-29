@@ -205,6 +205,7 @@ export const useOnlineStore = defineStore("online", () => {
   const broadcastScore = () => {
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
+    console.log("triggered game finished", activeChannel.value, client.value)
     if (activeChannel.value && client.value) {
       const me = playersOnline.value.find((p) => p.playerId === playerId.value);
       if (me) {
