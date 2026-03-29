@@ -76,6 +76,7 @@ const avatarStyle = computed(() => {
 const hostGame = () => {
   soundStore.playSound("click");
   prepareGame(configStore.revealTime);
+  onlineStore.playerId = playerId;
   onlineStore.isLoading = true;
   onlineStore.loadingText = "CREATING ONLINE GAME...";
   onlineStore.hostSession({
@@ -91,6 +92,7 @@ const hostGame = () => {
 const joinGame = () => {
   if (!joinRoomId) return;
   soundStore.playSound("click");
+  onlineStore.playerId = playerId;
   onlineStore.isLoading = true;
   loadingText.value = "JOINING GAME...";
   onlineStore.joinSession(
