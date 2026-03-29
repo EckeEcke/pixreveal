@@ -381,10 +381,4 @@ const avatarStyle = computed(() => {
   color: var(--neon-success);
   filter: drop-shadow(0 0 5px var(--neon-success));
 }
-
-@media (max-width: 420px) {
-  .hud-username {
-    display: none;
-  }
-}
 </style>
