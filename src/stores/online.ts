@@ -34,7 +34,7 @@ export const useOnlineStore = defineStore("online", () => {
   const configStore = useConfigStore();
   const messages = ref<any[]>([]);
   const isLoading = ref(false);
-  const gameStore = useGameStore();
+  const loadingText = ref("LOADING...");
 
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
@@ -272,6 +272,7 @@ export const useOnlineStore = defineStore("online", () => {
     playerId,
     messages,
     isLoading,
+    loadingText,
     hostSession,
     joinSession,
     reset,

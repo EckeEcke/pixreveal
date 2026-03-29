@@ -1,7 +1,10 @@
 <template>
-  <header class="game-header">
+  <header
+    class="game-header"
+    :class="!playerStore.isCreatorMode ? 'header-grid' : ''"
+  >
     <!-- LEFT -->
-    <div class="header-section left">
+    <div v-if="!playerStore.isCreatorMode" class="header-section left">
       <div class="inset-pill blue-accent">
         <div class="pill-value">
           <transition name="slide-up" mode="out-in">
@@ -36,7 +39,14 @@
 
           <div class="timer-content">
             <transition name="text-pop" mode="out-in">
-              <span v-if="isCorrect" class="msg-bold success" key="c"
+              <span
+                v-if="playerStore.isCreatorMode && count === 0"
+                class="msg-bold success"
+                key="d"
+                >MAKE YOUR GUESS!</span
+              >
+
+              <span v-else-if="isCorrect" class="msg-bold success" key="c"
                 >NICE!</span
               >
               <span v-else-if="isIncorrect" class="msg-bold error" key="i"
@@ -60,7 +70,7 @@
     </div>
 
     <!-- RIGHT -->
-    <div class="header-section right">
+    <div v-if="!playerStore.isCreatorMode" class="header-section right">
       <div class="inset-pill gold-accent">
         <div class="pill-value">
           <transition name="score-bump" mode="out-in">
@@ -84,6 +94,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { Icon } from "@iconify/vue";
+import { usePlayerStore } from "@/stores/player";
 
 const props = defineProps<{
   count: number;
@@ -96,6 +107,8 @@ const props = defineProps<{
   maxRounds?: number;
   isSurvival: boolean;
 }>();
+
+const playerStore = usePlayerStore();
 
 const showBonus = ref(false);
 const lastBonus = ref(0);
@@ -131,11 +144,8 @@ watch(
 
 <style scoped>
 .game-header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
   padding: 8px 14px;
-  gap: 10px;
+  gap: 12px;
   background: linear-gradient(
     180deg,
     rgba(20, 10, 40, 0.9),
@@ -143,6 +153,12 @@ watch(
   );
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-grid {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
 }
 
 .header-section.center {
@@ -202,7 +218,6 @@ watch(
 
 .timer-wrapper {
   width: 100%;
-  max-width: 240px;
 }
 
 .timer-bar-inset {

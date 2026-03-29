@@ -5,17 +5,6 @@
       <h1 class="logo">Pix<span>Reveal</span></h1>
 
       <div class="setup-section">
-        <div class="player-info-wrapper" @click="showAvatarModal = true">
-          <div class="player-avatar" :style="avatarStyle">
-            <Icon icon="pixel:pencil" class="edit-badge" />
-          </div>
-          <div class="player-name">
-            {{ playerStore.playerName || "SET PLAYER NAME" }}
-          </div>
-        </div>
-      </div>
-
-      <div class="setup-section">
         <p class="section-label">
           FOR THE BEST EXPERIENCE ENABLE AUDIO AND FULLSCREEN
         </p>
@@ -61,42 +50,23 @@
         HOW TO PLAY
       </button>
     </div>
-
-    <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
-import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
-import PlayerEditModal from "@/components/PlayerEditModal.vue";
 import { getRandomUserName } from "@/utils/random";
 import GameManual from "./GameManual.vue";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
-const showAvatarModal = ref(false);
 const isFullscreen = ref(!!document.fullscreenElement);
 const showManual = ref(false);
 
 const emit = defineEmits(["start"]);
-
-const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
-  return {
-    backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated",
-  };
-});
 
 const toggleAudio = () => {
   soundStore.isAudioEnabled = !soundStore.isAudioEnabled;
@@ -168,65 +138,17 @@ onUnmounted(() => {
 
 .logo {
   font-size: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
   @media (min-width: 579px) {
     font-size: 38px;
   }
-}
-
-.setup-section {
-  margin: 48px 0;
-}
-
-.section-label {
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-.player-info-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-}
-
-.player-avatar {
-  position: relative;
-  width: 72px;
-  height: 72px;
-  background-color: #2d3748;
-  border-radius: 8px;
-  transition: transform 0.2s ease;
-}
-
-.player-info-wrapper:hover .player-avatar {
-  transform: scale(1.05);
-  border-color: var(--primary);
-}
-
-.edit-badge {
-  position: absolute;
-  right: -8px;
-  bottom: -8px;
-  background: var(--primary);
-  border-radius: 50%;
-  padding: 4px;
-  font-size: 16px;
-  color: white;
-}
-
-.player-name {
-  text-transform: uppercase;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
 }
 
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  margin-bottom: 32px;
 }
 
 .setup-btn {
