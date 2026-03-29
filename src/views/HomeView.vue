@@ -1,6 +1,6 @@
 <template>
   <div class="home-content-wrapper">
-    <LoadingOverlay :show="onlineStore.isLoading" :text="loadingText" />
+    <LoadingOverlay :show="onlineStore.isLoading" />
     <transition name="fade" mode="default">
       <WelcomeOverlay
         v-if="showWelcomeModal"
@@ -10,14 +10,11 @@
         <section class="setup-card">
           <header>
             <h1 class="logo">Pix<span>Reveal</span></h1>
-            <div class="config">
-              <div class="player-info" @click="showAvatarModal = true">
-                <div class="player-avatar" :style="avatarStyle"></div>
-                <div class="player-name">
-                  {{ playerStore.playerName || "UNKNOWN" }}
-                </div>
-              </div>
-            </div>
+            <Icon
+              icon="pixel:cog-solid"
+              class="btn-icon settings-btn"
+              @click="showSettingsModal = true"
+            />
           </header>
           <div class="content-wrapper">
             <div class="mode-section classic">
@@ -34,7 +31,18 @@
                   </div>
                 </button>
 
-                <button class="neon-btn host" @click="hostGame">
+                <button
+                  class="neon-btn classic"
+                  @click="startGravity"
+                >
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixelarticons:blocks" class="btn-icon" />
+                    <span class="btn-text">GRAVITY</span>
+                  </div>
+                </button>
+
+                <button class="neon-btn host" @click="openOnlineModal('host')">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:globe" class="btn-icon" />
@@ -42,25 +50,14 @@
                   </div>
                 </button>
 
-                <button class="neon-btn join" @click="joinGame">
+                <button
+                  class="neon-btn join"
+                  @click="openOnlineModal('client')"
+                >
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixel:login" class="btn-icon" />
                     <span class="btn-text">JOIN GAME</span>
-                  </div>
-                </button>
-
-                <button
-                  class="neon-btn settings"
-                  @click="showSettingsModal = true"
-                >
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon
-                      icon="streamline-pixel:interface-essential-setting-cog"
-                      class="btn-icon"
-                    />
-                    <span class="btn-text">SETTINGS</span>
                   </div>
                 </button>
               </div>
@@ -71,6 +68,13 @@
                 <h2>SPECIAL</h2>
               </div>
               <div class="classic-mode-buttons">
+                <button class="neon-btn special" @click="startInspect">
+                  <div class="glow-layer"></div>
+                  <div class="btn-content">
+                    <Icon icon="pixel:search" class="btn-icon" />
+                    <span class="btn-text">INSPECT</span>
+                  </div>
+                </button>
                 <button class="neon-btn special" @click="startSurvival">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
@@ -84,14 +88,6 @@
                   <div class="btn-content">
                     <Icon icon="pixel:question" class="btn-icon" />
                     <span class="btn-text">BUZZER</span>
-                  </div>
-                </button>
-
-                <button class="neon-btn special" @click="startInspect">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:search" class="btn-icon" />
-                    <span class="btn-text">INSPECT</span>
                   </div>
                 </button>
 
@@ -161,7 +157,6 @@ const route = useRoute();
 const onlineStore = useOnlineStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
-const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 const showWelcomeModal = ref(!playerStore.playerName);
@@ -209,6 +204,14 @@ const startGame = () => {
   router.push("/game");
 };
 
+const startGravity = () => {
+  setUser();
+  prepareGame(configStore.revealTime);
+  playerStore.gameMode = "gravity";
+  soundStore.playSound("click");
+  router.push("/gravity");
+};
+
 const startBuzzer = () => {
   setUser();
   prepareGame(configStore.revealTime);
@@ -237,6 +240,12 @@ const openEditor = () => {
   router.push("/editor");
 };
 
+const openOnlineModal = (playerIs) => {
+  soundStore.playSound("click");
+  showJoinModal.value = true;
+  onlineStore.isHost = playerIs === "host";
+};
+
 const hostGame = () => {
   soundStore.playSound("click");
   setUser();
@@ -251,26 +260,6 @@ const hostGame = () => {
     rounds: configStore.maxRounds,
     revealTime: configStore.revealTime,
   });
-};
-
-const joinGame = () => {
-  soundStore.playSound("click");
-  if (!hasRoomIdFromQuery.value) {
-    showJoinModal.value = true;
-    return;
-  }
-  setUser();
-  onlineStore.isLoading = true;
-  loadingText.value = "JOINING GAME...";
-  onlineStore.joinSession(
-    {
-      playerId,
-      username: playerStore.playerName,
-      avatarIndex: playerStore.avatarIndex,
-      isHost: false,
-    },
-    joinRoomId.value.toUpperCase().trim(),
-  );
 };
 
 if (document.fullscreenElement) isFullscreen.value = true;
@@ -357,14 +346,6 @@ header {
   display: block;
   color: var(--white);
   opacity: 0.8;
-}
-
-.config {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  flex-direction: row-reverse;
-  justify-content: center;
 }
 
 .content-wrapper {
@@ -604,7 +585,6 @@ footer {
   filter: brightness(1.2);
 }
 
-.neon-btn.settings,
 .neon-btn.editor {
   --btn-color: #94a3b8;
   border-color: #94a3b8;
@@ -639,6 +619,16 @@ footer {
 .neon-btn.special .btn-icon {
   color: #00f2ff;
   filter: drop-shadow(0 0 2px #00f2ff);
+}
+
+.settings-btn {
+  color: var(--white);
+  transition: all 0.3s;
+}
+
+.settings-btn:hover {
+  color: #aaaaaa;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 480px) {

@@ -10,6 +10,7 @@ import BuzzerView from "@/views/BuzzerView.vue";
 import InspectView from "@/views/InspectView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import { useGameStore } from "@/stores/game";
+import GravityView from "@/views/GravityView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,12 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/gravity",
+      name: "gravity",
+      component: GravityView,
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/gameover",
       name: "gameover",
       component: GameOverView,
@@ -81,14 +88,16 @@ router.beforeEach((to, from, next) => {
     "/survival",
     "/buzzer",
     "/inspect",
+    "/gravity"
   ];
   const validPathsForGameOver = [
     "/game",
     "/survival",
     "/buzzer",
     "/inspect",
+    "/gravity"
   ];
-  const needRounds = ["/game", "/buzzer", "/inspect"];
+  const needRounds = ["/game", "/buzzer", "/inspect", "/gravity"];
 
   if (protectedRoutes.includes(to.path)) {
     if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {

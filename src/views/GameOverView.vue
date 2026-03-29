@@ -47,17 +47,12 @@
       </div>
       <div v-else class="results-card">
         <h1 class="logo">GAME <span>OVER</span></h1>
-        <PlayerDisplay
-          :name="playerStore.playerName"
-          :avatar-index="playerStore.avatarIndex"
-          :points="playerStore.points || survivalStore.solvedCount"
-          :correct-answers="playerStore.correctAnswers"
-          minimalistic
-        />
+        <GameOverStats />
         <div
           v-if="
             playerStore.gameMode === 'classic' ||
-            playerStore.gameMode === 'inspect'
+            playerStore.gameMode === 'inspect' ||
+            playerStore.gameMode === 'gravity'
           "
           class="rank-text"
         >
@@ -107,6 +102,7 @@ import { Icon } from "@iconify/vue";
 import ShareIcons from "@/components/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
+import GameOverStats from "@/components/GameOverStats.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();

@@ -51,7 +51,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 4px;
   color: #fff;
-  margin-bottom: 64px;
+  margin-bottom: 32px;
   @media (min-width: 1024px) {
     font-size: 32px;
   }

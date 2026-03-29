@@ -1,12 +1,9 @@
 <script setup lang="ts">
+import { useOnlineStore } from "@/stores/online";
 import LoadingAnimation from "./LoadingAnimation.vue";
 
 defineProps({
   show: Boolean,
-  text: {
-    type: String,
-    default: "LOADING...",
-  },
 });
 </script>
 
@@ -15,7 +12,7 @@ defineProps({
     <div v-if="show" class="loading-overlay">
       <div class="loading-content">
         <LoadingAnimation />
-        <p v-if="text" class="loading-text">{{ text }}</p>
+        <p class="loading-text">{{ useOnlineStore().loadingText }}</p>
       </div>
     </div>
   </Transition>
