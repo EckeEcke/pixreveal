@@ -121,7 +121,7 @@ const playersSortedByPoints = computed(() => {
 });
 
 const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => !player.hasFinished),
+  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
 );
 
 const isOnlinePlay = computed(

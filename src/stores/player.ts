@@ -1,6 +1,7 @@
 import { ref, type Ref } from "vue";
 import { defineStore } from "pinia";
 import { getRandomUserName } from "@/utils/random";
+import { useConfigStore } from "./config";
 
 export const usePlayerStore = defineStore("player", () => {
   const playerName: Ref<string> = ref("");
@@ -18,7 +19,8 @@ export const usePlayerStore = defineStore("player", () => {
   };
 
   const addPoints = (earnedPoints: number) => {
-    points.value += earnedPoints;
+    const pointsToAdd = Math.min(earnedPoints, useConfigStore().maxRounds);
+    points.value += pointsToAdd;
     if (earnedPoints > 0) correctAnswers.value++;
   };
 
