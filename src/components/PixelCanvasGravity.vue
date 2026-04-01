@@ -57,7 +57,7 @@ const initGravityEffect = () => {
   const maxDelayFrames =
     !props.isRevealing || props.isStatusIcon
       ? 0
-      : Math.max(0, (duration - 2) * 60);
+      : Math.max(0, (duration - 1) * 60);
 
   props.pixelArray.forEach((row, y) => {
     if (Array.isArray(row)) {

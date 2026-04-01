@@ -31,10 +31,7 @@
                   </div>
                 </button>
 
-                <button
-                  class="neon-btn classic"
-                  @click="startGravity"
-                >
+                <button class="neon-btn classic" @click="startGravity">
                   <div class="glow-layer"></div>
                   <div class="btn-content">
                     <Icon icon="pixelarticons:blocks" class="btn-icon" />
@@ -624,11 +621,13 @@ footer {
 .settings-btn {
   color: var(--white);
   transition: all 0.3s;
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.7));
 }
 
 .settings-btn:hover {
   color: #aaaaaa;
   transform: translateY(-2px);
+  filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.7));
 }
 
 @media (max-width: 480px) {
