@@ -36,6 +36,9 @@ export const useOnlineStore = defineStore("online", () => {
   const isLoading = ref(false);
   const loadingText = ref("LOADING...");
 
+  const unloadHandler = ref<(() => void) | null>(null);
+  const visibilityHandler = ref<(() => void) | null>(null);
+
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
     currentRoomId.value = roomId;
@@ -57,6 +60,18 @@ export const useOnlineStore = defineStore("online", () => {
   const setupEvents = (myPlayerId: string) => {
     const channel = activeChannel.value;
     if (!channel) return;
+
+    unloadHandler.value = () => {
+      channel.trigger("client-player-left", { playerId: myPlayerId });
+    };
+    window.addEventListener("beforeunload", unloadHandler.value);
+
+    visibilityHandler.value = () => {
+      if (document.visibilityState === "hidden") {
+        channel.trigger("client-player-left", { playerId: myPlayerId });
+      }
+    };
+    document.addEventListener("visibilitychange", visibilityHandler.value);
 
     channel.bind("realtime:subscription_succeeded", (members: any) => {
       const hash = members.presence?.hash || {};
@@ -205,7 +220,7 @@ export const useOnlineStore = defineStore("online", () => {
   const broadcastScore = () => {
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
-    console.log("triggered game finished", activeChannel.value, client.value)
+    console.log("triggered game finished", activeChannel.value, client.value);
     if (activeChannel.value && client.value) {
       const me = playersOnline.value.find((p) => p.playerId === playerId.value);
       if (me) {
@@ -255,13 +270,22 @@ export const useOnlineStore = defineStore("online", () => {
     currentRoomId.value = null;
     messages.value = [];
     isLoading.value = false;
+
+    if (unloadHandler.value) {
+      window.removeEventListener("beforeunload", unloadHandler.value);
+      unloadHandler.value = null;
+    }
+    if (visibilityHandler.value) {
+      document.removeEventListener("visibilitychange", visibilityHandler.value);
+      visibilityHandler.value = null;
+    }
   };
 
   watch(
     () => playersOnline.value.length,
     (newLength) => {
-      console.log(`[DEBUG] Spieleranzahl geändert: ${newLength}`);
-      console.log("Aktuelle Spieler:", JSON.stringify(playersOnline.value));
+      console.log(`[DEBUG] Player count changed: ${newLength}`);
+      console.log("Current players:", JSON.stringify(playersOnline.value));
     },
   );
 
