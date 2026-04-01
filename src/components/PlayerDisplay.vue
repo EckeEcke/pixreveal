@@ -1,7 +1,7 @@
 <template>
   <div
     class="player-hud"
-    :class="{ pending: hasFinished === false, minimalistic: minimalistic }"
+    :class="{ pending: hasFinished === false }"
   >
     <div class="hud-avatar" :style="avatarStyle"></div>
     <div>
@@ -73,7 +73,6 @@ const props = defineProps({
   roundIndex: Number | undefined,
   maxRounds: Number | undefined,
   showYouIndicator: Boolean,
-  minimalistic: Boolean,
 });
 
 const showBonus = ref(false);
@@ -292,26 +291,6 @@ const avatarStyle = computed(() => {
   background-size: 100% 4px;
   background: rgba(15, 15, 25, 0.7);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.player-hud.minimalistic {
-  background: none;
-  border: none;
-  border-left: none;
-  justify-content: center;
-  backdrop-filter: unset;
-  font-size: 24px;
-  .hud-avatar {
-    height: 66px;
-    width: 66px;
-    flex-shrink: 0;
-  }
-  .hud-username {
-    font-size: 24px;
-  }
-  .hud-info {
-    gap: 8px;
-  }
 }
 
 .hud-info {

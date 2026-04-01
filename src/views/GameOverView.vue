@@ -18,7 +18,6 @@
             :points="playersSortedByPoints[0].points"
             :has-finished="playersSortedByPoints[0].hasFinished"
             :correct-answers="playersSortedByPoints[0].correctAnswers"
-            minimalistic
           />
           <button class="btn-outline" @click="playAgain">
             <Icon icon="pixel:refresh-solid" />
@@ -30,8 +29,6 @@
           :key="player.playerId"
           class="player-wrapper"
         >
-          <div v-if="player.hasFinished" class="position">{{ index + 1 }}.</div>
-          <LoadingAnimation size="small" v-else />
           <PlayerDisplay
             :name="player.username"
             :avatar-index="player.avatarIndex"
@@ -40,6 +37,8 @@
             :correct-answers="player.correctAnswers"
             :show-you-indicator="isMe(player.playerId)"
           />
+          <div v-if="player.hasFinished" class="position">{{ index + 1 }}</div>
+          <LoadingAnimation size="small" v-else />
         </div>
         <div v-if="waitingForFinalResults">
           <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
@@ -191,17 +190,26 @@ gameStore.reset();
 
 <style scoped>
 .player-wrapper {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 32px;
+  position: relative;
+  margin-bottom: 16px;
 }
 
 .position {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  background: var(--bg-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: var(--primary);
   font-weight: 700;
   font-size: 32px;
   width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  box-shadow: 2px 2px 4px #00000088;
 }
 
 .btn-outline {
