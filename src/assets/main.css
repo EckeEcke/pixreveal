@@ -140,6 +140,10 @@ h1 {
   text-transform: uppercase;
 }
 
+h2 {
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
 .loading-text {
   color: var(--primary);
   font-size: 14px;

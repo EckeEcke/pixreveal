@@ -142,6 +142,7 @@ h2 {
   font-family: inherit;
   font-size: 0.9rem;
   outline: none;
+  max-width: calc(100% - 105px);
 }
 
 .terminal-btn {
