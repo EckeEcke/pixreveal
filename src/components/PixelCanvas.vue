@@ -252,7 +252,6 @@ onUnmounted(() => {
   overflow: hidden;
   line-height: 0;
   touch-action: none;
-  padding: 16px 0;
 }
 canvas {
   max-width: 100%;
