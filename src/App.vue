@@ -1,4 +1,5 @@
 <template>
+  <Analytics />
   <div class="pixelCon">
     <div
       v-for="n in 80"
@@ -21,6 +22,7 @@
 import { watch, ref, onMounted } from "vue";
 import { useSoundStore } from "./stores/sound";
 import { usePlayerStore } from "./stores/player";
+import { Analytics } from "@vercel/analytics/vue";
 
 const playerStore = usePlayerStore();
 
@@ -55,8 +57,8 @@ watch(
 );
 
 onMounted(() => {
-  const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.get('creator') === 'true') {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("creator") === "true") {
     playerStore.isCreatorMode = true;
   }
 });
