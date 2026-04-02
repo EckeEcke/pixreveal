@@ -569,8 +569,8 @@ footer {
 }
 
 .neon-btn:hover {
-  transform: translateY(-5px);
   box-shadow: 0 0 20px var(--btn-color);
+  animation: 1.5s floating infinite ease-in-out;
 }
 
 .neon-btn:hover .glow-layer {
@@ -626,7 +626,7 @@ footer {
 
 .settings-btn:hover {
   color: #aaaaaa;
-  transform: translateY(-2px);
+  transform: translateY(-2px) rotate(45deg);
   filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.7));
 }
 
