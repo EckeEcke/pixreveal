@@ -288,63 +288,6 @@ gameStore.reset();
   margin: 32px auto 0;
 }
 
-@keyframes floating {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes sharp-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-}
-
-@keyframes glitch {
-  0% {
-    transform: translate(1px, 1px);
-  }
-  50% {
-    transform: translate(-1px, -1px);
-  }
-  100% {
-    transform: translate(1px, -1px);
-  }
-}
-
-@keyframes blur-fade {
-  0%,
-  100% {
-    filter: blur(0px);
-    opacity: 1;
-  }
-  50% {
-    filter: blur(2px);
-    opacity: 0.5;
-  }
-}
-
-@keyframes slow-blink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0.3;
-  }
-}
-
 .results-card::after {
   content: "";
   position: absolute;
@@ -357,15 +300,4 @@ gameStore.reset();
   animation: shine 4s infinite;
 }
 
-@keyframes shine {
-  0% {
-    left: -100%;
-  }
-  20% {
-    left: 100%;
-  }
-  100% {
-    left: 150%;
-  }
-}
 </style>

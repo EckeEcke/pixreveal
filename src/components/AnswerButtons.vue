@@ -28,24 +28,23 @@ const props = defineProps({
   answers: Array,
   hasAnswered: Boolean,
 });
-const buttonColors = ["btn-pink", "btn-blue", "btn-purple", "btn-yellow"];
-const soundStore = useSoundStore();
-const selectedAnswer = ref(undefined)
 
 const emit = defineEmits(["answered"]);
+
+const buttonColors = ["btn-pink", "btn-blue", "btn-purple", "btn-yellow"];
+const soundStore = useSoundStore();
+const selectedAnswer = ref(undefined);
 
 const checkAnswer = (answer, event) => {
   if (event) event.currentTarget.blur();
   selectedAnswer.value = answer.name;
-  const isCorrect = answer.isCorrect;
 
-  if (isCorrect) {
+  if (answer.isCorrect) {
     soundStore.playSound("correct");
   } else {
     soundStore.playSound("incorrect");
   }
-
-  emit("answered", isCorrect);
+  emit("answered", answer.isCorrect);
 };
 </script>
 
@@ -54,7 +53,10 @@ const checkAnswer = (answer, event) => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
+  .answer-buttons {
     grid-template-columns: 1fr;
     gap: 32px;
     margin-top: 32px;
@@ -62,145 +64,118 @@ const checkAnswer = (answer, event) => {
 }
 
 .answer-btn {
-  font-weight: 900;
-  @media (min-width: 769px) {
-    padding: 16px;
-    font-size: 18px;
-  }
-}
-
-.btn-pink {
-  color: var(--neon-pink);
-  border: 2px solid var(--neon-pink);
-  background: var(--pink-bg);
-  box-shadow:
-    0 0 10px var(--pink-glow),
-    inset 0 0 5px var(--pink-glow);
-  text-shadow: 0 0 5px var(--pink-glow);
-}
-
-.btn-yellow {
-  color: var(--neon-yellow);
-  border: 2px solid var(--neon-yellow);
-  background: var(--yellow-bg);
-  box-shadow:
-    0 0 10px var(--yellow-glow),
-    inset 0 0 5px var(--yellow-glow);
-  text-shadow: 0 0 5px var(--yellow-glow);
-}
-
-.btn-blue {
-  color: var(--neon-blue);
-  border: 2px solid var(--neon-blue);
-  background: var(--blue-bg);
-  box-shadow:
-    0 0 10px var(--blue-glow),
-    inset 0 0 5px var(--blue-bg);
-  text-shadow: 0 0 5px var(--blue-glow);
-}
-
-.btn-purple {
-  color: var(--neon-purple);
-  border: 2px solid var(--neon-purple);
-  background: var(--purple-bg);
-  box-shadow:
-    0 0 10px var(--purple-glow),
-    inset 0 0 5px var(--purple-glow);
-  text-shadow: 0 0 5px var(--purple-bg);
-}
-
-.answer-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.answer-btn.is-correct {
-  background-color: var(--neon-success);
-  opacity: 1;
-  color: var(--text-main);
-  border: none;
-  color: var(--white);
-  box-shadow:
-    0 0 20px var(--neon-success),
-    0 0 40px var(--neon-success);
-  animation:
-    sharp-pulse 1s infinite,
-    floating 1s infinite;
-}
-
-.answer-btn.is-wrong {
-  background-color: var(--neon-error);
-  opacity: 1;
-  color: var(--text-main);
-  border: none;
-  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  box-shadow:
-    0 0 20px var(--neon-error),
-    0 0 40px var(--neon-error);
-}
-
-.answer-btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
   background: #222222aa;
   backdrop-filter: blur(20px);
-  padding: 10px;
+  padding: 14px;
   text-transform: uppercase;
   font-family: inherit;
   letter-spacing: 2px;
   font-weight: 900;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
   width: 100%;
+  border: none;
+  z-index: 1;
 }
 
-@media (hover: hover) {
-  .btn-pink:not(:disabled):hover {
-    background: var(--pink-bg);
-    box-shadow: 0 0 20px var(--neon-pink);
-    transform: translateY(-2px);
-  }
-  .btn-purple:not(:disabled):hover {
-    background: var(--purple-bg);
-    box-shadow: 0 0 20px var(--neon-purple);
-    transform: translateY(-2px);
-  }
+.answer-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
 
-  .btn-blue:not(:disabled):hover {
-    background: var(--blue-bg);
-    box-shadow: 0 0 20px var(--neon-blue);
-    transform: translateY(-2px);
-  }
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 90% /* Ende verwaschen */
+  );
 
-  .btn-yellow:not(:disabled):hover {
-    background: var(--yellow-bg);
-    box-shadow: 0 0 20px var(--neon-yellow);
-    transform: translateY(-2px);
+  transform: skewX(-45deg);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+}
+
+.answer-btn.is-correct::after {
+  animation: shine-sweep 0.5s steps(8) forwards;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -150%;
+    opacity: 1;
   }
+  100% {
+    left: 150%;
+    opacity: 1;
+  }
+}
+
+.btn-pink {
+  color: var(--neon-pink);
+  border: 2px solid var(--neon-pink) !important;
+  box-shadow: 0 0 10px var(--pink-glow);
+}
+.btn-yellow {
+  color: var(--neon-yellow);
+  border: 2px solid var(--neon-yellow) !important;
+  box-shadow: 0 0 10px var(--yellow-glow);
+}
+.btn-blue {
+  color: var(--neon-blue);
+  border: 2px solid var(--neon-blue) !important;
+  box-shadow: 0 0 10px var(--blue-glow);
+}
+.btn-purple {
+  color: var(--neon-purple);
+  border: 2px solid var(--neon-purple) !important;
+  box-shadow: 0 0 10px var(--purple-glow);
+}
+
+.answer-btn.is-correct {
+  background-color: var(--neon-success) !important;
+  color: white !important;
+  box-shadow: 0 0 30px var(--neon-success);
+  border: none !important;
+}
+
+.answer-btn.is-wrong {
+  background-color: var(--neon-error) !important;
+  color: white !important;
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  border: none !important;
 }
 
 @keyframes shake {
-  0% {
-    transform: translateX(0);
-  }
-  20% {
-    transform: translateX(-10px);
-  }
-  40% {
-    transform: translateX(10px);
-  }
-  60% {
-    transform: translateX(-10px);
-  }
-  80% {
-    transform: translateX(10px);
-  }
+  0%,
   100% {
     transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-12px);
+  }
+  75% {
+    transform: translateX(12px);
+  }
+}
+
+.answer-btn:disabled:not(.is-correct):not(.is-wrong) {
+  opacity: 0.2;
+}
+
+@media (min-width: 769px) {
+  .answer-btn {
+    padding: 18px;
+    font-size: 20px;
   }
 }
 </style>

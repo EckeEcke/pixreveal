@@ -153,6 +153,9 @@ watch(
   );
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  @media (min-width: 1024px) {
+    background: none;
+  }
 }
 
 .header-grid {
