@@ -177,6 +177,12 @@ onUnmounted(() => {
   }
 }
 
+.canvas-section {
+  @media (min-width: 1024px) {
+    border-right: 2px solid #334155;
+  }
+}
+
 .answer-section {
   display: flex;
   flex-direction: column;

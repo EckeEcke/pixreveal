@@ -153,9 +153,16 @@ onUnmounted(() => {
   max-width: 500px;
   width: 100%;
   @media (min-width: 1024px) {
+    position: relative;
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
+  }
+}
+
+.canvas-section {
+  @media (min-width: 1024px) {
+    border-right: 2px solid #334155;
   }
 }
 
