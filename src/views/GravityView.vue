@@ -171,7 +171,6 @@ onUnmounted(() => {
 .canvas-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
 .answer-section {
