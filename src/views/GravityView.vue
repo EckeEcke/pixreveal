@@ -1,5 +1,8 @@
 <template>
   <main class="game-layout">
+    <transition name="fade" mode="out-in">
+      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+    </transition>
     <section class="canvas-section">
       <GameHeader
         :max="timerDuration"
@@ -32,6 +35,7 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import PixelCanvasGravity from "../components/PixelCanvasGravity.vue";
+import GameTransition from "@/components/GameTransition.vue";
 import GameHeader from "@/components/GameHeader.vue";
 import AnswerButtons from "@/components/AnswerButtons.vue";
 import { useGameStore } from "@/stores/game";
@@ -54,6 +58,7 @@ const isStatusIcon = ref(false);
 const hasAnsweredCorrectly = ref(false);
 const timerDuration = configStore.revealTime || 15;
 const timer = ref(timerDuration);
+const showTransition = ref(true);
 
 let timerId = null;
 let revealTimeoutId = null;
@@ -137,9 +142,13 @@ const requestWakeLock = async () => {
   }
 };
 
+const start = () => {
+  showTransition.value = false;
+  setDrawing(rounds.value[currentRoundIndex.value].data);
+};
+
 onMounted(() => {
   requestWakeLock();
-  setDrawing(rounds.value[currentRoundIndex.value].data);
 });
 
 onUnmounted(() => {

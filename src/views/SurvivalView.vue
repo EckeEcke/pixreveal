@@ -1,5 +1,9 @@
 <template>
   <main class="game-layout">
+    <transition name="fade" mode="out-in">
+      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+    </transition>
+
     <section class="canvas-section">
       <GameHeader
         :max="store.maxTime"
@@ -31,6 +35,7 @@
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useSurvivalStore } from "@/stores/survival";
 import PixelCanvas from "../components/PixelCanvas.vue";
+import GameTransition from "@/components/GameTransition.vue";
 import router from "@/router";
 import { usePlayerStore } from "@/stores/player";
 import GameHeader from "@/components/GameHeader.vue";
@@ -44,6 +49,7 @@ const playerStore = usePlayerStore();
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const isRevealing = ref(true);
+const showTransition = ref(true);
 
 const setDrawing = () => {
   if (store.currentDrawing) {
@@ -85,9 +91,13 @@ watch(
   },
 );
 
+const start = () => {
+  showTransition.value = false;
+  setDrawing();
+};
+
 onMounted(() => {
   store.startSurvival();
-  setDrawing();
 });
 
 onUnmounted(() => {

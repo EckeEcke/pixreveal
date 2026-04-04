@@ -1,5 +1,12 @@
 <template>
   <main class="game-layout">
+    <transition name="fade" mode="out-in">
+      <GameTransition
+        v-if="showTransition"
+        message="GET READY"
+        @done="start"
+      />
+    </transition>
     <section class="canvas-section">
       <GameHeader
         :max="timerDuration"
@@ -40,6 +47,7 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
+import GameTransition from "@/components/GameTransition.vue";
 import GameHeader from "@/components/GameHeader.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
@@ -67,6 +75,7 @@ const hasAnsweredCorrectly = ref(false);
 const showAnswers = ref(false);
 const potentialPoints = ref(0);
 const pauseReveal = ref(false);
+const showTransition = ref(true);
 
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
@@ -135,7 +144,10 @@ const handleAnswer = (isCorrect) => {
   }, 3000);
 };
 
-setDrawing(rounds.value[currentRoundIndex.value].data);
+const start = () => {
+  showTransition.value = false;
+  setDrawing(rounds.value[currentRoundIndex.value].data);
+};
 
 const activeChannel = computed(() => onlineStore.ac);
 

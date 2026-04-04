@@ -39,14 +39,4 @@ defineProps({
   align-items: center;
   gap: 20px;
 }
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 </style>
