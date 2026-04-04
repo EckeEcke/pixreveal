@@ -6,8 +6,8 @@ import clickSound from "@/assets/audio/click.mp3";
 import revealSound from "@/assets/audio/click.mp3";
 import completeSound from "@/assets/audio/complete.mp3";
 import buzzSound from "@/assets/audio/buzz.wav";
-import timerSound from "@/assets/audio/timer.wav"
-
+import timerSound from "@/assets/audio/timer.wav";
+import punchSound from "@/assets/audio/punch.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(false);
@@ -20,6 +20,7 @@ export const useSoundStore = defineStore("sound", () => {
     complete: new Audio(completeSound),
     buzz: new Audio(buzzSound),
     timer: new Audio(timerSound),
+    punch: new Audio(punchSound),
   };
 
   const playSound = (name: keyof typeof sounds) => {

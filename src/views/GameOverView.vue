@@ -1,6 +1,12 @@
 <template>
   <main>
-    <header></header>
+    <Transition name="fade" mode="out-in">
+      <GameOverTransition
+        v-if="showIntro"
+        message="GAME OVER"
+        @done="() => { showIntro = false; soundStore.playSound('complete');}"
+      />
+    </Transition>
     <div>
       <div v-if="isOnlinePlay">
         <h1 class="logo">GAME <span>OVER</span></h1>
@@ -88,7 +94,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
 import { useOnlineStore } from "@/stores/online";
@@ -102,6 +108,7 @@ import ShareIcons from "@/components/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
 import GameOverStats from "@/components/GameOverStats.vue";
+import GameOverTransition from "@/components/GameOverTransition.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -110,6 +117,7 @@ const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
+const showIntro = ref(true);
 
 const isMe = (id) => id === onlineStore.playerId;
 
@@ -126,8 +134,6 @@ const waitingForFinalResults = computed(() =>
 const isOnlinePlay = computed(
   () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1,
 );
-
-soundStore.playSound("complete");
 
 const getRankData = (score) => {
   const adjustedScore =
@@ -299,5 +305,4 @@ gameStore.reset();
   transform: rotate(30deg);
   animation: shine 4s infinite;
 }
-
 </style>
