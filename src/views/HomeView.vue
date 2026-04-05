@@ -197,7 +197,6 @@ const startGame = () => {
   setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
-  soundStore.playSound("click");
   router.push("/game");
 };
 
@@ -205,7 +204,6 @@ const startGravity = () => {
   setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "gravity";
-  soundStore.playSound("click");
   router.push("/gravity");
 };
 
@@ -213,7 +211,6 @@ const startBuzzer = () => {
   setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
-  soundStore.playSound("click");
   router.push("/buzzer");
 };
 
@@ -221,14 +218,12 @@ const startInspect = () => {
   setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "inspect";
-  soundStore.playSound("click");
   router.push("/inspect");
 };
 
 const startSurvival = () => {
   setUser();
   playerStore.gameMode = "survival";
-  soundStore.playSound("click");
   router.push("/survival");
 };
 
