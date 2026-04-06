@@ -1,7 +1,7 @@
 <template>
   <div class="setup-card manual">
     <div class="close-btn-wrapper">
-      <button @click="$emit('close')" class="close-btn">
+      <button @click="$emit('close')" data-sfx="click" class="close-btn">
         <Icon icon="pixel:window-close-solid" />
       </button>
     </div>
@@ -58,15 +58,15 @@
       <h2>Settings & Customization</h2>
       <p>
         Fine-tune your session for the best experience. We highly recommend
-        enabling <strong>audio cues</strong> and
-        <strong>fullscreen mode</strong> to fully immerse yourself in the
-        pixel-hunting atmosphere. PixReveal adapts to your playstyle: whether
-        you want <strong>action-packed 5-second blitz rounds</strong> for a
-        quick adrenaline rush, or a
-        <strong>relaxed 20-second marathon</strong> with 20 drawings to test
-        your long-term recognition skills. Customize your experience by
-        selecting your favorite <strong>Categories</strong>. You can combine as
-        many as you like to increase the total pool of drawings.
+        enabling
+        <strong>audio cues</strong> and <strong>fullscreen mode</strong> to
+        fully immerse yourself in the pixel-hunting atmosphere. PixReveal adapts
+        to your playstyle: whether you want
+        <strong>action-packed 5-second blitz rounds</strong> for a quick
+        adrenaline rush, or a <strong>relaxed 20-second marathon</strong> with
+        20 drawings to test your long-term recognition skills. Customize your
+        experience by selecting your favorite <strong>Categories</strong>. You
+        can combine as many as you like to increase the total pool of drawings.
       </p>
     </article>
   </div>

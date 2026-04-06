@@ -1,6 +1,6 @@
 <template>
   <ModalWrapper>
-    <button @click="$emit('close')" class="close-btn">
+    <button @click="$emit('close')" data-sfx="click" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
     <h2>{{ isHost ? "HOST GAME" : "JOIN GAME" }}</h2>
@@ -14,15 +14,18 @@
         </div>
       </div>
     </div>
-    <button v-if="isHost" class="start-btn" @click="hostGame">HOST GAME</button>
+    <button v-if="isHost" class="start-btn" data-sfx="click" @click="hostGame">
+      HOST GAME
+    </button>
     <div v-else class="join-container">
       <div class="join-terminal">
-        <input
-          v-model="joinRoomId"
-          placeholder="ENTER ROOM ID"
-          class="terminal-input"
-        />
-        <button class="terminal-btn" :disabled="!joinRoomId" @click="joinGame">
+        <input v-model="joinRoomId" placeholder="ENTER ROOM ID" class="terminal-input" />
+        <button
+          class="terminal-btn"
+          :disabled="!joinRoomId"
+          data-sfx="click"
+          @click="joinGame"
+        >
           JOIN
           <Icon icon="pixel:login" class="btn-icon" />
         </button>
@@ -102,7 +105,7 @@ const joinGame = () => {
       avatarIndex: playerStore.avatarIndex,
       isHost: false,
     },
-    joinRoomId.value.toUpperCase().trim(),
+    joinRoomId.value.toUpperCase().trim()
   );
 };
 </script>

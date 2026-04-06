@@ -10,7 +10,8 @@
             <Icon
               icon="pixel:cog-solid"
               class="btn-icon settings-btn"
-              @click="(showSettingsModal = true), (hasOpenedSettings = true)"
+              data-sfx="click"
+              @click="((showSettingsModal = true), (hasOpenedSettings = true))"
             />
             <span
               v-if="!soundStore.isAudioEnabled && !hasOpenedSettings"
@@ -101,7 +102,13 @@
     </main>
     <footer>
       <PlatformBar />
-      <button class="how-to-play-link" @click="showManual = true">HOW TO PLAY</button>
+      <button
+        class="how-to-play-link"
+        data-sfx="click"
+        @click="showManual = true"
+      >
+        HOW TO PLAY
+      </button>
       <div>
         Music: Lo-Bit 13 by
         <a
@@ -123,7 +130,10 @@
     </footer>
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
-    <SettingsModal v-if="showSettingsModal" @close="showSettingsModal = false" />
+    <SettingsModal
+      v-if="showSettingsModal"
+      @close="showSettingsModal = false"
+    />
   </div>
 </template>
 
@@ -244,10 +254,12 @@ const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
-onMounted(() => document.addEventListener("fullscreenchange", updateFullscreenStatus));
+onMounted(() =>
+  document.addEventListener("fullscreenchange", updateFullscreenStatus),
+);
 
 onUnmounted(() =>
-  document.removeEventListener("fullscreenchange", updateFullscreenStatus)
+  document.removeEventListener("fullscreenchange", updateFullscreenStatus),
 );
 </script>
 
@@ -511,7 +523,11 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, var(--btn-color) 0%, transparent 70%);
+  background: radial-gradient(
+    circle at center,
+    var(--btn-color) 0%,
+    transparent 70%
+  );
   opacity: 0.1;
   transition: opacity 0.3s ease;
 }

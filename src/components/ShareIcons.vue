@@ -3,18 +3,25 @@
     <button
       class="btn-outline"
       @click="share('whatsapp')"
+      data-sfx="click"
       title="Share via WhatsApp"
     >
       <Icon icon="streamline-pixel:logo-whatapp" />
     </button>
 
-    <button class="btn-outline" @click="share('x')" title="Share on X">
+    <button
+      class="btn-outline"
+      @click="share('x')"
+      data-sfx="click"
+      title="Share on X"
+    >
       <Icon icon="pixel:x" />
     </button>
 
     <button
       class="btn-outline"
       @click="share('facebook')"
+      data-sfx="click"
       title="Share on Facebook"
     >
       <Icon icon="streamline-pixel:logo-social-media-facebook-circle" />
@@ -23,6 +30,7 @@
     <button
       class="btn-outline"
       @click="share('reddit')"
+      data-sfx="click"
       title="Share on Reddit"
     >
       <Icon icon="pixel:reddit" />
@@ -32,6 +40,7 @@
       class="btn-outline"
       @click="shareNative"
       title="More sharing options"
+      data-sfx="click"
     >
       <Icon icon="pixel:share" />
     </button>

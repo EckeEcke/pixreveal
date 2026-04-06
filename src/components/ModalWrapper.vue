@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-wrapper" @click.self="$emit('close')">
+  <div class="modal-wrapper" data-sfx="click" @click.self="$emit('close')">
     <div class="modal">
       <div class="modal-content">
         <slot></slot>
@@ -40,9 +40,9 @@
 }
 
 .modal-content {
-    height: 100%;
-    overflow: auto;
-    margin: -32px;
-    padding: 32px;
+  height: 100%;
+  overflow: auto;
+  margin: -32px;
+  padding: 32px;
 }
 </style>

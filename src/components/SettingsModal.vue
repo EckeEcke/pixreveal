@@ -1,6 +1,6 @@
 <template>
   <ModalWrapper>
-    <button @click="$emit('close')" class="close-btn">
+    <button @click="$emit('close')" data-sfx="click" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
     <h2>SETTINGS</h2>
@@ -90,6 +90,7 @@
               '--cat-color-alpha': cat.color + '33',
             }"
             @click="configStore.toggleCategory(cat.name)"
+            data-sfx="click"
           >
             <span class="icon">{{ cat.icon }}</span>
             <span class="label">{{ cat.name }}</span>
@@ -97,7 +98,9 @@
           </div>
         </div>
       </div>
-      <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
+      <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
+        CONFIRM
+      </button>
     </div>
   </ModalWrapper>
 </template>
@@ -116,7 +119,7 @@ const isFullscreen = ref(!!document.fullscreenElement);
 
 const toggleFullscreen = () => {
   const elem = document.documentElement;
-
+  soundStore.playSound("click");
   if (!document.fullscreenElement) {
     if (elem.requestFullscreen) {
       elem.requestFullscreen();

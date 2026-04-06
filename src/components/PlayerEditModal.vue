@@ -1,6 +1,6 @@
 <template>
   <ModalWrapper>
-    <button @click="$emit('close')" class="close-btn">
+    <button @click="$emit('close')" data-sfx="click" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
     <h2>EDIT PLAYER</h2>
@@ -26,6 +26,7 @@
             :key="avatar.id"
             class="avatar-slot"
             :class="{ active: playerStore.avatarIndex === avatar.id }"
+            data-sfx="click"
             @click="selectAvatar(avatar.id)"
           >
             <div class="avatar-image" :style="getAvatarStyle(avatar.id)"></div>
@@ -33,7 +34,7 @@
         </div>
       </div>
     </div>
-    <button class="confirm-btn" @click="$emit('close')">CONFIRM</button>
+    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">CONFIRM</button>
   </ModalWrapper>
 </template>
 
@@ -61,7 +62,6 @@ const getAvatarStyle = (index) => {
 
 const selectAvatar = (id) => {
   playerStore.avatarIndex = id;
-  soundStore.playSound("click");
 };
 </script>
 

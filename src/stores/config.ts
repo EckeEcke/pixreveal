@@ -66,7 +66,6 @@ export const useConfigStore = defineStore("config", () => {
         selectedCategories.value.length > 1
       ) {
         selectedCategories.value.splice(index, 1);
-        useSoundStore().playSound("click");
       } else {
         toast.error(`NOT ENOUGH DRAWINGS! Need ${maxRounds.value * 4} items.`, {
           icon: "🚫",
@@ -78,7 +77,6 @@ export const useConfigStore = defineStore("config", () => {
       }
     } else {
       selectedCategories.value.push(category);
-      useSoundStore().playSound("click");
     }
   };
 
