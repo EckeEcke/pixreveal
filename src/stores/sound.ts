@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import correctSound from "@/assets/audio/correct.wav";
 import incorrectSound from "@/assets/audio/incorrect.mp3";
 import clickSound from "@/assets/audio/click.mp3";
@@ -10,7 +10,9 @@ import timerSound from "@/assets/audio/timer.wav";
 import punchSound from "@/assets/audio/punch.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
-  const isAudioEnabled = ref(false);
+  const isAudioEnabled = ref(
+    localStorage.getItem("pixreveal_audio") === "true",
+  );
 
   const sounds = {
     correct: new Audio(correctSound),
@@ -34,6 +36,10 @@ export const useSoundStore = defineStore("sound", () => {
       });
     }
   };
+
+  watch(isAudioEnabled, (newValue) => {
+    localStorage.setItem("pixreveal_audio", newValue.toString());
+  });
 
   return { isAudioEnabled, playSound };
 });

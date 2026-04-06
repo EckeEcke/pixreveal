@@ -1,108 +1,107 @@
 <template>
   <div class="home-content-wrapper">
     <LoadingOverlay :show="onlineStore.isLoading" />
-    <transition name="fade" mode="default">
-      <WelcomeOverlay
-        v-if="showWelcomeModal"
-        @close="showWelcomeModal = false"
-      />
-      <main v-else class="home-container">
-        <section class="setup-card">
-          <header>
-            <h1 class="logo">Pix<span>Reveal</span></h1>
+    <GameManual v-show="showManual" @close="showManual = false" />
+    <main v-show="!showManual" class="home-container">
+      <section class="setup-card">
+        <header>
+          <h1 class="logo">Pix<span>Reveal</span></h1>
+          <div class="settings-wrapper">
             <Icon
               icon="pixel:cog-solid"
               class="btn-icon settings-btn"
-              @click="showSettingsModal = true"
+              @click="(showSettingsModal = true), (hasOpenedSettings = true)"
             />
-          </header>
-          <div class="content-wrapper">
-            <div class="mode-section classic">
-              <div class="section-header">
-                <h2>CLASSIC</h2>
-              </div>
-
-              <div class="classic-mode-buttons">
-                <button class="neon-btn classic" @click="startGame">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:user-solid" class="btn-icon" />
-                    <span class="btn-text">SOLO PLAY</span>
-                  </div>
-                </button>
-
-                <button class="neon-btn classic" @click="startGravity">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixelarticons:blocks" class="btn-icon" />
-                    <span class="btn-text">GRAVITY</span>
-                  </div>
-                </button>
-
-                <button class="neon-btn host" @click="openOnlineModal('host')">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:globe" class="btn-icon" />
-                    <span class="btn-text">HOST GAME</span>
-                  </div>
-                </button>
-
-                <button
-                  class="neon-btn join"
-                  @click="openOnlineModal('client')"
-                >
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:login" class="btn-icon" />
-                    <span class="btn-text">JOIN GAME</span>
-                  </div>
-                </button>
-              </div>
+            <span
+              v-if="!soundStore.isAudioEnabled && !hasOpenedSettings"
+              class="notification-badge"
+            ></span>
+          </div>
+        </header>
+        <div class="content-wrapper">
+          <div class="mode-section classic">
+            <div class="section-header">
+              <h2>CLASSIC</h2>
             </div>
 
-            <div class="mode-section special">
-              <div class="section-header">
-                <h2>SPECIAL</h2>
-              </div>
-              <div class="classic-mode-buttons">
-                <button class="neon-btn special" @click="startInspect">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:search" class="btn-icon" />
-                    <span class="btn-text">INSPECT</span>
-                  </div>
-                </button>
-                <button class="neon-btn special" @click="startSurvival">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
-                    <span class="btn-text">SURVIVAL</span>
-                  </div>
-                </button>
+            <div class="classic-mode-buttons">
+              <button class="neon-btn classic" @click="startGame">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:user-solid" class="btn-icon" />
+                  <span class="btn-text">SOLO PLAY</span>
+                </div>
+              </button>
 
-                <button class="neon-btn special" @click="startBuzzer">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:question" class="btn-icon" />
-                    <span class="btn-text">BUZZER</span>
-                  </div>
-                </button>
+              <button class="neon-btn classic" @click="startGravity">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixelarticons:blocks" class="btn-icon" />
+                  <span class="btn-text">GRAVITY</span>
+                </div>
+              </button>
 
-                <button class="neon-btn special editor" @click="openEditor">
-                  <div class="glow-layer"></div>
-                  <div class="btn-content">
-                    <Icon icon="pixel:image-solid" class="btn-icon" />
-                    <span class="btn-text">EDITOR</span>
-                  </div>
-                </button>
-              </div>
+              <button class="neon-btn host" @click="openOnlineModal('host')">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:globe" class="btn-icon" />
+                  <span class="btn-text">HOST GAME</span>
+                </div>
+              </button>
+
+              <button class="neon-btn join" @click="openOnlineModal('client')">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:login" class="btn-icon" />
+                  <span class="btn-text">JOIN GAME</span>
+                </div>
+              </button>
             </div>
           </div>
-        </section>
-      </main>
-    </transition>
+
+          <div class="mode-section special">
+            <div class="section-header">
+              <h2>SPECIAL</h2>
+            </div>
+            <div class="classic-mode-buttons">
+              <button class="neon-btn special" @click="startInspect">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:search" class="btn-icon" />
+                  <span class="btn-text">INSPECT</span>
+                </div>
+              </button>
+              <button class="neon-btn special" @click="startSurvival">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
+                  <span class="btn-text">SURVIVAL</span>
+                </div>
+              </button>
+
+              <button class="neon-btn special" @click="startBuzzer">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:question" class="btn-icon" />
+                  <span class="btn-text">BUZZER</span>
+                </div>
+              </button>
+
+              <button class="neon-btn special editor" @click="openEditor">
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:image-solid" class="btn-icon" />
+                  <span class="btn-text">EDITOR</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
     <footer>
       <PlatformBar />
+      <button class="how-to-play-link" @click="showManual = true">HOW TO PLAY</button>
       <div>
         Music: Lo-Bit 13 by
         <a
@@ -124,17 +123,13 @@
     </footer>
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
-    <SettingsModal
-      v-if="showSettingsModal"
-      @close="showSettingsModal = false"
-    />
+    <SettingsModal v-if="showSettingsModal" @close="showSettingsModal = false" />
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
@@ -145,8 +140,8 @@ import { Icon } from "@iconify/vue";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
 import JoinModal from "@/components/JoinModal.vue";
 import SettingsModal from "@/components/SettingsModal.vue";
-import WelcomeOverlay from "@/components/WelcomeOverlay.vue";
 import PlatformBar from "@/components/PlatformBar.vue";
+import GameManual from "@/components/GameManual.vue";
 import { useConfigStore } from "@/stores/config";
 
 const router = useRouter();
@@ -156,9 +151,10 @@ const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
-const showWelcomeModal = ref(!playerStore.playerName);
+const hasOpenedSettings = ref(false);
 const showAvatarModal = ref(false);
 const showSettingsModal = ref(false);
+const showManual = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
@@ -172,20 +168,6 @@ const showJoinModal = ref(hasRoomIdFromQuery.value);
 const joinRoomId = ref(undefined);
 
 if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
-
-const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
-  return {
-    backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated",
-  };
-});
 
 const setUser = () =>
   playerStore.setUser({
@@ -262,12 +244,10 @@ const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
-onMounted(() =>
-  document.addEventListener("fullscreenchange", updateFullscreenStatus),
-);
+onMounted(() => document.addEventListener("fullscreenchange", updateFullscreenStatus));
 
 onUnmounted(() =>
-  document.removeEventListener("fullscreenchange", updateFullscreenStatus),
+  document.removeEventListener("fullscreenchange", updateFullscreenStatus)
 );
 </script>
 
@@ -531,11 +511,7 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle at center,
-    var(--btn-color) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at center, var(--btn-color) 0%, transparent 70%);
   opacity: 0.1;
   transition: opacity 0.3s ease;
 }
@@ -613,6 +589,10 @@ footer {
   filter: drop-shadow(0 0 2px #00f2ff);
 }
 
+.settings-wrapper {
+  position: relative;
+}
+
 .settings-btn {
   color: var(--white);
   transition: all 0.3s;
@@ -623,6 +603,43 @@ footer {
   color: #aaaaaa;
   transform: translateY(-2px) rotate(45deg);
   filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.7));
+}
+
+.how-to-play-link {
+  background: none;
+  color: var(--white);
+  border: none;
+  text-decoration: underline;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary);
+  border-radius: 50%;
+}
+
+.notification-badge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 50%;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
 }
 
 @media (max-width: 480px) {
