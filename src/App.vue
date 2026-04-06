@@ -63,11 +63,11 @@ onMounted(() => {
       await handleAudioState(true);
     }
     document.removeEventListener("click", startAudioOnFirstInteraction);
-    document.removeEventListener("touchstart", startAudioOnFirstInteraction);
+    document.removeEventListener("pointerdown", startAudioOnFirstInteraction);
   };
 
   document.addEventListener("click", startAudioOnFirstInteraction);
-  document.addEventListener("touchstart", startAudioOnFirstInteraction);
+  document.addEventListener("pointerdown", startAudioOnFirstInteraction);
 });
 </script>
 
