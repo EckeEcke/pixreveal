@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-wrapper" data-sfx="click" @click.self="$emit('close')">
+  <div class="modal-wrapper" @click.self="$emit('close')">
     <div class="modal">
       <div class="modal-content">
         <slot></slot>
