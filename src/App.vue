@@ -59,6 +59,7 @@ onMounted(() => {
   if (urlParams.get("creator") === "true") {
     playerStore.isCreatorMode = true;
   }
+  handleAudioState(soundStore.isAudioEnabled);
 });
 </script>
 

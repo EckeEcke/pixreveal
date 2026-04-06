@@ -5,48 +5,12 @@
     </button>
     <h2>SETTINGS</h2>
     <div class="modal-content">
-      <div class="rounds-selection">
-        <label class="selection-label">HOW MANY ROUNDS</label>
-        <div class="radio-group">
-          <label
-            v-for="amount in [5, 10, 15, 20]"
-            :key="amount"
-            class="radio-item"
-          >
-            <input
-              type="radio"
-              name="rounds"
-              :value="amount"
-              v-model="configStore.maxRounds"
-              :disabled="configStore.filteredDrawings.length < amount * 4"
-              @change="soundStore.playSound('click')"
-            />
-            <span class="radio-button">{{ amount }}</span>
-          </label>
-        </div>
-      </div>
-      <div class="rounds-selection">
-        <label class="selection-label">SET ROUND LENGTH</label>
-        <div class="radio-group">
-          <label
-            v-for="duration in [5, 10, 15, 20]"
-            :key="duration"
-            class="radio-item"
-          >
-            <input
-              type="radio"
-              name="duration"
-              :value="duration"
-              v-model="configStore.revealTime"
-              @change="soundStore.playSound('click')"
-            />
-            <span class="radio-button">{{ duration }}</span>
-          </label>
-        </div>
+      <div class="recommendation">
+        <span>💡</span>
+        <p>FOR THE BEST EXPERIENCE ENABLE AUDIO AND FULLSCREEN</p>
       </div>
       <div class="general-settings">
         <label class="selection-label">DISPLAY & AUDIO</label>
-
         <div class="config-buttons">
           <div class="config-element">
             <label class="config-label">
@@ -70,11 +34,7 @@
           </div>
           <div class="config-element">
             <label class="config-label">
-              <input
-                type="checkbox"
-                v-model="isFullscreen"
-                @change="toggleFullscreen"
-              />
+              <input type="checkbox" v-model="isFullscreen" @change="toggleFullscreen" />
               <div class="pixel-box">
                 <Icon
                   class="status-icon"
@@ -84,6 +44,37 @@
               </div>
             </label>
           </div>
+        </div>
+      </div>
+      <div class="rounds-selection">
+        <label class="selection-label">HOW MANY ROUNDS</label>
+        <div class="radio-group">
+          <label v-for="amount in [5, 10, 15, 20]" :key="amount" class="radio-item">
+            <input
+              type="radio"
+              name="rounds"
+              :value="amount"
+              v-model="configStore.maxRounds"
+              :disabled="configStore.filteredDrawings.length < amount * 4"
+              @change="soundStore.playSound('click')"
+            />
+            <span class="radio-button">{{ amount }}</span>
+          </label>
+        </div>
+      </div>
+      <div class="rounds-selection">
+        <label class="selection-label">SET ROUND LENGTH</label>
+        <div class="radio-group">
+          <label v-for="duration in [5, 10, 15, 20]" :key="duration" class="radio-item">
+            <input
+              type="radio"
+              name="duration"
+              :value="duration"
+              v-model="configStore.revealTime"
+              @change="soundStore.playSound('click')"
+            />
+            <span class="radio-button">{{ duration }}</span>
+          </label>
         </div>
       </div>
       <div class="filter-settings">
@@ -358,5 +349,22 @@ h2 {
   font-size: 12px;
   margin-top: 4px;
   opacity: 0.8;
+}
+
+.recommendation {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--blue-bg);
+  border-radius: 4px;
+  padding: 12px;
+  padding: 8px;
+  p {
+    margin: 0;
+    font-size: 12px;
+  }
+  span {
+    font-size: 24px;
+  }
 }
 </style>
