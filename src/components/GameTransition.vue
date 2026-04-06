@@ -14,17 +14,23 @@ import { useSoundStore } from "@/stores/sound";
 const emit = defineEmits(["done"]);
 
 const steps = ["3", "2", "1", "GO!"];
-const current = ref(steps[0]);
+const current = ref("");
+
+const INTERVAL = 800;
+
+useSoundStore().playSound("correct");
 
 onMounted(() => {
-  steps.forEach((step, i) => {
-    setTimeout(() => {
-      current.value = step;
-      useSoundStore().playSound(step === "GO!" ? "buzz" : "timer");
-    }, i * 800);
-  });
+  setTimeout(() => {
+    steps.forEach((step, i) => {
+      setTimeout(() => {
+        current.value = step;
+        useSoundStore().playSound(step === "GO!" ? "buzz" : "timer");
+      }, i * INTERVAL);
+    });
 
-  setTimeout(() => emit("done"), steps.length * 800);
+    setTimeout(() => emit("done"), steps.length * INTERVAL);
+  }, 250);
 });
 </script>
 
@@ -47,9 +53,7 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 4px;
   color: #fff;
-  text-shadow:
-    0 0 20px #b44fff,
-    0 0 60px #b44fff;
+  text-shadow: 0 0 20px #b44fff, 0 0 60px #b44fff;
   display: block;
 }
 
