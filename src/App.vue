@@ -33,8 +33,7 @@ const handleAudioState = async (isEnabled) => {
 
   if (isEnabled) {
     if (!audio.value.src) {
-      const musicPath = new URL("./assets/audio/music.mp3", import.meta.url)
-        .href;
+      const musicPath = new URL("./assets/audio/music.mp3", import.meta.url).href;
       audio.value.src = musicPath;
     }
 
@@ -51,7 +50,7 @@ watch(
   () => soundStore.isAudioEnabled,
   (isEnabled) => {
     handleAudioState(isEnabled);
-  },
+  }
 );
 
 onMounted(() => {
@@ -59,7 +58,16 @@ onMounted(() => {
   if (urlParams.get("creator") === "true") {
     playerStore.isCreatorMode = true;
   }
-  handleAudioState(soundStore.isAudioEnabled);
+  const startAudioOnFirstInteraction = async () => {
+    if (soundStore.isAudioEnabled) {
+      await handleAudioState(true);
+    }
+    document.removeEventListener("click", startAudioOnFirstInteraction);
+    document.removeEventListener("touchstart", startAudioOnFirstInteraction);
+  };
+
+  document.addEventListener("click", startAudioOnFirstInteraction);
+  document.addEventListener("touchstart", startAudioOnFirstInteraction);
 });
 </script>
 
