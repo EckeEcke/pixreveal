@@ -189,7 +189,6 @@ const getShareMessage = (score, mode) => {
 };
 
 const playAgain = () => {
-  soundStore.playSound("click");
   onlineStore.reset();
   router.push("/");
 };
