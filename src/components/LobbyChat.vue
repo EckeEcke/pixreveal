@@ -25,7 +25,7 @@
         class="chat-input"
         @input="soundStore.playSound('click')"
       />
-      <button @click="handleSend" class="btn-outline">
+      <button @click="handleSend" data-sfx="click" class="btn-outline">
         <Icon icon="pixel:play-solid" />
         SEND
       </button>
@@ -54,7 +54,6 @@ const scrollToBottom = async () => {
 const handleSend = () => {
   if (chatInput.value.trim() === "") return;
   onlineStore.sendChatMessage(chatInput.value);
-  soundStore.playSound("click");
   chatInput.value = "";
 };
 

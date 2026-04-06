@@ -5,6 +5,7 @@
       target="_blank"
       class="btn-outline"
       title="Follow on Facebook"
+      data-sfx="click"
     >
       <Icon icon="streamline-pixel:logo-social-media-facebook-circle" />
     </a>
@@ -14,6 +15,7 @@
       target="_blank"
       class="btn-outline"
       title="Subscribe on YouTube"
+      data-sfx="click"
     >
       <Icon icon="pixel:youtube" />
     </a>
@@ -23,6 +25,7 @@
       target="_blank"
       class="btn-outline"
       title="Follow on TikTok"
+      data-sfx="click"
     >
       <Icon icon="pixel:tiktok" />
     </a>
@@ -32,6 +35,7 @@
       target="_blank"
       class="btn-outline"
       title="View on GitHub"
+      data-sfx="click"
     >
       <Icon icon="pixel:github" />
     </a>

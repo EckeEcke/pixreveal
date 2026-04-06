@@ -4,7 +4,12 @@
       <GameOverTransition
         v-if="showIntro"
         message="GAME OVER"
-        @done="() => { showIntro = false; soundStore.playSound('complete');}"
+        @done="
+          () => {
+            showIntro = false;
+            soundStore.playSound('complete');
+          }
+        "
       />
     </Transition>
     <div>
@@ -25,7 +30,7 @@
             :has-finished="playersSortedByPoints[0].hasFinished"
             :correct-answers="playersSortedByPoints[0].correctAnswers"
           />
-          <button class="btn-outline" @click="playAgain">
+          <button class="btn-outline" data-sfx="click" @click="playAgain">
             <Icon icon="pixel:refresh-solid" />
             Play Again
           </button>
@@ -71,9 +76,7 @@
         </div>
 
         <div
-          v-if="
-            playerStore.gameMode === 'survival' && survivalStore.newHighscore
-          "
+          v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
           class="rank-prophet highscore-message"
         >
           NEW HIGHSCORE!
@@ -83,7 +86,7 @@
           <h2>Challenge your friends!</h2>
           <ShareIcons :msg="getShareMessage(playerStore.points)" />
         </div>
-        <button class="btn-outline pulse-btn" @click="playAgain">
+        <button class="btn-outline pulse-btn" data-sfx="click" @click="playAgain">
           <Icon icon="pixel:refresh-solid" />
           Play Again
         </button>
@@ -128,11 +131,11 @@ const playersSortedByPoints = computed(() => {
 });
 
 const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
+  playersOnline.value.some((player) => player.isOnline && !player.hasFinished)
 );
 
 const isOnlinePlay = computed(
-  () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1,
+  () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1
 );
 
 const getRankData = (score) => {

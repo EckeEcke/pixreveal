@@ -41,5 +41,24 @@ export const useSoundStore = defineStore("sound", () => {
     localStorage.setItem("pixreveal_audio", newValue.toString());
   });
 
+  window.addEventListener(
+    "pointerdown",
+    (event: PointerEvent) => {
+      const target = (event.target as Element).closest<HTMLElement>(
+        "[data-sfx]",
+      );
+
+      if (!target || (target as any).disabled || !isAudioEnabled.value) {
+        return;
+      }
+
+      const sfxType = target.dataset.sfx;
+      if (sfxType) {
+        playSound(sfxType as keyof typeof sounds);
+      }
+    },
+    { capture: true, passive: true },
+  );
+
   return { isAudioEnabled, playSound };
 });
