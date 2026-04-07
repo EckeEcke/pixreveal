@@ -9,6 +9,7 @@ import EditorView from "@/views/EditorView.vue";
 import BuzzerView from "@/views/BuzzerView.vue";
 import InspectView from "@/views/InspectView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
+import AboutView from "@/views/AboutView.vue";
 import { useGameStore } from "@/stores/game";
 import GravityView from "@/views/GravityView.vue";
 
@@ -68,6 +69,12 @@ const router = createRouter({
       name: "lobby",
       component: LobbyView,
       meta: { robots: "noindex" },
+    },
+    {
+      path: "/about",
+      name: "about",
+      component: AboutView,
+      meta: { robots: "index, follow" },
     },
     {
       // PATH GUARD: always put in the end
