@@ -22,12 +22,45 @@
         </p>
 
         <div class="tech-stack">
-          <span>Vue 3</span>
-          <span>TypeScript</span>
-          <span>Pinia</span>
-          <span>Vite</span>
-          <span>Apinator.io</span>
+          <div class="tech-item">
+            <Icon icon="logos:vue" />
+            <span>Vue 3</span>
+          </div>
+          <div class="tech-item">
+            <Icon icon="devicon:typescript" />
+            <span>TypeScript</span>
+          </div>
+          <div class="tech-item">
+            <Icon icon="logos:pinia" />
+            <span>Pinia</span>
+          </div>
+
+          <div class="tech-item">
+            <Icon icon="devicon:vitejs" />
+            <span>Vite</span>
+          </div>
+          <div class="tech-item">
+            <Icon icon="logos:websocket" class="white-icon" />
+            <span>Apinator.io</span>
+          </div>
         </div>
+      </section>
+
+      <section class="about-section">
+        <p>
+          Looking for a collab or want to give me feedback? You can reach out to me via
+          Github or LinkedIn
+        </p>
+        <a href="https://github.com/eckeecke" target="_blank" rel="noopener noreferrer">
+          <Icon icon="devicon:github" class="white-icon" />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/christian-eckardt-hh/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon icon="devicon:linkedin" />
+        </a>
       </section>
 
       <footer class="about-footer">
@@ -38,6 +71,10 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { Icon } from "@iconify/vue";
+</script>
 
 <style scoped>
 .about-view {
@@ -53,10 +90,16 @@
   width: 100%;
   max-width: 600px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 h1 {
   font-size: 24px;
+}
+
+a {
+  font-size: 24px;
+  margin-right: 8px;
 }
 
 .confirm-btn {
@@ -76,9 +119,16 @@ h1 {
 
 .tech-stack {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
   margin-top: 1rem;
   flex-wrap: wrap;
+}
+
+.tech-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .tech-stack span {
@@ -87,5 +137,9 @@ h1 {
 
 .about-footer {
   margin-top: 2rem;
+}
+
+.white-icon {
+  filter: invert(1);
 }
 </style>
