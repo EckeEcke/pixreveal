@@ -1,17 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { usePlayerStore } from "@/stores/player";
-import GameView from "@/views/GameView.vue";
-import SurvivalView from "@/views/SurvivalView.vue";
-import GameOverView from "@/views/GameOverView.vue";
-import LobbyView from "@/views/LobbyView.vue";
-import EditorView from "@/views/EditorView.vue";
-import BuzzerView from "@/views/BuzzerView.vue";
-import InspectView from "@/views/InspectView.vue";
-import NotFoundView from "@/views/NotFoundView.vue";
-import AboutView from "@/views/AboutView.vue";
 import { useGameStore } from "@/stores/game";
-import GravityView from "@/views/GravityView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,61 +15,61 @@ const router = createRouter({
     {
       path: "/editor",
       name: "editor",
-      component: EditorView,
+      component: () => import("@/views/EditorView.vue"),
       meta: { robots: "index, follow" },
     },
     {
       path: "/game",
       name: "game",
-      component: GameView,
+      component: () => import("@/views/GameView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/survival",
       name: "survival",
-      component: SurvivalView,
+      component: () => import("@/views/SurvivalView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/buzzer",
       name: "buzzer",
-      component: BuzzerView,
+      component: () => import("@/views/BuzzerView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/inspect",
       name: "inspect",
-      component: InspectView,
+      component: () => import("@/views/InspectView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/gravity",
       name: "gravity",
-      component: GravityView,
+      component: () => import("@/views/GravityView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/gameover",
       name: "gameover",
-      component: GameOverView,
+      component: () => import("@/views/GameOverView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/lobby",
       name: "lobby",
-      component: LobbyView,
+      component: () => import("@/views/LobbyView.vue"),
       meta: { robots: "noindex" },
     },
     {
       path: "/about",
       name: "about",
-      component: AboutView,
+      component: () => import("@/views/AboutView.vue"),
       meta: { robots: "index, follow" },
     },
+    // Path Guard: always put at the bottom!
     {
-      // PATH GUARD: always put in the end
       path: "/:pathMatch(.*)*",
-      component: NotFoundView,
+      component: () => import("@/views/NotFoundView.vue"),
       meta: { robots: "noindex" },
     },
   ],
