@@ -6,6 +6,7 @@
       </button>
     </div>
     <article>
+      <h1 class="logo">HOW TO <span>PLAY</span></h1>
       <h2>How to play PixReveal</h2>
       <p>
         PixReveal is a <strong>free browser party game</strong> about guessing
@@ -71,6 +72,10 @@
         increase the total pool of drawings.
       </p>
     </article>
+    <br />
+    <button class="confirm-btn" data-sfx="click" @click="$router.push('/')">
+      BACK TO HOME
+    </button>
   </div>
 </template>
 
@@ -87,9 +92,9 @@ import { Icon } from "@iconify/vue";
 .close-btn-wrapper {
   display: flex;
   justify-content: flex-end;
-  position: sticky;
-  top: 0;
-  right: 16px;
+  position: absolute;
+  top: -16px;
+  right: -16px;
   z-index: 1;
 }
 
@@ -100,5 +105,19 @@ import { Icon } from "@iconify/vue";
   color: var(--primary);
   font-size: 36px;
   cursor: pointer;
+}
+
+.confirm-btn {
+  background: var(--primary);
+  padding: 8px 16px;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+h1 {
+  text-align: left;
 }
 </style>

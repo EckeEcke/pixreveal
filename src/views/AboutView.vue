@@ -1,6 +1,11 @@
 <template>
   <div class="about-view">
     <div class="about-content">
+      <div class="close-btn-wrapper">
+        <button @click="$router.push('/')" data-sfx="click" class="close-btn">
+          <Icon icon="pixel:window-close-solid" />
+        </button>
+      </div>
       <h1 class="logo">ABOUT PIX<span>REVEAL</span></h1>
 
       <section class="about-section">
@@ -92,13 +97,16 @@ import { Icon } from "@iconify/vue";
   padding: 32px;
   border-radius: 8px;
   width: 100%;
-  max-width: 600px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
 }
 
+.about-content {
+  position: relative;
+}
+
 h1 {
-  font-size: 24px;
+  text-align: left;
 }
 
 a {
@@ -108,12 +116,29 @@ a {
 
 .confirm-btn {
   background: var(--primary);
-  width: 100%;
   padding: 8px 16px;
   border: none;
   font-family: inherit;
   font-weight: 700;
   border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  z-index: 1;
+}
+
+.close-btn {
+  padding: 0;
+  background: var(--card-bg);
+  border: none;
+  color: var(--primary);
+  font-size: 36px;
   cursor: pointer;
 }
 
