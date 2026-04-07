@@ -23,24 +23,28 @@
 
         <div class="tech-stack">
           <div class="tech-item">
-            <Icon icon="logos:vue" />
+            <Icon icon="logos:vue" alt="Built with Vue" />
             <span>Vue 3</span>
           </div>
           <div class="tech-item">
-            <Icon icon="devicon:typescript" />
+            <Icon icon="devicon:typescript" alt="Using Typescript" />
             <span>TypeScript</span>
           </div>
           <div class="tech-item">
-            <Icon icon="logos:pinia" />
+            <Icon icon="logos:pinia" alt="Pinia for state management" />
             <span>Pinia</span>
           </div>
 
           <div class="tech-item">
-            <Icon icon="devicon:vitejs" />
+            <Icon icon="devicon:vitejs" alt="Vite as bundler" />
             <span>Vite</span>
           </div>
           <div class="tech-item">
-            <Icon icon="logos:websocket" class="white-icon" />
+            <Icon
+              icon="logos:websocket"
+              class="white-icon"
+              alt="apinator.io for websocket multiplayer"
+            />
             <span>Apinator.io</span>
           </div>
         </div>
@@ -52,14 +56,14 @@
           Github or LinkedIn
         </p>
         <a href="https://github.com/eckeecke" target="_blank" rel="noopener noreferrer">
-          <Icon icon="devicon:github" class="white-icon" />
+          <Icon icon="devicon:github" class="white-icon" alt="link to my github" />
         </a>
         <a
           href="https://www.linkedin.com/in/christian-eckardt-hh/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Icon icon="devicon:linkedin" />
+          <Icon icon="devicon:linkedin" alt="link to my linkedin" />
         </a>
       </section>
 
