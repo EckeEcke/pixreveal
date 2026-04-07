@@ -9,10 +9,11 @@
   
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PixReveal">
   
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="manifest" href="/site.webmanifest" />
-  
+    <link rel="dns-prefetch" href="//gc.zgo.at">
     <meta name="theme-color" content="#0a0a0c" />
   
     <meta name="description" content="Challenge your friends in PixReveal! A minimalist pixel art guessing game. Quick rounds, multiple game modes, and competitive online multiplayer fun.">
@@ -49,7 +50,8 @@
         "Multiple Game Modes",
         "Real-time Multiplayer",
         "Inspect Mode",
-        "5s Blitz Mode",
+        "Gravity Mode",
+        "Buzzer Mode",
         "Survival Mode",
         "Category Filters"
       ],
@@ -69,6 +71,11 @@
         display: none;
       }
     </style>
+    <noscript>
+      <h1>PixReveal - Pixel Art Guessing Game</h1>
+      <p>An interactive multiplayer party game built with Vue 3 and TypeScript.
+        Reveal pixel art in Solo, Gravity, Inspect, Buzzer, Survival or Multiplayer mode.</p>
+    </noscript>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
     <script data-goatcounter="https://pixreveal.goatcounter.com/count" data-goatcounter-settings='{"no_onload": true}' async src="//gc.zgo.at/count.js"></script>
