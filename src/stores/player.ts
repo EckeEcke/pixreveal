@@ -19,7 +19,7 @@ export const usePlayerStore = defineStore("player", () => {
   };
 
   const addPoints = (earnedPoints: number) => {
-    const pointsToAdd = Math.min(earnedPoints, useConfigStore().maxRounds);
+    const pointsToAdd = Math.min(earnedPoints, useConfigStore().revealTime);
     points.value += pointsToAdd;
     if (earnedPoints > 0) correctAnswers.value++;
   };
