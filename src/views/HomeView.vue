@@ -11,7 +11,7 @@
               icon="pixel:cog-solid"
               class="btn-icon settings-btn"
               data-sfx="click"
-              @click="((showSettingsModal = true), (hasOpenedSettings = true))"
+              @click="(showSettingsModal = true), (hasOpenedSettings = true)"
             />
             <span
               v-if="!soundStore.isAudioEnabled && !hasOpenedSettings"
@@ -102,11 +102,7 @@
     </main>
     <footer>
       <PlatformBar />
-      <button
-        class="how-to-play-link"
-        data-sfx="click"
-        @click="showManual = true"
-      >
+      <button class="how-to-play-link" data-sfx="click" @click="openManual">
         HOW TO PLAY
       </button>
       <div>
@@ -130,10 +126,7 @@
     </footer>
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
-    <SettingsModal
-      v-if="showSettingsModal"
-      @close="showSettingsModal = false"
-    />
+    <SettingsModal v-if="showSettingsModal" @close="showSettingsModal = false" />
   </div>
 </template>
 
@@ -168,8 +161,6 @@ const showManual = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
 onlineStore.playerId = playerId;
 const { prepareGame } = useGameStore();
-
-const loadingText = ref("LOADING...");
 
 const hasRoomIdFromQuery = computed(() => !!route.query.id);
 const roomIdFromQuery = route.query.id;
@@ -230,19 +221,12 @@ const openOnlineModal = (playerIs) => {
   onlineStore.isHost = playerIs === "host";
 };
 
-const hostGame = () => {
-  soundStore.playSound("click");
-  setUser();
-  prepareGame(configStore.revealTime);
-  onlineStore.isLoading = true;
-  loadingText.value = "CREATING ONLINE GAME...";
-  onlineStore.hostSession({
-    playerId,
-    username: playerStore.playerName,
-    avatarIndex: playerStore.avatarIndex,
-    isHost: true,
-    rounds: configStore.maxRounds,
-    revealTime: configStore.revealTime,
+const openManual = () => {
+  showManual.value = true;
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
   });
 };
 
@@ -254,12 +238,10 @@ const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
-onMounted(() =>
-  document.addEventListener("fullscreenchange", updateFullscreenStatus),
-);
+onMounted(() => document.addEventListener("fullscreenchange", updateFullscreenStatus));
 
 onUnmounted(() =>
-  document.removeEventListener("fullscreenchange", updateFullscreenStatus),
+  document.removeEventListener("fullscreenchange", updateFullscreenStatus)
 );
 </script>
 
@@ -523,11 +505,7 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle at center,
-    var(--btn-color) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at center, var(--btn-color) 0%, transparent 70%);
   opacity: 0.1;
   transition: opacity 0.3s ease;
 }
