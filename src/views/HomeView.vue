@@ -102,9 +102,15 @@
     </main>
     <footer>
       <PlatformBar />
-      <button class="how-to-play-link" data-sfx="click" @click="openManual">
-        HOW TO PLAY
-      </button>
+      <div>
+        <button class="how-to-play-link" data-sfx="click" @click="openManual">
+          HOW TO PLAY
+        </button>
+        <button class="how-to-play-link" data-sfx="click" @click="router.push('/about')">
+          ABOUT
+        </button>
+      </div>
+
       <div>
         Music: Lo-Bit 13 by
         <a
