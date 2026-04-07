@@ -5,9 +5,9 @@
 
       <section class="about-section">
         <p>
-          PixReveal is an interactive guessing game where the goal is as simple as it is
-          challenging: Identify the pixel art masterpiece as it reveals itself piece by
-          piece. Whether you are playing in the classic Solo Mode, the dynamic Gravity
+          PixReveal is an interactive guessing party game where the goal is as simple as
+          it is challenging: Identify the pixel art masterpiece as it reveals itself piece
+          by piece. Whether you are playing in the classic Solo Mode, the dynamic Gravity
           Mode, or competing in Online Multiplayer against friends — it's all about your
           eye for detail.
         </p>
@@ -16,9 +16,9 @@
       <section class="about-section">
         <p>
           This project was built from the ground up by me as a solo developer. As a
-          frontend specialist with a passion for <strong>Vue.js</strong> and
-          <strong>TypeScript</strong>, my focus was to create a web-based gaming
-          experience that feels snappy, modern, and visually cohesive.
+          frontend specialist with a passion for <strong>Vue.js</strong>, my focus was to
+          create a web-based gaming experience that feels snappy, modern, and visually
+          cohesive.
         </p>
 
         <div class="tech-stack">
