@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { shuffle } from "@/utils/random";
 import { useConfigStore } from "./config";
-import type { S } from "vue-router/dist/index-DFCq6eJK.js";
 
 type PixelGrid = number[][];
 
