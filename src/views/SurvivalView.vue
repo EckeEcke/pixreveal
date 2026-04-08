@@ -32,19 +32,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onUnmounted, watch } from "vue";
 import { useSurvivalStore } from "@/stores/survival";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import GameTransition from "@/components/GameTransition.vue";
 import router from "@/router";
-import { usePlayerStore } from "@/stores/player";
 import GameHeader from "@/components/GameHeader.vue";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/AnswerButtons.vue";
 import { useConfigStore } from "@/stores/config";
 
 const store = useSurvivalStore();
-const playerStore = usePlayerStore();
 
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
@@ -92,13 +90,10 @@ watch(
 );
 
 const start = () => {
+  store.startSurvival();
   showTransition.value = false;
   setDrawing();
 };
-
-onMounted(() => {
-  store.startSurvival();
-});
 
 onUnmounted(() => {
   if (store.timerInterval) clearInterval(store.timerInterval);
