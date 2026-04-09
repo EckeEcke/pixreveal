@@ -8,8 +8,7 @@
       :class="[
         buttonColors[index % buttonColors.length],
         {
-          'is-wrong':
-            hasAnswered && selectedAnswer === answer.name && !answer.isCorrect,
+          'is-wrong': hasAnswered && selectedAnswer === answer && !answer.isCorrect,
           'is-correct': hasAnswered && answer.isCorrect,
         },
       ]"
@@ -37,14 +36,14 @@ const selectedAnswer = ref(undefined);
 
 const checkAnswer = (answer, event) => {
   if (event) event.currentTarget.blur();
-  selectedAnswer.value = answer.name;
+  selectedAnswer.value = answer;
 
   if (answer.isCorrect) {
     soundStore.playSound("correct");
   } else {
     soundStore.playSound("incorrect");
   }
-  emit("answered", answer.isCorrect);
+  emit("answered", selectedAnswer.value);
 };
 </script>
 

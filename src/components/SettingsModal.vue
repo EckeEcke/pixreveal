@@ -339,7 +339,7 @@ h2 {
 }
 
 .title-card .label {
-  font-family: "Rajdhani", sans-serif;
+  font-family: "inherit", sans-serif;
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;

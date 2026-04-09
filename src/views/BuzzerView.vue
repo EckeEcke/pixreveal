@@ -1,11 +1,7 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition
-        v-if="showTransition"
-        message="GET READY"
-        @done="start"
-      />
+      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
     </transition>
     <section class="canvas-section">
       <GameHeader
@@ -116,10 +112,10 @@ const handleBuzzerPress = () => {
   useSoundStore().playSound("buzz");
 };
 
-const handleAnswer = (isCorrect) => {
+const handleAnswer = (selectedAnswer) => {
   hasAnswered.value = true;
   pauseReveal.value = false;
-  if (!isCorrect) {
+  if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
   } else {
     pixelData.value = statusIcons.success;

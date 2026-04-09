@@ -1,22 +1,22 @@
+<template>
+  <Transition name="fade">
+    <div v-if="show" class="loading-overlay">
+      <div class="loading-content">
+        <LoadingAnimation />
+        <p class="loading-text">{{ useChannelStore().loadingText }}</p>
+      </div>
+    </div>
+  </Transition>
+</template>
+
 <script setup lang="ts">
-import { useOnlineStore } from "@/stores/online";
+import { useChannelStore } from "@/stores/channel";
 import LoadingAnimation from "./LoadingAnimation.vue";
 
 defineProps({
   show: Boolean,
 });
 </script>
-
-<template>
-  <Transition name="fade">
-    <div v-if="show" class="loading-overlay">
-      <div class="loading-content">
-        <LoadingAnimation />
-        <p class="loading-text">{{ useOnlineStore().loadingText }}</p>
-      </div>
-    </div>
-  </Transition>
-</template>
 
 <style scoped>
 .loading-overlay {

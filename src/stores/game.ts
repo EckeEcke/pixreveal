@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, type Ref } from "vue";
 import { shuffle } from "@/utils/random";
 import { useConfigStore } from "./config";
 
@@ -38,11 +38,18 @@ export const useGameStore = defineStore("game", () => {
 
   const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
 
-  const prepareGame = (customRevealTime: number, customRounds?: any[]) => {
+  const resolveRevealTime = (value: number | Ref<number>) =>
+    typeof value === "number" ? value : value?.value ?? 15;
+
+  const prepareGame = (
+    customRevealTime: number | Ref<number>,
+    customRounds?: any[],
+  ) => {
+    const resolvedRevealTime = resolveRevealTime(customRevealTime);
     if (customRounds) {
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
-      configStore.revealTime = customRevealTime;
+      configStore.revealTime = resolvedRevealTime;
     } else {
       const shuffled = shuffle(filteredDrawings.value);
       const selectedDrawings = shuffled.slice(0, maxRounds.value);

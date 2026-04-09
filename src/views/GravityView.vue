@@ -91,7 +91,7 @@ const setDrawing = (data) => {
   startTimer();
 };
 
-const handleAnswer = (isCorrect) => {
+const handleAnswer = (selectedAnswer) => {
   if (hasAnswered.value) return;
   hasAnswered.value = true;
   clearInterval(timerId);
@@ -99,7 +99,7 @@ const handleAnswer = (isCorrect) => {
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
     isStatusIcon.value = true;
-  } else if (!isCorrect) {
+  } else if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
     isStatusIcon.value = true;
     soundStore.playSound("incorrect");

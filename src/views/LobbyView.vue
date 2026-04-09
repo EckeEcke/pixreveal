@@ -1,13 +1,15 @@
 <template>
   <div>
     <div class="lobby-card">
-      <h1>Lobby</h1>
-      <div>ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
-      <div>ROUND DURATION: {{ configStore.revealTime }}</div>
+      <h1>{{ mode === "party" ? "Party Lobby" : "Lobby" }}</h1>
+      <template v-if="mode === 'regular'">
+        <div>ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
+        <div>ROUND DURATION: {{ configStore.revealTime }}</div>
+      </template>
       <div class="room-id">
         ROOM ID:
         <span @click="copyToClipboard">
-          {{ onlineStore.currentRoomId }}
+          {{ channelStore.currentRoomId }}
           <Icon icon="pixel:copy" />
         </span>
       </div>
@@ -16,12 +18,7 @@
           <Icon icon="pixel:link-solid" />
           COPY INVITE LINK
         </button>
-        <button
-          v-if="canNativeShare"
-          class="btn-outline"
-          @click="shareNative"
-          title="More sharing options"
-        >
+        <button v-if="canNativeShare" class="btn-outline" @click="shareNative">
           <Icon icon="pixel:share" />
           SHARE
         </button>
@@ -41,17 +38,20 @@
         :show-you-indicator="isMe(player.playerId)"
       />
     </div>
-    <button
-      v-if="players && players.length > 1 && onlineStore.isHost"
-      class="btn-outline pulse-btn"
-      @click="startGame"
-    >
-      START GAME
-    </button>
+
+    <template v-if="channelStore.isHost && players.length > 1">
+      <button class="btn-outline pulse-btn" @click="startGame" data-sfx="click">
+        {{ mode === "party" ? "START PARTY" : "START GAME" }}
+      </button>
+    </template>
+
     <LoadingAnimation
-      v-if="(onlineStore.isHost && players.length === 1) || !onlineStore.isHost"
-      :text="onlineStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
+      v-if="
+        (channelStore.isHost && players.length === 1) || !channelStore.isHost
+      "
+      :text="channelStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
     />
+
     <LobbyChat />
   </div>
 </template>
@@ -60,54 +60,61 @@
 import { computed, onMounted, ref } from "vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import { useOnlineStore } from "@/stores/online";
-import { useRouter } from "vue-router";
-import { useGameStore } from "@/stores/game";
-import LoadingAnimation from "@/components/LoadingAnimation.vue";
+import { useConfigStore } from "@/stores/config";
+import { useChannelStore } from "@/stores/channel";
+import { usePartyStore } from "@/stores/party";
+import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
+import { useRouter, useRoute } from "vue-router";
+import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import LobbyChat from "@/components/LobbyChat.vue";
 import { Icon } from "@iconify/vue";
-import { usePlayerStore } from "@/stores/player";
-import { useConfigStore } from "@/stores/config";
 
-const { rounds } = useGameStore();
-
-const soundStore = useSoundStore();
-const onlineStore = useOnlineStore();
-const playerStore = usePlayerStore();
-const configStore = useConfigStore();
+const route = useRoute();
 const router = useRouter();
+const isParty = route.meta.mode === "party";
+
+const channelStore = useChannelStore();
+const onlineStore = useOnlineStore();
+const configStore = useConfigStore();
+const playerStore = usePlayerStore();
+const soundStore = useSoundStore();
+const partyStore = usePartyStore();
+
 const showClipboardInfo = ref(false);
 const canNativeShare = ref(false);
+const shareModeParam = computed(() => (isParty ? "party" : "online"));
+const inviteLink = computed(
+  () =>
+    `${window.location.origin}?id=${channelStore.currentRoomId}&mode=${shareModeParam.value}`,
+);
 
-const inviteLink = `${window.location.host}?id=${onlineStore.currentRoomId}`;
+const players = computed(() => channelStore.playersOnline);
+const isMe = (id) => id === channelStore.playerId;
 
-const players = computed(() => onlineStore.playersOnline);
-
-const isMe = (id) => id === onlineStore.playerId;
+const startGame = () => {
+  soundStore.playSound("click");
+  if (isParty) {
+    partyStore.startGame();
+  } else {
+    onlineStore.triggerGameStart();
+  }
+};
 
 const copyToClipboard = async () => {
   try {
-    await navigator.clipboard.writeText(onlineStore.currentRoomId);
+    await navigator.clipboard.writeText(channelStore.currentRoomId);
     showClipboardInfo.value = true;
-    setTimeout(() => {
-      showClipboardInfo.value = false;
-    }, 2000);
-  } catch (err) {}
+    setTimeout(() => (showClipboardInfo.value = false), 2000);
+  } catch {}
 };
 
 const copyLinkToClipboard = async () => {
   try {
-    await navigator.clipboard.writeText(inviteLink);
+    await navigator.clipboard.writeText(inviteLink.value);
     showClipboardInfo.value = true;
-    setTimeout(() => {
-      showClipboardInfo.value = false;
-    }, 2000);
-  } catch (err) {}
-};
-
-const startGame = () => {
-  soundStore.playSound("click");
-  onlineStore.triggerGameStart(rounds);
+    setTimeout(() => (showClipboardInfo.value = false), 2000);
+  } catch {}
 };
 
 const shareNative = async () => {
@@ -115,16 +122,16 @@ const shareNative = async () => {
     await navigator.share({
       title: "PixReveal",
       text: `${playerStore.playerName} invites you to play!`,
-      url: inviteLink,
+      url: inviteLink.value,
     });
-  } catch (err) {
-    console.log("Native share failed", err);
-  }
+  } catch {}
 };
 
 onMounted(() => {
   if (players.value.length <= 0) router.push("/");
   canNativeShare.value = !!navigator.share;
+  if (isParty) partyStore.setupEvents();
+  else onlineStore.setupEvents();
 });
 </script>
 

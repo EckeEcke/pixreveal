@@ -60,6 +60,13 @@
         session, invite friends via link or room ID, and compete for the highest rank.
         Everyone plays the same drawings – may the fastest scout win!
       </p>
+
+      <h2>Local Party Mode Multiplayer</h2>
+      <p>
+        PixReveal offers a free alternative to Jackbox-style games! Gather around a single
+        screen, and everyone can join the fun by buzzing in with their own devices. No need for multiple screens or complex setups. Just one host starts the game, and everyone
+        else can join as a player on their phones. The game is designed to be enjoyed in a social setting, making it perfect for parties, family gatherings, or casual game nights. 
+      </p>
       <h2>Settings & Customization</h2>
       <p>
         Fine-tune your session for the best experience. I highly recommend enabling
@@ -93,8 +100,8 @@ import { Icon } from "@iconify/vue";
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  top: -16px;
-  right: -16px;
+  top: 8px;
+  right: 8px;
   z-index: 1;
 }
 

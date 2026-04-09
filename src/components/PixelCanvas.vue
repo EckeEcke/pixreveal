@@ -136,9 +136,10 @@ const render = () => {
   const now = Date.now();
 
   const drawPixels = () => {
-    const pixelsToDraw = props.isRevealing
-      ? displayedPixels.value
-      : allPixelsFromProp();
+    const pixelsToDraw =
+      props.isRevealing || props.pauseReveal
+        ? displayedPixels.value
+        : allPixelsFromProp();
     pixelsToDraw.forEach((p) => {
       const color = colorPalette[p.val];
       let scale = 1;
@@ -232,6 +233,12 @@ watch(
     if (props.pixelArray?.length > 0) startReveal();
   },
   { deep: true },
+);
+watch(
+  () => props.isRevealing,
+  () => {
+    if (props.pixelArray?.length > 0) startReveal();
+  },
 );
 onMounted(() => startReveal());
 onUnmounted(() => {

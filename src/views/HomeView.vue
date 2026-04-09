@@ -1,18 +1,19 @@
 <template>
   <div class="home-content-wrapper">
-    <LoadingOverlay :show="onlineStore.isLoading" />
+    <LoadingOverlay :show="channelStore.isLoading" />
     <GameManual v-show="showManual" @close="showManual = false" />
     <main v-show="!showManual" class="home-container">
       <section class="setup-card">
         <header>
           <h1 class="logo">Pix<span>Reveal</span></h1>
           <div class="settings-wrapper">
-            <Icon
-              icon="pixel:cog-solid"
-              class="btn-icon settings-btn"
-              data-sfx="click"
-              @click="(showSettingsModal = true), (hasOpenedSettings = true)"
-            />
+            <button @click="(showSettingsModal = true), (hasOpenedSettings = true)">
+              <Icon
+                icon="pixel:cog-solid"
+                class="btn-icon settings-btn"
+                data-sfx="click"
+              />
+            </button>
             <span
               v-if="!soundStore.isAudioEnabled && !hasOpenedSettings"
               class="notification-badge"
@@ -25,39 +26,38 @@
               <h2>CLASSIC</h2>
             </div>
 
-            <div class="classic-mode-buttons">
-              <button class="neon-btn classic" @click="startGame">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:user-solid" class="btn-icon" />
-                  <span class="btn-text">SOLO PLAY</span>
-                </div>
-              </button>
+          <div class="classic-mode-buttons">
+            <button class="neon-btn classic" @click="startGame">
+              <div class="glow-layer"></div>
+              <div class="btn-content">
+                <Icon icon="pixel:user-solid" class="btn-icon" />
+                <span class="btn-text">SOLO PLAY</span>
+              </div>
+            </button>
 
-              <button class="neon-btn classic" @click="startGravity">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixelarticons:blocks" class="btn-icon" />
-                  <span class="btn-text">GRAVITY</span>
-                </div>
-              </button>
+            <button class="neon-btn classic" @click="startGravity">
+              <div class="glow-layer"></div>
+              <div class="btn-content">
+                <Icon icon="pixelarticons:blocks" class="btn-icon" />
+                <span class="btn-text">GRAVITY</span>
+              </div>
+            </button>
 
-              <button class="neon-btn host" @click="openOnlineModal('host')">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:globe" class="btn-icon" />
-                  <span class="btn-text">HOST GAME</span>
-                </div>
-              </button>
-
-              <button class="neon-btn join" @click="openOnlineModal('client')">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:login" class="btn-icon" />
-                  <span class="btn-text">JOIN GAME</span>
-                </div>
-              </button>
-            </div>
+            <button class="neon-btn online" @click="openMultiplayerModal('online')">
+              <div class="glow-layer"></div>
+              <div class="btn-content">
+                <Icon icon="pixel:globe" class="btn-icon" />
+                <span class="btn-text">ONLINE</span>
+              </div>
+            </button>
+            <button class="neon-btn party" @click="openMultiplayerModal('party')">
+              <div class="glow-layer"></div>
+              <div class="btn-content">
+                <Icon icon="pixel:users" class="btn-icon" />
+                <span class="btn-text">LOCAL PARTY</span>
+              </div>
+            </button>
+          </div>
           </div>
 
           <div class="mode-section special">
@@ -131,15 +131,20 @@
       </div>
     </footer>
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
-    <JoinModal v-if="showJoinModal" @close="showJoinModal = false" />
+    <JoinModal
+      v-if="showJoinModal"
+      @close="closeMultiplayerModal"
+      :mode="multiplayerMode"
+      :initial-role="multiplayerRole"
+      :room-id="joinRoomId"
+    />
     <SettingsModal v-if="showSettingsModal" @close="showSettingsModal = false" />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
@@ -152,10 +157,11 @@ import SettingsModal from "@/components/SettingsModal.vue";
 import PlatformBar from "@/components/PlatformBar.vue";
 import GameManual from "@/components/GameManual.vue";
 import { useConfigStore } from "@/stores/config";
+import { useChannelStore } from "@/stores/channel";
 
 const router = useRouter();
 const route = useRoute();
-const onlineStore = useOnlineStore();
+const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
@@ -165,16 +171,15 @@ const showAvatarModal = ref(false);
 const showSettingsModal = ref(false);
 const showManual = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
-onlineStore.playerId = playerId;
+channelStore.playerId = playerId;
 const { prepareGame } = useGameStore();
 
 const hasRoomIdFromQuery = computed(() => !!route.query.id);
 const roomIdFromQuery = route.query.id;
-const showJoinModal = ref(hasRoomIdFromQuery.value);
-
-const joinRoomId = ref(undefined);
-
-if (hasRoomIdFromQuery.value) joinRoomId.value = roomIdFromQuery;
+const showJoinModal = ref(false);
+const joinRoomId = ref(route.query.id ?? "");
+const multiplayerMode = ref("online");
+const multiplayerRole = ref("join");
 
 const setUser = () =>
   playerStore.setUser({
@@ -183,35 +188,30 @@ const setUser = () =>
   });
 
 const startGame = () => {
-  setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
   router.push("/game");
 };
 
 const startGravity = () => {
-  setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "gravity";
   router.push("/gravity");
 };
 
 const startBuzzer = () => {
-  setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
   router.push("/buzzer");
 };
 
 const startInspect = () => {
-  setUser();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "inspect";
   router.push("/inspect");
 };
 
 const startSurvival = () => {
-  setUser();
   playerStore.gameMode = "survival";
   router.push("/survival");
 };
@@ -221,11 +221,57 @@ const openEditor = () => {
   router.push("/editor");
 };
 
-const openOnlineModal = (playerIs) => {
+const openMultiplayerModal = (mode) => {
   soundStore.playSound("click");
+  multiplayerMode.value = mode;
+  channelStore.setMode(mode === "party" ? "party" : "regular");
+  multiplayerRole.value = "join";
   showJoinModal.value = true;
-  onlineStore.isHost = playerIs === "host";
+  updateQuery({
+    mode,
+    role: "join",
+    id: joinRoomId.value || undefined,
+  });
 };
+
+const closeMultiplayerModal = () => {
+  showJoinModal.value = false;
+  updateQuery({
+    mode: undefined,
+    role: undefined,
+    id: undefined,
+  });
+};
+
+const updateQuery = (patch) => {
+  const nextQuery = { ...route.query, ...patch };
+  Object.keys(nextQuery).forEach((key) => {
+    if (nextQuery[key] === undefined || nextQuery[key] === null) {
+      delete nextQuery[key];
+    }
+  });
+  router.replace({ query: nextQuery });
+};
+
+watch(
+  () => route.query.mode,
+  (value) => {
+    if (value === "online" || value === "party") {
+      multiplayerMode.value = value;
+      multiplayerRole.value = route.query.role === "host" ? "host" : "join";
+      showJoinModal.value = true;
+      channelStore.setMode(value === "party" ? "party" : "regular");
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => route.query.id,
+  (value) => {
+    joinRoomId.value = value ?? "";
+  },
+);
 
 const openManual = () => {
   showManual.value = true;
@@ -238,7 +284,8 @@ const openManual = () => {
 
 if (document.fullscreenElement) isFullscreen.value = true;
 
-onlineStore.reset();
+channelStore.reset();
+setUser();
 
 const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
@@ -589,6 +636,25 @@ footer {
   filter: drop-shadow(0 0 2px #00f2ff);
 }
 
+.neon-btn.online {
+  --btn-color: var(--neon-purple);
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 15px var(--purple-glow);
+}
+.neon-btn.online .btn-icon {
+  color: var(--neon-purple);
+  filter: drop-shadow(0 0 2px var(--neon-purple));
+}
+
+.neon-btn.party {
+  --btn-color: var(--neon-purple);
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 15px var(--purple-glow);
+}
+.neon-btn.party .btn-icon {
+  color: var(--neon-purple);
+  filter: drop-shadow(0 0 2px var(--neon-purple));
+}
 .settings-wrapper {
   position: relative;
 }

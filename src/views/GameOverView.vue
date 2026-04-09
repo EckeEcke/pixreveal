@@ -13,7 +13,35 @@
       />
     </Transition>
     <div>
-      <div v-if="isOnlinePlay">
+      <div v-if="isPartyMode">
+        <h1 class="logo">PARTY <span>OVER</span></h1>
+        <div class="results-card party-results-card">
+          <p class="party-subtitle">
+            {{ partyPlayersSorted.length ? `${partyPlayersSorted[0].username.toUpperCase()} WON THE PARTY!` : "GAME OVER" }}
+          </p>
+          <div
+            v-for="(player, index) in partyPlayersSorted"
+            :key="player.playerId"
+            class="player-wrapper"
+          >
+            <PlayerDisplay
+              :name="player.username"
+              :avatar-index="player.avatarIndex"
+              :points="player.points"
+              :has-finished="true"
+              :show-you-indicator="player.playerId === channelStore.playerId"
+            />
+            <div class="position">{{ index + 1 }}</div>
+          </div>
+          <div class="party-actions">
+            <button class="btn-outline pulse-btn" data-sfx="click" @click="playAgain">
+              <Icon icon="pixel:refresh-solid" />
+              Play again
+            </button>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="isOnlinePlay">
         <h1 class="logo">GAME <span>OVER</span></h1>
         <div v-if="!waitingForFinalResults" class="results-card">
           <h2 class="rank-prophet">
@@ -100,8 +128,10 @@
 import { computed, ref } from "vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
+import { useChannelStore } from "@/stores/channel";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
+import { usePartyStore } from "@/stores/party";
 import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
 import LobbyChat from "@/components/LobbyChat.vue";
@@ -116,15 +146,17 @@ import GameOverTransition from "@/components/GameOverTransition.vue";
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
 const configStore = useConfigStore();
+const channelStore = useChannelStore();
+const partyStore = usePartyStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
 const showIntro = ref(true);
 
-const isMe = (id) => id === onlineStore.playerId;
+const isMe = (id) => id === channelStore.playerId;
 
-const playersOnline = computed(() => onlineStore.playersOnline);
+const playersOnline = computed(() => channelStore.playersOnline);
 
 const playersSortedByPoints = computed(() => {
   return [...playersOnline.value].sort((a, b) => b.points - a.points);
@@ -135,7 +167,15 @@ const waitingForFinalResults = computed(() =>
 );
 
 const isOnlinePlay = computed(
-  () => onlineStore.playersOnline && onlineStore.playersOnline.length > 1
+  () => channelStore.playersOnline && channelStore.playersOnline.length > 1
+);
+
+const isPartyMode = computed(
+  () => partyStore.isGameOver || partyStore.players.length > 0,
+);
+
+const partyPlayersSorted = computed(() =>
+  [...partyStore.players].sort((a, b) => b.points - a.points),
 );
 
 const getRankData = (score) => {
@@ -189,7 +229,8 @@ const getShareMessage = (score, mode) => {
 };
 
 const playAgain = () => {
-  onlineStore.reset();
+  if (partyStore && partyStore.reset) partyStore?.reset();
+  if (onlineStore && onlineStore.reset) onlineStore?.reset();
   router.push("/");
 };
 
@@ -238,6 +279,25 @@ gameStore.reset();
   .rank-prophet {
     margin: 0 auto 16px;
   }
+}
+
+.party-results-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 48px;
+}
+
+.party-subtitle {
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--neon-pink);
+}
+
+.party-actions {
+  display: flex;
+  justify-content: center;
 }
 
 .rank-prophet.highscore-message {
