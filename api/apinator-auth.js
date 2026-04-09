@@ -8,12 +8,13 @@ export default async function handler(req, res) {
   try {
     const { socket_id, channel_name } = req.body;
     const username = decodeURIComponent(
-      req.headers["x-player-username"] || "Guest",
+      req.headers["x-player-username"] ||
+        "Guest " + Math.floor(Math.random() * 1000),
     );
     const avatarIndex = req.headers["x-player-avatar"] || 0;
     const playerId = req.headers["x-player-id"] || "anon";
     const isHost = req.headers["x-player-host"] === "true";
-    const rounds = req.headers["x-player-rounds"] || null
+    const rounds = req.headers["x-player-rounds"] || null;
     const duration = req.headers["x-player-duration"] || 15;
 
     const appKey = process.env.VITE_APINATOR_KEY;
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
         avatar: Number(avatarIndex),
         host: isHost,
         rounds,
-        duration
+        duration,
       },
     });
 

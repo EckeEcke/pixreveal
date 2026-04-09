@@ -98,11 +98,11 @@ const setDrawing = (data) => {
   startTimer();
 };
 
-const handleAnswer = (isCorrect) => {
+const handleAnswer = (selectedAnswer) => {
   hasAnswered.value = true;
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
-  } else if (!isCorrect) {
+  } else if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
   } else {
     pixelData.value = statusIcons.success;

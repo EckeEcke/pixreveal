@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="player-hud"
-    :class="{ pending: hasFinished === false }"
-  >
+  <div class="player-hud" :class="{ pending: hasFinished === false }">
     <div class="hud-avatar" :style="avatarStyle"></div>
     <div>
       <div class="hud-username">
@@ -291,6 +288,7 @@ const avatarStyle = computed(() => {
   background-size: 100% 4px;
   background: rgba(15, 15, 25, 0.7);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
 }
 
 .hud-info {

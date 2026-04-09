@@ -1,12 +1,22 @@
 <template>
-  <header class="game-header" :class="!playerStore.isCreatorMode ? 'header-grid' : ''">
+  <header
+    class="game-header"
+    :class="!playerStore.isCreatorMode ? 'header-grid' : ''"
+  >
     <!-- LEFT -->
-    <div v-if="!playerStore.isCreatorMode" class="header-section left">
+    <div
+      v-if="!playerStore.isCreatorMode && (isSurvival || maxRounds)"
+      class="header-section left"
+    >
       <div class="inset-pill blue-accent">
         <div class="pill-value">
           <transition name="slide-up" mode="out-in">
             <span :key="isSurvival ? highscore : currentRound">
-              <Icon v-if="isSurvival" icon="pixel:crown-solid" class="pill-icon blue" />
+              <Icon
+                v-if="isSurvival"
+                icon="pixel:crown-solid"
+                class="pill-icon blue"
+              />
               {{ isSurvival ? highscore : currentRound }}
             </span>
           </transition>
@@ -39,9 +49,15 @@
                 >MAKE YOUR GUESS!</span
               >
 
-              <span v-else-if="isCorrect" class="msg-bold success" key="c">NICE!</span>
-              <span v-else-if="isIncorrect" class="msg-bold error" key="i">NOPE!</span>
-              <span v-else-if="count <= 0" class="msg-bold danger" key="t">TIME UP</span>
+              <span v-else-if="isCorrect" class="msg-bold success" key="c"
+                >NICE!</span
+              >
+              <span v-else-if="isIncorrect" class="msg-bold error" key="i"
+                >NOPE!</span
+              >
+              <span v-else-if="count <= 0" class="msg-bold danger" key="t"
+                >TIME UP</span
+              >
               <span v-else class="timer-digits" :key="count"
                 >{{ count }}
                 <Icon
@@ -57,7 +73,10 @@
     </div>
 
     <!-- RIGHT -->
-    <div v-if="!playerStore.isCreatorMode" class="header-section right">
+    <div
+      v-if="!playerStore.isCreatorMode && totalScore !== undefined"
+      class="header-section right"
+    >
       <div class="inset-pill gold-accent">
         <div class="pill-value">
           <transition name="slide-up" mode="out-in">
@@ -75,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { usePlayerStore } from "@/stores/player";
 
@@ -84,7 +103,7 @@ const props = defineProps<{
   max?: number;
   isCorrect?: boolean;
   isIncorrect?: boolean;
-  totalScore: number;
+  totalScore?: number;
   highscore?: number;
   currentRound?: number;
   maxRounds?: number;
@@ -96,7 +115,7 @@ const playerStore = usePlayerStore();
 const displayWidth = computed(() =>
   props.isCorrect || props.isIncorrect
     ? 100
-    : Math.max(0, (props.count / (props.max || 15)) * 100)
+    : Math.max(0, (props.count / (props.max || 15)) * 100),
 );
 
 const statusClass = computed(() => ({
@@ -104,17 +123,26 @@ const statusClass = computed(() => ({
   "is-incorrect": props.isIncorrect,
   "is-danger": props.count <= 3 && !props.isCorrect && !props.isIncorrect,
   "is-warning":
-    props.count < 7 && props.count > 3 && !props.isCorrect && !props.isIncorrect,
+    props.count < 7 &&
+    props.count > 3 &&
+    !props.isCorrect &&
+    !props.isIncorrect,
 }));
 </script>
 
 <style scoped>
 .game-header {
+  width: 100%;
   padding: 8px 14px;
   gap: 12px;
-  background: linear-gradient(180deg, rgba(20, 10, 40, 0.9), rgba(10, 10, 20, 0.9));
+  background: linear-gradient(
+    180deg,
+    rgba(20, 10, 40, 0.9),
+    rgba(10, 10, 20, 0.9)
+  );
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
   @media (min-width: 1024px) {
     background: none;
   }
@@ -124,6 +152,10 @@ const statusClass = computed(() => ({
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
+}
+
+.header-section.center:only-child {
+  grid-column: 1 / -1;
 }
 
 .header-section.center {
@@ -158,7 +190,9 @@ const statusClass = computed(() => ({
   display: flex;
   align-items: center;
   gap: 6px;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3), 1px 1px 0 #000;
+  text-shadow:
+    0 0 4px rgba(255, 255, 255, 0.3),
+    1px 1px 0 #000;
 }
 
 .pill-total {
@@ -187,7 +221,9 @@ const statusClass = computed(() => ({
   height: 36px;
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 0 12px rgba(0, 255, 150, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 12px rgba(0, 255, 150, 0.15),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(4px);
   position: relative;
   overflow: hidden;
@@ -198,7 +234,9 @@ const statusClass = computed(() => ({
   height: 100%;
   background: linear-gradient(90deg, #39ff14, #00ffa6);
   box-shadow: 0 0 12px #39ff14;
-  transition: width 0.1s linear, background 0.3s ease;
+  transition:
+    width 0.1s linear,
+    background 0.3s ease;
 }
 
 .is-warning {
@@ -232,14 +270,18 @@ const statusClass = computed(() => ({
   font-weight: 900;
   color: #fff;
   letter-spacing: 1px;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3), 1px 1px 0 #000;
+  text-shadow:
+    0 0 4px rgba(255, 255, 255, 0.3),
+    1px 1px 0 #000;
 }
 
 .msg-bold {
   font-size: 20px;
   font-weight: 900;
   letter-spacing: 1px;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3), 1px 1px 0 #000;
+  text-shadow:
+    0 0 4px rgba(255, 255, 255, 0.3),
+    1px 1px 0 #000;
 }
 
 .shake-active {
@@ -308,7 +350,12 @@ const statusClass = computed(() => ({
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   animation: sweep 0.6s ease-out forwards;
 }
 

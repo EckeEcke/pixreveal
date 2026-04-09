@@ -61,6 +61,24 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/party-lobby",
+      name: "party-lobby",
+      component: () => import("@/views/LobbyView.vue"),
+      meta: { robots: "noindex", mode: "party" },
+    },
+    {
+      path: "/party-host",
+      name: "party-host",
+      component: () => import("@/views/PartyHostView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/party-player",
+      name: "party-player",
+      component: () => import("@/views/PartyPlayerView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/about",
       name: "about",
       component: () => import("@/views/AboutView.vue"),
@@ -76,31 +94,17 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const playerStore = usePlayerStore();
   const gameStore = useGameStore();
 
-  const protectedRoutes = [
-    "/game",
-    "/gameover",
-    "/survival",
-    "/buzzer",
-    "/inspect",
-    "/gravity"
-  ];
   const validPathsForGameOver = [
     "/game",
     "/survival",
     "/buzzer",
     "/inspect",
-    "/gravity"
+    "/gravity",
+    "/party-host",
   ];
-  const needRounds = ["/game", "/buzzer", "/inspect", "/gravity"];
-
-  if (protectedRoutes.includes(to.path)) {
-    if (!playerStore.playerName || !(playerStore.avatarIndex + 1)) {
-      return next("/");
-    }
-  }
+  const needRounds = ["/game", "/buzzer", "/inspect", "/gravity", "/party-host"];
 
   if (
     needRounds.includes(to.path) &&

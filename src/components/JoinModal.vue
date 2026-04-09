@@ -1,9 +1,37 @@
+<!-- OnlineModal.vue -->
 <template>
   <ModalWrapper>
     <button @click="$emit('close')" data-sfx="click" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
-    <h2>{{ isHost ? "HOST GAME" : "JOIN GAME" }}</h2>
+
+    <h2>
+      {{
+        isHost
+          ? mode === "party"
+            ? "HOST PARTY"
+            : "HOST GAME"
+          : mode === "party"
+            ? "JOIN PARTY"
+            : "JOIN GAME"
+      }}
+    </h2>
+
+    <div class="role-toggle">
+      <button
+        :class="{ active: selectedRole === 'join' }"
+        @click="setRole('join')"
+      >
+        JOIN
+      </button>
+      <button
+        :class="{ active: selectedRole === 'host' }"
+        @click="setRole('host')"
+      >
+        HOST
+      </button>
+    </div>
+
     <div class="setup-section">
       <div class="player-info-wrapper" @click="showAvatarModal = true">
         <div class="player-avatar" :style="avatarStyle">
@@ -14,12 +42,23 @@
         </div>
       </div>
     </div>
-    <button v-if="isHost" class="start-btn" data-sfx="click" @click="hostGame">
-      HOST GAME
+
+    <button
+      v-if="selectedRole === 'host'"
+      class="start-btn"
+      data-sfx="click"
+      @click="hostGame"
+    >
+      {{ mode === "party" ? "HOST PARTY" : "HOST GAME" }}
     </button>
+
     <div v-else class="join-container">
       <div class="join-terminal">
-        <input v-model="joinRoomId" placeholder="ENTER ROOM ID" class="terminal-input" />
+        <input
+          v-model="joinRoomId"
+          placeholder="ENTER ROOM ID"
+          class="terminal-input"
+        />
         <button
           class="terminal-btn"
           :disabled="!joinRoomId"
@@ -31,81 +70,123 @@
         </button>
       </div>
     </div>
+
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
   </ModalWrapper>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { useGameStore } from "@/stores/game";
+import { useConfigStore } from "@/stores/config";
+import { useChannelStore } from "@/stores/channel";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "./ModalWrapper.vue";
-import { useRoute } from "vue-router";
-import { useOnlineStore } from "@/stores/online";
 import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
-import { useConfigStore } from "@/stores/config";
 
-const route = useRoute();
-const joinRoomId = ref(route.query.id ?? "");
-const loadingText = ref("LOADING...");
-const playerId = Math.random().toString(36).substring(2, 9);
+const props = defineProps({
+  mode: { type: String, default: "online" },
+  initialRole: { type: String, default: "join" },
+  roomId: { type: String, default: "" },
+});
+
+defineEmits(["close"]);
+
 const showAvatarModal = ref(false);
+const playerId = Math.random().toString(36).substring(2, 9);
 
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
-const onlineStore = useOnlineStore();
+const channelStore = useChannelStore();
 const { prepareGame } = useGameStore();
 
-const isHost = onlineStore.isHost;
+const joinRoomId = ref(props.roomId ?? "");
+const selectedRole = ref(props.initialRole === "host" ? "host" : "join");
+
+const setRole = (role) => {
+  selectedRole.value = role;
+  channelStore.isHost = role === "host";
+};
+
+setRole(selectedRole.value);
+
+watch(
+  () => props.initialRole,
+  (value) => {
+    setRole(value === "host" ? "host" : "join");
+  },
+);
+
+watch(
+  () => props.roomId,
+  (value) => {
+    joinRoomId.value = value ?? "";
+  },
+);
+
+const isHost = computed(() => selectedRole.value === "host");
+const mode = computed(() => (props.mode === "party" ? "party" : "online"));
 
 const avatarStyle = computed(() => {
   const index = playerStore.avatarIndex || 0;
   const col = index % 6;
   const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
   return {
     backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
+    backgroundPosition: `${col * 20}% ${row * 20}%`,
     backgroundSize: "600%",
     imageRendering: "pixelated",
   };
 });
 
 const hostGame = () => {
+  channelStore.setMode(props.mode === "party" ? "party" : "regular");
   soundStore.playSound("click");
-  prepareGame(configStore.revealTime);
-  onlineStore.playerId = playerId;
-  onlineStore.isLoading = true;
-  onlineStore.loadingText = "CREATING ONLINE GAME...";
-  onlineStore.hostSession({
-    playerId,
-    username: playerStore.playerName,
-    avatarIndex: playerStore.avatarIndex,
-    isHost: true,
-    rounds: configStore.maxRounds,
-    revealTime: configStore.revealTime,
-  });
+  channelStore.playerId = playerId;
+  channelStore.isLoading = true;
+
+  if (props.mode === "party") {
+    prepareGame(configStore.revealTime);
+    channelStore.loadingText = "CREATING PARTY...";
+    channelStore.hostSession({
+      playerId,
+      username: playerStore.playerName,
+      avatarIndex: playerStore.avatarIndex,
+      isHost: true,
+    });
+  } else {
+    channelStore.loadingText = "CREATING ONLINE GAME...";
+    prepareGame(configStore.revealTime);
+    channelStore.hostSession({
+      playerId,
+      username: playerStore.playerName,
+      avatarIndex: playerStore.avatarIndex,
+      isHost: true,
+      rounds: configStore.maxRounds,
+      revealTime: configStore.revealTime,
+    });
+  }
 };
 
 const joinGame = () => {
-  if (!joinRoomId) return;
+  if (!joinRoomId.value) return;
+  channelStore.setMode(props.mode === "party" ? "party" : "regular");
   soundStore.playSound("click");
-  onlineStore.playerId = playerId;
-  onlineStore.isLoading = true;
-  loadingText.value = "JOINING GAME...";
-  onlineStore.joinSession(
+  channelStore.playerId = playerId;
+  channelStore.isLoading = true;
+  channelStore.loadingText = "JOINING...";
+  channelStore.joinSession(
     {
       playerId,
       username: playerStore.playerName,
       avatarIndex: playerStore.avatarIndex,
       isHost: false,
     },
-    joinRoomId.value.toUpperCase().trim()
+    joinRoomId.value.toUpperCase().trim(),
   );
 };
 </script>
@@ -245,5 +326,30 @@ h2 {
 .start-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px 0 #b45309;
+}
+
+.role-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.role-toggle button {
+  flex: 1;
+  padding: 12px 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  font-family: "8bit", sans-serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.role-toggle button.active {
+  border-color: var(--primary);
+  background: rgba(236, 72, 153, 0.2);
 }
 </style>

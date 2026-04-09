@@ -2,7 +2,7 @@
   <div class="lobby-chat">
     <div class="messages-area" ref="scrollContainer">
       <div
-        v-for="msg in onlineStore.messages"
+        v-for="msg in channelStore.messages"
         :key="msg.id"
         :class="['chat-row', { 'system-msg': msg.isSystem }]"
       >
@@ -38,8 +38,10 @@ import { ref, onMounted, nextTick, watch } from "vue";
 import { useOnlineStore } from "@/stores/online";
 import { Icon } from "@iconify/vue";
 import { useSoundStore } from "@/stores/sound";
+import { useChannelStore } from "@/stores/channel";
 
 const onlineStore = useOnlineStore();
+const channelStore = useChannelStore();
 const soundStore = useSoundStore();
 const chatInput = ref("");
 const scrollContainer = ref<HTMLElement | null>(null);
@@ -53,15 +55,15 @@ const scrollToBottom = async () => {
 
 const handleSend = () => {
   if (chatInput.value.trim() === "") return;
-  onlineStore.sendChatMessage(chatInput.value);
+  channelStore.sendChatMessage(chatInput.value);
   chatInput.value = "";
 };
 
 watch(
-  () => onlineStore.messages.length,
+  () => channelStore.messages.length,
   () => {
     scrollToBottom();
-  },
+  }
 );
 
 onMounted(() => {
