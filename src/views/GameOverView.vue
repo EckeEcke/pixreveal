@@ -76,7 +76,7 @@
             :correct-answers="player.correctAnswers"
             :show-you-indicator="isMe(player.playerId)"
           />
-          <div v-if="player.hasFinished" class="position">{{ index + 1 }}</div>
+          <PositionInfo v-if="player.hasFinished" :position="index + 1" />
           <LoadingAnimation size="small" v-else />
         </div>
         <div v-if="waitingForFinalResults">
@@ -142,6 +142,7 @@ import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
 import GameOverStats from "@/components/GameOverStats.vue";
 import GameOverTransition from "@/components/GameOverTransition.vue";
+import PositionInfo from "@/components/PositionInfo.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -241,48 +242,6 @@ gameStore.reset();
 .player-wrapper {
   position: relative;
   margin-bottom: 16px;
-}
-
-.position {
-  position: absolute;
-  top: -12px;
-  left: -12px;
-  background: var(--bg-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--primary);
-  font-weight: 700;
-  font-size: 32px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--primary);
-  box-shadow: 2px 2px 4px #00000088;
-}
-
-.player-wrapper:nth-of-type(1) .position {
-  border-color: var(--neon-yellow);
-  color: var(--neon-yellow);
-  box-shadow:
-    0 0 20px var(--yellow-glow),
-    2px 2px 4px #00000088;
-}
-
-.player-wrapper:nth-of-type(2) .position {
-  border-color: #c0c0c0;
-  color: #c0c0c0;
-  box-shadow:
-    0 0 15px rgba(192, 192, 192, 0.4),
-    2px 2px 4px #00000088;
-}
-
-.player-wrapper:nth-of-type(3) .position {
-  border-color: #cd7f32; /* Bronze */
-  color: #cd7f32;
-  box-shadow:
-    0 0 15px rgba(205, 127, 50, 0.4),
-    2px 2px 4px #00000088;
 }
 
 .btn-outline {

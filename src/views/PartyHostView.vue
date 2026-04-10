@@ -66,6 +66,7 @@
           :avatar-index="player.avatarIndex"
           :points="player.points"
         />
+        <PositionInfo :position="index + 1" />
         <div class="position">{{ index + 1 }}</div>
       </div>
     </div>
@@ -77,6 +78,7 @@ import { ref, onUnmounted, computed, watch } from "vue";
 import GameHeader from "@/components/GameHeader.vue";
 import PixelCanvas from "@/components/PixelCanvas.vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
+import PositionInfo from "@/components/PositionInfo.vue";
 import GameTransition from "@/components/GameTransition.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
@@ -225,52 +227,6 @@ h1 {
 .player-wrapper {
   position: relative;
   margin-bottom: 16px;
-}
-/*
-.player-wrapper:nth-of-type(1) {
-
-  animation: sharp-pulse 2s ease-in-out infinite;
-}
-*/
-.player-wrapper:nth-of-type(1) .position {
-  border-color: var(--neon-yellow);
-  color: var(--neon-yellow);
-  box-shadow:
-    0 0 20px var(--yellow-glow),
-    2px 2px 4px #00000088;
-}
-
-.player-wrapper:nth-of-type(2) .position {
-  border-color: #c0c0c0;
-  color: #c0c0c0;
-  box-shadow:
-    0 0 15px rgba(192, 192, 192, 0.4),
-    2px 2px 4px #00000088;
-}
-
-.player-wrapper:nth-of-type(3) .position {
-  border-color: #cd7f32; /* Bronze */
-  color: #cd7f32;
-  box-shadow:
-    0 0 15px rgba(205, 127, 50, 0.4),
-    2px 2px 4px #00000088;
-}
-
-.position {
-  position: absolute;
-  top: -12px;
-  left: -12px;
-  background: var(--bg-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  font-size: 32px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid;
-  transition: all 0.3s ease;
 }
 
 .buzzer-status {
