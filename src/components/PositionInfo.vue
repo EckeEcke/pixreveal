@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   position: Number,
 });
 
