@@ -15,6 +15,7 @@
         <button
           class="neon-buzzer"
           aria-label="Buzz to answer"
+          data-sfx="buzz"
           @click="partyStore.pressBuzzer"
         >
           <span class="buzzer-text">BUZZ!</span>

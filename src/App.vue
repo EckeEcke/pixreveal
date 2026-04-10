@@ -21,6 +21,9 @@ import { watch, ref, onMounted } from "vue";
 import { useSoundStore } from "./stores/sound";
 import { usePlayerStore } from "./stores/player";
 import { Analytics } from "@vercel/analytics/vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const playerStore = usePlayerStore();
 
@@ -33,7 +36,8 @@ const handleAudioState = async (isEnabled) => {
 
   if (isEnabled) {
     if (!audio.value.src) {
-      const musicPath = new URL("./assets/audio/music.mp3", import.meta.url).href;
+      const musicPath = new URL("./assets/audio/music.mp3", import.meta.url)
+        .href;
       audio.value.src = musicPath;
     }
 
@@ -50,7 +54,18 @@ watch(
   () => soundStore.isAudioEnabled,
   (isEnabled) => {
     handleAudioState(isEnabled);
-  }
+  },
+);
+
+watch(
+  () => route.name,
+  (newRouteName) => {
+    if (newRouteName === "party-player") {
+      audio.value?.pause();
+    } else if (soundStore.isAudioEnabled && audio.value?.paused) {
+      audio.value?.play().catch(() => {});
+    }
+  },
 );
 
 onMounted(() => {
