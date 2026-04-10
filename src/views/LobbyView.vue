@@ -8,17 +8,17 @@
       </template>
       <div class="room-id">
         ROOM ID:
-        <span @click="copyToClipboard">
+        <span @click="copyToClipboard" data-sfx="click">
           {{ channelStore.currentRoomId }}
           <Icon icon="pixel:copy" />
         </span>
       </div>
       <div class="share-room-buttons">
-        <button @click="copyLinkToClipboard" class="btn-outline">
+        <button @click="copyLinkToClipboard" class="btn-outline" data-sfx="click">
           <Icon icon="pixel:link-solid" />
           COPY INVITE LINK
         </button>
-        <button v-if="canNativeShare" class="btn-outline" @click="shareNative">
+        <button v-if="canNativeShare" class="btn-outline" @click="shareNative" data-sfx="click">
           <Icon icon="pixel:share" />
           SHARE
         </button>
