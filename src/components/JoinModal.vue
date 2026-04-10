@@ -330,26 +330,38 @@ h2 {
 
 .role-toggle {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
 .role-toggle button {
   flex: 1;
-  padding: 12px 0;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  text-align: center;
+  padding: 10px 0;
+  background: #1a1a1a;
+  border: 2px solid #333;
   border-radius: 4px;
-  background: transparent;
   color: #fff;
-  font-family: "8bit", sans-serif;
-  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 900;
   letter-spacing: 2px;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+}
+
+.role-toggle button:hover {
+  border-color: #666;
+  background: #222;
 }
 
 .role-toggle button.active {
+  background: var(--primary);
   border-color: var(--primary);
-  background: rgba(236, 72, 153, 0.2);
+  color: #000;
+  font-size: 16px;
+  box-shadow: 0 0 10px var(--primary);
+  transform: translateY(-2px);
 }
 </style>

@@ -47,14 +47,14 @@
               <div class="glow-layer"></div>
               <div class="btn-content">
                 <Icon icon="pixel:globe" class="btn-icon" />
-                <span class="btn-text">ONLINE</span>
+                <span class="btn-text">ONLINE MULTIPLAYER</span>
               </div>
             </button>
             <button class="neon-btn party" @click="openMultiplayerModal('party')">
               <div class="glow-layer"></div>
               <div class="btn-content">
                 <Icon icon="pixel:users" class="btn-icon" />
-                <span class="btn-text">LOCAL PARTY</span>
+                <span class="btn-text">LOCAL PARTY MULTIPLAYER</span>
               </div>
             </button>
           </div>
@@ -663,6 +663,7 @@ footer {
   color: var(--white);
   transition: all 0.3s;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.7));
+  padding-right: 0;
 }
 
 .settings-btn:hover {
