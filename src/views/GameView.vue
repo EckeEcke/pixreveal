@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
@@ -134,16 +134,6 @@ const heartbeat = setInterval(() => {
     activeChannel.value.trigger("client-heartbeat", { timestamp: Date.now() });
   }
 }, 20000);
-
-const requestWakeLock = async () => {
-  try {
-    const wakeLock = await navigator.wakeLock.request("screen");
-  } catch (err) {
-    console.log(`${err.name}, ${err.message}`);
-  }
-};
-
-onMounted(() => requestWakeLock());
 
 onUnmounted(() => {
   clearTimeout(revealTimeoutId);
