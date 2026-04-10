@@ -44,9 +44,81 @@ export const useChannelStore = defineStore("channel", () => {
   const setMode = (value: "regular" | "party") => {
     mode.value = value;
   };
+  const onlineGameRunning = ref(false);
+  const setGameRunning = (value: boolean) => {
+    onlineGameRunning.value = value;
+  };
+  const inactivityNotified = ref(false);
 
   const unloadHandler = ref<(() => void) | null>(null);
   const visibilityHandler = ref<(() => void) | null>(null);
+
+  const reset = () => {
+    if (client.value && currentRoomId.value) {
+      client.value.unsubscribe(`presence-pixreveal-${currentRoomId.value}`);
+    }
+    playersOnline.value = [];
+    activeChannel.value = null;
+    client.value = null;
+    currentRoomId.value = null;
+    messages.value = [];
+    isLoading.value = false;
+    mode.value = "party";
+    playerId.value = "";
+    setGameRunning(false);
+    inactivityNotified.value = false;
+
+    if (unloadHandler.value) {
+      window.removeEventListener("beforeunload", unloadHandler.value);
+      unloadHandler.value = null;
+    }
+    if (visibilityHandler.value) {
+      document.removeEventListener(
+        "visibilitychange",
+        visibilityHandler.value,
+      );
+      visibilityHandler.value = null;
+    }
+  };
+
+  const handleInactivity = ({
+    skipNavigation = false,
+    skipReset = false,
+  }: { skipNavigation?: boolean; skipReset?: boolean } = {}) => {
+    if (
+      inactivityNotified.value ||
+      !onlineGameRunning.value ||
+      !activeChannel.value ||
+      !playerId.value
+    ) {
+      return;
+    }
+    inactivityNotified.value = true;
+
+    const eventName = isHost.value
+      ? "client-host-inactive"
+      : "client-player-inactive";
+    activeChannel.value.trigger(eventName, {
+      playerId: playerId.value,
+    });
+
+    if (!skipReset) {
+      reset();
+    }
+
+    if (!skipNavigation) {
+      router.push("/");
+    }
+  };
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === "visible") return;
+    handleInactivity();
+  };
+
+  const handleBeforeUnload = () => {
+    handleInactivity({ skipNavigation: true });
+  };
 
   const setChannel = (channel: any, roomId: string) => {
     activeChannel.value = channel;
@@ -65,13 +137,14 @@ export const useChannelStore = defineStore("channel", () => {
   };
 
   const setupEvents = (myPlayerId: string) => {
+    playerId.value = myPlayerId;
     const channel = activeChannel.value;
     if (!channel) return;
 
-    unloadHandler.value = () => {};
+    unloadHandler.value = handleBeforeUnload;
     window.addEventListener("beforeunload", unloadHandler.value);
 
-    visibilityHandler.value = () => {};
+    visibilityHandler.value = handleVisibilityChange;
     document.addEventListener("visibilitychange", visibilityHandler.value);
 
     channel.bind("realtime:subscription_succeeded", (members: any) => {
@@ -136,6 +209,11 @@ export const useChannelStore = defineStore("channel", () => {
         text: `${member.user_info.name} joined the lobby`,
         isSystem: true,
       });
+      if (isHost.value && onlineGameRunning.value) {
+        channel.trigger("client-join-blocked", {
+          targetId: member.user_id,
+        });
+      }
     });
 
     channel.bind("realtime:member_removed", (member: any) => {
@@ -207,29 +285,7 @@ export const useChannelStore = defineStore("channel", () => {
     });
   };
 
-  const reset = () => {
-    if (client.value && currentRoomId.value) {
-      client.value.unsubscribe(`presence-pixreveal-${currentRoomId.value}`);
-    }
-    playersOnline.value = [];
-    activeChannel.value = null;
-    client.value = null;
-    currentRoomId.value = null;
-    messages.value = [];
-    isLoading.value = false;
-    mode.value = "party";
-
-    if (unloadHandler.value) {
-      window.removeEventListener("beforeunload", unloadHandler.value);
-      unloadHandler.value = null;
-    }
-    if (visibilityHandler.value) {
-      document.removeEventListener("visibilitychange", visibilityHandler.value);
-      visibilityHandler.value = null;
-    }
-  };
-
-  return {
+    return {
     playersOnline,
     activeChannel,
     currentRoomId,
@@ -239,7 +295,9 @@ export const useChannelStore = defineStore("channel", () => {
     isLoading,
     loadingText,
     mode,
+    onlineGameRunning,
     setMode,
+    setGameRunning,
     hostSession,
     joinSession,
     sendChatMessage,

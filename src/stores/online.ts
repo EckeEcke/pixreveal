@@ -1,5 +1,6 @@
 // stores/online.ts
 import { defineStore } from "pinia";
+import { ref } from "vue";
 import { useChannelStore } from "./channel";
 import { useGameStore } from "./game";
 import { usePlayerStore } from "./player";
@@ -12,6 +13,7 @@ export const useOnlineStore = defineStore("online", () => {
   const playerStore = usePlayerStore();
   const configStore = useConfigStore();
   const router = useRouter();
+  const onlineGameRunning = ref(false);
 
   const setupEvents = () => {
     const channel = channelStore.activeChannel;
@@ -20,6 +22,29 @@ export const useOnlineStore = defineStore("online", () => {
     channel.bind("client-game-started", (data: any) => {
       gameStore.prepareGame(data.revealTime, data.rounds);
       router.push("/game");
+    });
+
+    channel.bind(
+      "client-player-inactive",
+      (data: { playerId: string; playerName?: string }) => {
+        if (!channelStore.isHost) return;
+        channelStore.removePlayer(data.playerId);
+        channel.trigger("client-join-blocked", {
+          targetId: data.playerId,
+        });
+      },
+    );
+
+    channel.bind("client-host-inactive", (data: { playerId: string }) => {
+      if (data.playerId === channelStore.playerId) return;
+      channelStore.reset();
+      router.push("/");
+    });
+
+    channel.bind("client-join-blocked", (data: { targetId: string }) => {
+      if (data.targetId !== channelStore.playerId) return;
+      channelStore.reset();
+      router.push("/");
     });
 
     channel.bind(
@@ -40,6 +65,8 @@ export const useOnlineStore = defineStore("online", () => {
   const triggerGameStart = () => {
     const channel = channelStore.activeChannel;
     if (!channel) return;
+    channelStore.setGameRunning(true);
+    onlineGameRunning.value = true;
 
     channel.trigger("client-game-started", {
       startedAt: new Date().toISOString(),
@@ -74,9 +101,16 @@ export const useOnlineStore = defineStore("online", () => {
     });
   };
 
+  const stopGame = () => {
+    onlineGameRunning.value = false;
+    channelStore.setGameRunning(false);
+  };
+
   return {
     setupEvents,
     triggerGameStart,
     broadcastScore,
+    onlineGameRunning,
+    stopGame,
   };
 });
