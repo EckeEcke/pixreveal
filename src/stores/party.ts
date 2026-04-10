@@ -60,6 +60,8 @@ export const usePartyStore = defineStore("party", () => {
         points: 0,
       }));
 
+    channelStore.setGameRunning(true);
+
     gameStore.prepareGame(configStore.revealTime);
 
     channel.value?.trigger("client-party-game-started", {
@@ -164,12 +166,32 @@ export const usePartyStore = defineStore("party", () => {
     channel.value?.trigger("client-party-game-over", {
       players: players.value,
     });
+    channelStore.setGameRunning(false);
     router.push("/gameover");
   };
 
   const setupEvents = () => {
     const c = channel.value;
     if (!c) return;
+
+    c.bind("client-join-blocked", () => {
+      channelStore.reset();
+      router.push("/");
+    });
+
+    c.bind("client-player-inactive", (data: { playerId: string }) => {
+      if (!isHost.value) return;
+      players.value = players.value.filter(
+        (player) => player.playerId !== data.playerId,
+      );
+      channelStore.removePlayer(data.playerId);
+    });
+
+    c.bind("client-host-inactive", (data: { playerId: string }) => {
+      if (data.playerId === channelStore.playerId) return;
+      channelStore.reset();
+      router.push("/");
+    });
 
     c.bind("client-party-game-started", (data: any) => {
       gameStore.prepareGame(data.revealTime, data.rounds);

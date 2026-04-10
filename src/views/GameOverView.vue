@@ -261,6 +261,30 @@ gameStore.reset();
   box-shadow: 2px 2px 4px #00000088;
 }
 
+.player-wrapper:nth-of-type(1) .position {
+  border-color: var(--neon-yellow);
+  color: var(--neon-yellow);
+  box-shadow:
+    0 0 20px var(--yellow-glow),
+    2px 2px 4px #00000088;
+}
+
+.player-wrapper:nth-of-type(2) .position {
+  border-color: #c0c0c0;
+  color: #c0c0c0;
+  box-shadow:
+    0 0 15px rgba(192, 192, 192, 0.4),
+    2px 2px 4px #00000088;
+}
+
+.player-wrapper:nth-of-type(3) .position {
+  border-color: #cd7f32; /* Bronze */
+  color: #cd7f32;
+  box-shadow:
+    0 0 15px rgba(205, 127, 50, 0.4),
+    2px 2px 4px #00000088;
+}
+
 .btn-outline {
   margin-top: 32px;
 }
