@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted } from "vue";
+import { watch, ref, onMounted, onBeforeUnmount } from "vue";
 import { useSoundStore } from "./stores/sound";
 import { usePlayerStore } from "./stores/player";
 import { Analytics } from "@vercel/analytics/vue";
@@ -69,16 +69,41 @@ watch(
   },
 );
 
+let wakeLock = null;
+
 const requestWakeLock = async () => {
+  if (!("wakeLock" in navigator)) return;
+  
   try {
-    const wakeLock = await navigator.wakeLock.request("screen");
+    wakeLock = await navigator.wakeLock.request("screen");
+    wakeLock.addEventListener("release", () => {
+      console.log("WakeLock released");
+    });
   } catch (err) {
-    console.log(`${err.name}, ${err.message}`);
+    console.warn(`WakeLock failed: ${err.name}`);
+  }
+};
+
+const releaseWakeLock = async () => {
+  if (!wakeLock) return;
+  try {
+    await wakeLock.release();
+  } finally {
+    wakeLock = null;
+  }
+};
+
+const handleVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    requestWakeLock();
+  } else {
+    releaseWakeLock();
   }
 };
 
 onMounted(() => {
-  requestWakeLock()
+  requestWakeLock();
+  document.addEventListener("visibilitychange", handleVisibilityChange);
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("creator") === "true") {
     playerStore.isCreatorMode = true;
@@ -93,6 +118,11 @@ onMounted(() => {
 
   document.addEventListener("click", startAudioOnFirstInteraction);
   document.addEventListener("pointerdown", startAudioOnFirstInteraction);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
+  releaseWakeLock();
 });
 </script>
 
