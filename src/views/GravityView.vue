@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onUnmounted } from "vue";
 import PixelCanvasGravity from "../components/PixelCanvasGravity.vue";
 import GameTransition from "@/components/GameTransition.vue";
 import GameHeader from "@/components/GameHeader.vue";
@@ -134,22 +134,10 @@ const heartbeat = setInterval(() => {
   }
 }, 20000);
 
-const requestWakeLock = async () => {
-  try {
-    await navigator.wakeLock.request("screen");
-  } catch (err) {
-    console.log(`${err.name}, ${err.message}`);
-  }
-};
-
 const start = () => {
   showTransition.value = false;
   setDrawing(rounds.value[currentRoundIndex.value].data);
 };
-
-onMounted(() => {
-  requestWakeLock();
-});
 
 onUnmounted(() => {
   clearTimeout(revealTimeoutId);

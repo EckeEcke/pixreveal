@@ -50,6 +50,7 @@ const handleAudioState = async (isEnabled) => {
     audio.value.pause();
   }
 };
+
 watch(
   () => soundStore.isAudioEnabled,
   (isEnabled) => {
@@ -68,7 +69,16 @@ watch(
   },
 );
 
+const requestWakeLock = async () => {
+  try {
+    const wakeLock = await navigator.wakeLock.request("screen");
+  } catch (err) {
+    console.log(`${err.name}, ${err.message}`);
+  }
+};
+
 onMounted(() => {
+  requestWakeLock()
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("creator") === "true") {
     playerStore.isCreatorMode = true;

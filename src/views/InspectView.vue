@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onUnmounted } from "vue";
 import PixelCanvas from "../components/PixelCanvas.vue";
 import GameTransition from "@/components/GameTransition.vue";
 import GameHeader from "@/components/GameHeader.vue";
@@ -139,14 +139,6 @@ const heartbeat = setInterval(() => {
   }
 }, 20000);
 
-const requestWakeLock = async () => {
-  try {
-    const wakeLock = await navigator.wakeLock.request("screen");
-  } catch (err) {
-    console.log(`${err.name}, ${err.message}`);
-  }
-};
-
 const mousePos = ref({ x: 300, y: 300 });
 
 const updateMousePos = (event) => {
@@ -177,8 +169,6 @@ const updateTouchPos = (event) => {
     y: (touch.clientY - rect.top) * scaleY,
   };
 };
-
-onMounted(() => requestWakeLock());
 
 onUnmounted(() => {
   clearTimeout(revealTimeoutId);
