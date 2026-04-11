@@ -59,6 +59,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
+import type { CSSProperties } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 import { Icon } from "@iconify/vue";
 
@@ -68,8 +69,8 @@ const props = defineProps<{
   points?: number;
   highscore?: number;
   hasFinished?: boolean;
-  isHost: boolean;
-  isActive: boolean;
+  isHost?: boolean;
+  isActive?: boolean;
   correctAnswers?: number;
   roundIndex?: number;
   maxRounds?: number;
@@ -117,7 +118,7 @@ watch(
   },
 );
 
-const avatarStyle = computed(() => {
+const avatarStyle = computed<CSSProperties>(() => {
   const index = props.avatarIndex || 0;
   const col = index % 6;
   const row = Math.floor(index / 6);
@@ -127,7 +128,7 @@ const avatarStyle = computed(() => {
     backgroundImage: `url(${avatarSheet})`,
     backgroundPosition: `${x}% ${y}%`,
     backgroundSize: "600%",
-    imageRendering: "pixelated",
+    imageRendering: "pixelated" as CSSProperties["imageRendering"],
   };
 });
 </script>
