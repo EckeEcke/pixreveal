@@ -1,5 +1,5 @@
 <template>
-  <div class="player-hud" :class="{ pending: hasFinished === false }">
+  <div class="player-hud" :class="{ pending: hasFinished === false, active: isActive }">
     <div class="hud-avatar" :style="avatarStyle"></div>
     <div>
       <div class="hud-username">
@@ -41,10 +41,13 @@
             <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
           </div>
         </transition>
-        <transition name="float-bonus">
-          <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
-        </transition>
-      </div>
+      <transition name="float-bonus">
+        <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
+      </transition>
+      <transition name="float-malus">
+        <span v-if="showMalus" class="hud-malus-popup">-{{ lastMalus }}</span>
+      </transition>
+    </div>
     </div>
 
     <div v-if="isHost" class="host-info">
@@ -54,7 +57,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 import { Icon } from "@iconify/vue";
@@ -66,6 +69,7 @@ const props = defineProps({
   highscore: Number | undefined,
   hasFinished: Boolean | undefined,
   isHost: Boolean,
+  isActive: Boolean,
   correctAnswers: Number | undefined,
   roundIndex: Number | undefined,
   maxRounds: Number | undefined,
@@ -74,36 +78,41 @@ const props = defineProps({
 
 const showBonus = ref(false);
 const lastBonus = ref(0);
-const showCorrectBonus = ref(false);
+const showMalus = ref(false);
+const lastMalus = ref(0);
+
+const animateBonus = (delta: number) => {
+  lastBonus.value = delta;
+  showBonus.value = false;
+  nextTick(() => {
+    showBonus.value = true;
+    setTimeout(() => {
+      showBonus.value = false;
+    }, 750);
+  });
+};
+
+const animateMalus = (delta: number) => {
+  lastMalus.value = delta;
+  showMalus.value = false;
+  nextTick(() => {
+    showMalus.value = true;
+    setTimeout(() => {
+      showMalus.value = false;
+    }, 750);
+  });
+};
 
 watch(
   () => props.points,
   (newVal, oldVal) => {
-    if (newVal > oldVal) {
-      lastBonus.value = newVal - oldVal;
-      showBonus.value = false;
-      nextTick(() => {
-        showBonus.value = true;
-        setTimeout(() => {
-          showBonus.value = false;
-        }, 750);
-      });
-    }
-  },
-);
-
-watch(
-  () => props.correctAnswers,
-  (newVal, oldVal) => {
-    if (newVal > oldVal) {
-      showCorrectBonus.value = false;
-
-      nextTick(() => {
-        showCorrectBonus.value = true;
-        setTimeout(() => {
-          showCorrectBonus.value = false;
-        }, 800);
-      });
+    const current = typeof newVal === "number" ? newVal : 0;
+    const previous = typeof oldVal === "number" ? oldVal : 0;
+    const delta = current - previous;
+    if (delta > 0) {
+      animateBonus(delta);
+    } else if (delta < 0) {
+      animateMalus(Math.abs(delta));
     }
   },
 );
@@ -227,6 +236,17 @@ const avatarStyle = computed(() => {
   z-index: 1;
 }
 
+.hud-malus-popup {
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  color: var(--neon-error);
+  font-weight: bold;
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .float-bonus-enter-active {
   animation: float-up 0.8s ease-out forwards;
 }
@@ -245,6 +265,19 @@ const avatarStyle = computed(() => {
 }
 
 .float-bonus-leave-active {
+  display: none;
+}
+
+.float-malus-enter-active {
+  animation: float-up 0.8s ease-out forwards;
+}
+
+.float-malus-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.float-malus-leave-active {
   display: none;
 }
 
@@ -289,6 +322,12 @@ const avatarStyle = computed(() => {
   background: rgba(15, 15, 25, 0.7);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-sizing: border-box;
+}
+
+.player-hud.active {
+  border: 2px solid var(--neon-pink);
+  box-shadow: 0 0 10px var(--neon-pink);
+  animation: floating 1s ease-in-out infinite;
 }
 
 .hud-info {

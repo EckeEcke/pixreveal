@@ -37,6 +37,7 @@
           :name="player.username"
           :avatar-index="player.avatarIndex"
           :points="player.points"
+          :is-active="partyStore.activePlayer?.username === player.username"
         />
         <PositionInfo :position="index + 1" />
       </div>
@@ -55,6 +56,7 @@ import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
 import { useChannelStore } from "@/stores/channel";
+import BuzzerStatus from "@/components/BuzzerStatus.vue";
 
 const gameStore = useGameStore();
 const configStore = useConfigStore();
@@ -132,10 +134,6 @@ const start = () => {
   channelStore.activeChannel?.bind("client-party-buzz", (data: any) => {
     partyStore.handleBuzz(data.playerId);
     stopTimer();
-  });
-
-  channelStore.activeChannel?.bind("client-party-answer", (data: any) => {
-    partyStore.resolveAnswer(data.playerId, data.isCorrect);
   });
 };
 

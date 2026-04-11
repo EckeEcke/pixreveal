@@ -60,8 +60,6 @@ export const usePartyStore = defineStore("party", () => {
         points: 0,
       }));
 
-    channelStore.setGameRunning(true);
-
     gameStore.prepareGame(configStore.revealTime);
 
     channel.value?.trigger("client-party-game-started", {
@@ -114,9 +112,10 @@ export const usePartyStore = defineStore("party", () => {
 
     roundResult.value = isCorrect ? "correct" : "incorrect";
 
+    const player = players.value.find((p) => p.playerId === playerId);
+    if (player) player.points += isCorrect ? 1 : -2;
+
     if (isCorrect) {
-      const player = players.value.find((p) => p.playerId === playerId);
-      if (player) player.points++;
     }
 
     if (isHost.value) {
@@ -166,7 +165,6 @@ export const usePartyStore = defineStore("party", () => {
     channel.value?.trigger("client-party-game-over", {
       players: players.value,
     });
-    channelStore.setGameRunning(false);
     router.push("/gameover");
   };
 
