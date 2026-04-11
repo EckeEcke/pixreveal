@@ -17,7 +17,11 @@
         <h1 class="logo">PARTY <span>OVER</span></h1>
         <div class="results-card party-results-card">
           <p class="party-subtitle">
-            {{ partyPlayersSorted.length ? `${partyPlayersSorted[0].username.toUpperCase()} WON THE PARTY!` : "GAME OVER" }}
+            {{
+              partyPlayersSorted.length
+                ? `${partyPlayersSorted[0].username.toUpperCase()} WON THE PARTY!`
+                : "GAME OVER"
+            }}
           </p>
           <div
             v-for="(player, index) in partyPlayersSorted"
@@ -31,10 +35,16 @@
               :has-finished="true"
               :show-you-indicator="player.playerId === channelStore.playerId"
             />
+            <PositionInfo :position="index + 1" />
+
             <div class="position">{{ index + 1 }}</div>
           </div>
           <div class="party-actions">
-            <button class="btn-outline pulse-btn" data-sfx="click" @click="playAgain">
+            <button
+              class="btn-outline pulse-btn"
+              data-sfx="click"
+              @click="playAgain"
+            >
               <Icon icon="pixel:refresh-solid" />
               Play again
             </button>
@@ -104,7 +114,9 @@
         </div>
 
         <div
-          v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
+          v-if="
+            playerStore.gameMode === 'survival' && survivalStore.newHighscore
+          "
           class="rank-prophet highscore-message"
         >
           NEW HIGHSCORE!
@@ -114,7 +126,11 @@
           <h2>Challenge your friends!</h2>
           <ShareIcons :msg="getShareMessage(playerStore.points)" />
         </div>
-        <button class="btn-outline pulse-btn" data-sfx="click" @click="playAgain">
+        <button
+          class="btn-outline pulse-btn"
+          data-sfx="click"
+          @click="playAgain"
+        >
           <Icon icon="pixel:refresh-solid" />
           Play Again
         </button>
@@ -164,11 +180,11 @@ const playersSortedByPoints = computed(() => {
 });
 
 const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => player.isOnline && !player.hasFinished)
+  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
 );
 
 const isOnlinePlay = computed(
-  () => channelStore.playersOnline && channelStore.playersOnline.length > 1
+  () => channelStore.playersOnline && channelStore.playersOnline.length > 1,
 );
 
 const isPartyMode = computed(

@@ -30,7 +30,7 @@
 
 <script setup>
 import { usePartyStore } from "@/stores/party";
-import { useGameStore } from "@stores/game";
+import { useGameStore } from "@/stores/game";
 
 const gameStore = useGameStore();
 const partyStore = usePartyStore();
