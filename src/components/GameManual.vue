@@ -90,7 +90,7 @@
       </p>
     </article>
     <br />
-    <button class="confirm-btn" data-sfx="click" @click="$router.push('/')">
+    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
       BACK TO HOME
     </button>
   </div>
