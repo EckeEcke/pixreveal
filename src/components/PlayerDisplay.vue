@@ -41,13 +41,13 @@
             <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
           </div>
         </transition>
-      <transition name="float-bonus">
-        <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
-      </transition>
-      <transition name="float-malus">
-        <span v-if="showMalus" class="hud-malus-popup">-{{ lastMalus }}</span>
-      </transition>
-    </div>
+        <transition name="float-bonus">
+          <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
+        </transition>
+        <transition name="float-malus">
+          <span v-if="showMalus" class="hud-malus-popup">-{{ lastMalus }}</span>
+        </transition>
+      </div>
     </div>
 
     <div v-if="isHost" class="host-info">
@@ -62,19 +62,19 @@ import { computed, nextTick, ref, watch } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.jpg";
 import { Icon } from "@iconify/vue";
 
-const props = defineProps({
-  name: String,
-  avatarIndex: Number,
-  points: Number | undefined,
-  highscore: Number | undefined,
-  hasFinished: Boolean | undefined,
-  isHost: Boolean,
-  isActive: Boolean,
-  correctAnswers: Number | undefined,
-  roundIndex: Number | undefined,
-  maxRounds: Number | undefined,
-  showYouIndicator: Boolean,
-});
+const props = defineProps<{
+  name?: string;
+  avatarIndex?: number;
+  points?: number;
+  highscore?: number;
+  hasFinished?: boolean;
+  isHost: boolean;
+  isActive: boolean;
+  correctAnswers?: number;
+  roundIndex?: number;
+  maxRounds?: number;
+  showYouIndicator?: boolean;
+}>();
 
 const showBonus = ref(false);
 const lastBonus = ref(0);
