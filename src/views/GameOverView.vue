@@ -36,8 +36,6 @@
               :show-you-indicator="player.playerId === channelStore.playerId"
             />
             <PositionInfo :position="index + 1" />
-
-            <div class="position">{{ index + 1 }}</div>
           </div>
           <div class="party-actions">
             <button
