@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onBeforeUnmount } from "vue";
+import { computed, ref, watch, onBeforeUnmount, onMounted } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import { useChannelStore } from "@/stores/channel";
@@ -157,6 +157,10 @@ const handleTimeoutAnswer = () => {
   partyStore.hasAnswered = true;
   partyStore.submitAnswer(undefined);
 };
+
+onMounted(() => {
+  partyStore.setupEvents();
+});
 </script>
 
 <style scoped>
