@@ -39,6 +39,17 @@ export const usePartyStore = defineStore("party", () => {
 const channel = computed(() => channelStore.activeChannel);
 const eventsBound = ref(false);
 const boundChannel = ref<any>(null);
+const eventBindings: { event: string; handler: (...args: any[]) => void }[] = [];
+
+const unbindEvents = () => {
+  if (!boundChannel.value) return;
+  eventBindings.forEach(({ event, handler }) => {
+    boundChannel.value.unbind(event, handler);
+  });
+  eventBindings.length = 0;
+  boundChannel.value = null;
+  eventsBound.value = false;
+};
 
   const broadcastPlayerScores = () => {
     if (!isHost.value) return;
@@ -175,15 +186,21 @@ const boundChannel = ref<any>(null);
     if (!c || channelStore.mode !== "party") return;
     if (eventsBound.value && boundChannel.value === c) return;
 
+    unbindEvents();
     boundChannel.value = c;
     eventsBound.value = true;
 
-    c.bind("client-join-blocked", () => {
+    const bindEvent = (name: string, handler: (...args: any[]) => void) => {
+      c.bind(name, handler);
+      eventBindings.push({ event: name, handler });
+    };
+
+    bindEvent("client-join-blocked", () => {
       channelStore.reset();
       router.push("/");
     });
 
-    c.bind("client-player-inactive", (data: { playerId: string }) => {
+    bindEvent("client-player-inactive", (data: { playerId: string }) => {
       if (!isHost.value) return;
       players.value = players.value.filter(
         (player) => player.playerId !== data.playerId,
@@ -191,23 +208,23 @@ const boundChannel = ref<any>(null);
       channelStore.removePlayer(data.playerId);
     });
 
-    c.bind("client-host-inactive", (data: { playerId: string }) => {
+    bindEvent("client-host-inactive", (data: { playerId: string }) => {
       if (data.playerId === channelStore.playerId) return;
       channelStore.reset();
       router.push("/");
     });
 
-    c.bind("client-party-game-started", (data: any) => {
+    bindEvent("client-party-game-started", (data: any) => {
       gameStore.prepareGame(data.revealTime, data.rounds);
       router.push("/party-player");
     });
 
     if (isHost.value) {
-      c.bind("client-party-buzz", (data: { playerId: string }) => {
+      bindEvent("client-party-buzz", (data: { playerId: string }) => {
         handleBuzz(data.playerId);
       });
 
-      c.bind(
+      bindEvent(
         "client-party-answer",
         (data: { playerId: string; isCorrect: boolean }) => {
           if (
@@ -220,18 +237,13 @@ const boundChannel = ref<any>(null);
       );
     }
 
-    c.bind("client-party-game-started", (data: any) => {
-      gameStore.prepareGame(data.revealTime, data.rounds);
-      router.push("/party-player");
-    });
-
-    c.bind("client-party-buzzer-open", () => {
+    bindEvent("client-party-buzzer-open", () => {
       buzzerState.value = "open";
       roundResult.value = null;
       activePlayerId.value = null;
     });
 
-    c.bind(
+    bindEvent(
       "client-party-buzzer-locked",
       (data: { playerId: string; options?: any[] }) => {
         activePlayerId.value = data.playerId;
@@ -244,22 +256,22 @@ const boundChannel = ref<any>(null);
       },
     );
 
-    c.bind("client-party-round-result", (data: any) => {
+    bindEvent("client-party-round-result", (data: any) => {
       roundResult.value = data.isCorrect ? "correct" : "incorrect";
       buzzerState.value = "locked";
       activePlayerId.value = data.playerId;
     });
 
-    c.bind("client-party-player-scores", (data: { players: PartyPlayer[] }) => {
+    bindEvent("client-party-player-scores", (data: { players: PartyPlayer[] }) => {
       players.value = data.players;
     });
 
-    c.bind("client-party-next-round", () => {
+    bindEvent("client-party-next-round", () => {
       gameStore.nextRound();
       hasAnswered.value = false;
     });
 
-    c.bind("client-party-game-over", (data: { players: PartyPlayer[] }) => {
+    bindEvent("client-party-game-over", (data: { players: PartyPlayer[] }) => {
       players.value = data.players;
       router.push("/gameover");
     });
@@ -269,8 +281,7 @@ const boundChannel = ref<any>(null);
     () => [channelStore.mode, channel.value],
     ([mode, c]) => {
       if (mode !== "party" || !c) {
-        eventsBound.value = false;
-        boundChannel.value = null;
+        unbindEvents();
         return;
       }
       setupEvents();
@@ -308,6 +319,7 @@ const boundChannel = ref<any>(null);
   };
 
   const reset = () => {
+    unbindEvents();
     players.value = [];
     buzzerState.value = "locked";
     activePlayerId.value = null;
