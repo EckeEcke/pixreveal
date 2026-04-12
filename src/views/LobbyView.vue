@@ -33,9 +33,10 @@
         v-for="(player, index) in players"
         :key="player.playerId"
         :name="isParty && index === 0 ? 'HOST' : player.username"
-        :avatar-index="isParty ? undefined : player.avatarIndex"
+        :avatar-index="(isParty && player.isHost) ? undefined : player.avatarIndex"
         :is-host="player.isHost"
         :show-you-indicator="isMe(player.playerId)"
+        :has-finished="true"
       />
       {{ mode}}
     </div>

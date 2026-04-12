@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 
 const router = createRouter({
