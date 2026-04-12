@@ -1,5 +1,5 @@
 <template>
-  <div class="player-hud" :class="{ pending: hasFinished === false, active: isActive }">
+  <div class="player-hud" :class="{ pending: isPending, active: isActive }">
     <div v-if="avatarIndex !== undefined" class="hud-avatar" :style="avatarStyle"></div>
     <div>
       <div class="hud-username">
@@ -68,7 +68,7 @@ const props = defineProps<{
   avatarIndex?: number;
   points?: number;
   highscore?: number;
-  hasFinished?: boolean;
+  isPending?: boolean;
   isHost?: boolean;
   isActive?: boolean;
   correctAnswers?: number;

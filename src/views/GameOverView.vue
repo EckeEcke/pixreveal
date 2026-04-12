@@ -32,7 +32,6 @@
               :name="player.username"
               :avatar-index="player.avatarIndex"
               :points="player.points"
-              :has-finished="true"
               :show-you-indicator="player.playerId === channelStore.playerId"
             />
             <PositionInfo :position="index + 1" />
@@ -63,7 +62,7 @@
             :name="playersSortedByPoints[0].username"
             :avatar-index="playersSortedByPoints[0].avatarIndex"
             :points="playersSortedByPoints[0].points"
-            :has-finished="playersSortedByPoints[0].hasFinished"
+            :is-pending="!playersSortedByPoints[0].hasFinished"
             :correct-answers="playersSortedByPoints[0].correctAnswers"
           />
           <button class="btn-outline" data-sfx="click" @click="playAgain">
@@ -80,7 +79,7 @@
             :name="player.username"
             :avatar-index="player.avatarIndex"
             :points="player.points"
-            :has-finished="player.hasFinished"
+            :is-pending="!player.hasFinished"
             :correct-answers="player.correctAnswers"
             :show-you-indicator="isMe(player.playerId)"
           />

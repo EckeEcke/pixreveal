@@ -36,7 +36,6 @@
         :avatar-index="(isParty && player.isHost) ? undefined : player.avatarIndex"
         :is-host="player.isHost"
         :show-you-indicator="isMe(player.playerId)"
-        :has-finished="true"
       />
       {{ mode}}
     </div>
