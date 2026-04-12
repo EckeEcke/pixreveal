@@ -34,7 +34,9 @@
         </div>
       </div>
     </div>
-    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">CONFIRM</button>
+    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
+      CONFIRM
+    </button>
   </ModalWrapper>
 </template>
 
@@ -66,10 +68,6 @@ const selectAvatar = (id) => {
 </script>
 
 <style scoped>
-h2 {
-  font-family: "8bit";
-}
-
 h3 {
   color: var(--primary);
   margin-bottom: 8px;
