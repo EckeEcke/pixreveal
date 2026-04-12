@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
+import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";

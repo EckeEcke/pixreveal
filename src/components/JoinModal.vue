@@ -94,7 +94,7 @@ import { useConfigStore } from "@/stores/config";
 import { useChannelStore } from "@/stores/channel";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "./ModalWrapper.vue";
-import avatarSpriteSheet from "@/assets/avatars/avatars.jpg";
+import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
 
 const props = defineProps({

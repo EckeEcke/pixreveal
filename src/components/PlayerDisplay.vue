@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
-import avatarSheet from "@/assets/avatars/avatars.jpg";
+import avatarSheet from "@/assets/avatars/avatars.webp";
 import { Icon } from "@iconify/vue";
 
 const props = defineProps<{
