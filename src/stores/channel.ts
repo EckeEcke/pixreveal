@@ -63,7 +63,6 @@ export const useChannelStore = defineStore("channel", () => {
     currentRoomId.value = null;
     messages.value = [];
     isLoading.value = false;
-    mode.value = "party";
     playerId.value = "";
     setGameRunning(false);
     inactivityNotified.value = false;

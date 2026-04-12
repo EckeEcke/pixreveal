@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
 import { useOnlineStore } from "@/stores/online";
 import { useConfigStore } from "@/stores/config";
@@ -82,10 +82,18 @@ const soundStore = useSoundStore();
 const partyStore = usePartyStore();
 
 const isParty = computed(() => channelStore.mode === "party");
+watch(
+  () => channelStore.activeChannel,
+  (channel) => {
+    if (!channel || channelStore.mode !== "regular") return;
+    onlineStore.setupEvents();
+  },
+  { immediate: true },
+);
 
 const showClipboardInfo = ref(false);
 const canNativeShare = ref(false);
-const shareModeParam = computed(() => (isParty ? "party" : "online"));
+const shareModeParam = computed(() => (isParty.value ? "party" : "online"));
 const inviteLink = computed(
   () =>
     `${window.location.origin}?id=${channelStore.currentRoomId}&mode=${shareModeParam.value}`,
@@ -96,7 +104,7 @@ const isMe = (id) => id === channelStore.playerId;
 
 const startGame = () => {
   soundStore.playSound("click");
-  if (isParty) {
+  if (isParty.value) {
     partyStore.startGame();
   } else {
     onlineStore.triggerGameStart();
@@ -130,7 +138,6 @@ const shareNative = async () => {
 };
 
 onMounted(() => {
-  if (players.value.length <= 0) router.push("/");
   canNativeShare.value = !!navigator.share;
 });
 </script>

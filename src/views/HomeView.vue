@@ -187,6 +187,8 @@ const setUser = () =>
     avatar: playerStore.avatarIndex,
   });
 
+setUser();
+
 const startGame = () => {
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
@@ -283,9 +285,6 @@ const openManual = () => {
 };
 
 if (document.fullscreenElement) isFullscreen.value = true;
-
-channelStore.reset();
-setUser();
 
 const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;

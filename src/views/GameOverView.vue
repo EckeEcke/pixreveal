@@ -14,8 +14,8 @@
     </Transition>
     <div>
       <div v-if="isPartyMode">
-        <h1 class="logo">PARTY <span>OVER</span></h1>
         <div class="results-card party-results-card">
+          <h1 class="logo">PARTY <span>OVER</span></h1>
           <p class="party-subtitle">
             {{
               partyPlayersSorted.length
@@ -49,8 +49,8 @@
         </div>
       </div>
       <div v-else-if="isOnlinePlay">
-        <h1 class="logo">GAME <span>OVER</span></h1>
         <div v-if="!waitingForFinalResults" class="results-card">
+          <h1 class="logo">GAME <span>OVER</span></h1>
           <h2 class="rank-prophet">
             {{
               isMe(playersSortedByPoints[0].playerId)
