@@ -30,9 +30,9 @@
 
     <div class="players-grid">
       <PlayerDisplay
-        v-for="(player, index) in players"
+        v-for="player in players"
         :key="player.playerId"
-        :name="isParty && index === 0 ? 'HOST' : player.username"
+        :name="isParty && player.isHost ? 'HOST' : player.username"
         :avatar-index="(isParty && player.isHost) ? undefined : player.avatarIndex"
         :is-host="player.isHost"
         :show-you-indicator="isMe(player.playerId)"
