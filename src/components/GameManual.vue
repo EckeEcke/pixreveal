@@ -66,7 +66,7 @@
         win!
       </p>
 
-      <h3>Local Party Mode Multiplayer</h3>
+      <h4>Local Party Mode Multiplayer</h4>
       <p>
         PixReveal offers a free alternative to Jackbox-style games! Gather
         around a single screen, and everyone can join the fun by buzzing in with
@@ -75,7 +75,7 @@
         their phones. The game is designed to be enjoyed in a social setting,
         making it perfect for parties, family gatherings, or casual game nights.
       </p>
-      <h3>Settings & Customization</h3>
+      <h4>Settings & Customization</h4>
       <p>
         Fine-tune your session for the best experience. I highly recommend
         enabling
@@ -88,6 +88,8 @@
         experience by selecting your favorite <strong>Categories</strong>. You
         can combine as many as you like to increase the total pool of drawings.
       </p>
+      <h3>Rankings</h3>
+      <RankOverview />
     </article>
     <br />
     <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
@@ -99,6 +101,7 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import YoutubeEmbed from "@/components/YoutubeEmbed.vue";
+import RankOverview from "@/components/RankOverview.vue";
 </script>
 
 <style scoped>
