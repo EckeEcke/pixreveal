@@ -6,8 +6,8 @@
       </button>
     </div>
     <article>
-      <h1 class="logo">HOW TO <span>PLAY</span></h1>
-      <h2>How to play PixReveal</h2>
+      <h2 class="logo">HOW TO <span>PLAY</span></h2>
+      <h3>How to play PixReveal</h3>
       <p>
         PixReveal is a <strong>free browser party game</strong> about guessing
         <strong>pixelart</strong> within a time limit. The faster you answer
@@ -19,9 +19,9 @@
 
       <YoutubeEmbed video-id="Prz-jTEg7fU" />
 
-      <h2>The Game Modes</h2>
+      <h3>The Game Modes</h3>
 
-      <h3>Classic & Blitz</h3>
+      <h4>Classic & Blitz</h4>
       <p>
         Identify the drawing as it reveals one pixel at a time. Choose from four
         options.
@@ -30,35 +30,35 @@
         for an extreme speed challenge. Earn stars based on your remaining time.
       </p>
 
-      <h3>Gravity</h3>
+      <h4>Gravity</h4>
       <p>
         Similar to Classic, but with a twist. Pixels drop in Tetris style.
         Otherwise the same gameplay: correct answer out of four options as fast
         as possible to earn the most points.
       </p>
 
-      <h3>Buzzer Mode</h3>
+      <h4>Buzzer Mode</h4>
       <p>
         A true <strong>reaction test</strong>. Answer options stay hidden until
         you hit the <strong>Buzzer</strong>. Once pressed, the reveal stops, and
         you have only 5 seconds to make your choice.
       </p>
 
-      <h3>Survival</h3>
+      <h4>Survival</h4>
       <p>
         The ultimate <strong>highscore challenge</strong>. You start with 30
         seconds. Every correct guess adds 3 seconds to the clock. How many
         drawings can you solve before the time runs out?
       </p>
 
-      <h3>Inspect</h3>
+      <h4>Inspect</h4>
       <p>
         The drawing is fully complete but shrouded in darkness. Use your
         <strong>magnifying glass</strong>
         (search lens) to inspect sections and uncover the hidden pixelart.
       </p>
 
-      <h2>Free Online Multiplayer</h2>
+      <h3>Free Online Multiplayer</h3>
       <p>
         Play with others in the <strong>real-time multiplayer mode</strong>.
         Host a session, invite friends via link or room ID, and compete for the
@@ -66,7 +66,7 @@
         win!
       </p>
 
-      <h2>Local Party Mode Multiplayer</h2>
+      <h3>Local Party Mode Multiplayer</h3>
       <p>
         PixReveal offers a free alternative to Jackbox-style games! Gather
         around a single screen, and everyone can join the fun by buzzing in with
@@ -75,7 +75,7 @@
         their phones. The game is designed to be enjoyed in a social setting,
         making it perfect for parties, family gatherings, or casual game nights.
       </p>
-      <h2>Settings & Customization</h2>
+      <h3>Settings & Customization</h3>
       <p>
         Fine-tune your session for the best experience. I highly recommend
         enabling

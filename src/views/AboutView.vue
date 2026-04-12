@@ -6,7 +6,7 @@
           <Icon icon="pixel:window-close-solid" />
         </button>
       </div>
-      <h1 class="logo">ABOUT PIX<span>REVEAL</span></h1>
+      <h2 class="logo">ABOUT PIX<span>REVEAL</span></h2>
 
       <section class="about-section">
         <p>
@@ -103,10 +103,6 @@ import { Icon } from "@iconify/vue";
 
 .about-content {
   position: relative;
-}
-
-h1 {
-  text-align: left;
 }
 
 a {
