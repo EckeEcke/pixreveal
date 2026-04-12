@@ -13,12 +13,14 @@
       <button
         :class="{ active: selectedRole === 'join' }"
         @click="setRole('join')"
+        data-sfx="click"
       >
         JOIN
       </button>
       <button
         :class="{ active: selectedRole === 'host' }"
         @click="setRole('host')"
+        data-sfx="click"
       >
         HOST
       </button>
