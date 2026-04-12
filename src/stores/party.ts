@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useChannelStore } from "./channel";
 import { useGameStore } from "./game";
 import { useConfigStore } from "./config";
@@ -36,7 +36,9 @@ export const usePartyStore = defineStore("party", () => {
   );
 
   const isHost = computed(() => channelStore.isHost);
-  const channel = computed(() => channelStore.activeChannel);
+const channel = computed(() => channelStore.activeChannel);
+const eventsBound = ref(false);
+const boundChannel = ref<any>(null);
 
   const broadcastPlayerScores = () => {
     if (!isHost.value) return;
@@ -170,7 +172,11 @@ export const usePartyStore = defineStore("party", () => {
 
   const setupEvents = () => {
     const c = channel.value;
-    if (!c) return;
+    if (!c || channelStore.mode !== "party") return;
+    if (eventsBound.value && boundChannel.value === c) return;
+
+    boundChannel.value = c;
+    eventsBound.value = true;
 
     c.bind("client-join-blocked", () => {
       channelStore.reset();
@@ -258,6 +264,19 @@ export const usePartyStore = defineStore("party", () => {
       router.push("/gameover");
     });
   };
+
+  watch(
+    () => [channelStore.mode, channel.value],
+    ([mode, c]) => {
+      if (mode !== "party" || !c) {
+        eventsBound.value = false;
+        boundChannel.value = null;
+        return;
+      }
+      setupEvents();
+    },
+    { immediate: true },
+  );
 
   const pressBuzzer = () => {
     if (buzzerState.value !== "open") return;

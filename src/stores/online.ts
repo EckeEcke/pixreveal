@@ -1,6 +1,6 @@
 // stores/online.ts
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useChannelStore } from "./channel";
 import { useGameStore } from "./game";
 import { usePlayerStore } from "./player";
@@ -15,9 +15,17 @@ export const useOnlineStore = defineStore("online", () => {
   const router = useRouter();
   const onlineGameRunning = ref(false);
 
+  const eventsBound = ref(false);
+  const boundChannel = ref<any>(null);
+
   const setupEvents = () => {
     const channel = channelStore.activeChannel;
-    if (!channel) return;
+    if (!channel || channelStore.mode !== "regular") return;
+    if (eventsBound.value && boundChannel.value === channel) return;
+
+    boundChannel.value = channel;
+    eventsBound.value = true;
+
 
     channel.bind("client-game-started", (data: any) => {
       gameStore.prepareGame(data.revealTime, data.rounds);
@@ -105,6 +113,19 @@ export const useOnlineStore = defineStore("online", () => {
     onlineGameRunning.value = false;
     channelStore.setGameRunning(false);
   };
+
+  watch(
+    () => [channelStore.mode, channelStore.activeChannel],
+    ([mode, channel]) => {
+      if (mode !== "regular" || !channel) {
+        eventsBound.value = false;
+        boundChannel.value = null;
+        return;
+      }
+      setupEvents();
+    },
+    { immediate: true },
+  );
 
   return {
     setupEvents,

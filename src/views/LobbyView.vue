@@ -130,8 +130,6 @@ const shareNative = async () => {
 onMounted(() => {
   if (players.value.length <= 0) router.push("/");
   canNativeShare.value = !!navigator.share;
-  if (isParty) partyStore.setupEvents();
-  else onlineStore.setupEvents();
 });
 </script>
 
