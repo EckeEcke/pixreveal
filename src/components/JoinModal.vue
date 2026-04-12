@@ -4,17 +4,9 @@
     <button @click="$emit('close')" data-sfx="click" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
-
+    <span class="pre-headline">MODE</span>
     <h2>
-      {{
-        isHost
-          ? mode === "party"
-            ? "HOST PARTY"
-            : "HOST GAME"
-          : mode === "party"
-            ? "JOIN PARTY"
-            : "JOIN GAME"
-      }}
+      {{ mode === "party" ? "LOCAL PARTY" : "ONLINE GAME" }}
     </h2>
 
     <div class="role-toggle">
@@ -32,15 +24,31 @@
       </button>
     </div>
 
-    <div class="setup-section">
-      <div class="player-info-wrapper" @click="showAvatarModal = true">
-        <div class="player-avatar" :style="avatarStyle">
+    <div
+      v-if="!(selectedRole === 'host' && mode === 'party')"
+      class="setup-section"
+    >
+      <h3>YOUR AVATAR</h3>
+      <div class="player-info-wrapper">
+        <div
+          class="player-avatar"
+          :style="avatarStyle"
+          @click="showAvatarModal = true"
+        >
           <Icon icon="pixel:pencil" class="edit-badge" />
         </div>
-        <div class="player-name">
-          {{ playerStore.playerName || "SET PLAYER NAME" }}
+        <div class="player-name" @click="showAvatarModal = true">
+          <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
+          <span class="info-text">Tap to change</span>
         </div>
       </div>
+    </div>
+    <div v-else class="host-info">
+      <h3>Hosting a Party Game</h3>
+      <p>
+        The party mode is displayed on the host device. PC/Laptop recommended
+        for hosting. Players can join via smartphone to buzz and answer.
+      </p>
     </div>
 
     <button
@@ -56,7 +64,7 @@
       <div class="join-terminal">
         <input
           v-model="joinRoomId"
-          placeholder="ENTER ROOM ID"
+          placeholder="Enter room ID"
           class="terminal-input"
         />
         <button
@@ -66,7 +74,7 @@
           @click="joinGame"
         >
           JOIN
-          <Icon icon="pixel:login" class="btn-icon" />
+          <Icon icon="pixel:arrow-right-solid" class="btn-icon" />
         </button>
       </div>
     </div>
@@ -192,20 +200,12 @@ const joinGame = () => {
 </script>
 
 <style scoped>
-h2 {
-  font-family: "8bit";
-  margin-bottom: 32px;
-}
-
-.close-btn {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  padding: 0;
-  background: none;
-  border: none;
+.pre-headline {
   color: var(--primary);
-  font-size: 36px;
+}
+h2 {
+  margin-top: 0;
+  margin-bottom: 32px;
 }
 
 .join-terminal {
@@ -255,7 +255,7 @@ h2 {
 }
 
 .setup-section {
-  margin: 48px 0;
+  margin: 32px 0;
 }
 
 .section-label {
@@ -263,11 +263,15 @@ h2 {
   margin-bottom: 16px;
 }
 
+.host-info {
+  margin: 32px 0;
+}
+
 .player-info-wrapper {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   cursor: pointer;
 }
 
@@ -297,10 +301,21 @@ h2 {
 }
 
 .player-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  align-items: flex-start;
   text-transform: uppercase;
   font-size: 18px;
   font-weight: 700;
   color: #fff;
+  .info-text {
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.7;
+  }
 }
 
 .start-btn {
@@ -330,18 +345,23 @@ h2 {
 
 .role-toggle {
   display: flex;
-  gap: 10px;
+  background: #111;
+  border: 2px solid #333;
+  border-radius: 4px;
   margin-bottom: 16px;
+  overflow: hidden;
+  padding: 3px;
+  gap: 3px;
 }
 
 .role-toggle button {
   flex: 1;
   text-align: center;
   padding: 10px 0;
-  background: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 4px;
-  color: #fff;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.4);
   font-size: 14px;
   font-family: inherit;
   font-weight: 900;
@@ -352,16 +372,14 @@ h2 {
 }
 
 .role-toggle button:hover {
-  border-color: #666;
-  background: #222;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .role-toggle button.active {
   background: var(--primary);
-  border-color: var(--primary);
   color: #000;
   font-size: 16px;
-  box-shadow: 0 0 10px var(--primary);
-  transform: translateY(-2px);
+  box-shadow: none;
+  transform: none;
 }
 </style>

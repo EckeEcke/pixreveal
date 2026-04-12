@@ -112,18 +112,9 @@ import YoutubeEmbed from "@/components/YoutubeEmbed.vue";
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 0;
+  right: 0;
   z-index: 1;
-}
-
-.close-btn {
-  padding: 0;
-  background: var(--card-bg);
-  border: none;
-  color: var(--primary);
-  font-size: 36px;
-  cursor: pointer;
 }
 
 .confirm-btn {

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="lobby-card">
-      <h1>{{ mode === "party" ? "Party Lobby" : "Lobby" }}</h1>
-      <template v-if="mode === 'regular'">
+      <h1>{{ isParty ? "Party Lobby" : "Lobby" }}</h1>
+      <template v-if="!isParty">
         <div>ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
         <div>ROUND DURATION: {{ configStore.revealTime }}</div>
       </template>
@@ -30,18 +30,19 @@
 
     <div class="players-grid">
       <PlayerDisplay
-        v-for="player in players"
+        v-for="(player, index) in players"
         :key="player.playerId"
-        :name="player.username"
-        :avatar-index="player.avatarIndex"
+        :name="isParty && index === 0 ? 'HOST' : player.username"
+        :avatar-index="isParty ? undefined : player.avatarIndex"
         :is-host="player.isHost"
         :show-you-indicator="isMe(player.playerId)"
       />
+      {{ mode}}
     </div>
 
     <template v-if="channelStore.isHost && players.length > 1">
       <button class="btn-outline pulse-btn" @click="startGame" data-sfx="click">
-        {{ mode === "party" ? "START PARTY" : "START GAME" }}
+        {{ isParty ? "START PARTY" : "START GAME" }}
       </button>
     </template>
 
@@ -72,7 +73,6 @@ import { Icon } from "@iconify/vue";
 
 const route = useRoute();
 const router = useRouter();
-const isParty = route.meta.mode === "party";
 
 const channelStore = useChannelStore();
 const onlineStore = useOnlineStore();
@@ -80,6 +80,8 @@ const configStore = useConfigStore();
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
 const partyStore = usePartyStore();
+
+const isParty = computed(() => channelStore.mode === "party");
 
 const showClipboardInfo = ref(false);
 const canNativeShare = ref(false);

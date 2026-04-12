@@ -120,17 +120,6 @@ h3 {
   filter: contrast(2);
 }
 
-.close-btn {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  padding: 0;
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: 36px;
-}
-
 .confirm-btn {
   background: var(--primary);
   width: 100%;

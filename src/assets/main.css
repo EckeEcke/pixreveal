@@ -46,7 +46,8 @@ body {
   font-family: var(--font-display), "Inter", sans-serif;
 }
 
-a, button:not(:disabled) {
+a,
+button:not(:disabled) {
   cursor: pointer;
 }
 
@@ -209,6 +210,31 @@ input[type="text"] {
 
 input[type="text"]:focus {
   border-color: var(--primary);
+}
+
+.close-btn {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 36px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.close-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.close-btn:active {
+  transform: scale(0.95);
 }
 
 @keyframes pulse {

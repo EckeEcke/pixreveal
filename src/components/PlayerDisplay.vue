@@ -1,6 +1,6 @@
 <template>
   <div class="player-hud" :class="{ pending: hasFinished === false, active: isActive }">
-    <div class="hud-avatar" :style="avatarStyle"></div>
+    <div v-if="avatarIndex !== undefined" class="hud-avatar" :style="avatarStyle"></div>
     <div>
       <div class="hud-username">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>

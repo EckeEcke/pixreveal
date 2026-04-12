@@ -135,20 +135,8 @@ const toggleFullscreen = () => {
 
 <style scoped>
 h2 {
-  font-family: "8bit";
+  margin-top: 0;
   margin-bottom: 32px;
-}
-
-.close-btn {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  padding: 0;
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: 36px;
-  cursor: pointer;
 }
 
 .confirm-btn {
