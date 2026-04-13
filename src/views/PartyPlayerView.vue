@@ -16,7 +16,7 @@
           class="neon-buzzer"
           aria-label="Buzz to answer"
           data-sfx="buzz"
-          @click="partyStore.pressBuzzer"
+          @click="handleBuzz"
         >
           <span class="buzzer-text">BUZZ!</span>
         </button>
@@ -69,6 +69,7 @@ import { useChannelStore } from "@/stores/channel";
 import AnswerButtons from "@/components/AnswerButtons.vue";
 import GameHeader from "@/components/GameHeader.vue";
 import PlayerDisplay from "@/components/PlayerDisplay.vue";
+import { vibrateBuzz } from "@/utils/vibration";
 
 const partyStore = usePartyStore();
 const gameStore = useGameStore();
@@ -100,18 +101,16 @@ const activePlayerDisplay = computed(
 );
 
 watch(isMyTurn, (newValue) => {
-    if (newValue) {
-    triggerBuzzVibration();
+  if (newValue) {
     startTimer();
   } else {
     cancelTimer();
   }
 });
 
-const triggerBuzzVibration = () => {
-  if (typeof window !== "undefined" && window.navigator?.vibrate) {
-    window.navigator.vibrate(35);
-  }
+const handleBuzz = () => {
+  vibrateBuzz();
+  partyStore.pressBuzzer();
 };
 
 onBeforeUnmount(() => {

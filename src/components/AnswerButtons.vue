@@ -22,6 +22,7 @@
 <script setup>
 import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
+import { vibrateError, vibrateSuccess } from "@/utils/vibration";
 
 const props = defineProps({
   answers: Array,
@@ -40,8 +41,10 @@ const checkAnswer = (answer, event) => {
 
   if (answer.isCorrect) {
     soundStore.playSound("correct");
+    vibrateSuccess();
   } else {
     soundStore.playSound("incorrect");
+    vibrateError();
   }
   emit("answered", selectedAnswer.value);
 };
