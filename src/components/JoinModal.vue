@@ -320,31 +320,6 @@ h2 {
   }
 }
 
-.start-btn {
-  width: 100%;
-  background: var(--primary);
-  color: #000;
-  border: none;
-  padding: 16px;
-  border-radius: 4px;
-  font-family: "8bit", sans-serif;
-  font-weight: bold;
-  font-size: 1.2rem;
-  cursor: pointer;
-  animation: arcadeBlink 1.4s infinite;
-  transition: all 0.3s;
-}
-
-.start-btn:hover {
-  filter: brightness(1.1);
-  transform: scale(1.05);
-}
-
-.start-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #b45309;
-}
-
 .role-toggle {
   display: flex;
   background: #111;

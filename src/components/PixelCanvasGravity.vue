@@ -141,7 +141,7 @@ const render = () => {
       ctx.shadowBlur = 0;
     } else {
       ctx.shadowColor = color;
-      ctx.shadowBlur = props.isStatusIcon ? 15 * scale : p.landed ? 0 : 10;
+      ctx.shadowBlur = props.isStatusIcon ? 15 * scale : 10;
     }
 
     ctx.fillRect(

@@ -73,7 +73,7 @@ let wakeLock = null;
 
 const requestWakeLock = async () => {
   if (!("wakeLock" in navigator)) return;
-  
+
   try {
     wakeLock = await navigator.wakeLock.request("screen");
     wakeLock.addEventListener("release", () => {
@@ -136,6 +136,7 @@ onBeforeUnmount(() => {
   padding: 16px;
   position: relative;
   z-index: 1;
+  filter: contrast(1.1);
 }
 
 .pixelCon {
@@ -147,6 +148,7 @@ onBeforeUnmount(() => {
   transform: translate(-50%, -50%);
   overflow: hidden;
   opacity: 0.9;
+  filter: contrast(1.1);
 }
 
 .pixel {

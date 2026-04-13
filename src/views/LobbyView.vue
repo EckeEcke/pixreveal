@@ -41,7 +41,7 @@
     </div>
 
     <template v-if="channelStore.isHost && players.length > 1">
-      <button class="btn-outline pulse-btn" @click="startGame" data-sfx="click">
+      <button class="start-btn pulse-btn" @click="startGame" data-sfx="click">
         {{ isParty ? "START PARTY" : "START GAME" }}
       </button>
     </template>

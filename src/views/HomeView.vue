@@ -656,6 +656,9 @@ footer {
 }
 .settings-wrapper {
   position: relative;
+  button {
+    padding: 0;
+  }
 }
 
 .settings-btn {
