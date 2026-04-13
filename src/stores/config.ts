@@ -29,7 +29,7 @@ export const CATEGORIES = [
   },
 ];
 
-const allCategoryNames = CATEGORIES.map((c) => c.name);
+export const allCategoryNames = CATEGORIES.map((c) => c.name);
 
 export const minimumCategories = 4;
 
