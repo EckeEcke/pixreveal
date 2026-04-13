@@ -100,12 +100,19 @@ const activePlayerDisplay = computed(
 );
 
 watch(isMyTurn, (newValue) => {
-  if (newValue) {
+    if (newValue) {
+    triggerBuzzVibration();
     startTimer();
   } else {
     cancelTimer();
   }
 });
+
+const triggerBuzzVibration = () => {
+  if (typeof window !== "undefined" && window.navigator?.vibrate) {
+    window.navigator.vibrate(35);
+  }
+};
 
 onBeforeUnmount(() => {
   cancelTimer();
