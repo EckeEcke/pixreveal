@@ -16,26 +16,13 @@
       <div v-if="isPartyMode">
         <div class="results-card party-results-card">
           <h1 class="logo">PARTY <span>OVER</span></h1>
-          <p class="party-subtitle">
+          <p class="party-subtitle rank-prophet">
             {{
               partyPlayersSorted.length
                 ? `${partyPlayersSorted[0].username.toUpperCase()} WON THE PARTY!`
                 : "GAME OVER"
             }}
           </p>
-          <div
-            v-for="(player, index) in partyPlayersSorted"
-            :key="player.playerId"
-            class="player-wrapper"
-          >
-            <PlayerDisplay
-              :name="player.username"
-              :avatar-index="player.avatarIndex"
-              :points="player.points"
-              :show-you-indicator="player.playerId === channelStore.playerId"
-            />
-            <PositionInfo :position="index + 1" />
-          </div>
           <div class="party-actions">
             <button
               class="btn-outline pulse-btn"
@@ -46,6 +33,19 @@
               Play again
             </button>
           </div>
+        </div>
+        <div
+          v-for="(player, index) in partyPlayersSorted"
+          :key="player.playerId"
+          class="player-wrapper"
+        >
+          <PlayerDisplay
+            :name="player.username"
+            :avatar-index="player.avatarIndex"
+            :points="player.points"
+            :show-you-indicator="player.playerId === channelStore.playerId"
+          />
+          <PositionInfo :position="index + 1" />
         </div>
       </div>
       <div v-else-if="isOnlinePlay">
@@ -58,13 +58,6 @@
                 : `${playersSortedByPoints[0].username.toUpperCase()} WINS!`
             }}
           </h2>
-          <PlayerDisplay
-            :name="playersSortedByPoints[0].username"
-            :avatar-index="playersSortedByPoints[0].avatarIndex"
-            :points="playersSortedByPoints[0].points"
-            :is-pending="!playersSortedByPoints[0].hasFinished"
-            :correct-answers="playersSortedByPoints[0].correctAnswers"
-          />
           <button class="btn-outline" data-sfx="click" @click="playAgain">
             <Icon icon="pixel:refresh-solid" />
             Play Again
@@ -286,6 +279,8 @@ gameStore.reset();
 
 .party-subtitle {
   font-size: 20px;
+  font-weight: 700;
+  margin-top: 0;
   text-transform: uppercase;
   letter-spacing: 3px;
   color: var(--neon-pink);
