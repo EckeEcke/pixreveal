@@ -92,7 +92,7 @@
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:image-solid" class="btn-icon" />
-                  <span class="btn-text">EDITOR</span>
+                  <span class="btn-text">SUBMIT ART</span>
                 </div>
               </button>
             </div>
