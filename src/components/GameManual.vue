@@ -75,12 +75,14 @@
         their phones. The game is designed to be enjoyed in a social setting,
         making it perfect for parties, family gatherings, or casual game nights.
       </p>
-      <h4>Submit your Art</h4>
+      <h4>Submit your Art - User Generat content</h4>
       <p>
         Have you created your own pixelart? Share it with the PixReveal
         community! Use the <strong>Editor</strong> to upload your drawings and
         submit them for others to guess. Community-made content expands the pool
-        of drawings and keeps the game fresh for everyone.
+        of drawings and keeps the game fresh for everyone. Enable user art via the settings. 
+        Once approved, your art will be available in the game. 
+        You can also find user art in the editor under Presets (marked as [User Art])
       </p>
 
       <h4>Settings & Customization</h4>
