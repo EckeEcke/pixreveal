@@ -37,12 +37,27 @@ export const useConfigStore = defineStore("config", () => {
   const revealTime = ref(15);
   const selectedCategories = ref([...allCategoryNames]);
   const minimumDrawings = computed(() => maxRounds.value * 4);
+  const includeUgc = ref(false);
+  const ugcDrawings: Ref<Drawing[]> = ref([]);
 
-  const filteredDrawings: Ref<Drawing[]> = computed(() =>
-    drawings.filter((drawing) =>
+  fetch(
+    "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      ugcDrawings.value = data;
+    })
+    .catch((err) => console.error("UGC fetch fehlgeschlagen:", err));
+
+  const filteredDrawings: Ref<Drawing[]> = computed(() => {
+    const base = includeUgc.value
+      ? drawings.concat(ugcDrawings.value)
+      : drawings;
+
+    return base.filter((drawing) =>
       selectedCategories.value.includes(drawing.category),
-    ),
-  );
+    );
+  });
 
   const isCategorySelected = computed(() => {
     return (category: string) => selectedCategories.value.includes(category);
@@ -109,6 +124,7 @@ export const useConfigStore = defineStore("config", () => {
   return {
     categoriesWithCounts,
     revealTime,
+    includeUgc,
     selectedCategories,
     isCategorySelected,
     hasActiveFilters,

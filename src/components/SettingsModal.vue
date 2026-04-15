@@ -77,6 +77,31 @@
           </label>
         </div>
       </div>
+      <div class="ugc-settings">
+        <label class="selection-label">INCLUDE USER DRAWINGS</label>
+        <div class="config-buttons">
+          <div class="config-element">
+            <label class="config-label">
+              <input
+                type="checkbox"
+                v-model="configStore.includeUgc"
+                @change="soundStore.playSound('click')"
+              />
+              <div class="pixel-box">
+                <Icon
+                  class="status-icon"
+                  :icon="
+                    configStore.includeUgc
+                      ? 'pixel:check-solid'
+                      : 'pixel:minus-solid'
+                  "
+                />
+                <span class="status-text">INCLUDE UGC</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
       <div class="filter-settings">
         <label class="selection-label">SET Categories</label>
         <div class="filter-container">
@@ -158,7 +183,8 @@ h2 {
 
 .rounds-selection,
 .general-settings,
-.filter-settings {
+.filter-settings,
+.ugc-settings {
   margin: 0;
   display: flex;
   flex-direction: column;

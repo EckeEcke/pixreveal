@@ -80,7 +80,7 @@
                 :key="drawing.name"
                 :value="drawing.name"
               >
-                {{ drawing.name }}
+                {{ drawing.name }}{{ drawing.createdAt ? ' [User Art]' : '' }}
               </option>
             </select>
           </div>
