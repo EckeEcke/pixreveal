@@ -1,90 +1,60 @@
 <template>
   <div class="home-content-wrapper">
     <LoadingOverlay :show="channelStore.isLoading" />
-    <GameManual v-show="showManual" @close="showManual = false" />
-    <main v-show="!showManual" class="home-container">
+    <GameManual
+      v-show="configStore.showManual"
+      @close="configStore.closeManual"
+    />
+    <main v-show="!configStore.showManual" class="home-container">
       <section class="setup-card">
-        <header>
-          <h1 class="logo">Pix<span>Reveal</span></h1>
-          <div class="settings-wrapper">
-            <button @click="(showSettingsModal = true), (hasOpenedSettings = true)">
-              <Icon
-                icon="pixel:cog-solid"
-                class="btn-icon settings-btn"
-                data-sfx="click"
-              />
-            </button>
-            <span
-              v-if="!soundStore.isAudioEnabled && !hasOpenedSettings"
-              class="notification-badge"
-            ></span>
-          </div>
-        </header>
+        <SettingsButton />
         <div class="content-wrapper">
           <div class="mode-section classic">
-            <div class="section-header">
-              <h2>CLASSIC</h2>
-            </div>
-
-          <div class="classic-mode-buttons">
-            <button class="neon-btn classic" @click="startGame">
-              <div class="glow-layer"></div>
-              <div class="btn-content">
-                <Icon icon="pixel:user-solid" class="btn-icon" />
-                <span class="btn-text">SOLO PLAY</span>
-              </div>
-            </button>
-
-            <button class="neon-btn classic" @click="startGravity">
-              <div class="glow-layer"></div>
-              <div class="btn-content">
-                <Icon icon="pixelarticons:blocks" class="btn-icon" />
-                <span class="btn-text">GRAVITY</span>
-              </div>
-            </button>
-
-            <button class="neon-btn online" @click="openMultiplayerModal('online')">
-              <div class="glow-layer"></div>
-              <div class="btn-content">
-                <Icon icon="pixel:globe" class="btn-icon" />
-                <span class="btn-text">ONLINE MULTIPLAYER</span>
-              </div>
-            </button>
-            <button class="neon-btn party" @click="openMultiplayerModal('party')">
-              <div class="glow-layer"></div>
-              <div class="btn-content">
-                <Icon icon="pixel:users" class="btn-icon" />
-                <span class="btn-text">LOCAL PARTY MULTIPLAYER</span>
-              </div>
-            </button>
-          </div>
-          </div>
-
-          <div class="mode-section special">
-            <div class="section-header">
-              <h2>SPECIAL</h2>
-            </div>
+            <h1 class="logo">Pix<span>Reveal</span></h1>
+            <h2 class="hook">Guess the pixel art as it reveals.</h2>
             <div class="classic-mode-buttons">
-              <button class="neon-btn special" @click="startInspect">
+              <button class="neon-btn classic" @click="openSingleplayer">
                 <div class="glow-layer"></div>
                 <div class="btn-content">
-                  <Icon icon="pixel:search" class="btn-icon" />
-                  <span class="btn-text">INSPECT</span>
-                </div>
-              </button>
-              <button class="neon-btn special" @click="startSurvival">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
-                  <span class="btn-text">SURVIVAL</span>
+                  <Icon icon="pixel:user-solid" class="btn-icon" />
+                  <div class="text-wrapper">
+                    <span class="btn-text">SINGLEPLAYER</span>
+                    <span class="sub-title"
+                      >Choose your mode and start playing</span
+                    >
+                  </div>
                 </div>
               </button>
 
-              <button class="neon-btn special" @click="startBuzzer">
+              <button
+                class="neon-btn party"
+                @click="openMultiplayerModal('party')"
+              >
                 <div class="glow-layer"></div>
                 <div class="btn-content">
-                  <Icon icon="pixel:question" class="btn-icon" />
-                  <span class="btn-text">BUZZER</span>
+                  <Icon icon="pixel:users" class="btn-icon" />
+                  <div class="text-wrapper">
+                    <span class="btn-text">LOCAL PARTY MULTIPLAYER</span>
+                    <span class="sub-title"
+                      >Local Multiplayer in Jackbox style</span
+                    >
+                  </div>
+                </div>
+              </button>
+
+              <button
+                class="neon-btn online"
+                @click="openMultiplayerModal('online')"
+              >
+                <div class="glow-layer"></div>
+                <div class="btn-content">
+                  <Icon icon="pixel:globe" class="btn-icon" />
+                  <div class="text-wrapper">
+                    <span class="btn-text">ONLINE MULTIPLAYER</span>
+                    <span class="sub-title">
+                      Host/join a game with your friends
+                    </span>
+                  </div>
                 </div>
               </button>
 
@@ -92,7 +62,12 @@
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:image-solid" class="btn-icon" />
-                  <span class="btn-text">SUBMIT ART</span>
+                  <div class="text-wrapper">
+                    <span class="btn-text">SUBMIT ART</span>
+                    <span class="sub-title"
+                      >Create and submit your own pixel art</span
+                    >
+                  </div>
                 </div>
               </button>
             </div>
@@ -106,7 +81,11 @@
         <button class="how-to-play-link" data-sfx="click" @click="openManual">
           HOW TO PLAY
         </button>
-        <button class="how-to-play-link" data-sfx="click" @click="router.push('/about')">
+        <button
+          class="how-to-play-link"
+          data-sfx="click"
+          @click="router.push('/about')"
+        >
           ABOUT
         </button>
       </div>
@@ -138,15 +117,13 @@
       :initial-role="multiplayerRole"
       :room-id="joinRoomId"
     />
-    <SettingsModal v-if="showSettingsModal" @close="showSettingsModal = false" />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
-import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/LoadingOverlay.vue";
@@ -156,8 +133,9 @@ import JoinModal from "@/components/JoinModal.vue";
 import SettingsModal from "@/components/SettingsModal.vue";
 import PlatformBar from "@/components/PlatformBar.vue";
 import GameManual from "@/components/GameManual.vue";
-import { useConfigStore } from "@/stores/config";
 import { useChannelStore } from "@/stores/channel";
+import { useConfigStore } from "@/stores/config";
+import SettingsButton from "@/components/SettingsButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -166,16 +144,9 @@ const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
-const hasOpenedSettings = ref(false);
 const showAvatarModal = ref(false);
-const showSettingsModal = ref(false);
-const showManual = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
 channelStore.playerId = playerId;
-const { prepareGame } = useGameStore();
-
-const hasRoomIdFromQuery = computed(() => !!route.query.id);
-const roomIdFromQuery = route.query.id;
 const showJoinModal = ref(false);
 const joinRoomId = ref(route.query.id ?? "");
 const multiplayerMode = ref("online");
@@ -189,33 +160,9 @@ const setUser = () =>
 
 setUser();
 
-const startGame = () => {
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "classic";
-  router.push("/game");
-};
-
-const startGravity = () => {
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "gravity";
-  router.push("/gravity");
-};
-
-const startBuzzer = () => {
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "classic";
-  router.push("/buzzer");
-};
-
-const startInspect = () => {
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "inspect";
-  router.push("/inspect");
-};
-
-const startSurvival = () => {
-  playerStore.gameMode = "survival";
-  router.push("/survival");
+const openSingleplayer = () => {
+  soundStore.playSound("click");
+  router.push("/singleplayer");
 };
 
 const openEditor = () => {
@@ -276,7 +223,7 @@ watch(
 );
 
 const openManual = () => {
-  showManual.value = true;
+  configStore.openManual();
 
   window.scrollTo({
     top: 0,
@@ -290,10 +237,12 @@ const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
-onMounted(() => document.addEventListener("fullscreenchange", updateFullscreenStatus));
+onMounted(() =>
+  document.addEventListener("fullscreenchange", updateFullscreenStatus),
+);
 
 onUnmounted(() =>
-  document.removeEventListener("fullscreenchange", updateFullscreenStatus)
+  document.removeEventListener("fullscreenchange", updateFullscreenStatus),
 );
 </script>
 
@@ -353,7 +302,7 @@ header {
   position: relative;
   background: var(--card-bg);
   border: 2px solid #334155;
-  padding: 16px 32px 32px;
+  padding: 0 32px 32px;
   border-radius: 8px;
   width: 100%;
   max-width: 600px;
@@ -367,7 +316,7 @@ header {
 }
 
 .content-wrapper {
-  margin: 16px -32px -32px;
+  margin: 0 -32px -32px;
   display: grid;
   grid-template-columns: 1fr;
   border-top: 2px solid #33415522;
@@ -388,14 +337,11 @@ header {
 
   .mode-section.classic {
     border-bottom-left-radius: 8px;
-  }
-
-  .mode-section.special {
-    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 8px;
   }
 
   .content-wrapper {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -460,31 +406,17 @@ footer {
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 32px;
-  padding-top: 48px;
+  padding-top: 32px;
 }
 
-.mode-section.classic {
+.setup-card {
   background: radial-gradient(
     circle at center,
     rgba(168, 85, 247, 0.12) 0%,
     rgba(40, 10, 60, 0.5) 60%,
     rgba(15, 5, 25, 0.9) 100%
   );
-  background-color: #ff356222;
-  h2 {
-    color: var(--white);
-  }
-}
-
-.mode-section.special {
-  background: radial-gradient(
-    circle at center,
-    rgba(6, 182, 212, 0.1) 0%,
-    rgba(10, 40, 60, 0.5) 60%,
-    rgba(5, 15, 25, 0.9) 100%
-  );
-  border-bottom-right-radius: 8px;
-  border-bottom-left-radius: 8px;
+  background-color: var(--card-bg);
   h2 {
     color: var(--white);
   }
@@ -492,8 +424,20 @@ footer {
 
 .classic-mode-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
+}
+
+.hook {
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 575px) {
+  .classic-mode-buttons {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .action-grid {
@@ -506,25 +450,25 @@ footer {
 .neon-btn {
   position: relative;
   background: #1a1a1e;
-  border: 2px solid var(--neon-purple);
+  --btn-color: var(--neon-cyan);
+  border: 2px solid var(--btn-color);
   border-radius: 8px;
   padding: 20px;
-  min-height: 140px;
+  min-height: 120px;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
 }
 
 .neon-btn.classic {
-  --btn-color: var(--neon-purple);
+  --btn-color: var(--neon-cyan);
 }
 .neon-btn.survival {
-  --btn-color: var(--neon-purple);
-  border-color: var(--neon-purple);
+  --btn-color: var(--neon-cyan);
 }
 
 .neon-btn:disabled {
@@ -557,7 +501,11 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, var(--btn-color) 0%, transparent 70%);
+  background: radial-gradient(
+    circle at center,
+    var(--btn-color) 0%,
+    transparent 70%
+  );
   opacity: 0.1;
   transition: opacity 0.3s ease;
 }
@@ -566,15 +514,25 @@ footer {
   position: relative;
   z-index: 2;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 14px;
+  width: 100%;
 }
 
 .btn-icon {
+  flex: 0 0 auto;
   font-size: 40px;
   color: var(--btn-color);
   filter: drop-shadow(0 0 2px var(--btn-color));
+}
+
+.text-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
 }
 
 .btn-text {
@@ -583,6 +541,12 @@ footer {
   font-weight: 700;
   color: #fff;
   letter-spacing: 1px;
+}
+
+.sub-title {
+  color: #ffffffcc;
+  font-size: 14px;
+  font-family: var(--font-display);
 }
 
 .neon-btn:hover {
@@ -597,12 +561,6 @@ footer {
 .neon-btn:active {
   transform: translateY(-2px);
   filter: brightness(1.2);
-}
-
-.neon-btn.editor {
-  --btn-color: #94a3b8;
-  border-color: #94a3b8;
-  box-shadow: 0 0 15px #94a3b822;
 }
 
 .neon-btn.host {
@@ -626,52 +584,21 @@ footer {
 }
 
 .neon-btn.special {
-  --btn-color: #00f2ff;
-  border-color: #00f2ff;
+  --btn-color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
   box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-}
-.neon-btn.special .btn-icon {
-  color: #00f2ff;
-  filter: drop-shadow(0 0 2px #00f2ff);
 }
 
 .neon-btn.online {
-  --btn-color: var(--neon-purple);
-  border-color: var(--neon-purple);
-  box-shadow: 0 0 15px var(--purple-glow);
-}
-.neon-btn.online .btn-icon {
-  color: var(--neon-purple);
-  filter: drop-shadow(0 0 2px var(--neon-purple));
+  --btn-color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
 .neon-btn.party {
-  --btn-color: var(--neon-purple);
-  border-color: var(--neon-purple);
-  box-shadow: 0 0 15px var(--purple-glow);
-}
-.neon-btn.party .btn-icon {
-  color: var(--neon-purple);
-  filter: drop-shadow(0 0 2px var(--neon-purple));
-}
-.settings-wrapper {
-  position: relative;
-  button {
-    padding: 0;
-  }
-}
-
-.settings-btn {
-  color: var(--white);
-  transition: all 0.3s;
-  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.7));
-  padding-right: 0;
-}
-
-.settings-btn:hover {
-  color: #aaaaaa;
-  transform: translateY(-2px) rotate(45deg);
-  filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.7));
+  --btn-color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
 .how-to-play-link {
@@ -679,36 +606,6 @@ footer {
   color: var(--white);
   border: none;
   text-decoration: underline;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 10px;
-  height: 10px;
-  background-color: var(--primary);
-  border-radius: 50%;
-}
-
-.notification-badge::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--primary);
-  border-radius: 50%;
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes ping {
-  75%,
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
 }
 
 @media (max-width: 480px) {

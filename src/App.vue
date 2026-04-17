@@ -14,6 +14,10 @@
     </router-view>
     <audio ref="audio" loop></audio>
   </div>
+  <SettingsModal
+    v-if="configStore.showSettings"
+    @close="configStore.closeSettings"
+  />
 </template>
 
 <script setup>
@@ -22,11 +26,13 @@ import { useSoundStore } from "./stores/sound";
 import { usePlayerStore } from "./stores/player";
 import { Analytics } from "@vercel/analytics/vue";
 import { useRoute } from "vue-router";
+import { useConfigStore } from "./stores/config";
+import SettingsModal from "./components/SettingsModal.vue";
 
 const route = useRoute();
 
 const playerStore = usePlayerStore();
-
+const configStore = useConfigStore();
 const soundStore = useSoundStore();
 
 const audio = ref(null);

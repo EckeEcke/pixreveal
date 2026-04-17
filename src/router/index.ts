@@ -18,6 +18,12 @@ const router = createRouter({
       meta: { robots: "index, follow" },
     },
     {
+      path: "/singleplayer",
+      name: "singleplayer",
+      component: () => import("@/views/SinglePlayerView.vue"),
+      meta: { robots: "index, follow" },
+    },
+    {
       path: "/game",
       name: "game",
       component: () => import("@/views/GameView.vue"),

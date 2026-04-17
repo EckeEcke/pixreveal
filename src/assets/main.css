@@ -25,6 +25,10 @@
   --blue-glow: rgba(30, 144, 255, 0.4);
   --blue-bg: rgba(30, 144, 255, 0.05);
 
+  --neon-cyan: #00f2ff;
+  --cyan-glow: rgba(0, 242, 255, 0.4);
+  --cyan-bg: rgba(0, 242, 255, 0.05);
+
   --neon-purple: #9d50bb;
   --purple-glow: rgba(157, 80, 187, 0.4);
   --purple-bg: rgba(157, 80, 187, 0.05);
@@ -338,5 +342,13 @@ input[type="text"]:focus {
   50%,
   100% {
     opacity: 0.3;
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
   }
 }
