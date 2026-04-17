@@ -45,11 +45,14 @@ const openSettings = () => {
 
 .settings-btn {
   flex: 0 0 auto;
-  font-size: 40px;
+  font-size: 32px;
   color: var(--white);
   transition: all 0.3s;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.7));
   padding-right: 0;
+  @media (min-width: 576px) {
+    font-size: 40px;
+  } 
 }
 
 .settings-btn:hover {

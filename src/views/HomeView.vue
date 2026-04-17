@@ -328,9 +328,6 @@ header {
 }
 
 @media (min-width: 1024px) {
-  h1 {
-    margin: 0;
-  }
   .setup-card {
     max-width: 800px;
   }

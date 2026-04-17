@@ -156,7 +156,7 @@ const goHome = () => router.push("/");
 
 <style scoped>
 h1 {
-  margin: 0;
+  margin-bottom: 0;
   font-size: 24px;
   @media (max-width: 360px) {
     font-size: 18px;
