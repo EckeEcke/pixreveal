@@ -73,8 +73,8 @@
       </section>
 
       <footer class="about-footer">
-        <button class="confirm-btn" data-sfx="click" @click="$router.push('/')">
-          BACK TO HOME
+        <button class="confirm-btn" data-sfx="click" @click="$router.back()">
+          BACK
         </button>
       </footer>
     </div>

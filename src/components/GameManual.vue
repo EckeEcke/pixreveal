@@ -103,7 +103,7 @@
     </article>
     <br />
     <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
-      BACK TO HOME
+      BACK
     </button>
   </div>
 </template>

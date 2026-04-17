@@ -1,6 +1,10 @@
 <template>
   <div class="singleplayer-content-wrapper">
-    <main class="singleplayer-container">
+    <GameManual
+      v-show="configStore.showManual"
+      @close="configStore.closeManual"
+    />
+    <main v-show="!configStore.showManual" class="singleplayer-container">
       <section class="setup-card">
         <SettingsButton />
         <div class="content-wrapper">
@@ -96,6 +100,7 @@
         </div>
       </section>
     </main>
+    <FooterApp />
   </div>
 </template>
 
@@ -107,13 +112,14 @@ import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { getRandomUserName } from "@/utils/random";
 import SettingsButton from "@/components/SettingsButton.vue";
+import FooterApp from "@/components/FooterApp.vue";
+import GameManual from "@/components/GameManual.vue";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const { prepareGame } = useGameStore();
 
-// Mirror HomeView behavior so singleplayer starts with a valid user.
 const setUser = () =>
   playerStore.setUser({
     username: playerStore.playerName || getRandomUserName(),

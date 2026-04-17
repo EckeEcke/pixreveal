@@ -75,40 +75,7 @@
         </div>
       </section>
     </main>
-    <footer>
-      <PlatformBar />
-      <div>
-        <button class="how-to-play-link" data-sfx="click" @click="openManual">
-          HOW TO PLAY
-        </button>
-        <button
-          class="how-to-play-link"
-          data-sfx="click"
-          @click="router.push('/about')"
-        >
-          ABOUT
-        </button>
-      </div>
-
-      <div>
-        Music: Lo-Bit 13 by
-        <a
-          href="https://freemusicarchive.org/music/holiznapatreon/lo-bit-lofi-gamer-tracks"
-          target="_blank"
-          >HoliznaPATREON</a
-        >
-      </div>
-      <div>
-        © 2026 PixReveal | Code & Design by
-        <a
-          href="https://eckeecke.github.io"
-          target="_blank"
-          rel="noopener"
-          class="website-link"
-          >Christian Eckardt</a
-        >
-      </div>
-    </footer>
+    <FooterApp />
     <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal
       v-if="showJoinModal"
@@ -130,12 +97,11 @@ import LoadingOverlay from "@/components/LoadingOverlay.vue";
 import { Icon } from "@iconify/vue";
 import PlayerEditModal from "@/components/PlayerEditModal.vue";
 import JoinModal from "@/components/JoinModal.vue";
-import SettingsModal from "@/components/SettingsModal.vue";
-import PlatformBar from "@/components/PlatformBar.vue";
 import GameManual from "@/components/GameManual.vue";
 import { useChannelStore } from "@/stores/channel";
 import { useConfigStore } from "@/stores/config";
 import SettingsButton from "@/components/SettingsButton.vue";
+import FooterApp from "@/components/FooterApp.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -221,15 +187,6 @@ watch(
     joinRoomId.value = value ?? "";
   },
 );
-
-const openManual = () => {
-  configStore.openManual();
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
 
 if (document.fullscreenElement) isFullscreen.value = true;
 
@@ -322,11 +279,6 @@ header {
   border-top: 2px solid #33415522;
 }
 
-.website-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
 @media (min-width: 1024px) {
   .setup-card {
     max-width: 800px;
@@ -339,62 +291,6 @@ header {
 
   .content-wrapper {
     grid-template-columns: 1fr;
-  }
-}
-
-footer {
-  display: grid;
-  gap: 32px;
-  text-align: center;
-  margin: 16px auto 0;
-  a {
-    color: inherit;
-  }
-}
-
-.player-info {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
-  @media (min-width: 575px) {
-    background: rgba(15, 23, 42, 0.6);
-    padding-right: 16px;
-    border-radius: 12px;
-    border: 2px solid rgba(236, 72, 153, 0.3);
-  }
-}
-
-.player-info:hover {
-  background: rgba(236, 72, 153, 0.1);
-  border-color: #ec4899;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2);
-}
-
-.player-avatar {
-  width: 44px;
-  height: 44px;
-  background-color: #2d3748;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  @media (min-width: 575px) {
-    width: 56px;
-    height: 56px;
-  }
-}
-
-.player-name {
-  text-transform: uppercase;
-  font-weight: 900;
-  display: none;
-  @media (min-width: 575px) {
-    display: block;
   }
 }
 
@@ -596,13 +492,6 @@ footer {
   --btn-color: var(--neon-cyan);
   border-color: var(--neon-cyan);
   box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-}
-
-.how-to-play-link {
-  background: none;
-  color: var(--white);
-  border: none;
-  text-decoration: underline;
 }
 
 @media (max-width: 480px) {
