@@ -6,6 +6,9 @@
     />
     <main v-show="!configStore.showManual" class="singleplayer-container">
       <section class="setup-card">
+        <button class="back-btn" @click="$router.back()">
+          <Icon icon="pixel:arrow-circle-left-solid" />
+        </button>
         <SettingsButton />
         <div class="content-wrapper">
           <div class="mode-section">
@@ -333,18 +336,21 @@ h1 {
 }
 
 .back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
   border: none;
   background: none;
   color: var(--white);
   cursor: pointer;
   padding: 0;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 24px;
   opacity: 0.85;
   transition: all 0.2s ease;
+  @media (min-width: 576px) {
+    font-size: 32px;
+  } 
 }
 
 .back-btn:hover {

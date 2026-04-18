@@ -3,14 +3,14 @@
     <PlatformBar />
     <div>
       <button class="internal-link" data-sfx="click" @click="openManual">
-        HOW TO PLAY
+        <Icon icon="pixel:book" /> HOW TO PLAY
       </button>
       <button
         class="internal-link"
         data-sfx="click"
         @click="router.push('/about')"
       >
-        ABOUT
+        <Icon icon="pixel:info-circle" /> ABOUT
       </button>
     </div>
 
@@ -39,6 +39,7 @@
 import { useConfigStore } from "@/stores/config";
 import { useRouter } from "vue-router";
 import PlatformBar from "@/components/PlatformBar.vue"
+import { Icon } from "@iconify/vue";
 
 const configStore = useConfigStore();
 const router = useRouter();
@@ -70,9 +71,14 @@ footer {
 }
 
 .internal-link {
+  display: inline-flex;
+  place-items: center;
+  gap: 4px;
+  margin: 0 8px;
   background: none;
   color: var(--white);
   border: none;
   text-decoration: underline;
+  font-family: inherit;
 }
 </style>
