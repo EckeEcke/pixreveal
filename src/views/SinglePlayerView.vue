@@ -6,14 +6,13 @@
     />
     <main v-show="!configStore.showManual" class="singleplayer-container">
       <section class="setup-card">
-        <button class="back-btn" @click="$router.back()">
-          <Icon icon="pixel:arrow-circle-left-solid" />
-        </button>
-        <SettingsButton />
+          <button class="back-btn" @click="$router.back()">
+            <Icon icon="pixel:arrow-circle-left-solid" />
+          </button>
+          <SettingsButton />
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="section-header">
-              <h1 class="logo">Pix<span>Reveal</span></h1>
               <h2 class="hook">Choose a game mode</h2>
             </div>
 
@@ -21,9 +20,9 @@
               <button class="neon-btn special" type="button" @click="startGame">
                 <div class="glow-layer"></div>
                 <div class="btn-content">
-                  <Icon icon="pixel:user-solid" class="btn-icon" />
+                  <Icon icon="pixel:sparkles" class="btn-icon" />
                   <div class="text-wrapper">
-                    <span class="btn-text">CLASSIC</span>
+                    <span class="btn-text">CLASSIC REVEAL</span>
                     <span class="sub-title"
                       >Drawing gets revealed pixel by pixel</span
                     >
@@ -228,7 +227,7 @@ h1 {
   h2 {
     color: var(--white);
     text-align: center;
-    font-size: 18px;
+    font-size: 24px;
   }
 }
 
@@ -350,7 +349,7 @@ h1 {
   transition: all 0.2s ease;
   @media (min-width: 576px) {
     font-size: 32px;
-  } 
+  }
 }
 
 .back-btn:hover {
