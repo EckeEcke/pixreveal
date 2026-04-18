@@ -1,5 +1,6 @@
 <template>
   <div class="home-content-wrapper">
+    <HeaderApp />
     <LoadingOverlay :show="channelStore.isLoading" />
     <GameManual
       v-show="configStore.showManual"
@@ -7,11 +8,8 @@
     />
     <main v-show="!configStore.showManual" class="home-container">
       <section class="setup-card">
-        <SettingsButton />
         <div class="content-wrapper">
           <div class="mode-section classic">
-            <h1 class="logo">Pix<span>Reveal</span></h1>
-            <h2 class="hook">Guess the pixel art as it reveals.</h2>
             <div class="classic-mode-buttons">
               <button class="neon-btn classic" @click="openSingleplayer">
                 <div class="glow-layer"></div>
@@ -102,6 +100,7 @@ import { useChannelStore } from "@/stores/channel";
 import { useConfigStore } from "@/stores/config";
 import SettingsButton from "@/components/SettingsButton.vue";
 import FooterApp from "@/components/FooterApp.vue";
+import HeaderApp from "@/components/HeaderApp.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -250,7 +249,8 @@ header {
 
 .home-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  place-items: center;
   width: 100%;
   padding: 0 16px;
 }
@@ -264,6 +264,7 @@ header {
   width: 100%;
   max-width: 600px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 .link {
@@ -319,12 +320,6 @@ header {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-}
-
-.hook {
-  font-family: "Chakra Petch", sans-serif;
-  font-size: 18px;
-  margin-bottom: 16px;
 }
 
 @media (min-width: 575px) {

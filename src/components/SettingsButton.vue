@@ -30,11 +30,6 @@ const openSettings = () => {
 </script>
 
 <style scoped>
-.settings-wrapper {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
 
 .settings-btn-wrapper {
   position: relative;

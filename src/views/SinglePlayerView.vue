@@ -4,12 +4,9 @@
       v-show="configStore.showManual"
       @close="configStore.closeManual"
     />
+    <HeaderApp :show-back-btn="true" />
     <main v-show="!configStore.showManual" class="singleplayer-container">
       <section class="setup-card">
-          <button class="back-btn" @click="$router.back()">
-            <Icon icon="pixel:arrow-circle-left-solid" />
-          </button>
-          <SettingsButton />
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="section-header">
@@ -116,6 +113,7 @@ import { getRandomUserName } from "@/utils/random";
 import SettingsButton from "@/components/SettingsButton.vue";
 import FooterApp from "@/components/FooterApp.vue";
 import GameManual from "@/components/GameManual.vue";
+import HeaderApp from "@/components/HeaderApp.vue";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
@@ -202,6 +200,7 @@ h1 {
   width: 100%;
   max-width: 600px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 .content-wrapper {
@@ -228,6 +227,7 @@ h1 {
     color: var(--white);
     text-align: center;
     font-size: 24px;
+    margin-top: 0;
   }
 }
 
@@ -332,29 +332,6 @@ h1 {
 .neon-btn:active {
   transform: translateY(-2px);
   filter: brightness(1.2);
-}
-
-.back-btn {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  border: none;
-  background: none;
-  color: var(--white);
-  cursor: pointer;
-  padding: 0;
-  font-family: var(--font-display);
-  font-size: 24px;
-  opacity: 0.85;
-  transition: all 0.2s ease;
-  @media (min-width: 576px) {
-    font-size: 32px;
-  }
-}
-
-.back-btn:hover {
-  opacity: 1;
-  transform: translateY(-1px);
 }
 
 @media (max-width: 480px) {
