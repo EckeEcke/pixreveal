@@ -2,7 +2,7 @@
   <header v-show="!configStore.showManual">
     <div class="back-btn-wrapper">
       <button v-if="showBackBtn" class="back-btn" @click="$router.back()">
-        <Icon icon="pixel:arrow-circle-left-solid" />
+        <Icon icon="pixel:angle-left-solid" />
       </button>
     </div>
 
@@ -31,6 +31,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 16px 0;
   width: 100%;
   max-width: 800px;
@@ -52,7 +53,7 @@ h2 {
 }
 
 .back-btn-wrapper {
-  width: 40px;
+  min-width: 32px;
 }
 
 .back-btn {

@@ -30,8 +30,8 @@ const openSettings = () => {
 </script>
 
 <style scoped>
-
 .settings-btn-wrapper {
+  min-width: 32px;
   position: relative;
   button {
     padding: 0;
@@ -47,7 +47,7 @@ const openSettings = () => {
   padding-right: 0;
   @media (min-width: 576px) {
     font-size: 32px;
-  } 
+  }
 }
 
 .settings-btn:hover {
