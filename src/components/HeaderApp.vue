@@ -55,26 +55,4 @@ h2 {
 .back-btn-wrapper {
   min-width: 32px;
 }
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  border: none;
-  background: none;
-  color: var(--white);
-  cursor: pointer;
-  padding: 0;
-  font-family: var(--font-display);
-  font-size: 24px;
-  opacity: 0.7;
-  transition: all 0.2s ease;
-  @media (min-width: 576px) {
-    font-size: 32px;
-  }
-}
-
-.back-btn:hover {
-  opacity: 1;
-  transform: translateY(-1px);
-}
 </style>

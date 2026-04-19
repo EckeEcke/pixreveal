@@ -1,5 +1,8 @@
 <template>
   <div class="app-container">
+    <button class="back-btn" @click="$router.back()">
+      <Icon icon="pixel:angle-left-solid" />
+    </button>
     <main class="game-layout">
       <section class="canvas-section">
         <div class="canvas-wrapper">
@@ -31,6 +34,13 @@
 
       <section class="editor-section">
         <div v-if="viewMode === 'editor'">
+          <div class="recommendation">
+            <span>💡</span>
+            <p>
+              Create and submit your own pixel art. Once your art is approved,
+              it is available in PixReveal for all players to guess.
+            </p>
+          </div>
           <div class="action-buttons">
             <button @click="downloadDrawing" class="btn-outline">
               <Icon icon="pixel:download-solid" /> Download
@@ -256,6 +266,9 @@ const downloadDrawing = () => {
 </script>
 
 <style scoped>
+.back-btn {
+  margin: 0 auto 16px 0;
+}
 .editor-section {
   padding: 32px 0;
 }
@@ -369,7 +382,7 @@ const downloadDrawing = () => {
 
 .color-palette {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 
@@ -447,5 +460,23 @@ const downloadDrawing = () => {
 
 .btn-outline:hover {
   border-color: var(--primary);
+}
+
+.recommendation {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--blue-bg);
+  border-radius: 4px;
+  padding: 12px;
+  padding: 8px;
+  margin-bottom: 32px;
+  p {
+    margin: 0;
+    font-size: 12px;
+  }
+  span {
+    font-size: 24px;
+  }
 }
 </style>
