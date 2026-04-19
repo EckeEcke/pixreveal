@@ -258,7 +258,7 @@ header {
 .setup-card {
   position: relative;
   background: var(--card-bg);
-  border: 2px solid #334155;
+  border: 2px solid var(--border-color);
   padding: 0 32px 32px;
   border-radius: 8px;
   width: 100%;
@@ -277,7 +277,6 @@ header {
   margin: 0 -32px -32px;
   display: grid;
   grid-template-columns: 1fr;
-  border-top: 2px solid #33415522;
 }
 
 @media (min-width: 1024px) {
@@ -304,12 +303,6 @@ header {
 }
 
 .setup-card {
-  background: radial-gradient(
-    circle at center,
-    rgba(168, 85, 247, 0.12) 0%,
-    rgba(40, 10, 60, 0.5) 60%,
-    rgba(15, 5, 25, 0.9) 100%
-  );
   background-color: var(--card-bg);
   h2 {
     color: var(--white);

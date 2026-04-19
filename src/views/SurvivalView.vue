@@ -116,7 +116,7 @@ onUnmounted(() => {
 
 .canvas-section {
   @media (min-width: 1024px) {
-    border-right: 2px solid #334155;
+    border-right: 2px solid var(--border-color);
   }
 }
 

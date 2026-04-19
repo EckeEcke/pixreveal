@@ -101,7 +101,7 @@ import { Icon } from "@iconify/vue";
   margin: 0 auto;
   line-height: 1.6;
   background: var(--card-bg);
-  border: 2px solid #334155;
+  border: 2px solid var(--border-color);
   padding: 32px;
   border-radius: 8px;
   width: 100%;

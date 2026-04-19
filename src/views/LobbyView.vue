@@ -148,7 +148,7 @@ onMounted(() => {
   flex-direction: column;
   gap: 16px;
   background: var(--card-bg);
-  border: 2px solid #334155;
+  border: 2px solid var(--border-color);
   padding: 2rem;
   margin-bottom: 32px;
   border-radius: 8px;

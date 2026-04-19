@@ -177,8 +177,8 @@ const statusClass = computed(() => ({
   backdrop-filter: blur(6px);
   border-radius: 8px;
   padding: 12px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 2px 2px 6px rgba(10, 10, 10, 0.4);
   position: relative;
   transition: 0.15s ease;
 }

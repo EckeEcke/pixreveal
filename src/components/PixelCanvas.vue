@@ -227,6 +227,13 @@ const render = () => {
   animationFrame = requestAnimationFrame(render);
 };
 
+const getImageUrl = () => {
+  if (!canvasRef.value) return null;
+  return canvasRef.value.toDataURL("image/png");
+};
+
+defineExpose({ getImageUrl });
+
 watch(
   () => props.pixelArray,
   () => {
@@ -255,7 +262,7 @@ onUnmounted(() => {
     #0a0b10 60%,
     #000000 100%
   );
-  border: 2px solid #1a1c26;
+  border: 2px solid black;
   overflow: hidden;
   line-height: 0;
   touch-action: none;

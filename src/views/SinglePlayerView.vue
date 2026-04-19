@@ -194,7 +194,7 @@ h1 {
     rgba(15, 5, 25, 0.9) 100%
   );
   background-color: var(--card-bg);
-  border: 2px solid #334155;
+  border: 2px solid var(--border-color);
   padding: 0 32px 32px;
   border-radius: 8px;
   width: 100%;
@@ -207,7 +207,6 @@ h1 {
   margin: 0 -32px -32px;
   display: grid;
   grid-template-columns: 1fr;
-  border-top: 2px solid #33415522;
 }
 
 @media (min-width: 1024px) {

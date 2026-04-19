@@ -217,7 +217,7 @@ h2 {
   text-align: center;
   padding: 10px 0;
   background: #1a1a1a;
-  border: 2px solid #333;
+  border: 2px solid var(--border-color);
   color: #fff;
   font-size: 12px;
   transition: all 0.2s ease;
@@ -234,7 +234,6 @@ h2 {
   color: #000;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 0 10px var(--primary);
   transform: translateY(-2px);
 }
 

@@ -28,7 +28,7 @@
 .modal {
   position: relative;
   background: var(--card-bg);
-  border: 2px solid var(--primary);
+  border: 2px solid var(--border-color);
   padding: 2rem;
   border-radius: 8px;
   width: 100%;

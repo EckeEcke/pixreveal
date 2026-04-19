@@ -141,7 +141,7 @@ const avatarStyle = computed<CSSProperties>(() => {
   background: rgba(0, 0, 0, 0.3);
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
   margin-left: auto;
 }
@@ -307,7 +307,7 @@ const avatarStyle = computed<CSSProperties>(() => {
   gap: 12px;
   padding: 12px;
   background: var(--card-bg);
-  border: 2px solid #1a1c26;
+  border: 2px solid var(--border-color);
   border-radius: 4px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -321,7 +321,7 @@ const avatarStyle = computed<CSSProperties>(() => {
   );
   background-size: 100% 4px;
   background: rgba(15, 15, 25, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
 }
 

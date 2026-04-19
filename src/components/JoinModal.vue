@@ -323,7 +323,7 @@ h2 {
 .role-toggle {
   display: flex;
   background: #111;
-  border: 2px solid #333;
+  border: 2px solid var(--border-color);
   border-radius: 4px;
   margin-bottom: 16px;
   overflow: hidden;

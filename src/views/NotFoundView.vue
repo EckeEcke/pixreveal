@@ -16,7 +16,7 @@ import { Icon } from "@iconify/vue";
 <style scoped>
 .setup-card {
   background: var(--card-bg);
-  border: 2px solid #334155;
+  border: 2px solid var(--border-color);
   padding: 32px;
   margin: 0 16px;
   border-radius: 12px;

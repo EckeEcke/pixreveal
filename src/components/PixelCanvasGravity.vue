@@ -205,7 +205,6 @@ onUnmounted(() => {
     #0a0b10 60%,
     #000000 100%
   );
-  border: 2px solid #1a1c26;
   overflow: hidden;
   line-height: 0;
   touch-action: none;

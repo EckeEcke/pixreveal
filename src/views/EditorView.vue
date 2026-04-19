@@ -21,6 +21,7 @@
           </div>
 
           <PixelCanvas
+            ref="pixelCanvasRef"
             :pixel-array="pixelData"
             :resolution="resolution"
             :is-revealing="false"
@@ -31,10 +32,14 @@
       <section class="editor-section">
         <div v-if="viewMode === 'editor'">
           <div class="action-buttons">
+            <button @click="downloadDrawing" class="btn-outline">
+              <Icon icon="pixel:download-solid" /> Download
+            </button>
             <button @click="generateEmpty" class="btn-outline">
-              Clear / New 16x16
+              <Icon icon="pixel:trash-alt-solid" /> Clear
             </button>
             <button
+              v-if="showCopyButton"
               @click="copyToClipboard"
               class="btn-outline"
               :class="{ 'btn-success': copyStatus === 'Copied!' }"
@@ -80,7 +85,7 @@
                 :key="drawing.name"
                 :value="drawing.name"
               >
-                {{ drawing.name }}{{ drawing.createdAt ? ' [User Art]' : '' }}
+                {{ drawing.name }}{{ drawing.createdAt ? " [User Art]" : "" }}
               </option>
             </select>
           </div>
@@ -119,7 +124,6 @@
 
           <div class="legal-text-container">
             <Icon icon="pixel:info-circle" />
-
             <p class="legal-text">
               By submitting, you confirm that this is your original work and
               agree that it may be used in PIXREVEAL for all players.
@@ -152,6 +156,8 @@ const resolution = ref(16);
 const rawInput = ref("");
 const selectedColor = ref("1");
 const pixelData = ref(Array.from({ length: 16 }, () => Array(16).fill(0)));
+
+const showCopyButton = window.location.hostname === "localhost";
 
 const viewMode = ref("editor");
 const submitData = reactive({
@@ -232,6 +238,21 @@ const uploadDrawing = async () => {
     console.error("Network error", err);
   }
 };
+
+const pixelCanvasRef = ref(null);
+
+const downloadDrawing = () => {
+  const dataUrl = pixelCanvasRef.value?.getImageUrl();
+
+  if (dataUrl) {
+    const link = document.createElement("a");
+    const fileName = "my-pixel-art";
+
+    link.download = `${fileName}.png`;
+    link.href = dataUrl;
+    link.click();
+  }
+};
 </script>
 
 <style scoped>
@@ -272,7 +293,7 @@ const uploadDrawing = async () => {
 
 .form-input {
   background: #2a2d3e;
-  border: 1px solid #3f4257;
+  border: 1px solid var(--border-color);
   color: white;
   padding: 10px;
   border-radius: 4px;
@@ -391,7 +412,7 @@ const uploadDrawing = async () => {
 .preset-select {
   width: 100%;
   background: #2a2d3e;
-  border: 1px solid #3f4257;
+  border: 1px solid var(--border-color);
   color: var(--white);
   padding: 8px 12px;
   border-radius: 4px;

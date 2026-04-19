@@ -75,7 +75,7 @@ onMounted(() => {
 .lobby-chat {
   display: flex;
   flex-direction: column;
-  border: 2px solid #333;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   background: rgba(10, 10, 10, 0.8);
   height: 200px;
@@ -130,7 +130,7 @@ onMounted(() => {
 
 .chat-input {
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid #444;
+  border: 1px solid var(--border-color);
   padding: 6px 12px;
   color: #fff;
   font-family: inherit;

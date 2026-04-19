@@ -177,7 +177,7 @@ onUnmounted(() => {
   margin: 0 auto;
   background: var(--card-bg);
   border-radius: 8px;
-  border: 2px solid #334155;
+  border: 2px solid var(--border-color);
   overflow: hidden;
 }
 
