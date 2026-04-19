@@ -3,6 +3,9 @@ import HomeView from "../views/HomeView.vue";
 import { useGameStore } from "@/stores/game";
 
 const router = createRouter({
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 };
+  },
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
@@ -109,7 +112,13 @@ router.beforeEach((to, from, next) => {
     "/gravity",
     "/party-host",
   ];
-  const needRounds = ["/game", "/buzzer", "/inspect", "/gravity", "/party-host"];
+  const needRounds = [
+    "/game",
+    "/buzzer",
+    "/inspect",
+    "/gravity",
+    "/party-host",
+  ];
 
   if (
     needRounds.includes(to.path) &&
