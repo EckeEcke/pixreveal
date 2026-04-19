@@ -41,22 +41,6 @@
               it is available in PixReveal for all players to guess.
             </p>
           </div>
-          <div class="action-buttons">
-            <button @click="downloadDrawing" class="btn-outline">
-              <Icon icon="pixel:download-solid" /> Download
-            </button>
-            <button @click="generateEmpty" class="btn-outline">
-              <Icon icon="pixel:trash-alt-solid" /> Clear
-            </button>
-            <button
-              v-if="showCopyButton"
-              @click="copyToClipboard"
-              class="btn-outline"
-              :class="{ 'btn-success': copyStatus === 'Copied!' }"
-            >
-              {{ copyStatus }}
-            </button>
-          </div>
 
           <div class="palette-container">
             <h3>Color Palette</h3>
@@ -77,6 +61,23 @@
                 <div class="color-label">{{ index }}</div>
               </div>
             </div>
+          </div>
+
+          <div class="action-buttons">
+            <button @click="downloadDrawing" class="btn-outline">
+              <Icon icon="pixel:download-solid" /> Download
+            </button>
+            <button @click="generateEmpty" class="btn-outline">
+              <Icon icon="pixel:trash-alt-solid" /> Clear
+            </button>
+            <button
+              v-if="showCopyButton"
+              @click="copyToClipboard"
+              class="btn-outline"
+              :class="{ 'btn-success': copyStatus === 'Copied!' }"
+            >
+              {{ copyStatus }}
+            </button>
           </div>
 
           <div class="drawings-list">
@@ -207,14 +208,14 @@ const setDrawing = (data) => {
   syncRawInput();
 };
 
-const copyStatus = ref("Copy to Clipboard");
+const copyStatus = ref("Copy");
 
 const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(rawInput.value);
     copyStatus.value = "Copied!";
     setTimeout(() => {
-      copyStatus.value = "Copy to Clipboard";
+      copyStatus.value = "Copy";
     }, 2000);
   } catch (err) {
     console.error("Failed to copy: ", err);
@@ -269,9 +270,7 @@ const downloadDrawing = () => {
 .back-btn {
   margin: 0 auto 16px 0;
 }
-.editor-section {
-  padding: 32px 0;
-}
+
 .submit-trigger {
   width: 100%;
   margin-top: 2rem;
@@ -446,6 +445,7 @@ const downloadDrawing = () => {
 .action-buttons {
   display: flex;
   gap: 12px;
+  margin: 24px 0 16px; 
 }
 
 .btn-outline {
@@ -477,6 +477,19 @@ const downloadDrawing = () => {
   }
   span {
     font-size: 24px;
+  }
+  @media (max-width: 576px) {
+    display: none;
+  }
+}
+
+h3 {
+  margin-bottom: 8px;
+}
+
+@media (min-width: 1024px) {
+  .editor-section {
+    padding: 32px 0;
   }
 }
 </style>

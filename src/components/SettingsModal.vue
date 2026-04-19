@@ -216,7 +216,6 @@ h2 {
   display: block;
   text-align: center;
   padding: 10px 0;
-  background: #1a1a1a;
   border: 2px solid var(--border-color);
   color: #fff;
   font-size: 12px;
@@ -225,7 +224,6 @@ h2 {
 
 .radio-item:hover .radio-button {
   border-color: #666;
-  background: #222;
 }
 
 .radio-item input:checked + .radio-button {
@@ -242,7 +240,6 @@ h2 {
   opacity: 0.2;
   filter: grayscale(1);
   border-style: dotted;
-  background: #0a0a0a;
   transform: none;
   box-shadow: none;
 }
@@ -283,8 +280,7 @@ h2 {
   justify-content: center;
   gap: 12px;
   padding: 10px;
-  border: 2px solid #444;
-  background: #222;
+  border: 2px solid var(--border-color);
   transition: all 0.1s;
   width: 100%;
   box-sizing: border-box;
@@ -292,7 +288,6 @@ h2 {
 
 .config-label input:checked + .pixel-box {
   border-color: var(--primary);
-  box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
 }
 
 .status-text {
