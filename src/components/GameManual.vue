@@ -119,6 +119,7 @@ import RankOverview from "@/components/RankOverview.vue";
   position: relative;
   top: 0;
   box-sizing: border-box;
+  padding: 32px;
 }
 
 .close-btn-wrapper {

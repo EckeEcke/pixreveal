@@ -7,8 +7,10 @@
     </div>
 
     <div>
-      <h1 class="logo">Pix<span>Reveal</span></h1>
-      <h2 class="hook">Guess the pixel art as it reveals.</h2>
+      <h1 class="logo">
+        Pix<span>Reveal</span>
+        <span class="hook">Guess the pixel art as it reveals.</span>
+      </h1>
     </div>
     <SettingsButton />
   </header>
@@ -40,8 +42,16 @@ header {
 }
 
 .hook {
-  font-family: "Chakra Petch", sans-serif;
+  display: block;
+  font-family: var(--font-display), sans-serif;
   font-size: 14px;
+  letter-spacing: 1px;
+  margin-top: 2px;
+  color: var(--white);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+  @media (max-width: 575px) {
+    display: none;
+  }
 }
 
 h1 {
