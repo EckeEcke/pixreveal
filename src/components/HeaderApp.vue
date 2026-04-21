@@ -36,9 +36,8 @@ header {
   gap: 8px;
   padding: 16px 0;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
   box-sizing: border-box;
-  margin-bottom: 16px;
 }
 
 .hook {

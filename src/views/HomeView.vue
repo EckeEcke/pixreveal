@@ -98,7 +98,6 @@ import JoinModal from "@/components/JoinModal.vue";
 import GameManual from "@/components/GameManual.vue";
 import { useChannelStore } from "@/stores/channel";
 import { useConfigStore } from "@/stores/config";
-import SettingsButton from "@/components/SettingsButton.vue";
 import FooterApp from "@/components/FooterApp.vue";
 import HeaderApp from "@/components/HeaderApp.vue";
 
@@ -218,26 +217,6 @@ h2 {
   text-align: center;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.headline-wrapper {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: space-between;
-  align-items: center;
-  input {
-    accent-color: var(--primary);
-  }
-  @media (min-width: 575px) {
-    flex-direction: row;
-  }
-}
-
 .home-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -253,18 +232,25 @@ header {
   place-items: center;
   width: 100%;
   padding: 0 16px;
+  @media(min-width: 575px) {
+    margin-top: 16px;
+  }
 }
 
 .setup-card {
   position: relative;
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  padding: 0 32px 32px;
   border-radius: 8px;
   width: 100%;
-  max-width: 600px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  h2 {
+    color: var(--white);
+  }
   box-sizing: border-box;
+  @media (min-width: 575px) {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    max-width: 600px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .link {
@@ -274,15 +260,12 @@ header {
 }
 
 .content-wrapper {
-  margin: 0 -32px -32px;
+  margin: 0;
   display: grid;
   grid-template-columns: 1fr;
 }
 
 @media (min-width: 1024px) {
-  .setup-card {
-    max-width: 800px;
-  }
 
   .mode-section.classic {
     border-bottom-left-radius: 8px;
@@ -298,14 +281,9 @@ header {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  padding: 32px;
-  padding-top: 32px;
-}
-
-.setup-card {
-  background-color: var(--card-bg);
-  h2 {
-    color: var(--white);
+  padding: 16px;
+  @media(min-width: 575px) {
+    padding: 32px;
   }
 }
 
@@ -485,9 +463,6 @@ header {
 @media (max-width: 480px) {
   .btn-icon {
     font-size: 32px;
-  }
-  .btn-text {
-    font-size: 0.7rem;
   }
 }
 </style>

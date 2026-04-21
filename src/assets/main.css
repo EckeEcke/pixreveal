@@ -272,7 +272,7 @@ input[type="text"]:focus {
   padding: 0;
   font-family: var(--font-display);
   font-size: 24px;
-  opacity: 0.7;
+  opacity: 0.5;
   transition: all 0.2s ease;
   @media (min-width: 576px) {
     font-size: 32px;
