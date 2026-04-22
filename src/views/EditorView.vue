@@ -71,7 +71,7 @@
               <Icon icon="pixel:trash-alt-solid" /> Clear
             </button>
             <button
-              v-if="showCopyButton"
+              v-if="isAdmin"
               @click="copyToClipboard"
               class="btn-outline"
               :class="{ 'btn-success': copyStatus === 'Copied!' }"
@@ -80,7 +80,7 @@
             </button>
           </div>
 
-          <div class="drawings-list">
+          <div v-if="isAdmin" class="drawings-list">
             <h3>Presets ({{ drawings.length }})</h3>
             <select
               @change="
@@ -169,7 +169,7 @@ const rawInput = ref("");
 const selectedColor = ref("1");
 const pixelData = ref(Array.from({ length: 16 }, () => Array(16).fill(0)));
 
-const showCopyButton = window.location.hostname === "localhost";
+const isAdmin = window.location.hostname === "localhost";
 
 const viewMode = ref("editor");
 const submitData = reactive({
@@ -254,9 +254,7 @@ const uploadDrawing = async () => {
     submitData.name = "";
     submitData.category = "";
     viewMode.value = "editor";
-    toast.success('Upload successful. "Thx for contributing to PixReveal!"', {
-      style: { fontFamily: "8bit" },
-    });
+    toast.success('Upload successful. Thx for contributing to PixReveal!');
   } catch (err) {
     toast.error("Network error. Please check your connection and try again.", {
       icon: "📡",
