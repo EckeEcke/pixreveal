@@ -45,12 +45,19 @@
         </div>
       </div>
     </div>
-    <div v-else class="host-info">
-      <h3>Hosting a Party Game</h3>
-      <p>
-        The party mode is displayed on the host device. PC/Laptop recommended
-        for hosting. Players can join via smartphone to buzz and answer.
-      </p>
+    <div v-if="selectedRole === 'host'" class="host-info">
+      <template v-if="mode === 'party'">
+        <h3>Hosting a Party Game</h3>
+        <p>
+          The party mode is displayed on the host device. PC/Laptop recommended
+          for hosting. Players can join via smartphone to buzz and answer.
+        </p>
+      </template>
+      <template v-else>
+        <p>
+          Host an online game and invite friends via link or room id to play.
+        </p>
+      </template>
     </div>
 
     <button
@@ -63,6 +70,7 @@
     </button>
 
     <div v-else class="join-container">
+      <p>Enter a room id to join a game</p>
       <div class="join-terminal">
         <input
           v-model="joinRoomId"
@@ -76,7 +84,6 @@
           @click="joinGame"
         >
           JOIN
-          <Icon icon="pixel:arrow-right-solid" class="btn-icon" />
         </button>
       </div>
     </div>
@@ -138,7 +145,6 @@ watch(
   },
 );
 
-const isHost = computed(() => selectedRole.value === "host");
 const mode = computed(() => (props.mode === "party" ? "party" : "online"));
 
 const avatarStyle = computed(() => {
@@ -228,7 +234,7 @@ h2 {
   font-family: inherit;
   font-size: 0.9rem;
   outline: none;
-  max-width: calc(100% - 105px);
+  max-width: calc(100% - 90px);
 }
 
 .terminal-btn {
@@ -266,7 +272,7 @@ h2 {
 }
 
 .host-info {
-  margin: 32px 0;
+  margin: 32px 0 16px;
 }
 
 .player-info-wrapper {

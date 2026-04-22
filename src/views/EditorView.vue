@@ -162,6 +162,7 @@ import colorPalette from "@/data/colorPalette";
 import drawings from "@/data/drawings.json";
 import { allCategoryNames } from "@/stores/config";
 import { Icon } from "@iconify/vue";
+import { toast } from "vue3-toastify";
 
 const resolution = ref(16);
 const rawInput = ref("");
@@ -223,6 +224,12 @@ const copyToClipboard = async () => {
   }
 };
 
+const getUploadErrorMessage = (payload) => {
+  if (payload?.error && typeof payload.error === "string") return payload.error;
+  if (payload?.message && typeof payload.message === "string") return payload.message;
+  return "Upload failed. Please try again.";
+};
+
 const uploadDrawing = async () => {
   try {
     const res = await fetch("/api/upload", {
@@ -235,18 +242,25 @@ const uploadDrawing = async () => {
       }),
     });
 
-    const json = await res.json();
+    const json = await res.json().catch(() => null);
 
     if (!res.ok) {
-      console.error(json.error || "Something went wrong");
+      toast.error(getUploadErrorMessage(json), {
+        icon: "🚫",
+      });
       return;
     }
 
     submitData.name = "";
     submitData.category = "";
     viewMode.value = "editor";
+    toast.success('Upload successful. "Thx for contributing to PixReveal!"', {
+      style: { fontFamily: "8bit" },
+    });
   } catch (err) {
-    console.error("Network error", err);
+    toast.error("Network error. Please check your connection and try again.", {
+      icon: "📡",
+    });
   }
 };
 
