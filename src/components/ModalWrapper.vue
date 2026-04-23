@@ -33,7 +33,7 @@
   width: 100%;
   height: auto;
   overflow: auto;
-  max-width: 500px;
+  max-width: 468px;
   max-height: 90vh;
   box-sizing: border-box;
 }
