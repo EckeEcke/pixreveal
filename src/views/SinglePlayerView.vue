@@ -207,12 +207,8 @@ h1 {
 .mode-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: 16px;
   padding: 16px;
-  @media (min-width: 576px) {
-    gap: 16px;
-    padding: 32px 0;
-  }
   h2 {
     color: var(--white);
     text-align: center;
@@ -224,7 +220,11 @@ h1 {
 .mode-buttons {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 8px;
+  @media (min-width: 576px) {
+    gap: 16px;
+    padding: 32px 0;
+  }
 }
 
 @media (min-width: 575px) {
