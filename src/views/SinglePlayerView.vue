@@ -239,7 +239,7 @@ h1 {
   backdrop-filter: blur(4px);
   --btn-color: var(--neon-cyan);
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px;
   min-height: 100px;
   cursor: pointer;
   overflow: hidden;
@@ -272,7 +272,7 @@ h1 {
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
 }
 
