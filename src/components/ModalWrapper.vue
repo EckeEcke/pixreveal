@@ -20,7 +20,7 @@
   align-items: center;
   padding: 16px;
   z-index: 99;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
   box-sizing: border-box;
 }
@@ -28,7 +28,6 @@
 .modal {
   position: relative;
   background: var(--card-bg);
-  border: 2px solid var(--border-color);
   padding: 2rem;
   border-radius: 8px;
   width: 100%;
@@ -44,5 +43,26 @@
   overflow: auto;
   margin: -32px;
   padding: 32px;
+}
+
+@media (min-width: 576px) {
+  .modal::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .modal::-webkit-scrollbar-track {
+    background: rgba(10, 10, 15, 0.5);
+    border-radius: 10px;
+  }
+
+  .modal::-webkit-scrollbar-thumb {
+    background: rgb(50, 50, 50);
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+  }
+
+  .modal::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
 }
 </style>
