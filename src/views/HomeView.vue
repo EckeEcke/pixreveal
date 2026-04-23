@@ -275,7 +275,10 @@ h2 {
 .classic-mode-buttons {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 8px;
+  @media (min-width: 576px) {
+    gap: 16px;
+  }
 }
 
 @media (min-width: 575px) {

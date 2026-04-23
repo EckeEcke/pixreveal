@@ -207,9 +207,10 @@ h1 {
 .mode-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 8px;
   padding: 16px;
-  @media (min-width: 575px) {
+  @media (min-width: 576px) {
+    gap: 16px;
     padding: 32px 0;
   }
   h2 {
