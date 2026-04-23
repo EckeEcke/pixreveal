@@ -190,18 +190,12 @@ h1 {
 
 .setup-card {
   position: relative;
-  border-radius: 8px;
   width: 100%;
+  max-width: 600px;
   h2 {
     color: var(--white);
   }
   box-sizing: border-box;
-  @media (min-width: 575px) {
-    background: var(--card-bg);
-    border: 2px solid var(--border-color);
-    max-width: 600px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  }
 }
 
 .content-wrapper {
@@ -214,11 +208,9 @@ h1 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  border-bottom-right-radius: 8px;
-  border-bottom-left-radius: 8px;
   padding: 16px;
   @media (min-width: 575px) {
-    padding: 32px;
+    padding: 32px 0;
   }
   h2 {
     color: var(--white);
@@ -242,9 +234,9 @@ h1 {
 
 .neon-btn {
   position: relative;
-  background: #1a1a1e;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   --btn-color: var(--neon-cyan);
-  border: 2px solid var(--btn-color);
   border-radius: 8px;
   padding: 20px;
   min-height: 100px;
@@ -255,12 +247,6 @@ h1 {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-}
-
-.neon-btn.special {
-  --btn-color: var(--neon-cyan);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
 .glow-layer {
@@ -290,10 +276,21 @@ h1 {
 }
 
 .btn-icon {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.3) 0%,
+    rgba(0, 40, 40, 0.1) 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  box-shadow:
+    inset 0 0 10px rgba(0, 255, 255, 0.2),
+    0 0 15px rgba(0, 255, 255, 0.3);
+  padding: 8px;
+  border: 1px solid var(--btn-color);
+  border-radius: 25%;
   flex: 0 0 auto;
-  font-size: 40px;
+  font-size: 28px;
   color: var(--btn-color);
-  filter: drop-shadow(0 0 2px var(--btn-color));
 }
 
 .text-wrapper {

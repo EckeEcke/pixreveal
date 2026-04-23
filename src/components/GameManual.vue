@@ -80,9 +80,10 @@
         Have you created your own pixelart? Share it with the PixReveal
         community! Use the <strong>Editor</strong> to upload your drawings and
         submit them for others to guess. Community-made content expands the pool
-        of drawings and keeps the game fresh for everyone. Enable user art via the settings. 
-        Once approved, your art will be available in the game. 
-        You can also find user art in the editor under Presets (marked as [User Art])
+        of drawings and keeps the game fresh for everyone. Enable user art via
+        the settings. Once approved, your art will be available in the game. You
+        can also find user art in the editor under Presets (marked as [User
+        Art])
       </p>
 
       <h4>Settings & Customization</h4>
@@ -120,6 +121,9 @@ import RankOverview from "@/components/RankOverview.vue";
   top: 0;
   box-sizing: border-box;
   padding: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  border-radius: 8px;
 }
 
 .close-btn-wrapper {

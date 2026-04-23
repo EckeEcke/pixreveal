@@ -9,9 +9,9 @@
     <main v-show="!configStore.showManual" class="home-container">
       <section class="setup-card">
         <div class="content-wrapper">
-          <div class="mode-section classic">
+          <div class="mode-section">
             <div class="classic-mode-buttons">
-              <button class="neon-btn classic" @click="openSingleplayer">
+              <button class="neon-btn" @click="openSingleplayer">
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:user-solid" class="btn-icon" />
@@ -24,10 +24,7 @@
                 </div>
               </button>
 
-              <button
-                class="neon-btn party"
-                @click="openMultiplayerModal('party')"
-              >
+              <button class="neon-btn" @click="openMultiplayerModal('party')">
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:users" class="btn-icon" />
@@ -232,25 +229,19 @@ h2 {
   place-items: center;
   width: 100%;
   padding: 0 16px;
-  @media(min-width: 575px) {
+  @media (min-width: 575px) {
     margin-top: 16px;
   }
 }
 
 .setup-card {
   position: relative;
-  border-radius: 8px;
   width: 100%;
+  max-width: 600px;
   h2 {
     color: var(--white);
   }
   box-sizing: border-box;
-  @media (min-width: 575px) {
-    background: var(--card-bg);
-    border: 2px solid var(--border-color);
-    max-width: 600px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  }
 }
 
 .link {
@@ -266,12 +257,6 @@ h2 {
 }
 
 @media (min-width: 1024px) {
-
-  .mode-section.classic {
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
-
   .content-wrapper {
     grid-template-columns: 1fr;
   }
@@ -282,8 +267,8 @@ h2 {
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 16px;
-  @media(min-width: 575px) {
-    padding: 32px;
+  @media (min-width: 575px) {
+    padding: 32px 0;
   }
 }
 
@@ -308,11 +293,11 @@ h2 {
 
 .neon-btn {
   position: relative;
-  background: #1a1a1e;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   --btn-color: var(--neon-cyan);
-  border: 2px solid var(--btn-color);
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px;
   min-height: 120px;
   cursor: pointer;
   overflow: hidden;
@@ -321,13 +306,6 @@ h2 {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-}
-
-.neon-btn.classic {
-  --btn-color: var(--neon-cyan);
-}
-.neon-btn.survival {
-  --btn-color: var(--neon-cyan);
 }
 
 .neon-btn:disabled {
@@ -376,15 +354,26 @@ h2 {
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
 }
 
 .btn-icon {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.3) 0%,
+    rgba(0, 40, 40, 0.1) 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  box-shadow:
+    inset 0 0 10px rgba(0, 255, 255, 0.2),
+    0 0 15px rgba(0, 255, 255, 0.3);
   flex: 0 0 auto;
-  font-size: 40px;
+  font-size: 28px;
   color: var(--btn-color);
-  filter: drop-shadow(0 0 2px var(--btn-color));
+  padding: 8px;
+  border: 1px solid var(--neon-cyan);
+  border-radius: 25%;
 }
 
 .text-wrapper {
@@ -420,44 +409,6 @@ h2 {
 .neon-btn:active {
   transform: translateY(-2px);
   filter: brightness(1.2);
-}
-
-.neon-btn.host {
-  --btn-color: var(--neon-purple);
-  border-color: var(--neon-purple);
-  box-shadow: 0 0 15px var(--purple-glow);
-}
-.neon-btn.host .btn-icon {
-  color: var(--neon-purple);
-  filter: drop-shadow(0 0 2px var(--neon-purple));
-}
-
-.neon-btn.join {
-  --btn-color: var(--neon-purple);
-  border-color: var(--neon-purple);
-  box-shadow: 0 0 15px var(--purple-glow);
-}
-.neon-btn.join .btn-icon {
-  color: var(--neon-purple);
-  filter: drop-shadow(0 0 2px var(--neon-purple));
-}
-
-.neon-btn.special {
-  --btn-color: var(--neon-cyan);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-}
-
-.neon-btn.online {
-  --btn-color: var(--neon-cyan);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-}
-
-.neon-btn.party {
-  --btn-color: var(--neon-cyan);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
 @media (max-width: 480px) {

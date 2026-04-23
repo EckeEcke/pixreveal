@@ -284,7 +284,6 @@ gameStore.reset();
 .results-card {
   position: relative;
   overflow: hidden;
-  border: 2px solid #334155;
   border-radius: 8px;
   backdrop-filter: blur(20px);
   background: var(--card-bg);

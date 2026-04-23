@@ -75,7 +75,6 @@ onMounted(() => {
 .lobby-chat {
   display: flex;
   flex-direction: column;
-  border: 2px solid var(--border-color);
   border-radius: 8px;
   background: rgba(10, 10, 10, 0.8);
   height: 200px;
