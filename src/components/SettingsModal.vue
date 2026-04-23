@@ -123,9 +123,6 @@
           </div>
         </div>
       </div>
-      <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
-        CONFIRM
-      </button>
     </div>
   </ModalWrapper>
 </template>
@@ -162,17 +159,6 @@ const toggleFullscreen = () => {
 h2 {
   margin-top: 0;
   margin-bottom: 32px;
-}
-
-.confirm-btn {
-  background: var(--primary);
-  width: 100%;
-  padding: 8px 16px;
-  border: none;
-  font-family: inherit;
-  font-weight: 700;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 .modal-content {
@@ -308,6 +294,9 @@ h2 {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
+  @media(min-width: 576px) {
+    flex-wrap: wrap;
+  }
 }
 
 .filter-container::-webkit-scrollbar {
