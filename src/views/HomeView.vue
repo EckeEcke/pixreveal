@@ -29,7 +29,7 @@
                 <div class="btn-content">
                   <Icon icon="pixel:users" class="btn-icon" />
                   <div class="text-wrapper">
-                    <span class="btn-text">LOCAL PARTY MULTIPLAYER</span>
+                    <span class="btn-text">LOCAL PARTY</span>
                     <span class="sub-title"
                       >Local Multiplayer in Jackbox style</span
                     >
