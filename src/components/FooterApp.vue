@@ -12,6 +12,13 @@
       >
         <Icon icon="pixel:info-circle" /> ABOUT
       </button>
+      <button
+        class="internal-link"
+        data-sfx="click"
+        @click="router.push('/updates')"
+      >
+        <Icon icon="pixel:bullhorn" /> UPDATES
+      </button>
     </div>
 
     <div>

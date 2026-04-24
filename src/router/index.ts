@@ -92,6 +92,12 @@ const router = createRouter({
       component: () => import("@/views/AboutView.vue"),
       meta: { robots: "index, follow" },
     },
+    {
+      path: "/updates",
+      name: "updates",
+      component: () => import("@/views/DevlogView.vue"),
+      meta: { robots: "index, follow" },
+    },
     // Path Guard: always put at the bottom!
     {
       path: "/:pathMatch(.*)*",

@@ -87,10 +87,12 @@
       </footer>
     </div>
   </div>
+  <FooterApp />
 </template>
 
 <script setup>
 import { Icon } from "@iconify/vue";
+import FooterApp from "@/components/FooterApp.vue";
 </script>
 
 <style scoped>
