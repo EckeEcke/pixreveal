@@ -104,7 +104,7 @@ import FooterApp from "@/components/FooterApp.vue";
   line-height: 1.6;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  padding: 32px;
+  padding: 0;
   border-radius: 8px;
   width: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
