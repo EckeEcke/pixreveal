@@ -58,10 +58,10 @@ const setDrawing = () => {
   }
 };
 
-const handleAnswer = (isCorrect) => {
+const handleAnswer = (answer) => {
   store.isRevealing = false;
   store.hasAnswered = true;
-  if (isCorrect) {
+  if (answer.isCorrect) {
     store.handleCorrectAnswer();
     pixelData.value = statusIcons.success;
   } else {
