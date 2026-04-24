@@ -24,7 +24,10 @@
                 </div>
               </button>
 
-              <button class="neon-btn" @click="openMultiplayerModal('party')">
+              <button
+                class="neon-btn online"
+                @click="openMultiplayerModal('party')"
+              >
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:users" class="btn-icon" />
@@ -53,7 +56,7 @@
                 </div>
               </button>
 
-              <button class="neon-btn special editor" @click="openEditor">
+              <button class="neon-btn editor" @click="openEditor">
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:image-solid" class="btn-icon" />
@@ -295,10 +298,19 @@ h2 {
 }
 
 .neon-btn {
+  --btn-color: var(--primary);
+  &.online {
+    --btn-color: var(--neon-cyan);
+    @media (min-width: 576px) {
+      order: 1;
+    }
+  }
+  &.editor {
+    --btn-color: var(--neon-success);
+  }
   position: relative;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  --btn-color: var(--neon-cyan);
   border-radius: 8px;
   padding: 16px;
   min-height: 120px;
@@ -364,18 +376,18 @@ h2 {
 .btn-icon {
   background: linear-gradient(
     135deg,
-    rgba(0, 255, 255, 0.3) 0%,
+    rgb(from var(--btn-color) r g b / 0.5) 0%,
     rgba(0, 40, 40, 0.1) 50%,
     rgba(0, 0, 0, 0.5) 100%
   );
   box-shadow:
     inset 0 0 10px rgba(0, 255, 255, 0.2),
-    0 0 15px rgba(0, 255, 255, 0.3);
+    0 0 15px rgb(from var(--btn-color) r g b / 0.5);
   flex: 0 0 auto;
   font-size: 28px;
   color: var(--btn-color);
   padding: 8px;
-  border: 1px solid var(--neon-cyan);
+  border: 1px solid var(--btn-color);
   border-radius: 25%;
 }
 
@@ -395,7 +407,7 @@ h2 {
 }
 
 .sub-title {
-  color: #ffffffcc;
+  color: #ffffff88;
   font-size: 14px;
   font-family: var(--font-display);
 }

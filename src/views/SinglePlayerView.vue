@@ -10,11 +10,11 @@
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="section-header">
-              <h2 class="hook">Choose a game mode</h2>
+              <h2>Choose a game mode</h2>
             </div>
 
             <div class="mode-buttons">
-              <button class="neon-btn special" type="button" @click="startGame">
+              <button class="neon-btn" type="button" @click="startGame">
                 <div class="glow-layer"></div>
                 <div class="btn-content">
                   <Icon icon="pixel:sparkles" class="btn-icon" />
@@ -28,7 +28,7 @@
               </button>
 
               <button
-                class="neon-btn special"
+                class="neon-btn gravity"
                 type="button"
                 @click="startGravity"
               >
@@ -45,7 +45,7 @@
               </button>
 
               <button
-                class="neon-btn special"
+                class="neon-btn inspect"
                 type="button"
                 @click="startInspect"
               >
@@ -62,7 +62,7 @@
               </button>
 
               <button
-                class="neon-btn special"
+                class="neon-btn survival"
                 type="button"
                 @click="startSurvival"
               >
@@ -79,7 +79,7 @@
               </button>
 
               <button
-                class="neon-btn special"
+                class="neon-btn buzzer"
                 type="button"
                 @click="startBuzzer"
               >
@@ -223,7 +223,6 @@ h1 {
   gap: 8px;
   @media (min-width: 576px) {
     gap: 16px;
-    padding: 32px 0;
   }
 }
 
@@ -234,10 +233,22 @@ h1 {
 }
 
 .neon-btn {
+  --btn-color: var(--primary);
+  &.gravity {
+    --btn-color: var(--neon-success);
+  }
+  &.buzzer {
+    --btn-color: var(--neon-pink);
+  }
+  &.inspect {
+    --btn-color: var(--neon-cyan);
+  }
+  &.survival {
+    --btn-color: var(--neon-error);
+  }
   position: relative;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  --btn-color: var(--neon-cyan);
   border-radius: 8px;
   padding: 16px;
   min-height: 100px;
@@ -279,13 +290,13 @@ h1 {
 .btn-icon {
   background: linear-gradient(
     135deg,
-    rgba(0, 255, 255, 0.3) 0%,
+    rgb(from var(--btn-color) r g b / 0.5) 0%,
     rgba(0, 40, 40, 0.1) 50%,
     rgba(0, 0, 0, 0.5) 100%
   );
   box-shadow:
     inset 0 0 10px rgba(0, 255, 255, 0.2),
-    0 0 15px rgba(0, 255, 255, 0.3);
+    0 0 15px rgb(from var(--btn-color) r g b / 0.5);
   padding: 8px;
   border: 1px solid var(--btn-color);
   border-radius: 25%;
@@ -310,7 +321,7 @@ h1 {
 }
 
 .sub-title {
-  color: #ffffffcc;
+  color: #ffffff88;
   font-size: 14px;
   font-family: var(--font-display);
 }
