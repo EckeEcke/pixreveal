@@ -94,7 +94,7 @@ import FooterApp from "@/components/FooterApp.vue";
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 32px 0;
+  padding: 0;
 }
 
 .devlog-container {
