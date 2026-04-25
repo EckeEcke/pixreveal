@@ -34,7 +34,7 @@
                   <div class="text-wrapper">
                     <span class="btn-text">LOCAL PARTY</span>
                     <span class="sub-title"
-                      >Local Multiplayer in Jackbox style</span
+                      >Local Party Multiplayer in Jackbox style</span
                     >
                   </div>
                 </div>
@@ -221,8 +221,7 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 70vh;
+  min-height: 95vh;
   width: 100%;
 }
 
@@ -240,7 +239,7 @@ h2 {
 .setup-card {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
   h2 {
     color: var(--white);
   }
@@ -269,9 +268,9 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  padding: 16px;
+  padding: 16px 0;
   @media (min-width: 575px) {
-    padding: 32px 0;
+    padding: 32px;
   }
 }
 
@@ -384,7 +383,7 @@ h2 {
     inset 0 0 10px rgba(0, 255, 255, 0.2),
     0 0 15px rgb(from var(--btn-color) r g b / 0.5);
   flex: 0 0 auto;
-  font-size: 28px;
+  font-size: 32px;
   color: var(--btn-color);
   padding: 8px;
   border: 1px solid var(--btn-color);
@@ -404,6 +403,9 @@ h2 {
   font-weight: 700;
   color: #fff;
   letter-spacing: 1px;
+  @media(min-width: 576px) {
+    font-size: 18px;
+  }
 }
 
 .sub-title {
@@ -426,9 +428,4 @@ h2 {
   filter: brightness(1.2);
 }
 
-@media (max-width: 480px) {
-  .btn-icon {
-    font-size: 32px;
-  }
-}
 </style>

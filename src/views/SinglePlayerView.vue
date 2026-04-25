@@ -173,8 +173,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 70vh;
+  min-height: 95vh;
   width: 100%;
 }
 
@@ -191,7 +190,7 @@ h1 {
 .setup-card {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
   h2 {
     color: var(--white);
   }
@@ -208,7 +207,10 @@ h1 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  padding: 16px;
+  padding: 16px 0;
+  @media (min-width: 575px) {
+    padding: 32px;
+  }
   h2 {
     color: var(--white);
     text-align: center;
