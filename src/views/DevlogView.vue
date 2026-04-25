@@ -7,7 +7,7 @@
         </button>
       </div>
 
-      <h2>Updates</h2>
+      <h2>UPDATES</h2>
 
       <div class="log-grid">
         <div class="log-card">
