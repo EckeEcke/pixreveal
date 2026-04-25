@@ -118,20 +118,22 @@ import FooterApp from "@/components/FooterApp.vue";
 
 .log-card {
   --log-color: #00ffff;
-  background: linear-gradient(
-    135deg,
-    rgb(from var(--log-color) r g b / 0.15) 0%,
-    rgba(0, 40, 40, 0.05) 50%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-  border: 1px solid rgb(from var(--log-color) r g b / 0.4);
-  padding: 24px;
-  border-radius: 8px;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
   p {
     line-height: 1.4;
+  }
+  border-bottom: 1px solid rgb(from var(--log-color) r g b / 0.4);
+  @media (min-width: 576px) {
+    background: linear-gradient(
+      135deg,
+      rgb(from var(--log-color) r g b / 0.15) 0%,
+      rgba(0, 40, 40, 0.05) 50%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+    padding: 24px;
+    border: none;
   }
 }
 
