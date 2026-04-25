@@ -49,8 +49,8 @@ const isLoaded = ref(false);
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #000;
-  border: 2px solid var(--neon-purple); /* Dein PixReveal Style */
-  box-shadow: 0 0 15px var(--purple-glow);
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 15px var(--primary);
   cursor: pointer;
   overflow: hidden;
   box-sizing: border-box;
@@ -100,7 +100,7 @@ const isLoaded = ref(false);
 
 .video-wrapper:hover .play-button {
   transform: scale(1.1);
-  background: var(--neon-purple);
+  background: var(--neon-primary);
 }
 
 iframe {
