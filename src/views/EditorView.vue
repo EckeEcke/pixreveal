@@ -18,6 +18,7 @@
               v-for="(_, index) in flatPixelData"
               :key="index"
               class="pixel-cell"
+              :class="!showGrid ? 'transparent-border' : ''"
               @mousedown="paintPixel(index)"
               @mouseenter="handleDrag(index, $event)"
             ></div>
@@ -52,10 +53,16 @@
                 :class="{ active: selectedColor === index }"
                 @click="selectedColor = index"
               >
+                <Icon
+                  v-if="color === 'transparent'"
+                  class="eraser"
+                  icon="streamline-pixel:interface-essential-eraser"
+                />
                 <div
+                  v-else
                   class="color-flag"
                   :style="{
-                    backgroundColor: color === 'transparent' ? '#333' : color,
+                    backgroundColor: color,
                   }"
                 ></div>
               </div>
@@ -76,6 +83,13 @@
               :class="{ 'btn-success': copyStatus === 'Copied!' }"
             >
               {{ copyStatus }}
+            </button>
+            <button
+              @click="showGrid = !showGrid"
+              class="btn-outline"
+              :class="!showGrid ? 'inactive' : ''"
+            >
+              <Icon icon="pixel:grid" /> Grid
             </button>
           </div>
 
@@ -166,6 +180,7 @@ import { toast } from "vue3-toastify";
 const resolution = ref(16);
 const rawInput = ref("");
 const selectedColor = ref("1");
+const showGrid = ref(true);
 const pixelData = ref(Array.from({ length: 16 }, () => Array(16).fill(0)));
 
 const isAdmin = window.location.hostname === "localhost";
@@ -225,7 +240,8 @@ const copyToClipboard = async () => {
 
 const getUploadErrorMessage = (payload) => {
   if (payload?.error && typeof payload.error === "string") return payload.error;
-  if (payload?.message && typeof payload.message === "string") return payload.message;
+  if (payload?.message && typeof payload.message === "string")
+    return payload.message;
   return "Upload failed. Please try again.";
 };
 
@@ -253,7 +269,7 @@ const uploadDrawing = async () => {
     submitData.name = "";
     submitData.category = "";
     viewMode.value = "editor";
-    toast.success('Upload successful. Thx for contributing to PixReveal!');
+    toast.success("Upload successful. Thx for contributing to PixReveal!");
   } catch (err) {
     toast.error("Network error. Please check your connection and try again.", {
       icon: "📡",
@@ -362,6 +378,10 @@ const downloadDrawing = () => {
   filter: brightness(1.1);
 }
 
+.btn-outline.inactive {
+  opacity: 0.7;
+}
+
 .canvas-wrapper {
   width: 100%;
   position: relative;
@@ -384,6 +404,10 @@ const downloadDrawing = () => {
   box-sizing: border-box;
 }
 
+.pixel-cell.transparent-border {
+  border-color: transparent;
+}
+
 .pixel-cell:hover {
   background: rgba(255, 255, 255, 0.1);
   outline: 1px solid var(--primary);
@@ -394,6 +418,10 @@ const downloadDrawing = () => {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.eraser {
+  font-size: 26px;
 }
 
 .color-flag {
@@ -445,9 +473,10 @@ const downloadDrawing = () => {
 }
 
 .action-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin: 24px 0 16px; 
+  margin: 24px 0 16px;
 }
 
 .btn-outline {
