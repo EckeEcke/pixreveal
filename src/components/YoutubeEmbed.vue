@@ -82,7 +82,7 @@ const isLoaded = ref(false);
 .play-button {
   width: 70px;
   height: 70px;
-  background: rgba(180, 0, 255, 0.8);
+  background: var(--primary);
   border-radius: 50%;
   position: relative;
   transition: transform 0.2s ease;

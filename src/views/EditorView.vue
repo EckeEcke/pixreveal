@@ -93,7 +93,7 @@
             </button>
           </div>
 
-          <div v-if="isAdmin" class="drawings-list">
+          <div class="drawings-list">
             <h3>Presets ({{ drawings.length }})</h3>
             <select
               @change="
@@ -400,7 +400,7 @@ const downloadDrawing = () => {
 }
 
 .pixel-cell {
-  border: 0.5px solid rgba(255, 255, 255, 0.03);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
 }
 
@@ -438,7 +438,7 @@ const downloadDrawing = () => {
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.02);
+  background: transparent;
 }
 
 .color-palette-item.active {
