@@ -58,7 +58,6 @@
                     backgroundColor: color === 'transparent' ? '#333' : color,
                   }"
                 ></div>
-                <div class="color-label">{{ index }}</div>
               </div>
             </div>
           </div>
@@ -392,14 +391,14 @@ const downloadDrawing = () => {
 }
 
 .color-palette {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .color-flag {
-  height: 16px;
-  width: 16px;
+  height: 24px;
+  width: 24px;
   border: 1px solid var(--white);
 }
 
@@ -418,15 +417,6 @@ const downloadDrawing = () => {
   border-color: var(--primary);
   background: rgba(255, 77, 0, 0.15);
   box-shadow: 0 0 0 1px var(--primary);
-}
-
-.color-palette-item.active .color-label {
-  color: var(--white);
-}
-
-.color-label {
-  font-size: 0.8rem;
-  color: #888;
 }
 
 .drawings-list {
