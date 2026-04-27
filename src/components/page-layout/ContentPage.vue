@@ -14,7 +14,7 @@
 
 <script setup>
 import { Icon } from "@iconify/vue";
-import FooterApp from "@/components/FooterApp.vue";
+import FooterApp from "@/components/page-layout/FooterApp.vue";
 </script>
 
 <style scoped>

@@ -100,9 +100,9 @@ import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { useChannelStore } from "@/stores/channel";
 import { Icon } from "@iconify/vue";
-import ModalWrapper from "./ModalWrapper.vue";
+import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
-import PlayerEditModal from "@/components/PlayerEditModal.vue";
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 
 const props = defineProps({
   mode: { type: String, default: "online" },

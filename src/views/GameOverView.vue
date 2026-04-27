@@ -132,23 +132,23 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import PlayerDisplay from "@/components/PlayerDisplay.vue";
+import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
 import { useChannelStore } from "@/stores/channel";
 import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
 import { usePartyStore } from "@/stores/party";
-import LoadingAnimation from "@/components/LoadingAnimation.vue";
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
-import LobbyChat from "@/components/LobbyChat.vue";
+import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import { useGameStore } from "@/stores/game";
 import { Icon } from "@iconify/vue";
-import ShareIcons from "@/components/ShareIcons.vue";
+import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
-import GameOverStats from "@/components/GameOverStats.vue";
-import GameOverTransition from "@/components/GameOverTransition.vue";
-import PositionInfo from "@/components/PositionInfo.vue";
+import GameOverStats from "@/components/game-ui/GameOverStats.vue";
+import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
+import PositionInfo from "@/components/game-ui/PositionInfo.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();

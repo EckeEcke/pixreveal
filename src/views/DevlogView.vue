@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import ContentPage from "@/components/ContentPage.vue";
+import ContentPage from "@/components/page-layout/ContentPage.vue";
 </script>
 
 <style scoped>

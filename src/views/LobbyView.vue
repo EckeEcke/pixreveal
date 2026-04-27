@@ -59,20 +59,16 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
-import PlayerDisplay from "@/components/PlayerDisplay.vue";
+import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { useOnlineStore } from "@/stores/online";
 import { useConfigStore } from "@/stores/config";
 import { useChannelStore } from "@/stores/channel";
 import { usePartyStore } from "@/stores/party";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
-import { useRouter, useRoute } from "vue-router";
-import LoadingAnimation from "@/components/LoadingAnimation.vue";
-import LobbyChat from "@/components/LobbyChat.vue";
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
+import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import { Icon } from "@iconify/vue";
-
-const route = useRoute();
-const router = useRouter();
 
 const channelStore = useChannelStore();
 const onlineStore = useOnlineStore();

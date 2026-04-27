@@ -34,10 +34,10 @@
 
 <script setup>
 import { computed, ref, onUnmounted } from "vue";
-import PixelCanvasGravity from "../components/PixelCanvasGravity.vue";
-import GameTransition from "@/components/GameTransition.vue";
-import GameHeader from "@/components/GameHeader.vue";
-import AnswerButtons from "@/components/AnswerButtons.vue";
+import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue";
+import GameTransition from "@/components/page-layout/GameTransition.vue";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import { useConfigStore } from "@/stores/config";

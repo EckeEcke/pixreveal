@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { useConfigStore } from "@/stores/config";
-import SettingsButton from "./SettingsButton.vue";
+import SettingsButton from "@/components/page-ui/SettingsButton.vue";
 import { Icon } from "@iconify/vue";
 
 defineProps<{

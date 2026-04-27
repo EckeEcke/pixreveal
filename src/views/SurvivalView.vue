@@ -34,12 +34,12 @@
 <script setup>
 import { ref, onUnmounted, watch } from "vue";
 import { useSurvivalStore } from "@/stores/survival";
-import PixelCanvas from "../components/PixelCanvas.vue";
-import GameTransition from "@/components/GameTransition.vue";
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
+import GameTransition from "@/components/page-layout/GameTransition.vue";
 import router from "@/router";
-import GameHeader from "@/components/GameHeader.vue";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
 import { statusIcons } from "@/data/statusIcons";
-import AnswerButtons from "@/components/AnswerButtons.vue";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useConfigStore } from "@/stores/config";
 
 const store = useSurvivalStore();

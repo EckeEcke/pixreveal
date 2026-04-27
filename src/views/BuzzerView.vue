@@ -42,15 +42,15 @@
 
 <script setup>
 import { computed, ref, onUnmounted } from "vue";
-import PixelCanvas from "../components/PixelCanvas.vue";
-import GameTransition from "@/components/GameTransition.vue";
-import GameHeader from "@/components/GameHeader.vue";
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
+import GameTransition from "@/components/page-layout/GameTransition.vue";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import router from "@/router";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
-import AnswerButtons from "@/components/AnswerButtons.vue";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useSoundStore } from "@/stores/sound";
 import { useConfigStore } from "@/stores/config";
 

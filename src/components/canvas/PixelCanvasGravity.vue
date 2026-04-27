@@ -10,7 +10,7 @@
 
 <script setup>
 import { ref, onMounted, watch, onUnmounted } from "vue";
-import colorPalette from "../data/colorPalette";
+import colorPalette from "../../data/colorPalette";
 import { useSoundStore } from "@/stores/sound";
 import { useConfigStore } from "@/stores/config";
 

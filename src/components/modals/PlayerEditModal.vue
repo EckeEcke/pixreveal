@@ -45,7 +45,7 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
-import ModalWrapper from "./ModalWrapper.vue";
+import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();

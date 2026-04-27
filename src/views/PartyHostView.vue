@@ -47,16 +47,16 @@
 
 <script setup lang="ts">
 import { ref, onUnmounted, computed, watch } from "vue";
-import GameHeader from "@/components/GameHeader.vue";
-import PixelCanvas from "@/components/PixelCanvas.vue";
-import PlayerDisplay from "@/components/PlayerDisplay.vue";
-import PositionInfo from "@/components/PositionInfo.vue";
-import GameTransition from "@/components/GameTransition.vue";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
+import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import PositionInfo from "@/components/game-ui/PositionInfo.vue";
+import GameTransition from "@/components/page-layout/GameTransition.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
 import { useChannelStore } from "@/stores/channel";
-import BuzzerStatus from "@/components/BuzzerStatus.vue";
+import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 
 const gameStore = useGameStore();
 const configStore = useConfigStore();

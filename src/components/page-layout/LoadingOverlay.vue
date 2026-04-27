@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { useChannelStore } from "@/stores/channel";
-import LoadingAnimation from "./LoadingAnimation.vue";
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 
 defineProps({
   show: Boolean,

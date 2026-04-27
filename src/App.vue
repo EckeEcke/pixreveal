@@ -27,7 +27,7 @@ import { usePlayerStore } from "./stores/player";
 import { Analytics } from "@vercel/analytics/vue";
 import { useRoute } from "vue-router";
 import { useConfigStore } from "./stores/config";
-import SettingsModal from "./components/SettingsModal.vue";
+import SettingsModal from "./components/modals/SettingsModal.vue";
 
 const route = useRoute();
 

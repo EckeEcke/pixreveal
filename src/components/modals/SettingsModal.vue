@@ -131,7 +131,7 @@
 import { ref } from "vue";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
-import ModalWrapper from "./ModalWrapper.vue";
+import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import { useConfigStore } from "@/stores/config";
 
 const soundStore = useSoundStore();

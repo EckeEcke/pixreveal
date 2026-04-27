@@ -66,9 +66,9 @@ import { computed, ref, watch, onBeforeUnmount, onMounted } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import { useChannelStore } from "@/stores/channel";
-import AnswerButtons from "@/components/AnswerButtons.vue";
-import GameHeader from "@/components/GameHeader.vue";
-import PlayerDisplay from "@/components/PlayerDisplay.vue";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
+import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { vibrateBuzz } from "@/utils/vibration";
 
 const partyStore = usePartyStore();

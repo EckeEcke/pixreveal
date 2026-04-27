@@ -84,7 +84,7 @@
 
 <script setup>
 import { Icon } from "@iconify/vue";
-import ContentPage from "@/components/ContentPage.vue";
+import ContentPage from "@/components/page-layout/ContentPage.vue";
 </script>
 
 <style scoped>

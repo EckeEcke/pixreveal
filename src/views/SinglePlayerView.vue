@@ -14,86 +14,41 @@
             </div>
 
             <div class="mode-buttons">
-              <button class="neon-btn" type="button" @click="startGame">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:sparkles" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">CLASSIC REVEAL</span>
-                    <span class="sub-title"
-                      >Drawing gets revealed pixel by pixel</span
-                    >
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn gravity"
-                type="button"
-                @click="startGravity"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixelarticons:blocks" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">GRAVITY</span>
-                    <span class="sub-title"
-                      >Pixels dropping in from the top in Tetris style</span
-                    >
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn inspect"
-                type="button"
-                @click="startInspect"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:search" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">INSPECT</span>
-                    <span class="sub-title"
-                      >Use your lens to spot the hidden art</span
-                    >
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn survival"
-                type="button"
-                @click="startSurvival"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:hockey-mask-solid" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">SURVIVAL</span>
-                    <span class="sub-title"
-                      >Answer correctly to gain more time</span
-                    >
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn buzzer"
-                type="button"
-                @click="startBuzzer"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:question" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">BUZZER</span>
-                    <span class="sub-title"
-                      >Hit the buzzer to see answer options</span
-                    >
-                  </div>
-                </div>
-              </button>
+            <SelectionTile
+                icon-name="pixel:sparkles"
+                :btn-function="startGame"
+                btn-text="CLASSIC REVEAL"
+                sub-title="Drawing gets revealed pixel by pixel"
+                btn-color="var(--primary)"
+              />
+              <SelectionTile
+                icon-name="pixelarticons:blocks"
+                :btn-function="startGravity"
+                btn-text="GRAVITY"
+                sub-title="Pixels dropping in from the top in Tetris style"
+                btn-color="var(--neon-success)"
+              />
+              <SelectionTile
+                icon-name="pixel:search"
+                :btn-function="startInspect"
+                btn-text="INSPECT"
+                sub-title="Use your lens to spot the hidden art"
+                btn-color="var(--neon-cyan)"
+              />
+              <SelectionTile
+                icon-name="pixel:hockey-mask-solid"
+                :btn-function="startSurvival"
+                btn-text="SURVIVAL"
+                sub-title="Answer correctly to gain more time"
+                btn-color="var(--neon-error)"
+              />
+              <SelectionTile
+                icon-name="pixel:question"
+                :btn-function="startBuzzer"
+                btn-text="BUZZER"
+                sub-title="Hit the buzzer to see answer options"
+                btn-color="var(--neon-pink)"
+              />
             </div>
           </div>
         </div>
@@ -105,15 +60,14 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { Icon } from "@iconify/vue";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { getRandomUserName } from "@/utils/random";
-import SettingsButton from "@/components/SettingsButton.vue";
-import FooterApp from "@/components/FooterApp.vue";
-import GameManual from "@/components/GameManual.vue";
-import HeaderApp from "@/components/HeaderApp.vue";
+import FooterApp from "@/components/page-layout/FooterApp.vue";
+import SelectionTile from "@/components/page-ui/SelectionTile.vue";
+import GameManual from "@/components/modals/GameManual.vue";
+import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
@@ -157,7 +111,6 @@ const startSurvival = () => {
   router.push("/survival");
 };
 
-const goHome = () => router.push("/");
 </script>
 
 <style scoped>
@@ -234,117 +187,4 @@ h1 {
   }
 }
 
-.neon-btn {
-  --btn-color: var(--primary);
-  &.gravity {
-    --btn-color: var(--neon-success);
-  }
-  &.buzzer {
-    --btn-color: var(--neon-pink);
-  }
-  &.inspect {
-    --btn-color: var(--neon-cyan);
-  }
-  &.survival {
-    --btn-color: var(--neon-error);
-  }
-  position: relative;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  border-radius: 8px;
-  padding: 16px;
-  min-height: 100px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-}
-
-.glow-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    var(--btn-color) 0%,
-    transparent 70%
-  );
-  opacity: 0.1;
-  transition: opacity 0.3s ease;
-}
-
-.btn-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 16px;
-  width: 100%;
-}
-
-.btn-icon {
-  background: linear-gradient(
-    135deg,
-    rgb(from var(--btn-color) r g b / 0.5) 0%,
-    rgba(0, 40, 40, 0.1) 50%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
-  box-shadow:
-    inset 0 0 10px rgba(0, 255, 255, 0.2),
-    0 0 15px rgb(from var(--btn-color) r g b / 0.5);
-  padding: 8px;
-  border: 1px solid var(--btn-color);
-  border-radius: 25%;
-  flex: 0 0 auto;
-  font-size: 28px;
-  color: var(--btn-color);
-}
-
-.text-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-align: left;
-}
-
-.btn-text {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 1px;
-}
-
-.sub-title {
-  color: #ffffff88;
-  font-size: 14px;
-  font-family: var(--font-display);
-}
-
-.neon-btn:hover {
-  box-shadow: 0 0 20px var(--btn-color);
-  animation: 1.5s floating infinite ease-in-out;
-}
-
-.neon-btn:hover .glow-layer {
-  opacity: 0.3;
-}
-
-.neon-btn:active {
-  transform: translateY(-2px);
-  filter: brightness(1.2);
-}
-
-@media (max-width: 480px) {
-  .btn-icon {
-    font-size: 32px;
-  }
-}
 </style>

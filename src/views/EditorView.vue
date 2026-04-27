@@ -170,7 +170,7 @@
 
 <script setup>
 import { ref, computed, reactive } from "vue";
-import PixelCanvas from "../components/PixelCanvas.vue";
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import colorPalette from "@/data/colorPalette";
 import drawings from "@/data/drawings.json";
 import { allCategoryNames } from "@/stores/config";

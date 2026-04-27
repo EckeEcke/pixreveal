@@ -45,7 +45,7 @@
 <script setup>
 import { useConfigStore } from "@/stores/config";
 import { useRouter } from "vue-router";
-import PlatformBar from "@/components/PlatformBar.vue"
+import PlatformBar from "@/components/page-ui/PlatformBar.vue"
 import { Icon } from "@iconify/vue";
 
 const configStore = useConfigStore();

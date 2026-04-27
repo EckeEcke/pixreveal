@@ -11,63 +11,35 @@
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="classic-mode-buttons">
-              <button class="neon-btn" @click="openSingleplayer">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:user-solid" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">SINGLEPLAYER</span>
-                    <span class="sub-title"
-                      >Choose your mode and start playing</span
-                    >
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn online"
-                @click="openMultiplayerModal('party')"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:users" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">LOCAL PARTY</span>
-                    <span class="sub-title"
-                      >Local Party Multiplayer in Jackbox style</span
-                    >
-                  </div>
-                </div>
-              </button>
-
-              <button
-                class="neon-btn online"
-                @click="openMultiplayerModal('online')"
-              >
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:globe" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">ONLINE MULTIPLAYER</span>
-                    <span class="sub-title">
-                      Host/join a game with your friends
-                    </span>
-                  </div>
-                </div>
-              </button>
-
-              <button class="neon-btn editor" @click="openEditor">
-                <div class="glow-layer"></div>
-                <div class="btn-content">
-                  <Icon icon="pixel:image-solid" class="btn-icon" />
-                  <div class="text-wrapper">
-                    <span class="btn-text">SUBMIT ART</span>
-                    <span class="sub-title"
-                      >Create and submit your own pixel art</span
-                    >
-                  </div>
-                </div>
-              </button>
+              <SelectionTile
+                icon-name="pixel:user-solid"
+                :btn-function="openSingleplayer"
+                btn-text="SINGLEPLAYER"
+                sub-title="Choose your mode and start playing"
+                btn-color="var(--primary)"
+              />
+              <SelectionTile
+                icon-name="pixel:users"
+                :btn-function="() => openMultiplayerModal('party')"
+                btn-text="LOCAL PARTY"
+                sub-title="Local Party Multiplayer in Jackbox style"
+                btn-color="var(--neon-cyan)"
+              />
+              <SelectionTile
+                class="order-1"
+                icon-name="pixel:globe"
+                :btn-function="() => openMultiplayerModal('online')"
+                btn-text="ONLINE MULTIPLAYER"
+                sub-title="Host/join a game with your friends"
+                btn-color="var(--neon-cyan)"
+              />
+              <SelectionTile
+                icon-name="pixel:image-solid"
+                :btn-function="openEditor"
+                btn-text="SUBMIT ART"
+                sub-title="Create and submit your own pixel art"
+                btn-color="var(--neon-success)"
+              />
             </div>
           </div>
         </div>
@@ -91,15 +63,15 @@ import { useRouter, useRoute } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
-import LoadingOverlay from "@/components/LoadingOverlay.vue";
-import { Icon } from "@iconify/vue";
-import PlayerEditModal from "@/components/PlayerEditModal.vue";
-import JoinModal from "@/components/JoinModal.vue";
-import GameManual from "@/components/GameManual.vue";
+import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
+import JoinModal from "@/components/modals/JoinModal.vue";
+import GameManual from "@/components/modals/GameManual.vue";
 import { useChannelStore } from "@/stores/channel";
 import { useConfigStore } from "@/stores/config";
-import FooterApp from "@/components/FooterApp.vue";
-import HeaderApp from "@/components/HeaderApp.vue";
+import FooterApp from "@/components/page-layout/FooterApp.vue";
+import HeaderApp from "@/components/page-layout/HeaderApp.vue";
+import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -246,12 +218,6 @@ h2 {
   box-sizing: border-box;
 }
 
-.link {
-  display: block;
-  color: var(--white);
-  opacity: 0.8;
-}
-
 .content-wrapper {
   margin: 0;
   display: grid;
@@ -274,6 +240,12 @@ h2 {
   }
 }
 
+.order-1 {
+  @media (min-width: 576px) {
+    order: 1;
+  }
+}
+
 .classic-mode-buttons {
   display: grid;
   grid-template-columns: 1fr;
@@ -288,144 +260,4 @@ h2 {
     grid-template-columns: 1fr 1fr;
   }
 }
-
-.action-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.neon-btn {
-  --btn-color: var(--primary);
-  &.online {
-    --btn-color: var(--neon-cyan);
-    @media (min-width: 576px) {
-      order: 1;
-    }
-  }
-  &.editor {
-    --btn-color: var(--neon-success);
-  }
-  position: relative;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  border-radius: 8px;
-  padding: 16px;
-  min-height: 120px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-}
-
-.neon-btn:disabled {
-  opacity: 0.3;
-  box-shadow: none;
-  pointer-events: none;
-}
-
-.neon-btn:disabled:after {
-  content: "COMING SOON";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-15deg);
-
-  font-family: "8bit", sans-serif;
-  font-size: 14px;
-  color: #fbbf24;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 8px 16px;
-  border: 2px solid #fbbf24;
-  white-space: nowrap;
-  z-index: 10;
-  box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
-}
-
-.glow-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    var(--btn-color) 0%,
-    transparent 70%
-  );
-  opacity: 0.1;
-  transition: opacity 0.3s ease;
-}
-
-.btn-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 16px;
-  width: 100%;
-}
-
-.btn-icon {
-  background: linear-gradient(
-    135deg,
-    rgb(from var(--btn-color) r g b / 0.5) 0%,
-    rgba(0, 40, 40, 0.1) 50%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
-  box-shadow:
-    inset 0 0 10px rgba(0, 255, 255, 0.2),
-    0 0 15px rgb(from var(--btn-color) r g b / 0.5);
-  flex: 0 0 auto;
-  font-size: 32px;
-  color: var(--btn-color);
-  padding: 8px;
-  border: 1px solid var(--btn-color);
-  border-radius: 25%;
-}
-
-.text-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-align: left;
-}
-
-.btn-text {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 1px;
-  @media(min-width: 576px) {
-    font-size: 18px;
-  }
-}
-
-.sub-title {
-  color: #ffffff88;
-  font-size: 14px;
-  font-family: var(--font-display);
-}
-
-.neon-btn:hover {
-  box-shadow: 0 0 20px var(--btn-color);
-  animation: 1.5s floating infinite ease-in-out;
-}
-
-.neon-btn:hover .glow-layer {
-  opacity: 0.3;
-}
-
-.neon-btn:active {
-  transform: translateY(-2px);
-  filter: brightness(1.2);
-}
-
 </style>

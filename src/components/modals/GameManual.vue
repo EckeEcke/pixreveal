@@ -111,8 +111,8 @@
 
 <script setup>
 import { Icon } from "@iconify/vue";
-import YoutubeEmbed from "@/components/YoutubeEmbed.vue";
-import RankOverview from "@/components/RankOverview.vue";
+import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
+import RankOverview from "@/components/game-ui/RankOverview.vue";
 </script>
 
 <style scoped>
