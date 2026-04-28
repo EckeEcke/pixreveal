@@ -1,5 +1,9 @@
 <template>
-  <button class="neon-btn" :style="{ '--btn-color': btnColor }" @click="btnFunction">
+  <button
+    class="neon-btn"
+    :style="{ '--btn-color': btnColor }"
+    @click="btnFunction"
+  >
     <div class="glow-layer"></div>
     <div class="btn-content">
       <Icon :icon="iconName" class="btn-icon" />
@@ -12,28 +16,31 @@
 </template>
 
 <script setup>
-import { Icon } from '@iconify/vue';
+import { Icon } from "@iconify/vue";
 
 const props = defineProps({
-    iconName: String,
-    btnFunction: Function,
-    btnText: String,
-    subTitle: String,
-    btnColor: {
-        type: String,
-        default: "var(--primary)"
-    },
-    disabled: Boolean,
+  iconName: String,
+  btnFunction: Function,
+  btnText: String,
+  subTitle: String,
+  btnColor: {
+    type: String,
+    default: "var(--primary)",
+  },
+  disabled: Boolean,
 });
 </script>
 
 <style scoped>
 .neon-btn {
+  --left-block-width: 12px;
   position: relative;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border-radius: 8px;
+  border: none;
   padding: 16px;
+  padding-left: calc(16px + var(--left-block-width));
   min-height: 120px;
   cursor: pointer;
   overflow: hidden;
@@ -42,6 +49,15 @@ const props = defineProps({
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--left-block-width);
+    background-color: var(--btn-color);
+  }
 }
 
 .neon-btn:disabled {
