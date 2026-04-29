@@ -187,6 +187,7 @@ export const useChannelStore = defineStore("channel", () => {
       });
 
       if (router.currentRoute.value.path === "/") {
+        isLoading.value = false;
         router.push(mode.value === "party" ? "/party-lobby" : "/lobby");
       }
     });
