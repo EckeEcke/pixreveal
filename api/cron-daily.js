@@ -3,7 +3,7 @@ import drawings from "../src/data/drawings.json" with { type: "json" };
 
 export default async function handler(req, res) {
   const authHeader = req.headers["authorization"];
-  if (authHeader !== `Bearer ${process.env.CRON_KEY}`) {
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
