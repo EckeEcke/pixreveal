@@ -3,7 +3,7 @@
     <button
       class="answer-btn"
       v-for="(answer, index) in answers"
-      :key="answer.name"
+      :key="answer.title || answer.name"
       :disabled="hasAnswered"
       :class="[
         buttonColors[index % buttonColors.length],
@@ -14,7 +14,7 @@
       ]"
       @click="checkAnswer(answer, $event)"
     >
-      {{ answer.name }}
+      {{ answer.title || answer.name }}
     </button>
   </div>
 </template>

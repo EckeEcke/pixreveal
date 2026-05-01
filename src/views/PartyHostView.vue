@@ -114,7 +114,7 @@ const nextRound = () => {
   clearAutoNextRoundTimer();
   partyStore.nextRound();
   if (!gameStore.isGameOver) {
-    setDrawing(currentRound.value.data);
+    setDrawing(currentRound.value?.data);
   }
 };
 
@@ -128,7 +128,7 @@ const scheduleAutoNextRound = () => {
 
 const start = () => {
   showTransition.value = false;
-  setDrawing(currentRound.value.data);
+  setDrawing(currentRound.value?.data);
   partyStore.openBuzzer();
 
   channelStore.activeChannel?.bind("client-party-buzz", (data: any) => {

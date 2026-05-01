@@ -14,12 +14,26 @@
             </div>
 
             <div class="mode-buttons">
-            <SelectionTile
+              <SelectionTile
                 icon-name="pixel:sparkles"
                 :btn-function="startGame"
                 btn-text="CLASSIC REVEAL"
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
+              />
+              <SelectionTile
+                :icon-name="
+                  dailyStore.hasPlayedToday ? 'pixel:numbered-list-solid' : 'pixel:star'
+                "
+                :btn-function="startDaily"
+                btn-text="DAILY CHALLENGE"
+                :sub-title="
+                  dailyStore.hasPlayedToday
+                    ? 'Check today\'s results'
+                    : 'New puzzle every day with global leaderboard'
+                "
+                btn-color="var(--neon-yellow)"
+                :disabled="dailyStore.isLoading"
               />
               <SelectionTile
                 icon-name="pixelarticons:blocks"
@@ -63,15 +77,18 @@ import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
+import { useDailyStore } from "@/stores/daily";
 import { getRandomUserName } from "@/utils/random";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
+import { onMounted } from "vue";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
+const dailyStore = useDailyStore();
 const { prepareGame } = useGameStore();
 
 const setUser = () =>
@@ -111,6 +128,19 @@ const startSurvival = () => {
   router.push("/survival");
 };
 
+const startDaily = () => {
+  prepareGame(10, dailyStore.dailyRounds);
+  playerStore.gameMode = dailyStore.mode;
+  if (dailyStore.hasPlayedToday) {
+    router.push("/rankings-daily");
+  } else {
+    router.push("/daily");
+  }
+};
+
+onMounted(() => {
+  dailyStore.fetchDailyData();
+});
 </script>
 
 <style scoped>
@@ -186,5 +216,4 @@ h1 {
     grid-template-columns: 1fr 1fr;
   }
 }
-
 </style>

@@ -46,7 +46,7 @@ export default async function handler(req, res) {
       };
     });
 
-    const modes = ["classic", "inspect", "buzzer"];
+    const modes = ["classic", "inspect", "gravity"];
     const mode = modes[Math.floor(Math.random() * modes.length)];
 
     await client.set(

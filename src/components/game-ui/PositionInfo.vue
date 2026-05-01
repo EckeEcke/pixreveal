@@ -20,17 +20,18 @@ const getClass = () => {
 <style scoped>
 .position {
   position: absolute;
-  top: -12px;
-  left: -12px;
+  top: -8px;
+  left: -8px;
   background: var(--bg-dark);
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--primary);
   font-weight: 700;
-  font-size: 32px;
-  width: 40px;
-  height: 40px;
+  font-size: 24px;
+  line-height: 0.1;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid var(--primary);
   box-shadow: 2px 2px 4px #00000088;

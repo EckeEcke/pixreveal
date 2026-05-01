@@ -3,6 +3,7 @@
     class="neon-btn"
     :style="{ '--btn-color': btnColor }"
     @click="btnFunction"
+    :disabled="disabled"
   >
     <div class="glow-layer"></div>
     <div class="btn-content">
@@ -64,24 +65,7 @@ const props = defineProps({
   opacity: 0.3;
   box-shadow: none;
   pointer-events: none;
-}
-
-.neon-btn:disabled:after {
-  content: "COMING SOON";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-15deg);
-
-  font-family: "8bit", sans-serif;
-  font-size: 14px;
-  color: #fbbf24;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 8px 16px;
-  border: 2px solid #fbbf24;
-  white-space: nowrap;
-  z-index: 10;
-  box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+  color: red;
 }
 
 .glow-layer {

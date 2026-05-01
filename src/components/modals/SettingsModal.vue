@@ -5,10 +5,7 @@
     </button>
     <h2>SETTINGS</h2>
     <div class="modal-content">
-      <div class="recommendation">
-        <span>💡</span>
-        <p>FOR THE BEST EXPERIENCE ENABLE AUDIO AND FULLSCREEN</p>
-      </div>
+      <InfoBox message="FOR THE BEST EXPERIENCE ENABLE AUDIO AND FULLSCREEN" />
       <div class="general-settings">
         <label class="selection-label">DISPLAY & AUDIO</label>
         <div class="config-buttons">
@@ -91,9 +88,7 @@
                 <Icon
                   class="status-icon"
                   :icon="
-                    configStore.includeUgc
-                      ? 'pixel:check-solid'
-                      : 'pixel:minus-solid'
+                    configStore.includeUgc ? 'pixel:check-solid' : 'pixel:minus-solid'
                   "
                 />
                 <span class="status-text">INCLUDE UGC</span>
@@ -133,6 +128,7 @@ import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import { useConfigStore } from "@/stores/config";
+import InfoBox from "@/components/game-ui/InfoBox.vue";
 
 const soundStore = useSoundStore();
 const configStore = useConfigStore();
@@ -294,7 +290,7 @@ h2 {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     flex-wrap: wrap;
   }
 }

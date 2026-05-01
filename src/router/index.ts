@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { useGameStore } from "@/stores/game";
+import { useDailyStore } from "@/stores/daily";
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
@@ -54,6 +55,24 @@ const router = createRouter({
       path: "/gravity",
       name: "gravity",
       component: () => import("@/views/GravityView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/daily",
+      name: "daily",
+      component: () => import("@/views/DailyView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/rankings-daily",
+      name: "rankings-daily",
+      component: () => import("@/views/DailyRankingsView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/gameover-daily",
+      name: "gameover-daily",
+      component: () => import("@/views/GameOverDailyView.vue"),
       meta: { robots: "noindex" },
     },
     {
@@ -130,6 +149,10 @@ router.beforeEach((to, from, next) => {
     needRounds.includes(to.path) &&
     (!gameStore.rounds || gameStore.rounds.length <= 0)
   ) {
+    return next("/");
+  }
+
+  if (to.path === "/daily" && (useDailyStore().hasPlayedToday || from.path !== "/singleplayer")) {
     return next("/");
   }
 

@@ -109,7 +109,7 @@ const unbindEvents = () => {
 
     channel.value?.trigger("client-party-buzzer-locked", {
       playerId,
-      options: gameStore.currentRound.options,
+      options: gameStore.currentRound?.options,
     });
 
     if (answerTimer) clearTimeout(answerTimer);
@@ -139,7 +139,7 @@ const unbindEvents = () => {
       channel.value?.trigger("client-party-round-result", {
         playerId,
         isCorrect,
-        correctAnswer: gameStore.currentRound.answer,
+        correctAnswer: gameStore.currentRound?.answer,
       });
 
       buzzerState.value = "locked";
@@ -164,7 +164,7 @@ const unbindEvents = () => {
     channel.value?.trigger("client-party-round-result", {
       playerId: null,
       isCorrect: false,
-      correctAnswer: gameStore.currentRound.answer,
+      correctAnswer: gameStore.currentRound?.answer,
     });
     if (isHost.value) {
       isRevealing.value = false;

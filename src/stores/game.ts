@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed, type Ref } from "vue";
+import { ref, computed } from "vue";
 import { shuffle } from "@/utils/random";
 import { useConfigStore } from "./config";
 
@@ -10,94 +10,119 @@ export type Drawing = {
   category: string;
   data: PixelGrid;
   primaryColor: number;
-  options?: Object[];
 };
 
-type RoundOption = {
+export type RoundOption = {
   title: string;
   isCorrect: boolean;
 };
 
-type Round = {
+export type Round = {
   answer: string;
   data: PixelGrid;
   options: RoundOption[];
 };
 
 export const useGameStore = defineStore("game", () => {
-  const rounds = ref<any[]>([]);
+  // =============================
+  // STATE
+  // =============================
+
+  const rounds = ref<Round[]>([]);
   const currentRoundIndex = ref(0);
 
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
   const playSound = ref(false);
   const revealTime = ref(15);
+
   const configStore = useConfigStore();
+
+  // =============================
+  // COMPUTED
+  // =============================
+
   const maxRounds = computed(() => configStore.maxRounds);
   const filteredDrawings = computed(() => configStore.filteredDrawings);
 
-  const currentRound = computed(() => rounds.value[currentRoundIndex.value]);
+  const currentRound = computed<Round | null>(() => {
+    return rounds.value[currentRoundIndex.value] ?? null;
+  });
 
-  const resolveRevealTime = (value: number | Ref<number>) =>
-    typeof value === "number" ? value : value?.value ?? 15;
+  // =============================
+  // PURE HELPERS
+  // =============================
 
-  const prepareGame = (
-    customRevealTime: number | Ref<number>,
-    customRounds?: any[],
-  ) => {
-    const resolvedRevealTime = resolveRevealTime(customRevealTime);
+  function getDistractors(drawing: Drawing, pool: Drawing[]): Drawing[] {
+    const colorMatches: Drawing[] = [];
+    const categoryMatches: Drawing[] = [];
+    const fallbackMatches: Drawing[] = [];
+
+    for (const d of pool) {
+      if (d.primaryColor === drawing.primaryColor) {
+        colorMatches.push(d);
+      } else if (d.category === drawing.category) {
+        categoryMatches.push(d);
+      } else {
+        fallbackMatches.push(d);
+      }
+    }
+
+    return [...colorMatches, ...categoryMatches, ...fallbackMatches].slice(
+      0,
+      3,
+    );
+  }
+
+  function createRound(
+    drawing: Drawing,
+    allDrawings: Drawing[],
+    selectedDrawings: Drawing[],
+  ): Round {
+    const pool = shuffle(
+      allDrawings.filter((d) => !selectedDrawings.includes(d)),
+    );
+
+    const distractors = getDistractors(drawing, pool);
+
+    const options: RoundOption[] = shuffle([
+      { title: drawing.name, isCorrect: true },
+      ...distractors.map((d) => ({
+        title: d.name,
+        isCorrect: false,
+      })),
+    ]);
+
+    return {
+      answer: drawing.name,
+      data: drawing.data,
+      options,
+    };
+  }
+
+  function buildRounds(drawings: Drawing[]): Round[] {
+    return drawings.map((drawing) =>
+      createRound(drawing, filteredDrawings.value, drawings),
+    );
+  }
+
+  // =============================
+  // ACTIONS
+  // =============================
+
+  const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
     if (customRounds) {
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
-      configStore.revealTime = resolvedRevealTime;
+      configStore.revealTime = customRevealTime;
     } else {
-      const shuffled = shuffle(filteredDrawings.value);
+      const shuffled = shuffle([...filteredDrawings.value]); // defensive copy
       const selectedDrawings = shuffled.slice(0, maxRounds.value);
 
-      rounds.value = selectedDrawings.map((drawing) => {
-        const pool = shuffle(
-          filteredDrawings.value.filter(
-            (drawing) => !selectedDrawings.includes(drawing),
-          ),
-        );
-
-        const colorMatches = pool.filter(
-          (d: Drawing) => d.primaryColor === drawing.primaryColor,
-        );
-
-        const categoryMatches = pool.filter(
-          (d: Drawing) =>
-            !colorMatches.includes(d) && d.category === drawing.category,
-        );
-
-        const fallbackMatches = pool.filter(
-          (d: Drawing) =>
-            !colorMatches.includes(d) && !categoryMatches.includes(d),
-        );
-
-        const prioritizedPool = [
-          ...colorMatches,
-          ...categoryMatches,
-          ...fallbackMatches,
-        ];
-
-        const finalDistractors = prioritizedPool.slice(0, 3);
-
-        const options = shuffle([
-          { name: drawing.name, isCorrect: true },
-          ...finalDistractors.map((d: Drawing) => ({
-            name: d.name,
-            isCorrect: false,
-          })),
-        ]);
-
-        return {
-          answer: drawing.name,
-          data: drawing.data,
-          options,
-        };
-      });
+      rounds.value = buildRounds(selectedDrawings);
     }
+
+    // reset state
     currentRoundIndex.value = 0;
     isGameOver.value = false;
     selectedOption.value = null;
@@ -117,7 +142,12 @@ export const useGameStore = defineStore("game", () => {
     currentRoundIndex.value = 0;
     selectedOption.value = null;
     isGameOver.value = false;
+    playSound.value = false;
   };
+
+  // =============================
+  // EXPORT
+  // =============================
 
   return {
     rounds,
