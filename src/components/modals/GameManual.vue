@@ -56,13 +56,6 @@
         (search lens) to inspect sections and uncover the hidden pixelart.
       </p>
 
-      <h3>Free Online Multiplayer</h3>
-      <p>
-        Play with others in the <strong>real-time multiplayer mode</strong>. Host a
-        session, invite friends via link or room ID, and compete for the highest rank.
-        Everyone plays the same drawings – may the fastest scout win!
-      </p>
-
       <h4>Inspect</h4>
       <p>
         The drawing is fully complete but shrouded in darkness. Use your
