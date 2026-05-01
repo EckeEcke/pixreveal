@@ -16,12 +16,11 @@ function generateOptions(currentDrawing, allDrawings) {
 }
 
 export default async function handler(req, res) {
+  console.log(req.headers);
   const authHeader = req.headers["authorization"];
-  /*
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  */
 
   const client = createClient({
     url: process.env.KV_REDIS_URL,
