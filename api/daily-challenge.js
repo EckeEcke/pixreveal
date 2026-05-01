@@ -17,13 +17,11 @@ export default async function handler(req, res) {
 
     if (!data) {
       await client.disconnect();
-      return res
-        .status(404)
-        .json({ error: "No data today", date: today });
+      return res.status(404).json({ error: "No data today", date: today });
     }
 
     await client.disconnect();
-    return res.status(200).json(JSON.parse(data));
+    return res.status(200).json({ date: today, rounds: JSON.parse(data) });
   } catch (error) {
     if (client.isOpen) await client.disconnect();
     return res.status(500).json({
