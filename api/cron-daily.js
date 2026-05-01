@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
 
 export default async function handler(req, res) {
@@ -7,7 +7,15 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
+  const client = createClient({
+    url: process.env.KV_REDIS_URL,
+  });
+
+  client.on("error", (err) => console.log("Redis Client Error", err));
+
   try {
+    await client.connect();
+
     const today = new Date().toISOString().split("T")[0];
 
     const shuffled = [...drawings].sort(() => 0.5 - Math.random());
@@ -21,10 +29,12 @@ export default async function handler(req, res) {
       };
     });
 
-    await kv.set(`daily:${today}:set`, JSON.stringify(dailyRounds));
+    await client.set(`daily:${today}:set`, JSON.stringify(dailyRounds));
 
+    await client.disconnect();
     return res.status(200).json({ success: true, date: today });
   } catch (error) {
+    if (client.isOpen) await client.disconnect();
     return res.status(500).json({ error: error.message });
   }
 }

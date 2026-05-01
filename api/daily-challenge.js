@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       await client.disconnect();
       return res
         .status(404)
-        .json({ error: "Keine Daten für heute", date: today });
+        .json({ error: "No data today", date: today });
     }
 
     await client.disconnect();
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   } catch (error) {
     if (client.isOpen) await client.disconnect();
     return res.status(500).json({
-      error: "Datenbank-Fehler",
+      error: "Database error",
       details: error.message,
     });
   }
