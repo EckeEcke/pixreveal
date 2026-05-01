@@ -16,9 +16,7 @@ function generateOptions(currentDrawing, allDrawings) {
 }
 
 export default async function handler(req, res) {
-  console.log(req.headers);
-  const authHeader = req.headers["authorization"];
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (req.headers["user-agent"] !== "vercel-cron/1.0") {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
