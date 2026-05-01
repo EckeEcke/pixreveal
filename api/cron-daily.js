@@ -2,17 +2,21 @@ import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
 
 function generateOptions(currentDrawing, allDrawings) {
-  const options = new Set([currentDrawing.name]);
+  const correct = currentDrawing.name;
   const otherNames = allDrawings
     .map((d) => d.name)
-    .filter((name) => name !== currentDrawing.name);
+    .filter((name) => name !== correct);
 
-  while (options.size < 4 && otherNames.length > 0) {
-    const randomName =
-      otherNames[Math.floor(Math.random() * otherNames.length)];
-    options.add(randomName);
+  const wrongOptions = [];
+  while (wrongOptions.length < 3 && otherNames.length > 0) {
+    const randomIndex = Math.floor(Math.random() * otherNames.length);
+    wrongOptions.push(otherNames.splice(randomIndex, 1)[0]);
   }
-  return Array.from(options).sort(() => Math.random() - 0.5);
+
+  return [
+    { title: correct, isCorrect: true },
+    ...wrongOptions.map((name) => ({ title: name, isCorrect: false })),
+  ].sort(() => Math.random() - 0.5);
 }
 
 export default async function handler(req, res) {
@@ -45,7 +49,10 @@ export default async function handler(req, res) {
     const modes = ["classic", "inspect", "buzzer"];
     const mode = modes[Math.floor(Math.random() * modes.length)];
 
-    await client.set(`daily:${today}:set`, JSON.stringify({dailyRounds, mode}));
+    await client.set(
+      `daily:${today}:set`,
+      JSON.stringify({ dailyRounds, mode }),
+    );
 
     await client.disconnect();
     return res.status(200).json({ success: true, date: today });
