@@ -2,7 +2,11 @@ import { createClient } from "redis";
 
 export default async function handler(req, res) {
   const client = createClient({
-    url: process.env.KV_URL || process.env.REDIS_URL,
+    url: process.env.KV_REDIS_URL,
+    socket: {
+      tls: true,
+      rejectUnauthorized: false,
+    },
   });
 
   client.on("error", (err) => console.log("Redis Client Error", err));
@@ -22,13 +26,10 @@ export default async function handler(req, res) {
         .json({ error: "Keine Daten für heute", date: today });
     }
 
-    const parsedData = JSON.parse(data);
-
     await client.disconnect();
-    return res.status(200).json(parsedData);
+    return res.status(200).json(JSON.parse(data));
   } catch (error) {
     if (client.isOpen) await client.disconnect();
-
     return res.status(500).json({
       error: "Datenbank-Fehler",
       details: error.message,
