@@ -1,6 +1,20 @@
 import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
 
+function generateOptions(currentDrawing, allDrawings) {
+  const options = new Set([currentDrawing.name]);
+  const otherNames = allDrawings
+    .map((d) => d.name)
+    .filter((name) => name !== currentDrawing.name);
+
+  while (options.size < 4 && otherNames.length > 0) {
+    const randomName =
+      otherNames[Math.floor(Math.random() * otherNames.length)];
+    options.add(randomName);
+  }
+  return Array.from(options).sort(() => Math.random() - 0.5);
+}
+
 export default async function handler(req, res) {
   const authHeader = req.headers["authorization"];
   /*
