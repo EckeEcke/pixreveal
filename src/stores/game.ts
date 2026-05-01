@@ -10,6 +10,7 @@ export type Drawing = {
   category: string;
   data: PixelGrid;
   primaryColor: number;
+  options?: RoundOption[];
 };
 
 export type RoundOption = {

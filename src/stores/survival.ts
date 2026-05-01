@@ -64,15 +64,15 @@ export const useSurvivalStore = defineStore("survival", () => {
   const generateOptions = (correctDrawing: Drawing) => {
     const distractors = allDrawings
       .filter((d) => d.name !== correctDrawing.name)
-      .map((d) => ({ name: d.name, isCorrect: false }));
+      .map((d) => ({ title: d.name, isCorrect: false }));
 
-    const selectedDistraktors = distractors
+    const selectedDistractors = distractors
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
 
     const finalOptions = [
-      ...selectedDistraktors,
-      { name: correctDrawing.name, isCorrect: true },
+      ...selectedDistractors,
+      { title: correctDrawing.name, isCorrect: true },
     ];
 
     return finalOptions.sort(() => Math.random() - 0.5);
