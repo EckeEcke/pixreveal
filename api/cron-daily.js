@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, date: today });
   } catch (error) {
     if (client.isOpen) await client.disconnect();
+    console.log(error);
     return res.status(500).json({ error: error.message });
   }
 }
