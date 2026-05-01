@@ -3,10 +3,6 @@ import { createClient } from "redis";
 export default async function handler(req, res) {
   const client = createClient({
     url: process.env.KV_REDIS_URL,
-    socket: {
-      tls: true,
-      rejectUnauthorized: false,
-    },
   });
 
   client.on("error", (err) => console.log("Redis Client Error", err));
