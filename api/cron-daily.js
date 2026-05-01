@@ -1,7 +1,7 @@
 import { kv } from "@vercel/kv";
 import { drawings } from "../src/data/drawings";
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req, res) {
   if (req.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
