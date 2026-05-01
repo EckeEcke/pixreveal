@@ -1,5 +1,5 @@
 import { kv } from "@vercel/kv";
-import { drawings } from "../src/data/drawings";
+import drawings from "../src/data/drawings.json" with { type: "json" };
 
 export default async function handler(req, res) {
   if (req.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
