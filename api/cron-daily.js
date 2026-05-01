@@ -42,7 +42,10 @@ export default async function handler(req, res) {
       };
     });
 
-    await client.set(`daily:${today}:set`, JSON.stringify(dailyRounds));
+    const modes = ["classic", "inspect", "buzzer"];
+    const mode = modes[Math.floor(Math.random() * modes.length)];
+
+    await client.set(`daily:${today}:set`, JSON.stringify({dailyRounds, mode}));
 
     await client.disconnect();
     return res.status(200).json({ success: true, date: today });
