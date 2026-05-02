@@ -41,7 +41,7 @@
         message="Your score has been submitted! Check the rankings below to see how you did today."
       />
       <button class="confirm-btn" @click="$router.push('/')" data-sfx="click">
-        BACK TO HOME
+        <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
       </button>
     </div>
   </div>
@@ -197,10 +197,15 @@ h3 {
 }
 
 .confirm-btn {
+  display: flex;
+  place-items: center;
+  gap: 4px;
   background: var(--primary);
-  padding: 8px 16px;
+  padding: 12px 16px;
   width: 100%;
   border: none;
+  color: black;
+  font-size: 16px;
   font-family: inherit;
   font-weight: 700;
   border-radius: 4px;

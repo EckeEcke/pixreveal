@@ -110,7 +110,9 @@
       <RankOverview />
     </article>
     <br />
-    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">BACK</button>
+    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
+      <Icon icon="pixel:arrow-circle-left-solid" /> BACK
+    </button>
   </div>
 </template>
 
@@ -141,11 +143,16 @@ import RankOverview from "@/components/game-ui/RankOverview.vue";
 }
 
 .confirm-btn {
+  display: flex;
+  place-items: center;
+  gap: 4px;
   background: var(--primary);
-  padding: 8px 16px;
+  padding: 12px 16px;
   border: none;
+  color: black;
   font-family: inherit;
   font-weight: 700;
+  font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
 }

@@ -34,9 +34,7 @@
         </div>
       </div>
     </div>
-    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">
-      CONFIRM
-    </button>
+    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">CONFIRM</button>
   </ModalWrapper>
 </template>
 
@@ -119,10 +117,15 @@ h3 {
 }
 
 .confirm-btn {
+  display: flex;
+  place-items: center;
+  gap: 4px;
   background: var(--primary);
   width: 100%;
-  padding: 8px 16px;
+  padding: 12px 16px;
   border: none;
+  color: black;
+  font-size: 16px;
   font-family: inherit;
   font-weight: 700;
   border-radius: 4px;

@@ -76,7 +76,7 @@
 
     <footer class="about-footer">
       <button class="confirm-btn" data-sfx="click" @click="$router.back()">
-        BACK
+        <Icon icon="pixel:arrow-circle-left-solid" /> BACK
       </button>
     </footer>
   </ContentPage>
@@ -94,9 +94,14 @@ a {
 }
 
 .confirm-btn {
+  display: flex;
+  place-items: center;
+  gap: 4px;
   background: var(--primary);
-  padding: 8px 16px;
+  padding: 12px 16px;
   border: none;
+  color: black;
+  font-size: 16px;
   font-family: inherit;
   font-weight: 700;
   border-radius: 4px;

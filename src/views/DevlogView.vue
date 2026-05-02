@@ -70,12 +70,15 @@
       </div>
     </div>
     <div class="devlog-footer">
-      <button class="confirm-btn" data-sfx="click" @click="$router.back()">BACK</button>
+      <button class="confirm-btn" data-sfx="click" @click="$router.back()">
+        <Icon icon="pixel:arrow-circle-left-solid" /> BACK
+      </button>
     </div>
   </ContentPage>
 </template>
 
 <script setup>
+import { Icon } from "@iconify/vue";
 import ContentPage from "@/components/page-layout/ContentPage.vue";
 </script>
 
@@ -126,11 +129,16 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 }
 
 .confirm-btn {
+  display: flex;
+  place-items: center;
+  gap: 4px;
   background: var(--primary);
   color: black;
   border: none;
-  padding: 10px 24px;
-  font-weight: bold;
+  padding: 12px 24px;
+  color: black;
+  font-size: 16px;
+  font-weight: 700;
   border-radius: 4px;
   cursor: pointer;
   margin-top: 32px;
