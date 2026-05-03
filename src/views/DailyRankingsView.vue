@@ -4,7 +4,7 @@
       <Icon icon="pixel:angle-left-solid" />
     </button>
   </div>
-  <DailyRankings class="rankings"/>
+  <DailyRankings class="rankings" />
 </template>
 
 <script setup>

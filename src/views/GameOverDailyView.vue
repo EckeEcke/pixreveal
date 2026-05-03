@@ -110,9 +110,12 @@ const post = async () => {
 </script>
 
 <style scoped>
+h2,
+h3 {
+  text-align: center;
+}
 h3 {
   margin-top: 0;
-  text-align: center;
 }
 
 .ranking-card {

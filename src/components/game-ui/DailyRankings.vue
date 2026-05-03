@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="logo">DAILY <span>RANKINGS</span></h2>
-    <p>Rankings for {{ dailyStore.date }}</p>
+    <p>RANKINGS FOR  <strong>{{ dailyStore.date }}</strong></p>
     <div
       v-for="(ranking, index) in sortedRankings"
       :key="index"
@@ -14,6 +14,7 @@
         :position="index + 1"
       />
     </div>
+    <DailyCountdown />
   </div>
 </template>
 
@@ -21,6 +22,7 @@
 import { useDailyStore } from "@/stores/daily";
 import { computed } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import DailyCountdown from "../page-ui/DailyCountdown.vue";
 
 const dailyStore = useDailyStore();
 const sortedRankings = computed(() => {
@@ -38,6 +40,7 @@ h2 {
 p {
   margin-bottom: 32px;
   text-align: center;
+  letter-spacing: 1px;
 }
 
 .logo {
