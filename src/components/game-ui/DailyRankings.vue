@@ -11,8 +11,8 @@
         :name="ranking.name"
         :avatar-index="ranking.avatarIndex"
         :points="ranking.score"
+        :position="index + 1"
       />
-      <PositionInfo :position="index + 1" />
     </div>
   </div>
 </template>
@@ -21,7 +21,6 @@
 import { useDailyStore } from "@/stores/daily";
 import { computed } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
-import PositionInfo from "@/components/game-ui/PositionInfo.vue";
 
 const dailyStore = useDailyStore();
 const sortedRankings = computed(() => {
@@ -39,11 +38,6 @@ h2 {
 p {
   margin-bottom: 32px;
   text-align: center;
-}
-
-.player-wrapper {
-  position: relative;
-  margin-bottom: 4px;
 }
 
 .logo {

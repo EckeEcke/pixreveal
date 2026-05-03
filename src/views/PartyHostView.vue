@@ -27,18 +27,14 @@
     </div>
     <div class="rankings">
       <h1 class="logo"><span>RANKINGS</span></h1>
-      <div
-        v-for="(player, index) in partyPlayersSorted"
-        class="player-wrapper"
-        :key="index"
-      >
+      <div v-for="(player, index) in partyPlayersSorted" :key="index">
         <PlayerDisplay
+          :position="index + 1"
           :name="player.username"
           :avatar-index="player.avatarIndex"
           :points="player.points"
           :is-active="partyStore.activePlayer?.username === player.username"
         />
-        <PositionInfo :position="index + 1" />
       </div>
     </div>
   </main>
@@ -50,7 +46,6 @@ import { useRouter } from "vue-router";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
-import PositionInfo from "@/components/game-ui/PositionInfo.vue";
 import GameTransition from "@/components/page-layout/GameTransition.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
@@ -128,7 +123,8 @@ watch(
       clearNavigationTimeout();
 
       navigationTimeout = setTimeout(() => {
-        const isLastRound = gameStore.currentRoundIndex >= configStore.maxRounds - 1;
+        const isLastRound =
+          gameStore.currentRoundIndex >= configStore.maxRounds - 1;
 
         if (isLastRound) {
           router.push("/gameover");
@@ -140,7 +136,7 @@ watch(
     } else {
       clearNavigationTimeout();
     }
-  }
+  },
 );
 
 watch(
@@ -149,7 +145,7 @@ watch(
     if (newState === "answering" || newState === "locked") {
       stopTimer();
     }
-  }
+  },
 );
 
 onUnmounted(() => {
@@ -180,12 +176,6 @@ onUnmounted(() => {
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.player-wrapper {
-  position: relative;
-  margin-bottom: 16px;
-  transition: transform 0.3s ease;
-}
-
 .logo {
   text-align: center;
   margin-bottom: 32px;
@@ -198,7 +188,7 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
     max-width: 600px;
   }
-  
+
   .rankings {
     padding-left: 0;
     border-left: none;

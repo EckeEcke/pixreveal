@@ -1,6 +1,11 @@
 <template>
   <div class="player-hud" :class="{ pending: isPending, active: isActive }">
-    <div v-if="avatarIndex !== undefined" class="hud-avatar" :style="avatarStyle"></div>
+    <PositionInfo v-if="position" :position="position" />
+    <div
+      v-if="avatarIndex !== undefined"
+      class="hud-avatar"
+      :style="avatarStyle"
+    ></div>
     <div>
       <div class="hud-username">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
@@ -62,8 +67,10 @@ import { computed, nextTick, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import { Icon } from "@iconify/vue";
+import PositionInfo from "./PositionInfo.vue";
 
 const props = defineProps<{
+  position?: number;
   name?: string;
   avatarIndex?: number;
   points?: number;
@@ -307,10 +314,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   gap: 12px;
   padding: 12px;
   background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: 4px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
   backdrop-filter: blur(5px);
   min-width: 240px;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
@@ -321,7 +324,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   );
   background-size: 100% 4px;
   background: rgba(15, 15, 25, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
 }
 
@@ -339,11 +341,15 @@ const avatarStyle = computed<CSSProperties>(() => {
 }
 
 .hud-avatar {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   background-color: #2d3748;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
+  @media(min-width:576px) {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .hud-stats {
@@ -360,10 +366,13 @@ const avatarStyle = computed<CSSProperties>(() => {
 
 .hud-username {
   color: #fff;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  @media(min-width: 576px) {
+    font-size: 18px;
+  }
 }
 
 .host-info {

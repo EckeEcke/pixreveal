@@ -189,7 +189,6 @@ onMounted(() => {
 .players-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
   margin-bottom: 32px;
 }
 </style>

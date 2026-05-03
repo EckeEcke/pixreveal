@@ -37,15 +37,14 @@
         <div
           v-for="(player, index) in partyPlayersSorted"
           :key="player.playerId"
-          class="player-wrapper"
         >
           <PlayerDisplay
+            :position="index + 1"
             :name="player.username"
             :avatar-index="player.avatarIndex"
             :points="player.points"
             :show-you-indicator="player.playerId === channelStore.playerId"
           />
-          <PositionInfo :position="index + 1" />
         </div>
       </div>
       <div v-else-if="isOnlinePlay">
@@ -66,9 +65,9 @@
         <div
           v-for="(player, index) in playersSortedByPoints"
           :key="player.playerId"
-          class="player-wrapper"
         >
           <PlayerDisplay
+            :position="player.hasFinished ? index + 1 : undefined"
             :name="player.username"
             :avatar-index="player.avatarIndex"
             :points="player.points"
@@ -76,8 +75,7 @@
             :correct-answers="player.correctAnswers"
             :show-you-indicator="isMe(player.playerId)"
           />
-          <PositionInfo v-if="player.hasFinished" :position="index + 1" />
-          <LoadingAnimation size="small" v-else />
+          <LoadingAnimation v-if="!player.hasFinished" size="small" />
         </div>
         <div v-if="waitingForFinalResults">
           <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
@@ -149,7 +147,6 @@ import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
 import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
-import PositionInfo from "@/components/game-ui/PositionInfo.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -246,11 +243,6 @@ gameStore.reset();
 </script>
 
 <style scoped>
-.player-wrapper {
-  position: relative;
-  margin-bottom: 16px;
-}
-
 .btn-primary {
   display: flex;
   align-items: center;
