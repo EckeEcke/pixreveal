@@ -9,7 +9,7 @@
       />
     </div>
     <div class="info-text">
-      <h2>What is PixReveal?</h2>
+      <h2>What is PIX<span>REVEAL</span>?</h2>
       <p>
         Unveil the art, beat the clock! PixReveal is a fast-paced guessing game
         where every pixel counts. Challenge yourself in Solo mode, host a local
@@ -72,12 +72,15 @@ onUnmounted(() => {
 
 .info-text h2 {
   margin-top: 0;
-  color: var(--primary);
+  letter-spacing: 1px;
+    & span {
+    color: var(--primary);
+  }
 }
 
 .info-text p {
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff88;
 }
 
 @media (max-width: 767px) {
