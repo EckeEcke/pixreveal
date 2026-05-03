@@ -85,6 +85,7 @@
       </div>
       <div v-else class="results-card">
         <h1 class="logo">GAME <span>OVER</span></h1>
+        <h2>Your results</h2>
         <GameOverStats />
         <div
           v-if="

@@ -40,7 +40,7 @@
       </button>
     </div>
     <div>
-      <p>CHALLENGE A FRIEND!</p>
+      <h2>Challenge your friends!</h2>
       <ShareIcons :msg="shareMessage" />
     </div>
   </div>
