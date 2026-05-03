@@ -131,6 +131,7 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 .confirm-btn {
   display: flex;
   place-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--primary);
   color: black;

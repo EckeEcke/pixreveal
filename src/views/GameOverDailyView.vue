@@ -22,7 +22,11 @@
         message="Set your nickname and select an avatar to display in the rankings besides your score."
       />
       <div class="player-info-wrapper">
-        <div class="player-avatar" :style="avatarStyle" @click="showAvatarModal = true">
+        <div
+          class="player-avatar"
+          :style="avatarStyle"
+          @click="showAvatarModal = true"
+        >
           <Icon icon="pixel:pencil" class="edit-badge" />
         </div>
         <div class="player-name" @click="showAvatarModal = true">
@@ -30,7 +34,12 @@
           <span class="info-text">Tap to change</span>
         </div>
       </div>
-      <button v-if="!isPosting" class="confirm-btn" data-sfx="click" @click="post">
+      <button
+        v-if="!isPosting"
+        class="confirm-btn"
+        data-sfx="click"
+        @click="post"
+      >
         SUBMIT SCORE
       </button>
       <LoadingAnimation v-else :text="'SUBMITTING...'" />
@@ -102,7 +111,7 @@ const post = async () => {
     playerStore.playerName,
     playerStore.points,
     playerStore.avatarIndex,
-    dailyStore.date
+    dailyStore.date,
   );
   hasSubmitted.value = true;
   isPosting.value = false;
@@ -199,6 +208,7 @@ h3 {
 .confirm-btn {
   display: flex;
   place-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--primary);
   padding: 12px 16px;

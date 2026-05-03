@@ -119,6 +119,7 @@ h3 {
 .confirm-btn {
   display: flex;
   place-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--primary);
   width: 100%;

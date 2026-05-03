@@ -145,6 +145,7 @@ import RankOverview from "@/components/game-ui/RankOverview.vue";
 .confirm-btn {
   display: flex;
   place-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--primary);
   padding: 12px 16px;
