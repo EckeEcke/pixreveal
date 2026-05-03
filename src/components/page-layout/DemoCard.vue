@@ -11,11 +11,10 @@
     <div class="info-text">
       <h2>What is PixReveal?</h2>
       <p>
-        PixReveal is an interactive guessing game where pixel art is
-        revealed pixel by pixel. Challenge your recognition skills across
-        various game modes and compete against the clock. Whether playing solo,
-        hosting a local party, or battling friends online, the goal is simple:
-        guess the art before it's fully revealed!
+        Unveil the art, beat the clock! PixReveal is a fast-paced guessing game
+        where every pixel counts. Challenge yourself in Solo mode, host a local
+        Party, or battle friends online. Can you recognize the drawing before
+        the final pixel drops?
       </p>
     </div>
   </div>
@@ -55,7 +54,7 @@ onUnmounted(() => {
   max-width: 850px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  @media(min-width: 768px) {
+  @media (min-width: 768px) {
     flex-direction: row;
   }
 }
