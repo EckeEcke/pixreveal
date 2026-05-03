@@ -46,7 +46,6 @@
       </section>
     </main>
     <FooterApp />
-    <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
     <JoinModal
       v-if="showJoinModal"
       @close="closeMultiplayerModal"
@@ -64,7 +63,6 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
-import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import JoinModal from "@/components/modals/JoinModal.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import { useChannelStore } from "@/stores/channel";
@@ -80,7 +78,6 @@ const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
-const showAvatarModal = ref(false);
 const playerId = Math.random().toString(36).substring(2, 9);
 channelStore.playerId = playerId;
 const showJoinModal = ref(false);

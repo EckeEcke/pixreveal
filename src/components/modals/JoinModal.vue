@@ -30,7 +30,7 @@
       v-if="!(selectedRole === 'host' && mode === 'party')"
       class="setup-section"
     >
-      <h3>YOUR AVATAR</h3>
+      <h3>SET YOUR AVATAR</h3>
       <div class="player-info-wrapper">
         <div
           class="player-avatar"
@@ -88,7 +88,11 @@
       </div>
     </div>
 
-    <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
+    <PlayerEditModal
+      v-if="showAvatarModal"
+      @btn-click="showAvatarModal = false"
+      @close="showAvatarModal = false"
+    />
   </ModalWrapper>
 </template>
 

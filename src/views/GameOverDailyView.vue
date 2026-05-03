@@ -18,34 +18,19 @@
       <GameOverStats />
     </div>
     <div v-if="!hasSubmitted">
-      <InfoBox
-        message="Set your nickname and select an avatar to display in the rankings besides your score."
-      />
-      <div class="player-info-wrapper">
-        <div
-          class="player-avatar"
-          :style="avatarStyle"
-          @click="showAvatarModal = true"
-        >
-          <Icon icon="pixel:pencil" class="edit-badge" />
-        </div>
-        <div class="player-name" @click="showAvatarModal = true">
-          <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
-          <span class="info-text">Tap to change</span>
-        </div>
-      </div>
       <button
         v-if="!isPosting"
         class="confirm-btn"
         data-sfx="click"
-        @click="post"
+        @click="showAvatarModal = true"
       >
-        SUBMIT SCORE
+        SUBMIT YOUR SCORE
       </button>
       <LoadingAnimation v-else :text="'SUBMITTING...'" />
     </div>
     <div v-else>
       <InfoBox
+      class="confirmation"
         icon="✅"
         message="Your score has been submitted! Check the rankings below to see how you did today."
       />
@@ -57,16 +42,15 @@
   <div class="content">
     <DailyRankings />
   </div>
-  <PlayerEditModal v-if="showAvatarModal" @close="showAvatarModal = false" />
+  <PlayerEditModal v-if="showAvatarModal" title="SUBMIT SCORE TO LEADERBOARD" btn-text="SUBMIT" @btn-click="post" @close="showAvatarModal = false" />
 </template>
 
 <script setup>
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { useDailyStore } from "@/stores/daily";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { Icon } from "@iconify/vue";
-import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import DailyRankings from "@/components/game-ui/DailyRankings.vue";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
@@ -84,19 +68,8 @@ const showIntro = ref(true);
 
 const showAvatarModal = ref(false);
 
-const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  return {
-    backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${col * 20}% ${row * 20}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated",
-  };
-});
-
 const post = async () => {
+  showAvatarModal.value = false;
   isPosting.value = true;
   if (!playerStore.playerName) {
     showAvatarModal.value = true;
@@ -139,6 +112,10 @@ h3 {
   margin-bottom: 64px;
 }
 
+.confirmation {
+  margin-bottom: 32px;
+}
+
 .thx {
   color: #ffcc00;
   text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
@@ -151,58 +128,6 @@ h3 {
   width: 100%;
   box-sizing: border-box;
   max-width: 400px;
-}
-
-.player-info-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
-  margin-top: 32px;
-}
-
-.player-avatar {
-  position: relative;
-  width: 72px;
-  height: 72px;
-  background-color: #2d3748;
-  border-radius: 8px;
-  transition: transform 0.2s ease;
-}
-
-.player-info-wrapper:hover .player-avatar {
-  transform: scale(1.05);
-  border-color: var(--primary);
-}
-
-.edit-badge {
-  position: absolute;
-  right: -8px;
-  bottom: -8px;
-  background: var(--primary);
-  border-radius: 50%;
-  padding: 4px;
-  font-size: 16px;
-  color: white;
-}
-
-.player-name {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  justify-content: center;
-  align-items: flex-start;
-  text-transform: uppercase;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  .info-text {
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: none;
-    opacity: 0.7;
-  }
 }
 
 .confirm-btn {
@@ -220,6 +145,5 @@ h3 {
   font-weight: 700;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 32px;
 }
 </style>

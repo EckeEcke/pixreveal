@@ -3,7 +3,7 @@
     <button @click="$emit('close')" data-sfx="click" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
-    <h2>EDIT PLAYER</h2>
+    <h2>{{ title ? title : "EDIT PLAYER" }}</h2>
     <div class="input-group" @keyup.enter="handleEnter">
       <h3>Player Name</h3>
       <input
@@ -34,7 +34,9 @@
         </div>
       </div>
     </div>
-    <button class="confirm-btn" data-sfx="click" @click="$emit('close')">CONFIRM</button>
+    <button class="confirm-btn" data-sfx="click" @click="$emit('btn-click')">
+      {{ btnText ? btnText : "CONFIRM" }}
+    </button>
   </ModalWrapper>
 </template>
 
@@ -44,6 +46,11 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
+
+defineProps({
+  title: String,
+  btnText: String,
+});
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
