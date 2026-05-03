@@ -25,7 +25,7 @@
         data-sfx="click"
         @click="showAvatarModal = true"
       >
-        SUBMIT YOUR SCORE
+        <Icon icon="pixel:arrow-circle-up-solid" /> SUBMIT YOUR SCORE
       </button>
       <LoadingAnimation v-else :text="'SUBMITTING...'" />
     </div>
@@ -38,6 +38,10 @@
       <button class="confirm-btn" @click="$router.push('/')" data-sfx="click">
         <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
       </button>
+    </div>
+    <div>
+      <p>CHALLENGE A FRIEND!</p>
+      <ShareIcons :msg="shareMessage" />
     </div>
   </div>
   <div class="content">
@@ -56,7 +60,7 @@
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { useDailyStore } from "@/stores/daily";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import DailyRankings from "@/components/game-ui/DailyRankings.vue";
@@ -64,6 +68,7 @@ import GameOverStats from "@/components/game-ui/GameOverStats.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
 import InfoBox from "@/components/game-ui/InfoBox.vue";
+import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
@@ -74,6 +79,11 @@ const isPosting = ref(false);
 const showIntro = ref(true);
 
 const showAvatarModal = ref(false);
+
+const shareMessage = computed(
+  () =>
+    `I reached ${playerStore.points}⭐ in PixReveal Daily Challenge! Can you beat my score?`,
+);
 
 const post = async () => {
   showAvatarModal.value = false;
@@ -119,12 +129,15 @@ h3 {
   margin-bottom: 64px;
 }
 
+p {
+  text-align: center;
+}
+
 .confirmation {
   margin-bottom: 32px;
 }
 
 .score-title {
-  text-align: center;
   margin-bottom: 4px;
 }
 
@@ -157,5 +170,6 @@ h3 {
   font-weight: 700;
   border-radius: 4px;
   cursor: pointer;
+  animation: pulse 2s infinite;
 }
 </style>
