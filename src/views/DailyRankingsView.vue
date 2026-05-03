@@ -4,7 +4,7 @@
       <Icon icon="pixel:angle-left-solid" />
     </button>
   </div>
-  <DailyRankings />
+  <DailyRankings class="rankings"/>
 </template>
 
 <script setup>
@@ -24,5 +24,10 @@ if (!dailyStore.dailyRounds.length) {
   min-width: 32px;
   width: 100%;
   max-width: 500px;
+  margin-bottom: 16px;
+}
+
+.rankings {
+  min-height: calc(100vh - 64px);
 }
 </style>

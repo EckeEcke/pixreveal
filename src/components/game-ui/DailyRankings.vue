@@ -31,6 +31,7 @@ const sortedRankings = computed(() => {
 
 <style scoped>
 h2 {
+  font-family: "8bit";
   text-align: center;
   margin: 64px auto 32px;
 }

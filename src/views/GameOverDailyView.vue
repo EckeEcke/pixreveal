@@ -15,6 +15,7 @@
     <div>
       <h1 class="logo">GAME <span>OVER</span></h1>
       <p class="thx">Thx for playing today!</p>
+      <p class="score-title">YOUR SCORE</p>
       <GameOverStats />
     </div>
     <div v-if="!hasSubmitted">
@@ -30,7 +31,7 @@
     </div>
     <div v-else>
       <InfoBox
-      class="confirmation"
+        class="confirmation"
         icon="✅"
         message="Your score has been submitted! Check the rankings below to see how you did today."
       />
@@ -42,7 +43,13 @@
   <div class="content">
     <DailyRankings />
   </div>
-  <PlayerEditModal v-if="showAvatarModal" title="SUBMIT SCORE TO LEADERBOARD" btn-text="SUBMIT" @btn-click="post" @close="showAvatarModal = false" />
+  <PlayerEditModal
+    v-if="showAvatarModal"
+    title="SUBMIT SCORE TO LEADERBOARD"
+    btn-text="SUBMIT"
+    @btn-click="post"
+    @close="showAvatarModal = false"
+  />
 </template>
 
 <script setup>
@@ -114,6 +121,11 @@ h3 {
 
 .confirmation {
   margin-bottom: 32px;
+}
+
+.score-title {
+  text-align: center;
+  margin-bottom: 4px;
 }
 
 .thx {
