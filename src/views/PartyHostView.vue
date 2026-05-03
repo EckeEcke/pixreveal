@@ -26,7 +26,7 @@
       <BuzzerStatus />
     </div>
     <div class="rankings">
-      <h1 class="logo"><span>RANKINGS</span></h1>
+      <h1 class="logo">PARTY<span>RANKINGS</span></h1>
       <div v-for="(player, index) in partyPlayersSorted" :key="index">
         <PlayerDisplay
           :position="index + 1"
@@ -173,7 +173,6 @@ onUnmounted(() => {
 
 .rankings {
   padding-left: 24px;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {

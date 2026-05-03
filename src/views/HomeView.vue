@@ -41,6 +41,7 @@
                 btn-color="var(--neon-success)"
               />
             </div>
+            <DemoCard />
           </div>
         </div>
       </section>
@@ -70,6 +71,7 @@ import { useConfigStore } from "@/stores/config";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
+import DemoCard from "@/components/page-layout/DemoCard.vue";
 
 const router = useRouter();
 const route = useRoute();

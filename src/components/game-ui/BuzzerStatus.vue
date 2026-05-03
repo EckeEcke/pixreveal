@@ -43,6 +43,7 @@ const partyStore = usePartyStore();
   align-items: center;
   gap: 16px;
   width: 100%;
+  margin-top: 16px;
 }
 
 .status-pill {
