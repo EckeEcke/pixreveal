@@ -99,31 +99,38 @@ const setDrawing = (data) => {
 };
 
 const handleAnswer = (selectedAnswer) => {
+  if (hasAnswered.value) return;
   hasAnswered.value = true;
+  clearInterval(timerId);
+
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
   } else if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
+    useSoundStore().playSound("incorrect");
   } else {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(timer.value);
+    useSoundStore().playSound("correct");
   }
 
-  clearInterval(timerId);
   revealTimeoutId = setTimeout(() => {
     isRevealing.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
+
+    nextRoundTimeoutId = setTimeout(() => {
+      const isLastRound = currentRoundIndex.value >= maxRounds - 1;
+
+      if (isLastRound) {
+        onlineStore.broadcastScore();
+        router.push("/gameover");
+      } else {
+        nextRound();
+        setDrawing(rounds.value[currentRoundIndex.value].data);
+      }
+    }, 1500);
   }, 1500);
-  nextRoundTimeoutId = setTimeout(() => {
-    if (currentRoundIndex.value < maxRounds - 1) {
-      nextRound();
-      setDrawing(rounds.value[currentRoundIndex.value].data);
-    } else {
-      onlineStore.broadcastScore();
-      router.push("/gameover");
-    }
-  }, 3000);
 };
 
 const start = () => {

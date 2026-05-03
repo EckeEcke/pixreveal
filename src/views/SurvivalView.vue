@@ -59,8 +59,11 @@ const setDrawing = () => {
 };
 
 const handleAnswer = (answer) => {
+  if (store.hasAnswered || store.timeLeft <= 0) return;
+
   store.isRevealing = false;
   store.hasAnswered = true;
+
   if (answer.isCorrect) {
     store.handleCorrectAnswer();
     pixelData.value = statusIcons.success;
@@ -70,15 +73,17 @@ const handleAnswer = (answer) => {
   }
 
   setTimeout(() => {
+    if (store.isGameOver) return;
+
     isRevealing.value = false;
     pixelData.value = store.currentDrawing.data;
+
     setTimeout(() => {
-      isRevealing.value = true;
+      if (store.isGameOver) return;
+
       store.setNextDrawing();
-      pixelData.value = store.currentDrawing.data;
       setDrawing();
     }, 1000);
-    store.hasAnswered = false;
   }, 1000);
 };
 
@@ -97,6 +102,7 @@ const start = () => {
 
 onUnmounted(() => {
   if (store.timerInterval) clearInterval(store.timerInterval);
+  store.triggerGameOver();
 });
 </script>
 

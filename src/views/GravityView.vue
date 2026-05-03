@@ -98,33 +98,31 @@ const handleAnswer = (selectedAnswer) => {
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
-    isStatusIcon.value = true;
   } else if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
-    isStatusIcon.value = true;
     soundStore.playSound("incorrect");
   } else {
     pixelData.value = statusIcons.success;
-    isStatusIcon.value = true;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(timer.value);
     soundStore.playSound("success");
   }
+  isStatusIcon.value = true;
 
   revealTimeoutId = setTimeout(() => {
     isStatusIcon.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
-  }, 1500);
 
-  nextRoundTimeoutId = setTimeout(() => {
-    if (currentRoundIndex.value < maxRounds - 1) {
-      gameStore.nextRound();
-      setDrawing(rounds.value[currentRoundIndex.value].data);
-    } else {
-      onlineStore.broadcastScore();
-      router.push("/gameover");
-    }
-  }, 3000);
+    nextRoundTimeoutId = setTimeout(() => {
+      if (currentRoundIndex.value < maxRounds - 1) {
+        gameStore.nextRound();
+        setDrawing(rounds.value[currentRoundIndex.value].data);
+      } else {
+        onlineStore.broadcastScore();
+        router.push("/gameover");
+      }
+    }, 1500);
+  }, 1500);
 };
 
 const activeChannel = computed(() => onlineStore.ac);

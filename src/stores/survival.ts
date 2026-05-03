@@ -13,13 +13,13 @@ export const useSurvivalStore = defineStore("survival", () => {
     Number(localStorage.getItem("survival_highscore") || "0"),
   );
   const solvedCount = ref(0);
-  const timeLeft = ref(15);
+  const timeLeft = ref(30);
   const maxTime = ref(30);
   const isActive = ref(false);
   const isGameOver = ref(false);
   const hasAnswered = ref(false);
   const newHighscore = ref(false);
-  const timerInterval: Ref<number | undefined> = ref(undefined);
+  const timerInterval = ref<ReturnType<typeof setInterval> | null>(null);
 
   const timerPercentage = computed(
     () => (timeLeft.value / maxTime.value) * 100,
@@ -27,19 +27,19 @@ export const useSurvivalStore = defineStore("survival", () => {
 
   const startSurvival = () => {
     const configStore = useConfigStore();
+    newHighscore.value = false;
 
     const preferred = (allDrawings as Drawing[]).filter((d) =>
       configStore.selectedCategories.includes(d.category),
     );
-
     const remaining = (allDrawings as Drawing[]).filter(
       (d) => !configStore.selectedCategories.includes(d.category),
     );
 
-    const shuffledPreferred = [...preferred].sort(() => Math.random() - 0.5);
-    const shuffledRemaining = [...remaining].sort(() => Math.random() - 0.5);
-
-    drawings.value = [...shuffledPreferred, ...shuffledRemaining];
+    drawings.value = [
+      ...[...preferred].sort(() => Math.random() - 0.5),
+      ...[...remaining].sort(() => Math.random() - 0.5),
+    ];
 
     solvedCount.value = 0;
     timeLeft.value = 30;
@@ -52,41 +52,37 @@ export const useSurvivalStore = defineStore("survival", () => {
   const setNextDrawing = () => {
     if (drawings.value.length > 0) {
       const next = drawings.value.pop();
-
-      next!.options = generateOptions(next!);
-
-      currentDrawing.value = next;
+      if (next) {
+        next.options = generateOptions(next);
+        currentDrawing.value = next;
+      }
     } else {
       triggerGameOver();
     }
   };
 
   const generateOptions = (correctDrawing: Drawing) => {
-    const distractors = allDrawings
+    const selectedDistractors = (allDrawings as Drawing[])
       .filter((d) => d.name !== correctDrawing.name)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
       .map((d) => ({ title: d.name, isCorrect: false }));
 
-    const selectedDistractors = distractors
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
-
-    const finalOptions = [
+    return [
       ...selectedDistractors,
       { title: correctDrawing.name, isCorrect: true },
-    ];
-
-    return finalOptions.sort(() => Math.random() - 0.5);
+    ].sort(() => Math.random() - 0.5);
   };
 
   const runTimer = () => {
     if (timerInterval.value) clearInterval(timerInterval.value);
 
     timerInterval.value = setInterval(() => {
+      if (hasAnswered.value) return;
+
       if (timeLeft.value > 0) {
-        if (hasAnswered.value) return;
         timeLeft.value--;
         if (timeLeft.value <= 3) useSoundStore().playSound("timer");
-        if (timeLeft.value === 0) triggerGameOver;
       } else {
         triggerGameOver();
       }
@@ -95,14 +91,16 @@ export const useSurvivalStore = defineStore("survival", () => {
 
   const handleCorrectAnswer = () => {
     solvedCount.value++;
-    if (solvedCount.value > Number(highscore.value)) {
+    if (solvedCount.value > highscore.value) {
       newHighscore.value = true;
       highscore.value = solvedCount.value;
+      saveHighscore();
     }
     addTime(3);
   };
 
   const handleWrongAnswer = () => {
+    useSoundStore().playSound("incorrect");
     reduceTime(5);
   };
 
@@ -116,17 +114,17 @@ export const useSurvivalStore = defineStore("survival", () => {
   };
 
   const triggerGameOver = () => {
+    if (isGameOver.value) return;
     isActive.value = false;
     isGameOver.value = true;
-    clearInterval(timerInterval.value);
-    saveHighscore();
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value);
+      timerInterval.value = null;
+    }
   };
 
   const saveHighscore = () => {
-    const currentBest = localStorage.getItem("survival_highscore") || "0";
-    if (solvedCount.value > parseInt(currentBest)) {
-      localStorage.setItem("survival_highscore", solvedCount.value.toString());
-    }
+    localStorage.setItem("survival_highscore", highscore.value.toString());
   };
 
   return {
@@ -145,5 +143,6 @@ export const useSurvivalStore = defineStore("survival", () => {
     handleCorrectAnswer,
     handleWrongAnswer,
     setNextDrawing,
+    triggerGameOver,
   };
 });

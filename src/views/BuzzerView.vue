@@ -113,31 +113,36 @@ const handleBuzzerPress = () => {
 };
 
 const handleAnswer = (selectedAnswer) => {
+  if (hasAnswered.value) return;
   hasAnswered.value = true;
   pauseReveal.value = false;
+  clearInterval(timerId);
+
   if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
+    useSoundStore().playSound("incorrect");
   } else {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(potentialPoints.value);
+    useSoundStore().playSound("correct");
   }
 
-  clearInterval(timerId);
   revealTimeoutId = setTimeout(() => {
     isRevealing.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
+
+    nextRoundTimeoutId = setTimeout(() => {
+      if (currentRoundIndex.value < maxRounds - 1) {
+        showAnswers.value = false;
+        nextRound();
+        setDrawing(rounds.value[currentRoundIndex.value].data);
+      } else {
+        onlineStore.broadcastScore();
+        router.push("/gameover");
+      }
+    }, 1500);
   }, 1500);
-  nextRoundTimeoutId = setTimeout(() => {
-    if (currentRoundIndex.value < maxRounds - 1) {
-      nextRound();
-      setDrawing(rounds.value[currentRoundIndex.value].data);
-      showAnswers.value = false;
-    } else {
-      onlineStore.broadcastScore();
-      router.push("/gameover");
-    }
-  }, 3000);
 };
 
 const start = () => {

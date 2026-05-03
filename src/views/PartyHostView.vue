@@ -1,4 +1,3 @@
-<!-- PartyHostView.vue -->
 <template>
   <main class="host-layout setup-card">
     <Transition name="fade" mode="out-in">
@@ -47,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, onUnmounted, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -58,6 +58,7 @@ import { usePartyStore } from "@/stores/party";
 import { useChannelStore } from "@/stores/channel";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 
+const router = useRouter();
 const gameStore = useGameStore();
 const configStore = useConfigStore();
 const partyStore = usePartyStore();
@@ -69,24 +70,21 @@ const resolution = ref(16);
 const timerDuration = gameStore.revealTime;
 const timer = ref(timerDuration);
 let timerId: any = null;
-let autoNextRoundTimer: ReturnType<typeof setTimeout> | null = null;
+let navigationTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
 );
 
 const currentRound = computed(() => gameStore.currentRound);
-
 const isRevealing = computed(() => partyStore.isRevealing);
-let lastRoundResult: "correct" | "incorrect" | null = null;
 
 const startTimer = () => {
-  if (timerId) clearInterval(timerId);
+  stopTimer();
   timer.value = timerDuration;
-
   timerId = setInterval(() => {
     timer.value--;
-    if (timer.value <= 0) clearInterval(timerId);
+    if (timer.value <= 0) stopTimer();
   }, 1000);
 };
 
@@ -98,32 +96,17 @@ const stopTimer = () => {
 };
 
 const setDrawing = (data: any) => {
+  if (!data) return;
   pixelData.value = data;
   resolution.value = Math.sqrt(data.length);
   startTimer();
 };
 
-const clearAutoNextRoundTimer = () => {
-  if (autoNextRoundTimer) {
-    clearTimeout(autoNextRoundTimer);
-    autoNextRoundTimer = null;
+const clearNavigationTimeout = () => {
+  if (navigationTimeout) {
+    clearTimeout(navigationTimeout);
+    navigationTimeout = null;
   }
-};
-
-const nextRound = () => {
-  clearAutoNextRoundTimer();
-  partyStore.nextRound();
-  if (!gameStore.isGameOver) {
-    setDrawing(currentRound.value?.data);
-  }
-};
-
-const scheduleAutoNextRound = () => {
-  if (gameStore.isGameOver) return;
-  clearAutoNextRoundTimer();
-  autoNextRoundTimer = setTimeout(() => {
-    nextRound();
-  }, 3000);
 };
 
 const start = () => {
@@ -138,63 +121,89 @@ const start = () => {
 };
 
 watch(
-  () => partyStore.buzzerState,
-  (newState) => {
-    if (newState !== "open") {
+  () => partyStore.roundResult,
+  (newResult) => {
+    if (newResult) {
       stopTimer();
+      clearNavigationTimeout();
+
+      navigationTimeout = setTimeout(() => {
+        const isLastRound = gameStore.currentRoundIndex >= configStore.maxRounds - 1;
+
+        if (isLastRound) {
+          router.push("/gameover");
+        } else {
+          partyStore.nextRound();
+          setDrawing(currentRound.value?.data);
+        }
+      }, 3000);
+    } else {
+      clearNavigationTimeout();
     }
-  },
+  }
 );
 
 watch(
-  () => partyStore.roundResult,
-  (newResult) => {
-    if (newResult && newResult !== lastRoundResult) {
-      lastRoundResult = newResult;
-      scheduleAutoNextRound();
-    } else if (!newResult) {
-      lastRoundResult = null;
-      clearAutoNextRoundTimer();
+  () => partyStore.buzzerState,
+  (newState) => {
+    if (newState === "answering" || newState === "locked") {
+      stopTimer();
     }
-  },
+  }
 );
 
 onUnmounted(() => {
   stopTimer();
-  clearAutoNextRoundTimer();
+  clearNavigationTimeout();
+  channelStore.activeChannel?.unbind("client-party-buzz");
 });
 </script>
 
 <style scoped>
 .host-layout {
   display: grid;
-  grid-template-columns: auto 400px;
+  grid-template-columns: 1fr 400px;
   align-items: start;
-  flex-wrap: wrap;
   gap: 32px;
-  max-width: 1000px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border-radius: 8px;
-  overflow: hidden;
-}
-
-header {
-  width: 100%;
-}
-
-h1 {
-  margin: 14px auto 24px;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 .rankings {
-  padding-right: 32px;
+  padding-left: 24px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .player-wrapper {
   position: relative;
   margin-bottom: 16px;
+  transition: transform 0.3s ease;
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 1023px) {
+  .host-layout {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+  }
+  
+  .rankings {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 24px;
+  }
 }
 </style>
