@@ -18,6 +18,17 @@ export default async function handler(req, res) {
     ]);
 
     if (!data) {
+      const yesterdayDate = new Date();
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      targetDate = yesterdayDate.toISOString().split("T")[0];
+
+      [data, rankings] = await Promise.all([
+        client.get(`daily:${targetDate}:set`),
+        client.lRange(`daily:${targetDate}:rankings`, 0, -1),
+      ]);
+    }
+
+    if (!data) {
       await client.disconnect();
       return res.status(404).json({ error: "No data today", date: today });
     }
