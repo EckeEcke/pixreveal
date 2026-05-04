@@ -5,6 +5,7 @@
     @click="btnFunction"
     :disabled="disabled"
   >
+    <Icon :icon="iconName" class="background-icon" />
     <div class="glow-layer"></div>
     <div class="btn-content">
       <Icon :icon="iconName" class="btn-icon" />
@@ -148,5 +149,14 @@ const props = defineProps({
 .neon-btn:active {
   transform: translateY(-2px);
   filter: brightness(1.2);
+}
+
+.background-icon {
+  position: absolute;
+  right: -15%;
+  bottom: -15%;
+  color: var(--btn-color);
+  font-size: 120px;
+  opacity: 0.05;
 }
 </style>
