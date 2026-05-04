@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   });
 
   client.on("error", (err) => console.log("Redis Client Error", err));
+  let targetDate = new Date().toISOString().split("T")[0];
 
   try {
     await client.connect();
