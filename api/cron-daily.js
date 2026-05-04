@@ -35,6 +35,14 @@ export default async function handler(req, res) {
 
     const today = new Date().toISOString().split("T")[0];
 
+    const yesterdayStr = new Date(Date.now() - 864e5)
+      .toISOString()
+      .split("T")[0];
+    const yesterdayData = await client.get(`daily:${yesterdayStr}:set`);
+    const yesterdayRankings = yesterdayData
+      ? JSON.parse(yesterdayData).rankings
+      : null;
+
     const shuffled = [...drawings].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, 5);
 
@@ -51,7 +59,8 @@ export default async function handler(req, res) {
 
     await client.set(
       `daily:${today}:set`,
-      JSON.stringify({ dailyRounds, mode }),
+      JSON.stringify({ dailyRounds, mode, yesterdayRankings }),
+      { EX: 60 * 60 * 24 * 3 },
     );
 
     await client.disconnect();
