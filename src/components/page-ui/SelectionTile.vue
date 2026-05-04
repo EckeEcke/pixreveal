@@ -1,6 +1,7 @@
 <template>
   <button
     class="neon-btn"
+    :class="{'shiny': isShiny}"
     :style="{ '--btn-color': btnColor }"
     @click="btnFunction"
     :disabled="disabled"
@@ -30,6 +31,7 @@ const props = defineProps({
     default: "var(--primary)",
   },
   disabled: Boolean,
+  isShiny: Boolean,
 });
 </script>
 
@@ -37,6 +39,7 @@ const props = defineProps({
 .neon-btn {
   --left-block-width: 12px;
   position: relative;
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border-radius: 8px;
@@ -60,6 +63,18 @@ const props = defineProps({
     width: var(--left-block-width);
     background-color: var(--btn-color);
   }
+}
+
+.neon-btn.shiny::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  animation: shine 4s infinite;
 }
 
 .neon-btn:disabled {

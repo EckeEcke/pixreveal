@@ -29,7 +29,7 @@ const getClass = () => {
   line-height: 0.1;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 8px;
   border: 1px solid transparent;
   @media(min-width:576px) {
     font-size: 24px;

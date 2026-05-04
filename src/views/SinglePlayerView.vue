@@ -9,10 +9,6 @@
       <section class="setup-card">
         <div class="content-wrapper">
           <div class="mode-section">
-            <div class="section-header">
-              <h2>Choose a game mode</h2>
-            </div>
-
             <div class="mode-buttons">
               <SelectionTile
                 icon-name="pixel:sparkles"
@@ -34,6 +30,7 @@
                 "
                 btn-color="var(--neon-yellow)"
                 :disabled="dailyStore.isLoading"
+                :isShiny="true && !dailyStore.isLoading && !dailyStore.hasPlayedToday"
               />
               <SelectionTile
                 icon-name="pixelarticons:blocks"
@@ -83,7 +80,6 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
-import { onMounted } from "vue";
 
 const router = useRouter();
 const playerStore = usePlayerStore();

@@ -1,5 +1,8 @@
 <template>
-  <div class="player-hud" :class="{ pending: isPending, active: isActive }">
+  <div
+    class="player-hud"
+    :class="{ pending: isPending, active: isActive, first: position === 1 }"
+  >
     <PositionInfo v-if="position" :position="position" />
     <div
       v-if="avatarIndex !== undefined"
@@ -7,7 +10,7 @@
       :style="avatarStyle"
     ></div>
     <div>
-      <div class="hud-username">
+      <div class="hud-username" :class="{ first: position === 1 }">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
       </div>
     </div>
@@ -309,6 +312,7 @@ const avatarStyle = computed<CSSProperties>(() => {
 
 .player-hud {
   position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -325,6 +329,18 @@ const avatarStyle = computed<CSSProperties>(() => {
   background-size: 100% 4px;
   background: rgba(15, 15, 25, 0.7);
   box-sizing: border-box;
+}
+
+.player-hud.first::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  animation: shine 4s infinite;
 }
 
 .player-hud.active {
@@ -346,7 +362,7 @@ const avatarStyle = computed<CSSProperties>(() => {
   background-color: #2d3748;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
-  @media(min-width:576px) {
+  @media (min-width: 576px) {
     width: 44px;
     height: 44px;
   }
@@ -370,8 +386,11 @@ const avatarStyle = computed<CSSProperties>(() => {
   font-weight: 700;
   text-transform: uppercase;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     font-size: 18px;
+  }
+  &.first {
+    color: var(--neon-yellow);
   }
 }
 

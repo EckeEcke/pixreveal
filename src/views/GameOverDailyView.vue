@@ -119,6 +119,8 @@ h3 {
 }
 
 .ranking-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -130,6 +132,18 @@ h3 {
   box-sizing: border-box;
   max-width: 400px;
   margin-bottom: 64px;
+}
+
+.ranking-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  animation: shine 4s infinite;
 }
 
 p {
