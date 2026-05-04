@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const useDailyStore = defineStore("daily", () => {
   const dailyRounds = ref([]);
@@ -9,22 +9,23 @@ export const useDailyStore = defineStore("daily", () => {
   const error = ref(null);
   const dailyRankings = ref([]);
   const getDailyKey = () => {
-    const date = new Date().toISOString().split("T")[0];
-    return `pix_daily_${date}`;
+    if (!date.value) return null;
+    return `pix_daily_${date.value}`;
   };
 
-  const hasPlayedToday = ref(
-    typeof window !== "undefined"
-      ? !!localStorage.getItem(getDailyKey())
-      : false,
-  );
+  const hasPlayedToday = computed(() => {
+    if (typeof window === "undefined") return false;
+    const key = getDailyKey();
+    return key ? !!localStorage.getItem(key) : false;
+  });
 
   const markAsPlayed = () => {
     if (typeof window !== "undefined") {
       const key = getDailyKey();
-      localStorage.setItem(key, "true");
-      hasPlayedToday.value = true;
-      cleanupOldKeys(key);
+      if (key) {
+        localStorage.setItem(key, "true");
+        cleanupOldKeys(key);
+      }
     }
   };
 
