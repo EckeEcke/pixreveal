@@ -137,10 +137,6 @@ const startDaily = () => {
     router.push("/daily");
   }
 };
-
-onMounted(() => {
-  dailyStore.fetchDailyData();
-});
 </script>
 
 <style scoped>

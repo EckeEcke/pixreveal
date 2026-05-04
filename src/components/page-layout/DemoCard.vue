@@ -2,6 +2,7 @@
   <div class="info-card setup-card">
     <div class="canvas-preview">
       <PixelCanvas
+        class="canvas"
         :pixel-array="currentDisplayData"
         :resolution="16"
         :is-revealing="true"
@@ -9,12 +10,10 @@
       />
     </div>
     <div class="info-text">
-      <h2>What is PIX<span>REVEAL</span>?</h2>
+      <h2>WHAT IS PIX<span>REVEAL</span>?</h2>
       <p>
-        Unveil the art, beat the clock! PixReveal is a fast-paced guessing game
-        where every pixel counts. Challenge yourself in Solo mode, host a local
-        Party, or battle friends online. Can you recognize the drawing before
-        the final pixel drops?
+        Unveil the art, beat the clock. Guess the pixel art as it reveals —
+        before the final pixel drops.
       </p>
     </div>
   </div>
@@ -41,9 +40,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.canvas {
+  border-radius: 8px;
+}
+
 .info-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 32px;
   justify-content: center;
@@ -54,9 +57,6 @@ onUnmounted(() => {
   max-width: 850px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
 }
 
 .canvas-preview {
@@ -71,16 +71,20 @@ onUnmounted(() => {
 }
 
 .info-text h2 {
+  font-size: 20px;
   margin-top: 0;
+  margin-bottom: 16px;
   letter-spacing: 1px;
-    & span {
+  & span {
     color: var(--primary);
   }
 }
 
 .info-text p {
   line-height: 1.6;
+  font-size: 18px;
   color: #ffffff88;
+  margin-bottom: 0;
 }
 
 @media (max-width: 767px) {
