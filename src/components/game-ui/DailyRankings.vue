@@ -1,7 +1,10 @@
 <template>
   <div>
     <h2 class="logo">DAILY <span>RANKINGS</span></h2>
-    <p>RANKINGS FOR  <strong>{{ dailyStore.date }}</strong></p>
+    <p v-if="sortedRankings.length <= 0">NO RANKINGS YET FOR TODAY</p>
+    <p v-else>
+      RANKINGS FOR <strong>{{ dailyStore.date }}</strong>
+    </p>
     <div
       v-for="(ranking, index) in sortedRankings"
       :key="index"
