@@ -70,6 +70,12 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/rankings-yesterday",
+      name: "rankings-yesterday",
+      component: () => import("@/views/YesterdayRankingsView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/gameover-daily",
       name: "gameover-daily",
       component: () => import("@/views/GameOverDailyView.vue"),
