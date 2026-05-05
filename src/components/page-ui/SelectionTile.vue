@@ -1,9 +1,10 @@
 <template>
   <button
     class="neon-btn"
-    :class="{'shiny': isShiny}"
+    :class="{ shiny: isShiny }"
     :style="{ '--btn-color': btnColor }"
     @click="btnFunction"
+    @mouseenter="soundStore.playSound('hover')"
     :disabled="disabled"
   >
     <Icon :icon="iconName" class="background-icon" />
@@ -19,6 +20,7 @@
 </template>
 
 <script setup>
+import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 
 const props = defineProps({
@@ -33,6 +35,8 @@ const props = defineProps({
   disabled: Boolean,
   isShiny: Boolean,
 });
+
+const soundStore = useSoundStore();
 </script>
 
 <style scoped>

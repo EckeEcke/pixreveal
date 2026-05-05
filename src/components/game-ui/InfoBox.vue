@@ -23,7 +23,8 @@ defineProps({
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  background: var(--blue-bg);
+  background: #2D1B4D;
+  border: 1px solid #4D3182;
   border-radius: 4px;
   padding: 12px;
   padding: 8px;

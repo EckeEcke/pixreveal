@@ -1,6 +1,6 @@
 <template>
   <ContentPage>
-    <h2>UPDATES</h2>
+    <h2 class="logo">UPDATES</h2>
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
@@ -92,22 +92,11 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 }
 
 .log-card {
-  --log-color: #00ffff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   p {
     line-height: 1.4;
   }
-  border-bottom: 1px solid rgb(from var(--log-color) r g b / 0.4);
-  @media (min-width: 576px) {
-    background: linear-gradient(
-      135deg,
-      rgb(from var(--log-color) r g b / 0.15) 0%,
-      rgba(0, 40, 40, 0.05) 50%,
-      rgba(0, 0, 0, 0.4) 100%
-    );
-    padding: 24px;
-    border: none;
-  }
+  border-bottom: 1px solid rgb(from var(--primary) r g b / 0.4);
 }
 
 .log-info {

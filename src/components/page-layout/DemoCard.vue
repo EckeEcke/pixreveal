@@ -7,10 +7,11 @@
         :resolution="16"
         :is-revealing="true"
         :timer-duration="15"
+        :mute-sound="true"
       />
     </div>
     <div class="info-text">
-      <h2>WHAT IS PIX<span>REVEAL</span>?</h2>
+      <h2 class="logo">WHAT IS PIX<span>REVEAL</span>?</h2>
       <p>
         Unveil the art, beat the clock. Guess the pixel art as it reveals —
         before the final pixel drops.
@@ -71,13 +72,8 @@ onUnmounted(() => {
 }
 
 .info-text h2 {
-  font-size: 20px;
   margin-top: 0;
   margin-bottom: 16px;
-  letter-spacing: 1px;
-  & span {
-    color: var(--primary);
-  }
 }
 
 .info-text p {

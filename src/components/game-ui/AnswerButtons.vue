@@ -5,13 +5,12 @@
       v-for="(answer, index) in answers"
       :key="answer.title || answer.name"
       :disabled="hasAnswered"
-      :class="[
-        buttonColors[index % buttonColors.length],
-        {
-          'is-wrong': hasAnswered && selectedAnswer === answer && !answer.isCorrect,
-          'is-correct': hasAnswered && answer.isCorrect,
-        },
-      ]"
+      :style="{ '--btn-color': buttonColors[index % buttonColors.length].color, '--btn-glow': buttonColors[index % buttonColors.length].glow }"
+      :class="{
+        'is-wrong': hasAnswered && selectedAnswer === answer && !answer.isCorrect,
+        'is-correct': hasAnswered && answer.isCorrect,
+      }"
+      @mouseenter="!hasAnswered && soundStore.playSound('hover')"
       @click="checkAnswer(answer, $event)"
     >
       {{ answer.title || answer.name }}
@@ -31,7 +30,13 @@ const props = defineProps({
 
 const emit = defineEmits(["answered"]);
 
-const buttonColors = ["btn-pink", "btn-blue", "btn-purple", "btn-yellow"];
+const buttonColors = [
+  { color: "var(--neon-pink)",   glow: "var(--pink-glow)"   },
+  { color: "var(--neon-blue)",   glow: "var(--blue-glow)"   },
+  { color: "var(--neon-purple)", glow: "var(--purple-glow)" },
+  { color: "var(--neon-yellow)", glow: "var(--yellow-glow)" },
+];
+
 const soundStore = useSoundStore();
 const selectedAnswer = ref(undefined);
 
@@ -81,8 +86,16 @@ const checkAnswer = (answer, event) => {
   position: relative;
   overflow: hidden;
   width: 100%;
-  border: none;
+  border: 2px solid var(--btn-color);
+  color: var(--btn-color);
+  box-shadow: 0 0 10px var(--btn-glow);
   z-index: 1;
+}
+
+.answer-btn:not(:disabled):hover {
+  background: var(--btn-color);
+  color: black;
+  animation: 2s floating ease-in-out infinite;
 }
 
 .answer-btn::after {
@@ -92,15 +105,13 @@ const checkAnswer = (answer, event) => {
   left: -150%;
   width: 100%;
   height: 100%;
-
   background: linear-gradient(
     90deg,
     transparent,
     rgba(255, 255, 255, 0) 10%,
     rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0) 90% /* Ende verwaschen */
+    rgba(255, 255, 255, 0) 90%
   );
-
   transform: skewX(-45deg);
   pointer-events: none;
   z-index: 2;
@@ -122,39 +133,18 @@ const checkAnswer = (answer, event) => {
   }
 }
 
-.btn-pink {
-  color: var(--neon-pink);
-  border: 2px solid var(--neon-pink) !important;
-  box-shadow: 0 0 10px var(--pink-glow);
-}
-.btn-yellow {
-  color: var(--neon-yellow);
-  border: 2px solid var(--neon-yellow) !important;
-  box-shadow: 0 0 10px var(--yellow-glow);
-}
-.btn-blue {
-  color: var(--neon-blue);
-  border: 2px solid var(--neon-blue) !important;
-  box-shadow: 0 0 10px var(--blue-glow);
-}
-.btn-purple {
-  color: var(--neon-purple);
-  border: 2px solid var(--neon-purple) !important;
-  box-shadow: 0 0 10px var(--purple-glow);
-}
-
 .answer-btn.is-correct {
-  background-color: var(--neon-success) !important;
-  color: white !important;
+  background-color: var(--neon-success);
+  color: white;
   box-shadow: 0 0 30px var(--neon-success);
-  border: none !important;
+  border-color: var(--neon-success);
 }
 
 .answer-btn.is-wrong {
-  background-color: var(--neon-error) !important;
-  color: white !important;
+  background-color: var(--neon-error);
+  color: white;
   animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  border: none !important;
+  border-color: var(--neon-error);
 }
 
 @keyframes shake {

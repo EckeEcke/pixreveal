@@ -26,11 +26,21 @@
       </button>
     </div>
 
+    <div v-if="selectedRole === 'host'" class="host-info">
+      <InfoBox
+        :message="
+          mode === 'party'
+            ? 'The party mode is displayed on the host device. PC/Laptop recommended for hosting. Players can join via smartphone to buzz and answer.'
+            : 'Host an online game and invite friends via link or room id to play.'
+        "
+      />
+    </div>
+
     <div
       v-if="!(selectedRole === 'host' && mode === 'party')"
       class="setup-section"
     >
-      <h3>SET YOUR AVATAR</h3>
+      <h3>SET YOUR NAME AND AVATAR</h3>
       <div class="player-info-wrapper">
         <div
           class="player-avatar"
@@ -45,20 +55,6 @@
         </div>
       </div>
     </div>
-    <div v-if="selectedRole === 'host'" class="host-info">
-      <template v-if="mode === 'party'">
-        <h3>Hosting a Party Game</h3>
-        <p>
-          The party mode is displayed on the host device. PC/Laptop recommended
-          for hosting. Players can join via smartphone to buzz and answer.
-        </p>
-      </template>
-      <template v-else>
-        <p>
-          Host an online game and invite friends via link or room id to play.
-        </p>
-      </template>
-    </div>
 
     <button
       v-if="selectedRole === 'host'"
@@ -70,11 +66,14 @@
     </button>
 
     <div v-else class="join-container">
-      <p>Enter a room id to join a game</p>
+      <h3>ENTER ROOM ID TO JOIN A GAME</h3>
       <div class="join-terminal">
         <input
           v-model="joinRoomId"
           placeholder="Enter room ID"
+          minlength="5"
+          maxlength="6"
+          autocapitalize="on"
           class="terminal-input"
         />
         <button
@@ -107,6 +106,7 @@ import { Icon } from "@iconify/vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
+import InfoBox from "../game-ui/InfoBox.vue";
 
 const props = defineProps({
   mode: { type: String, default: "online" },
@@ -221,34 +221,28 @@ h2 {
 }
 
 .join-terminal {
-  display: flex;
-  border: 2px solid var(--primary);
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.4);
-  overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(255, 77, 0, 0.1);
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  gap: 8px;
 }
 
 .terminal-input {
-  flex: 1;
   background: transparent;
-  border: none;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
   color: #fff;
   padding: 12px;
   font-family: inherit;
   font-size: 0.9rem;
   outline: none;
-  max-width: calc(100% - 90px);
 }
 
 .terminal-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   background: var(--primary);
   color: #000;
   border: none;
-  padding: 0 20px;
+  border-radius: 4px;
+  padding: 12px 20px;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
@@ -276,7 +270,7 @@ h2 {
 }
 
 .host-info {
-  margin: 32px 0 16px;
+  margin: 32px 0;
 }
 
 .player-info-wrapper {

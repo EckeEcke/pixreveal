@@ -35,13 +35,11 @@
 
       <section class="editor-section">
         <div v-if="viewMode === 'editor'">
-          <div class="recommendation">
-            <span>💡</span>
-            <p>
-              Create and submit your own pixel art. Once your art is approved,
-              it is available in PixReveal for all players to guess.
-            </p>
-          </div>
+          <InfoBox
+            class="recommendation"
+            message="Create and submit your own pixel art. Once your art is approved,
+              it is available in PixReveal for all players to guess."
+          />
 
           <div class="palette-container">
             <h3>Color Palette</h3>
@@ -171,6 +169,7 @@
 <script setup>
 import { ref, computed, reactive } from "vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
+import InfoBox from "@/components/game-ui/InfoBox.vue";
 import colorPalette from "@/data/colorPalette";
 import drawings from "@/data/drawings.json";
 import { allCategoryNames } from "@/stores/config";
@@ -494,21 +493,7 @@ const downloadDrawing = () => {
 }
 
 .recommendation {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  background: var(--blue-bg);
-  border-radius: 4px;
-  padding: 12px;
-  padding: 8px;
   margin-bottom: 32px;
-  p {
-    margin: 0;
-    font-size: 12px;
-  }
-  span {
-    font-size: 24px;
-  }
   @media (max-width: 576px) {
     display: none;
   }

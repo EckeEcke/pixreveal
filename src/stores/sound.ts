@@ -8,6 +8,7 @@ import completeSound from "@/assets/audio/complete.mp3";
 import buzzSound from "@/assets/audio/buzz.wav";
 import timerSound from "@/assets/audio/timer.wav";
 import punchSound from "@/assets/audio/punch.mp3";
+import hoverSound from "@/assets/audio/hover.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -23,6 +24,7 @@ export const useSoundStore = defineStore("sound", () => {
     buzz: new Audio(buzzSound),
     timer: new Audio(timerSound),
     punch: new Audio(punchSound),
+    hover: new Audio(hoverSound),
   };
 
   const playSound = (name: keyof typeof sounds) => {

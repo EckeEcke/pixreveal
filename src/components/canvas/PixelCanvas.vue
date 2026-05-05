@@ -26,6 +26,7 @@ const props = defineProps({
   pauseReveal: Boolean | undefined,
   mousePos: Object,
   isMagnifierMode: Boolean,
+  muteSound: Boolean,
 });
 
 const emit = defineEmits(["mousemove", "touchstart", "touchmove"]);
@@ -110,7 +111,7 @@ const startReveal = () => {
       const cellSize = internalSize / res;
       const color = colorPalette[next.val] || "#fff";
       createParticles(next.x, next.y, color, cellSize);
-      soundStore.playSound("reveal");
+      if (!props.muteSound) soundStore.playSound("reveal");
     } else {
       clearInterval(intervalId);
       intervalId = null;

@@ -28,7 +28,7 @@
       class="confirm-btn"
       @click="$router.push('/rankings-yesterday')"
     >
-      VIEW RANKINGS OF YESTERDAY
+      VIEW YESTERDAY RANKINGS 
     </button>
   </div>
 </template>
