@@ -38,10 +38,12 @@ export default async function handler(req, res) {
     const yesterdayStr = new Date(Date.now() - 864e5)
       .toISOString()
       .split("T")[0];
-    const yesterdayData = await client.get(`daily:${yesterdayStr}:set`);
-    const yesterdayRankings = yesterdayData
-      ? JSON.parse(yesterdayData):rankings
-      : null;
+    const yesterdayRankingsRaw = await client.lRange(
+      `daily:${yesterdayStr}:rankings`,
+      0,
+      -1,
+    );
+    const yesterdayRankings = yesterdayRankingsRaw.map((r) => JSON.parse(r));
 
     const shuffled = [...drawings].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, 5);
