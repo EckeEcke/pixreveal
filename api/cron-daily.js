@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       .split("T")[0];
     const yesterdayData = await client.get(`daily:${yesterdayStr}:set`);
     const yesterdayRankings = yesterdayData
-      ? JSON.parse(yesterdayData).rankings
+      ? JSON.parse(yesterdayData):rankings
       : null;
 
     const shuffled = [...drawings].sort(() => 0.5 - Math.random());
