@@ -38,6 +38,7 @@ export default async function handler(req, res) {
 
     const parsedData = JSON.parse(data);
     const parsedRankings = rankings.map((r) => JSON.parse(r));
+    const parsedYesterdayRankings = parsedData.yesterdayRankings ?? [];
 
     await client.disconnect();
 
@@ -46,6 +47,7 @@ export default async function handler(req, res) {
       rounds: parsedData.dailyRounds,
       mode: parsedData.mode,
       rankings: parsedRankings,
+      yesterdayRankings: parsedYesterdayRankings,
     });
   } catch (error) {
     if (client.isOpen) await client.disconnect();

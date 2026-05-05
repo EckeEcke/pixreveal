@@ -65,7 +65,8 @@ const props = defineProps({
   }
 }
 
-.neon-btn.shiny::after {
+.neon-btn.shiny::after,
+.neon-btn:hover::after {
   content: "";
   position: absolute;
   top: -50%;
