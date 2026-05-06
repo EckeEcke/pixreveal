@@ -92,12 +92,13 @@ const checkAnswer = (answer, event) => {
   z-index: 1;
 }
 
-.answer-btn:not(:disabled):hover {
-  background: var(--btn-color);
-  color: black;
-  animation: 2s floating ease-in-out infinite;
+@media (hover: hover) {
+  .answer-btn:not(:disabled):hover {
+    background: var(--btn-color);
+    color: black;
+    animation: 2s floating ease-in-out infinite;
+  }
 }
-
 .answer-btn::after {
   content: "";
   position: absolute;
