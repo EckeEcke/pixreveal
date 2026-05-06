@@ -141,12 +141,10 @@ const handleAnswer = (selectedAnswer) => {
 
     workerClearTimeout(nextRoundTimeoutId);
     nextRoundTimeoutId = workerSetTimeout(() => {
-      const isLastRound = currentRoundIndex.value >= maxRounds - 1;
-
-      if (isLastRound) {
+      nextRound();
+      if (gameStore.isGameOver) {
         router.push("/gameover-daily");
       } else {
-        nextRound();
         setDrawing(rounds.value[currentRoundIndex.value].data);
       }
     }, 1500);

@@ -143,13 +143,13 @@ const handleAnswer = (selectedAnswer) => {
 
     workerClearTimeout(nextRoundTimeoutId);
     nextRoundTimeoutId = workerSetTimeout(() => {
-      if (currentRoundIndex.value < maxRounds - 1) {
-        showAnswers.value = false;
-        nextRound();
-        setDrawing(rounds.value[currentRoundIndex.value].data);
-      } else {
+      showAnswers.value = false;
+      nextRound();
+      if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
         router.push("/gameover");
+      } else {
+        setDrawing(rounds.value[currentRoundIndex.value].data);
       }
     }, 1500);
   }, 1500);

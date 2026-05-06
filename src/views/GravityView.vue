@@ -124,12 +124,12 @@ const handleAnswer = (selectedAnswer) => {
 
     workerClearTimeout(nextRoundTimeoutId);
     nextRoundTimeoutId = workerSetTimeout(() => {
-      if (currentRoundIndex.value < maxRounds - 1) {
-        gameStore.nextRound();
-        setDrawing(rounds.value[currentRoundIndex.value].data);
-      } else {
+      gameStore.nextRound();
+      if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
         router.push("/gameover");
+      } else {
+        setDrawing(rounds.value[currentRoundIndex.value].data);
       }
     }, 1500);
   }, 1500);

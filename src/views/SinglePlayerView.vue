@@ -18,8 +18,11 @@
                 btn-color="var(--primary)"
               />
               <SelectionTile
+                data-sfx="click"
                 :icon-name="
-                  dailyStore.hasPlayedToday ? 'pixel:numbered-list-solid' : 'pixel:star'
+                  dailyStore.hasPlayedToday
+                    ? 'pixel:numbered-list-solid'
+                    : 'pixel:star'
                 "
                 :btn-function="startDaily"
                 btn-text="DAILY CHALLENGE"
@@ -30,7 +33,9 @@
                 "
                 btn-color="var(--neon-yellow)"
                 :disabled="dailyStore.isLoading"
-                :isShiny="true && !dailyStore.isLoading && !dailyStore.hasPlayedToday"
+                :isShiny="
+                  true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
+                "
               />
               <SelectionTile
                 icon-name="pixelarticons:blocks"

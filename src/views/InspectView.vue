@@ -130,13 +130,11 @@ const handleAnswer = (selectedAnswer) => {
 
     workerClearTimeout(nextRoundTimeoutId);
     nextRoundTimeoutId = workerSetTimeout(() => {
-      const isLastRound = currentRoundIndex.value >= maxRounds - 1;
-
-      if (isLastRound) {
+      nextRound();
+      if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
         router.push("/gameover");
       } else {
-        nextRound();
         setDrawing(rounds.value[currentRoundIndex.value].data);
       }
     }, 1500);
