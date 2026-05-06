@@ -2,7 +2,7 @@
   <div class="content-view">
     <div class="content-wrapper">
       <div class="close-btn-wrapper">
-        <button @click="$router.push('/')" data-sfx="click" class="close-btn">
+        <button @click="$router.push('/')" data-sfx="back" class="close-btn">
           <Icon icon="pixel:window-close-solid" />
         </button>
       </div>

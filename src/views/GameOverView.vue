@@ -28,6 +28,7 @@
               class="btn-primary pulse-btn"
               data-sfx="click"
               @click="playAgain"
+              @mouseenter="soundStore.handleHoverSound"
             >
               <Icon icon="pixel:refresh-solid" />
               Play again
@@ -57,7 +58,12 @@
                 : `${playersSortedByPoints[0].username.toUpperCase()} WINS!`
             }}
           </h2>
-          <button class="btn-primary" data-sfx="click" @click="playAgain">
+          <button
+            class="btn-primary"
+            data-sfx="click"
+            @click="playAgain"
+            @mouseenter="soundStore.handleHoverSound"
+          >
             <Icon icon="pixel:refresh-solid" />
             Play Again
           </button>
@@ -119,6 +125,7 @@
           class="btn-primary pulse-btn"
           data-sfx="click"
           @click="playAgain"
+          @mouseenter="soundStore.handleHoverSound"
         >
           <Icon icon="pixel:refresh-solid" />
           Play Again

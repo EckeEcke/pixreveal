@@ -1,6 +1,6 @@
 <template>
   <ModalWrapper>
-    <button @click="$emit('close')" data-sfx="click" class="close-btn">
+    <button @click="$emit('close')" data-sfx="back" class="close-btn">
       <Icon icon="pixel:window-close-solid" />
     </button>
     <h2>SETTINGS</h2>

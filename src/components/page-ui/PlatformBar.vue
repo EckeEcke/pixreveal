@@ -1,49 +1,44 @@
 <template>
   <div class="social-bar">
     <a
-      href="https://www.facebook.com/profile.php?id=61580781216710"
+      v-for="link in socialLinks"
+      :key="link.href"
+      :href="link.href"
+      :title="link.title"
       target="_blank"
       class="btn-outline"
-      title="Follow on Facebook"
       data-sfx="click"
     >
-      <Icon icon="streamline-pixel:logo-social-media-facebook-circle" />
-    </a>
-
-    <a
-      href="https://www.youtube.com/@EckeEcke/shorts"
-      target="_blank"
-      class="btn-outline"
-      title="Subscribe on YouTube"
-      data-sfx="click"
-    >
-      <Icon icon="pixel:youtube" />
-    </a>
-
-    <a
-      href="https://www.tiktok.com/@pixreveal.com"
-      target="_blank"
-      class="btn-outline"
-      title="Follow on TikTok"
-      data-sfx="click"
-    >
-      <Icon icon="pixel:tiktok" />
-    </a>
-
-    <a
-      href="https://github.com/EckeEcke"
-      target="_blank"
-      class="btn-outline"
-      title="View on GitHub"
-      data-sfx="click"
-    >
-      <Icon icon="pixel:github" />
+      <Icon :icon="link.icon" />
     </a>
   </div>
 </template>
 
 <script setup>
 import { Icon } from "@iconify/vue";
+
+const socialLinks = [
+  {
+    href: "https://www.facebook.com/profile.php?id=61580781216710",
+    icon: "streamline-pixel:logo-social-media-facebook-circle",
+    title: "Follow on Facebook",
+  },
+  {
+    href: "https://www.youtube.com/@EckeEcke/shorts",
+    icon: "pixel:youtube",
+    title: "Subscribe on YouTube",
+  },
+  {
+    href: "https://www.tiktok.com/@pixreveal.com",
+    icon: "pixel:tiktok",
+    title: "Follow on TikTok",
+  },
+  {
+    href: "https://github.com/EckeEcke",
+    icon: "pixel:github",
+    title: "View on GitHub",
+  },
+];
 </script>
 
 <style scoped>

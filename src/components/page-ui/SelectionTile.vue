@@ -4,7 +4,7 @@
     :class="{ shiny: isShiny }"
     :style="{ '--btn-color': btnColor }"
     @click="btnFunction"
-    @mouseenter="soundStore.playSound('hover')"
+    @mouseenter="soundStore.handleHoverSound"
     :disabled="disabled"
   >
     <Icon :icon="iconName" class="background-icon" />

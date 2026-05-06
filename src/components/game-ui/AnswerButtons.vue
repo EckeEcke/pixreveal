@@ -10,7 +10,7 @@
         'is-wrong': hasAnswered && selectedAnswer === answer && !answer.isCorrect,
         'is-correct': hasAnswered && answer.isCorrect,
       }"
-      @mouseenter="!hasAnswered && soundStore.playSound('hover')"
+      @mouseenter="!hasAnswered && soundStore.handleHoverSound()"
       @click="checkAnswer(answer, $event)"
     >
       {{ answer.title || answer.name }}

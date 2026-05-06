@@ -66,7 +66,7 @@ footer {
   display: grid;
   gap: 32px;
   text-align: center;
-  margin: 16px auto 0;
+  margin: 16px auto 32px;
   a {
     color: inherit;
   }

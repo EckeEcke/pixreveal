@@ -3,12 +3,13 @@ import { ref, watch } from "vue";
 import correctSound from "@/assets/audio/correct.wav";
 import incorrectSound from "@/assets/audio/incorrect.mp3";
 import clickSound from "@/assets/audio/click.mp3";
-import revealSound from "@/assets/audio/click.mp3";
+import revealSound from "@/assets/audio/reveal2.mp3";
 import completeSound from "@/assets/audio/complete.mp3";
 import buzzSound from "@/assets/audio/buzz.wav";
 import timerSound from "@/assets/audio/timer.wav";
 import punchSound from "@/assets/audio/punch.mp3";
 import hoverSound from "@/assets/audio/hover.mp3";
+import backSound from "@/assets/audio/back.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -25,6 +26,7 @@ export const useSoundStore = defineStore("sound", () => {
     timer: new Audio(timerSound),
     punch: new Audio(punchSound),
     hover: new Audio(hoverSound),
+    back: new Audio(backSound),
   };
 
   const playSound = (name: keyof typeof sounds) => {
@@ -36,6 +38,12 @@ export const useSoundStore = defineStore("sound", () => {
       audio.play().catch((err) => {
         console.warn("Audio could not be played:", err);
       });
+    }
+  };
+
+  const handleHoverSound = () => {
+    if (window.matchMedia("(hover: hover)").matches) {
+      playSound("hover");
     }
   };
 
@@ -62,5 +70,5 @@ export const useSoundStore = defineStore("sound", () => {
     { capture: true, passive: true },
   );
 
-  return { isAudioEnabled, playSound };
+  return { isAudioEnabled, playSound, handleHoverSound };
 });

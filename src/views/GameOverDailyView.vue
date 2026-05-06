@@ -1,7 +1,7 @@
 <template>
   <Transition name="fade" mode="out-in">
     <GameOverTransition
-      v-if="showIntro"
+      v-if="showIntro && !dailyStore.hasSubmitted"
       message="GAME OVER"
       @done="
         () => {
@@ -18,7 +18,7 @@
       <p class="score-title">YOUR SCORE</p>
       <GameOverStats />
     </div>
-    <div v-if="!hasSubmitted">
+    <div v-if="!dailyStore.hasSubmitted">
       <button
         v-if="!isPosting"
         class="confirm-btn"
@@ -74,7 +74,6 @@ const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
 const dailyStore = useDailyStore();
 
-const hasSubmitted = ref(false);
 const isPosting = ref(false);
 const showIntro = ref(true);
 
@@ -103,7 +102,6 @@ const post = async () => {
     playerStore.avatarIndex,
     dailyStore.date,
   );
-  hasSubmitted.value = true;
   isPosting.value = false;
   soundStore.playSound("confirm");
 };

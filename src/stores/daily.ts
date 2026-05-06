@@ -5,6 +5,7 @@ export const useDailyStore = defineStore("daily", () => {
   const dailyRounds = ref([]);
   const date = ref("");
   const isLoading = ref(false);
+  const hasSubmitted = ref(false);
   const mode = ref("classic");
   const error = ref(null);
   const dailyRankings = ref([]);
@@ -57,6 +58,7 @@ export const useDailyStore = defineStore("daily", () => {
     avatarIndex: number,
     date: string,
   ) => {
+    hasSubmitted.value = true;
     try {
       const response = await fetch("/api/post-daily", {
         method: "POST",
@@ -65,6 +67,7 @@ export const useDailyStore = defineStore("daily", () => {
       });
       if (!response.ok) throw new Error("Failed to post ranking");
     } catch (err: any) {
+      hasSubmitted.value = false;
       console.error("Ranking error:", err);
     }
   };
@@ -89,5 +92,6 @@ export const useDailyStore = defineStore("daily", () => {
     fetchDailyData,
     postRanking,
     mode,
+    hasSubmitted,
   };
 });

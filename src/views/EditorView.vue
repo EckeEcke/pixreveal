@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <button class="back-btn" @click="$router.back()">
+    <button class="back-btn" @click="$router.back()" data-sfx="back">
       <Icon icon="pixel:angle-left-solid" />
     </button>
     <main class="game-layout">

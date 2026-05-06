@@ -1,7 +1,7 @@
 <template>
   <header v-show="!configStore.showManual">
     <div class="back-btn-wrapper">
-      <button v-if="showBackBtn" class="back-btn" @click="$router.back()">
+      <button v-if="showBackBtn" class="back-btn" @click="$router.back()" data-sfx="back">
         <Icon icon="pixel:angle-left-solid" />
       </button>
     </div>
