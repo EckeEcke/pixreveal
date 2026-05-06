@@ -70,6 +70,12 @@ import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { vibrateBuzz } from "@/utils/vibration";
+import {
+  workerClearInterval,
+  workerClearTimeout,
+  workerSetInterval,
+  workerSetTimeout,
+} from "@/services/workerTimers";
 
 const partyStore = usePartyStore();
 const gameStore = useGameStore();
@@ -121,7 +127,9 @@ const startTimer = () => {
   timerStartTime.value = Date.now();
   timeRemaining.value = 5;
 
-  timerInterval = setInterval(() => {
+  cancelTimer();
+
+  timerInterval = workerSetInterval(() => {
     const elapsed = Math.floor((Date.now() - timerStartTime.value) / 1000);
     const remaining = Math.max(0, 5 - elapsed);
     timeRemaining.value = remaining;
@@ -132,18 +140,18 @@ const startTimer = () => {
     }
   }, 1000);
 
-  timeoutId = setTimeout(() => {
+  timeoutId = workerSetTimeout(() => {
     handleTimeoutAnswer();
   }, ANSWER_TIMEOUT);
 };
 
 const cancelTimer = () => {
   if (timerInterval) {
-    clearInterval(timerInterval);
+    workerClearInterval(timerInterval);
     timerInterval = null;
   }
   if (timeoutId) {
-    clearTimeout(timeoutId);
+    workerClearTimeout(timeoutId);
     timeoutId = null;
   }
 };

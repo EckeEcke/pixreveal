@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { generateRoomId } from "@/utils/crypto";
 import { createApinatorClient } from "@/services/apinator";
 import { useRouter } from "vue-router";
 import { useConfigStore } from "./config";
 import { usePlayerStore } from "./player";
+import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
 
 export interface UserData {
   playerId: string;
@@ -52,6 +53,7 @@ export const useChannelStore = defineStore("channel", () => {
 
   const unloadHandler = ref<(() => void) | null>(null);
   const visibilityHandler = ref<(() => void) | null>(null);
+  const heartbeatIntervalId = ref<number | null>(null);
 
   const reset = () => {
     if (client.value && currentRoomId.value) {
@@ -66,6 +68,11 @@ export const useChannelStore = defineStore("channel", () => {
     playerId.value = "";
     setGameRunning(false);
     inactivityNotified.value = false;
+
+    if (heartbeatIntervalId.value) {
+      workerClearInterval(heartbeatIntervalId.value);
+      heartbeatIntervalId.value = null;
+    }
 
     if (unloadHandler.value) {
       window.removeEventListener("beforeunload", unloadHandler.value);
@@ -123,6 +130,29 @@ export const useChannelStore = defineStore("channel", () => {
     activeChannel.value = channel;
     currentRoomId.value = roomId;
   };
+
+  const startHeartbeat = () => {
+    if (heartbeatIntervalId.value) return;
+    heartbeatIntervalId.value = workerSetInterval(() => {
+      if (!activeChannel.value) return;
+      activeChannel.value.trigger("client-heartbeat", { timestamp: Date.now() });
+    }, 20000);
+  };
+
+  const stopHeartbeat = () => {
+    if (!heartbeatIntervalId.value) return;
+    workerClearInterval(heartbeatIntervalId.value);
+    heartbeatIntervalId.value = null;
+  };
+
+  watch(
+    () => [activeChannel.value, onlineGameRunning.value],
+    ([channel, running]) => {
+      if (channel && running) startHeartbeat();
+      else stopHeartbeat();
+    },
+    { immediate: true },
+  );
 
   const addPlayer = (player: Player) => {
     if (!playersOnline.value.some((p) => p.playerId === player.playerId)) {

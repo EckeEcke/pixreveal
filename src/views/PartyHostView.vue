@@ -52,6 +52,12 @@ import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
 import { useChannelStore } from "@/stores/channel";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
+import {
+  workerClearInterval,
+  workerClearTimeout,
+  workerSetInterval,
+  workerSetTimeout,
+} from "@/services/workerTimers";
 
 const router = useRouter();
 const gameStore = useGameStore();
@@ -64,8 +70,8 @@ const pixelData = ref(Array(256).fill(0));
 const resolution = ref(16);
 const timerDuration = gameStore.revealTime;
 const timer = ref(timerDuration);
-let timerId: any = null;
-let navigationTimeout: ReturnType<typeof setTimeout> | null = null;
+let timerId: number | null = null;
+let navigationTimeout: number | null = null;
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
@@ -77,7 +83,7 @@ const isRevealing = computed(() => partyStore.isRevealing);
 const startTimer = () => {
   stopTimer();
   timer.value = timerDuration;
-  timerId = setInterval(() => {
+  timerId = workerSetInterval(() => {
     timer.value--;
     if (timer.value <= 0) stopTimer();
   }, 1000);
@@ -85,7 +91,7 @@ const startTimer = () => {
 
 const stopTimer = () => {
   if (timerId) {
-    clearInterval(timerId);
+    workerClearInterval(timerId);
     timerId = null;
   }
 };
@@ -99,7 +105,7 @@ const setDrawing = (data: any) => {
 
 const clearNavigationTimeout = () => {
   if (navigationTimeout) {
-    clearTimeout(navigationTimeout);
+    workerClearTimeout(navigationTimeout);
     navigationTimeout = null;
   }
 };
@@ -122,7 +128,7 @@ watch(
       stopTimer();
       clearNavigationTimeout();
 
-      navigationTimeout = setTimeout(() => {
+      navigationTimeout = workerSetTimeout(() => {
         const isLastRound =
           gameStore.currentRoundIndex >= configStore.maxRounds - 1;
 

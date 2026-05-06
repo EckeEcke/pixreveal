@@ -28,6 +28,8 @@ export const useOnlineStore = defineStore("online", () => {
 
 
     channel.bind("client-game-started", (data: any) => {
+      channelStore.setGameRunning(true);
+      onlineGameRunning.value = true;
       gameStore.prepareGame(data.revealTime, data.rounds);
       router.push("/game");
     });

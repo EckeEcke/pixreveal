@@ -4,6 +4,10 @@ import { useChannelStore } from "./channel";
 import { useGameStore } from "./game";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
+import {
+  workerClearTimeout,
+  workerSetTimeout,
+} from "@/services/workerTimers";
 
 type BuzzerState = "open" | "locked" | "answering";
 
@@ -28,8 +32,8 @@ export const usePartyStore = defineStore("party", () => {
   const roundTimeLimit = ref(15);
   const buzzerTimeLimit = ref(15);
   const roundResult = ref<"correct" | "incorrect" | null>(null);
-  let buzzerTimer: ReturnType<typeof setTimeout> | null = null;
-  let answerTimer: ReturnType<typeof setTimeout> | null = null;
+  let buzzerTimer: number | null = null;
+  let answerTimer: number | null = null;
 
   const activePlayer = computed(() =>
     players.value.find((p) => p.playerId === activePlayerId.value),
@@ -74,6 +78,7 @@ const unbindEvents = () => {
       }));
 
     gameStore.prepareGame(configStore.revealTime);
+    channelStore.setGameRunning(true);
 
     channel.value?.trigger("client-party-game-started", {
       rounds: gameStore.rounds,
@@ -91,7 +96,8 @@ const unbindEvents = () => {
 
     channel.value?.trigger("client-party-buzzer-open", {});
 
-    buzzerTimer = setTimeout(() => {
+    workerClearTimeout(buzzerTimer);
+    buzzerTimer = workerSetTimeout(() => {
       if (buzzerState.value === "open") skipRound();
     }, buzzerTimeLimit.value * 1000);
   };
@@ -99,10 +105,8 @@ const unbindEvents = () => {
   const handleBuzz = (playerId: string) => {
     if (buzzerState.value !== "open") return;
 
-    if (buzzerTimer) {
-      clearTimeout(buzzerTimer);
-      buzzerTimer = null;
-    }
+    workerClearTimeout(buzzerTimer);
+    buzzerTimer = null;
 
     buzzerState.value = "answering";
     activePlayerId.value = playerId;
@@ -112,8 +116,8 @@ const unbindEvents = () => {
       options: gameStore.currentRound?.options,
     });
 
-    if (answerTimer) clearTimeout(answerTimer);
-    answerTimer = setTimeout(() => {
+    workerClearTimeout(answerTimer);
+    answerTimer = workerSetTimeout(() => {
       if (buzzerState.value === "answering") {
         resolveAnswer(playerId, false);
       }
@@ -121,7 +125,8 @@ const unbindEvents = () => {
   };
 
   const resolveAnswer = (playerId: string, isCorrect: boolean) => {
-    if (answerTimer) clearTimeout(answerTimer);
+    workerClearTimeout(answerTimer);
+    answerTimer = null;
 
     roundResult.value = isCorrect ? "correct" : "incorrect";
 
@@ -135,7 +140,7 @@ const unbindEvents = () => {
       isRevealing.value = false;
     }
 
-    setTimeout(() => {
+    workerSetTimeout(() => {
       channel.value?.trigger("client-party-round-result", {
         playerId,
         isCorrect,
@@ -175,6 +180,7 @@ const unbindEvents = () => {
 
   const endGame = () => {
     gameStore.isGameOver = true;
+    channelStore.setGameRunning(false);
     channel.value?.trigger("client-party-game-over", {
       players: players.value,
     });
@@ -215,6 +221,7 @@ const unbindEvents = () => {
     });
 
     bindEvent("client-party-game-started", (data: any) => {
+      channelStore.setGameRunning(true);
       gameStore.prepareGame(data.revealTime, data.rounds);
       router.push("/party-player");
     });
@@ -273,6 +280,7 @@ const unbindEvents = () => {
 
     bindEvent("client-party-game-over", (data: { players: PartyPlayer[] }) => {
       players.value = data.players;
+      channelStore.setGameRunning(false);
       router.push("/gameover");
     });
   };
@@ -324,8 +332,11 @@ const unbindEvents = () => {
     buzzerState.value = "locked";
     activePlayerId.value = null;
     roundResult.value = null;
-    if (buzzerTimer) clearTimeout(buzzerTimer);
-    if (answerTimer) clearTimeout(answerTimer);
+    channelStore.setGameRunning(false);
+    workerClearTimeout(buzzerTimer);
+    buzzerTimer = null;
+    workerClearTimeout(answerTimer);
+    answerTimer = null;
   };
 
   return {

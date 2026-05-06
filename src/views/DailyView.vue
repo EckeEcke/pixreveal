@@ -58,6 +58,12 @@ import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useConfigStore } from "@/stores/config";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import {
+  workerClearInterval,
+  workerClearTimeout,
+  workerSetInterval,
+  workerSetTimeout,
+} from "@/services/workerTimers";
 
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
@@ -86,13 +92,14 @@ const maxRounds = useConfigStore().maxRounds;
 const startTimer = () => {
   if (!pixelData.value || !pixelData.value[0]) return;
   if (timer.value < timerDuration) timer.value = timerDuration;
-  if (timerId) clearInterval(timerId);
-  timerId = setInterval(() => {
+  workerClearInterval(timerId);
+  timerId = workerSetInterval(() => {
     timer.value--;
     if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
     if (timer.value <= 0) {
       useSoundStore().playSound("incorrect");
-      clearInterval(timerId);
+      workerClearInterval(timerId);
+      timerId = null;
       handleAnswer(false);
     }
   }, 1000);
@@ -111,7 +118,8 @@ const setDrawing = (data) => {
 const handleAnswer = (selectedAnswer) => {
   if (hasAnswered.value) return;
   hasAnswered.value = true;
-  clearInterval(timerId);
+  workerClearInterval(timerId);
+  timerId = null;
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
@@ -125,12 +133,14 @@ const handleAnswer = (selectedAnswer) => {
     useSoundStore().playSound("correct");
   }
 
-  revealTimeoutId = setTimeout(() => {
+  workerClearTimeout(revealTimeoutId);
+  revealTimeoutId = workerSetTimeout(() => {
     isRevealing.value = false;
     isStatusIcon.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
 
-    nextRoundTimeoutId = setTimeout(() => {
+    workerClearTimeout(nextRoundTimeoutId);
+    nextRoundTimeoutId = workerSetTimeout(() => {
       const isLastRound = currentRoundIndex.value >= maxRounds - 1;
 
       if (isLastRound) {
@@ -182,9 +192,9 @@ const start = () => {
 dailyStore.markAsPlayed();
 
 onUnmounted(() => {
-  clearTimeout(revealTimeoutId);
-  clearTimeout(nextRoundTimeoutId);
-  clearInterval(timerId);
+  workerClearTimeout(revealTimeoutId);
+  workerClearTimeout(nextRoundTimeoutId);
+  workerClearInterval(timerId);
 });
 </script>
 

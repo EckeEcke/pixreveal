@@ -5,6 +5,7 @@ import type { Drawing } from "./game";
 import allDrawings from "@/data/drawings.json";
 import { useConfigStore } from "./config";
 import { useSoundStore } from "./sound";
+import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
 
 export const useSurvivalStore = defineStore("survival", () => {
   const drawings: Ref<Drawing[]> = ref([]);
@@ -19,7 +20,7 @@ export const useSurvivalStore = defineStore("survival", () => {
   const isGameOver = ref(false);
   const hasAnswered = ref(false);
   const newHighscore = ref(false);
-  const timerInterval = ref<ReturnType<typeof setInterval> | null>(null);
+  const timerInterval = ref<number | null>(null);
 
   const timerPercentage = computed(
     () => (timeLeft.value / maxTime.value) * 100,
@@ -75,9 +76,8 @@ export const useSurvivalStore = defineStore("survival", () => {
   };
 
   const runTimer = () => {
-    if (timerInterval.value) clearInterval(timerInterval.value);
-
-    timerInterval.value = setInterval(() => {
+    workerClearInterval(timerInterval.value);
+    timerInterval.value = workerSetInterval(() => {
       if (hasAnswered.value) return;
 
       if (timeLeft.value > 0) {
@@ -118,7 +118,7 @@ export const useSurvivalStore = defineStore("survival", () => {
     isActive.value = false;
     isGameOver.value = true;
     if (timerInterval.value) {
-      clearInterval(timerInterval.value);
+      workerClearInterval(timerInterval.value);
       timerInterval.value = null;
     }
   };

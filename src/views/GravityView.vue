@@ -45,6 +45,12 @@ import { useSoundStore } from "@/stores/sound";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
 import router from "@/router";
+import {
+  workerClearInterval,
+  workerClearTimeout,
+  workerSetInterval,
+  workerSetTimeout,
+} from "@/services/workerTimers";
 
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
@@ -60,23 +66,24 @@ const timerDuration = configStore.revealTime || 15;
 const timer = ref(timerDuration);
 const showTransition = ref(true);
 
-let timerId = null;
 let revealTimeoutId = null;
 let nextRoundTimeoutId = null;
+let timerIntervalId = null;
 
 const rounds = computed(() => gameStore.rounds);
 const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
 const maxRounds = configStore.maxRounds;
 
 const startTimer = () => {
-  if (timerId) clearInterval(timerId);
+  workerClearInterval(timerIntervalId);
   timer.value = timerDuration;
-  timerId = setInterval(() => {
+  timerIntervalId = workerSetInterval(() => {
     timer.value--;
     if (timer.value <= 3 && timer.value > 0) soundStore.playSound("timer");
     if (timer.value <= 0) {
       soundStore.playSound("incorrect");
-      clearInterval(timerId);
+      workerClearInterval(timerIntervalId);
+      timerIntervalId = null;
       handleAnswer(false);
     }
   }, 1000);
@@ -94,7 +101,8 @@ const setDrawing = (data) => {
 const handleAnswer = (selectedAnswer) => {
   if (hasAnswered.value) return;
   hasAnswered.value = true;
-  clearInterval(timerId);
+  workerClearInterval(timerIntervalId);
+  timerIntervalId = null;
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
@@ -109,11 +117,13 @@ const handleAnswer = (selectedAnswer) => {
   }
   isStatusIcon.value = true;
 
-  revealTimeoutId = setTimeout(() => {
+  workerClearTimeout(revealTimeoutId);
+  revealTimeoutId = workerSetTimeout(() => {
     isStatusIcon.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
 
-    nextRoundTimeoutId = setTimeout(() => {
+    workerClearTimeout(nextRoundTimeoutId);
+    nextRoundTimeoutId = workerSetTimeout(() => {
       if (currentRoundIndex.value < maxRounds - 1) {
         gameStore.nextRound();
         setDrawing(rounds.value[currentRoundIndex.value].data);
@@ -125,23 +135,15 @@ const handleAnswer = (selectedAnswer) => {
   }, 1500);
 };
 
-const activeChannel = computed(() => onlineStore.ac);
-const heartbeat = setInterval(() => {
-  if (activeChannel.value) {
-    activeChannel.value.trigger("client-heartbeat", { timestamp: Date.now() });
-  }
-}, 20000);
-
 const start = () => {
   showTransition.value = false;
   setDrawing(rounds.value[currentRoundIndex.value].data);
 };
 
 onUnmounted(() => {
-  clearTimeout(revealTimeoutId);
-  clearTimeout(nextRoundTimeoutId);
-  clearInterval(timerId);
-  clearInterval(heartbeat);
+  workerClearTimeout(revealTimeoutId);
+  workerClearTimeout(nextRoundTimeoutId);
+  workerClearInterval(timerIntervalId);
 });
 </script>
 
