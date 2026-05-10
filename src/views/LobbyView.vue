@@ -95,7 +95,7 @@ const inviteLink = computed(
     `${window.location.origin}?id=${channelStore.currentRoomId}&mode=${shareModeParam.value}`,
 );
 
-const players = computed(() => channelStore.playersOnline);
+const players = computed(() => channelStore.playersOnline.filter((p) => p.isOnline));
 const isMe = (id) => id === channelStore.playerId;
 
 const startGame = () => {

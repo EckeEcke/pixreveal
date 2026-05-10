@@ -43,6 +43,7 @@ export const usePartyStore = defineStore("party", () => {
 const channel = computed(() => channelStore.activeChannel);
 const eventsBound = ref(false);
 const boundChannel = ref<any>(null);
+let boundIsHost: boolean | null = null;
 const eventBindings: { event: string; handler: (...args: any[]) => void }[] = [];
 
 const unbindEvents = () => {
@@ -53,6 +54,7 @@ const unbindEvents = () => {
   eventBindings.length = 0;
   boundChannel.value = null;
   eventsBound.value = false;
+  boundIsHost = null;
 };
 
   const broadcastPlayerScores = () => {
@@ -69,7 +71,7 @@ const unbindEvents = () => {
 
   const startGame = () => {
     players.value = channelStore.playersOnline
-      .filter((p) => !p.isHost)
+      .filter((p) => !p.isHost && p.isOnline)
       .map((p) => ({
         playerId: p.playerId,
         username: p.username,
@@ -190,11 +192,17 @@ const unbindEvents = () => {
   const setupEvents = () => {
     const c = channel.value;
     if (!c || channelStore.mode !== "party") return;
-    if (eventsBound.value && boundChannel.value === c) return;
+    if (
+      eventsBound.value &&
+      boundChannel.value === c &&
+      boundIsHost === isHost.value
+    )
+      return;
 
     unbindEvents();
     boundChannel.value = c;
     eventsBound.value = true;
+    boundIsHost = isHost.value;
 
     const bindEvent = (name: string, handler: (...args: any[]) => void) => {
       c.bind(name, handler);
@@ -280,13 +288,14 @@ const unbindEvents = () => {
 
     bindEvent("client-party-game-over", (data: { players: PartyPlayer[] }) => {
       players.value = data.players;
+      gameStore.isGameOver = true;
       channelStore.setGameRunning(false);
       router.push("/gameover");
     });
   };
 
   watch(
-    () => [channelStore.mode, channel.value],
+    () => [channelStore.mode, channel.value, channelStore.isHost],
     ([mode, c]) => {
       if (mode !== "party" || !c) {
         unbindEvents();
@@ -354,6 +363,7 @@ const unbindEvents = () => {
     handleBuzz,
     resolveAnswer,
     nextRound,
+    endGame,
     pressBuzzer,
     submitAnswer,
     setupEvents,

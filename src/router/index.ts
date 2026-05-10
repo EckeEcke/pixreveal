@@ -142,6 +142,7 @@ router.beforeEach((to, from, next) => {
     "/inspect",
     "/gravity",
     "/party-host",
+    "/party-player",
   ];
   const needRounds = [
     "/game",

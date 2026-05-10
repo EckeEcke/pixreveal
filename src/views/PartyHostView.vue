@@ -133,7 +133,7 @@ watch(
           gameStore.currentRoundIndex >= configStore.maxRounds - 1;
 
         if (isLastRound) {
-          router.push("/gameover");
+          partyStore.endGame();
         } else {
           partyStore.nextRound();
           setDrawing(currentRound.value?.data);

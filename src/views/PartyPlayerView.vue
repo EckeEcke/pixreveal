@@ -7,8 +7,14 @@
       class="player-display"
     />
     <Transition name="fade" mode="out-in">
+      <div v-if="partyOver" key="party-over" class="centered placeholder">
+        <p class="waiting-label">PARTY IS OVER</p>
+        <button class="neon-buzzer" data-sfx="click" @click="goHome">
+          <span class="buzzer-text">GO HOME</span>
+        </button>
+      </div>
       <div
-        v-if="partyStore.buzzerState === 'open'"
+        v-else-if="partyStore.buzzerState === 'open'"
         key="buzzer"
         class="centered"
       >
@@ -66,6 +72,7 @@ import { computed, ref, watch, onBeforeUnmount, onMounted } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import { useChannelStore } from "@/stores/channel";
+import { useRouter } from "vue-router";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -80,6 +87,7 @@ import {
 const partyStore = usePartyStore();
 const gameStore = useGameStore();
 const channelStore = useChannelStore();
+const router = useRouter();
 
 const player = computed(() => {
   return partyStore.players.find(
@@ -105,6 +113,16 @@ const hasAnswered = computed(() => partyStore.hasAnswered);
 const activePlayerDisplay = computed(
   () => partyStore.activePlayer?.username?.toUpperCase() || "PLAYER",
 );
+
+const partyOver = computed(
+  () => !channelStore.onlineGameRunning && partyStore.buzzerState === "locked",
+);
+
+const goHome = () => {
+  partyStore.reset?.();
+  channelStore.reset?.();
+  router.push("/");
+};
 
 watch(isMyTurn, (newValue) => {
   if (newValue) {

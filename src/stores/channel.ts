@@ -6,6 +6,7 @@ import { useRouter } from "vue-router";
 import { useConfigStore } from "./config";
 import { usePlayerStore } from "./player";
 import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
+import { toast } from "vue3-toastify";
 
 export interface UserData {
   playerId: string;
@@ -54,10 +55,18 @@ export const useChannelStore = defineStore("channel", () => {
   const unloadHandler = ref<(() => void) | null>(null);
   const visibilityHandler = ref<(() => void) | null>(null);
   const heartbeatIntervalId = ref<number | null>(null);
+  const subscribeTimeoutId = ref<number | null>(null);
 
   const reset = () => {
+    if (activeChannel.value?.unbind) {
+      // defensive: remove any lingering handlers before dropping references
+      activeChannel.value.unbind();
+    }
     if (client.value && currentRoomId.value) {
       client.value.unsubscribe(`presence-pixreveal-${currentRoomId.value}`);
+    }
+    if (client.value?.disconnect) {
+      client.value.disconnect();
     }
     playersOnline.value = [];
     activeChannel.value = null;
@@ -72,6 +81,10 @@ export const useChannelStore = defineStore("channel", () => {
     if (heartbeatIntervalId.value) {
       workerClearInterval(heartbeatIntervalId.value);
       heartbeatIntervalId.value = null;
+    }
+    if (subscribeTimeoutId.value) {
+      window.clearTimeout(subscribeTimeoutId.value);
+      subscribeTimeoutId.value = null;
     }
 
     if (unloadHandler.value) {
@@ -131,6 +144,17 @@ export const useChannelStore = defineStore("channel", () => {
     currentRoomId.value = roomId;
   };
 
+  const startSubscribeTimeout = () => {
+    if (subscribeTimeoutId.value) window.clearTimeout(subscribeTimeoutId.value);
+    subscribeTimeoutId.value = window.setTimeout(() => {
+      if (!isLoading.value) return;
+      console.error("Subscription timeout");
+      toast.error("Connection timeout. Please try again.", { icon: "⏱️" });
+      reset();
+      router.push("/");
+    }, 12000);
+  };
+
   const startHeartbeat = () => {
     if (heartbeatIntervalId.value) return;
     heartbeatIntervalId.value = workerSetInterval(() => {
@@ -161,8 +185,7 @@ export const useChannelStore = defineStore("channel", () => {
   };
 
   const removePlayer = (id: string) => {
-    const player = playersOnline.value.find((p) => p.playerId === id);
-    if (player) player.isOnline = false;
+    playersOnline.value = playersOnline.value.filter((p) => p.playerId !== id);
   };
 
   const setupEvents = (myPlayerId: string) => {
@@ -177,6 +200,10 @@ export const useChannelStore = defineStore("channel", () => {
     document.addEventListener("visibilitychange", visibilityHandler.value);
 
     channel.bind("realtime:subscription_succeeded", (members: any) => {
+      if (subscribeTimeoutId.value) {
+        window.clearTimeout(subscribeTimeoutId.value);
+        subscribeTimeoutId.value = null;
+      }
       const hash = members.presence?.hash || {};
       const totalMembers = Object.keys(hash).length;
 
@@ -188,8 +215,13 @@ export const useChannelStore = defineStore("channel", () => {
         return;
       }
 
-      Object.keys(hash).forEach((id) => {
-        const remotePlayerData: Player = {
+      const nextPlayers: Player[] = Object.keys(hash).map((id) => {
+        if (hash[id].host && hash[id].rounds)
+          configStore.maxRounds = hash[id].rounds;
+        if (hash[id].host && hash[id].duration)
+          configStore.revealTime = hash[id].duration;
+
+        return {
           playerId: id,
           username: hash[id].name,
           avatarIndex: hash[id].avatar,
@@ -199,27 +231,37 @@ export const useChannelStore = defineStore("channel", () => {
           hasFinished: false,
           correctAnswers: 0,
         };
-
-        if (hash[id].host && hash[id].rounds)
-          configStore.maxRounds = hash[id].rounds;
-
-        if (hash[id].host && hash[id].duration)
-          configStore.revealTime = hash[id].duration;
-
-        const existing = playersOnline.value.find((p) => p.playerId === id);
-        if (existing) {
-          existing.username = remotePlayerData.username;
-          existing.avatarIndex = remotePlayerData.avatarIndex;
-          existing.isOnline = true;
-        } else {
-          playersOnline.value.push(remotePlayerData);
-        }
       });
+
+      // Replace list to avoid stale/duplicate entries across reconnects.
+      playersOnline.value = nextPlayers;
 
       if (router.currentRoute.value.path === "/") {
         isLoading.value = false;
         router.push(mode.value === "party" ? "/party-lobby" : "/lobby");
       }
+    });
+
+    channel.bind("realtime:subscription_error", (err: any) => {
+      if (subscribeTimeoutId.value) {
+        window.clearTimeout(subscribeTimeoutId.value);
+        subscribeTimeoutId.value = null;
+      }
+      console.error("Subscription error:", err);
+      if (err?.type === "AuthError") {
+        toast.error(
+          "Auth failed (invalid signature). Check APINATOR_SECRET matches your VITE_APINATOR_KEY.",
+          { icon: "🔑" },
+        );
+      } else {
+        toast.error("Failed to join room. Please try again.", { icon: "🚫" });
+      }
+      reset();
+      router.push("/");
+    });
+
+    channel.bind("realtime:error", (err: any) => {
+      console.error("Realtime error:", err);
     });
 
     channel.bind("realtime:member_added", (member: any) => {
@@ -273,8 +315,9 @@ export const useChannelStore = defineStore("channel", () => {
     );
 
     setChannel(channelInstance, roomId);
-    setupEvents(userData.playerId);
     isHost.value = true;
+    setupEvents(userData.playerId);
+    startSubscribeTimeout();
     setMode(userData.isHost && userData.playerId ? mode.value : mode.value);
     return roomId;
   };
@@ -290,6 +333,7 @@ export const useChannelStore = defineStore("channel", () => {
 
     setChannel(channelInstance, roomId);
     setupEvents(userData.playerId);
+    startSubscribeTimeout();
   };
 
   const sendChatMessage = (text: string) => {
