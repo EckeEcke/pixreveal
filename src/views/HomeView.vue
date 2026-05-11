@@ -95,6 +95,8 @@ const setUser = () =>
 
 setUser();
 
+channelStore.tryReconnect?.();
+
 const openSingleplayer = () => {
   soundStore.playSound("click");
   router.push("/singleplayer");
