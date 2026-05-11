@@ -118,13 +118,11 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 }
 
 .log-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgb(from var(--primary) r g b / 0.4);
   p {
     line-height: 1.4;
   }
-  border-bottom: 1px solid rgb(from var(--primary) r g b / 0.4);
 }
 
 .log-info {

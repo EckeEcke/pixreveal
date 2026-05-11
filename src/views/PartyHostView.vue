@@ -114,11 +114,6 @@ const start = () => {
   showTransition.value = false;
   setDrawing(currentRound.value?.data);
   partyStore.openBuzzer();
-
-  channelStore.activeChannel?.bind("client-party-buzz", (data: any) => {
-    partyStore.handleBuzz(data.playerId);
-    stopTimer();
-  });
 };
 
 watch(
@@ -157,7 +152,6 @@ watch(
 onUnmounted(() => {
   stopTimer();
   clearNavigationTimeout();
-  channelStore.activeChannel?.unbind("client-party-buzz");
 });
 </script>
 

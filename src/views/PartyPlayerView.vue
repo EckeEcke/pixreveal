@@ -101,6 +101,7 @@ const timeRemaining = ref(5);
 const timerStartTime = ref(null);
 let timerInterval = null;
 let timeoutId = null;
+let watchdogInterval = null;
 
 const isMyTurn = computed(
   () =>
@@ -139,6 +140,10 @@ const handleBuzz = () => {
 
 onBeforeUnmount(() => {
   cancelTimer();
+  if (watchdogInterval) {
+    workerClearInterval(watchdogInterval);
+    watchdogInterval = null;
+  }
 });
 
 const startTimer = () => {
@@ -192,6 +197,19 @@ const handleTimeoutAnswer = () => {
 
 onMounted(() => {
   partyStore.setupEvents();
+  channelStore.activeChannel?.trigger("client-party-state-request", {
+    requestedBy: channelStore.playerId,
+  });
+  watchdogInterval = workerSetInterval(() => {
+    if (isMyTurn.value && !hasAnswered.value && !timerInterval) {
+      startTimer();
+      return;
+    }
+
+    if (!isMyTurn.value && (timerInterval || timeoutId)) {
+      cancelTimer();
+    }
+  }, 500);
 });
 </script>
 

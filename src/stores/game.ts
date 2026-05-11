@@ -138,6 +138,13 @@ export const useGameStore = defineStore("game", () => {
     }
   };
 
+  const setRoundIndex = (index: number) => {
+    const next = Math.max(0, Math.min(index, rounds.value.length - 1));
+    currentRoundIndex.value = next;
+    selectedOption.value = null;
+    isGameOver.value = false;
+  };
+
   const reset = () => {
     rounds.value = [];
     currentRoundIndex.value = 0;
@@ -160,6 +167,7 @@ export const useGameStore = defineStore("game", () => {
     revealTime,
     prepareGame,
     nextRound,
+    setRoundIndex,
     reset,
   };
 });
