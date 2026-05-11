@@ -37,12 +37,14 @@ export const usePartyStore = defineStore("party", () => {
   let buzzerTimer: number | null = null;
   let answerTimer: number | null = null;
   let stateBroadcastInterval: number | null = null;
+  const answerDeadlineAt = ref<number | null>(null);
 
   type PartyStatePayload = {
     sentAt: number;
     roundIndex: number;
     buzzerState: BuzzerState;
     activePlayerId: string | null;
+    answerDeadlineAt: number | null;
     players: PartyPlayer[];
     roundTimeLimit: number;
     buzzerTimeLimit: number;
@@ -85,13 +87,34 @@ const unbindEvents = () => {
     roundIndex: gameStore.currentRoundIndex,
     buzzerState: buzzerState.value,
     activePlayerId: activePlayerId.value,
+    answerDeadlineAt: answerDeadlineAt.value,
     players: players.value,
     roundTimeLimit: roundTimeLimit.value,
     buzzerTimeLimit: buzzerTimeLimit.value,
   });
 
+  const ensureAnswerTimer = () => {
+    if (!isHost.value) return;
+    if (buzzerState.value !== "answering" || !activePlayerId.value) return;
+    if (answerTimer) return;
+
+    const now = Date.now();
+    const deadline =
+      answerDeadlineAt.value ?? now + roundTimeLimit.value * 1000;
+    answerDeadlineAt.value = deadline;
+
+    const delay = Math.max(0, deadline - now);
+    answerTimer = workerSetTimeout(() => {
+      answerTimer = null;
+      if (buzzerState.value === "answering" && activePlayerId.value) {
+        resolveAnswer(activePlayerId.value, false);
+      }
+    }, delay);
+  };
+
   const broadcastPartyState = (reason: string) => {
     if (!isHost.value) return;
+    ensureAnswerTimer();
     channel.value?.trigger("client-party-state", {
       reason,
       state: buildPartyState(),
@@ -138,6 +161,7 @@ const unbindEvents = () => {
     activePlayerId.value = null;
     roundResult.value = null;
     hasAnswered.value = false;
+    answerDeadlineAt.value = null;
 
     channel.value?.trigger("client-party-buzzer-open", {});
     broadcastPartyState("buzzer-open");
@@ -157,6 +181,7 @@ const unbindEvents = () => {
     buzzerState.value = "answering";
     activePlayerId.value = playerId;
     if (playerId === channelStore.playerId) hasAnswered.value = false;
+    answerDeadlineAt.value = Date.now() + roundTimeLimit.value * 1000;
 
     channel.value?.trigger("client-party-buzzer-locked", {
       playerId,
@@ -165,16 +190,14 @@ const unbindEvents = () => {
     broadcastPartyState("buzzer-locked");
 
     workerClearTimeout(answerTimer);
-    answerTimer = workerSetTimeout(() => {
-      if (buzzerState.value === "answering") {
-        resolveAnswer(playerId, false);
-      }
-    }, roundTimeLimit.value * 1000);
+    answerTimer = null;
+    ensureAnswerTimer();
   };
 
   const resolveAnswer = (playerId: string, isCorrect: boolean) => {
     workerClearTimeout(answerTimer);
     answerTimer = null;
+    answerDeadlineAt.value = null;
 
     roundResult.value = isCorrect ? "correct" : "incorrect";
 
@@ -208,6 +231,7 @@ const unbindEvents = () => {
       endGame();
       return;
     }
+    answerDeadlineAt.value = null;
     channel.value?.trigger("client-party-next-round", {
       roundIndex: gameStore.currentRoundIndex,
     });
@@ -228,6 +252,7 @@ const unbindEvents = () => {
     roundResult.value = "incorrect";
     activePlayerId.value = null;
     hasAnswered.value = false;
+    answerDeadlineAt.value = null;
     broadcastPartyState("skip-round");
   };
 
@@ -317,6 +342,7 @@ const unbindEvents = () => {
       roundResult.value = null;
       activePlayerId.value = null;
       hasAnswered.value = false;
+      answerDeadlineAt.value = null;
     });
 
     bindEvent(
@@ -337,6 +363,7 @@ const unbindEvents = () => {
       roundResult.value = data.isCorrect ? "correct" : "incorrect";
       buzzerState.value = "locked";
       activePlayerId.value = data.playerId;
+      answerDeadlineAt.value = null;
     });
 
     bindEvent("client-party-player-scores", (data: { players: PartyPlayer[] }) => {
@@ -367,6 +394,8 @@ const unbindEvents = () => {
 
         activePlayerId.value = state.activePlayerId ?? null;
         buzzerState.value = state.buzzerState ?? buzzerState.value;
+        answerDeadlineAt.value =
+          typeof state.answerDeadlineAt === "number" ? state.answerDeadlineAt : null;
 
         if (
           buzzerState.value !== "answering" ||
@@ -380,6 +409,7 @@ const unbindEvents = () => {
     clearStateBroadcastInterval();
     if (isHost.value && channelStore.onlineGameRunning) {
       stateBroadcastInterval = workerSetInterval(() => {
+        ensureAnswerTimer();
         broadcastPartyState("periodic");
       }, 3000);
     }
@@ -440,6 +470,7 @@ const unbindEvents = () => {
     activePlayerId.value = null;
     roundResult.value = null;
     hasAnswered.value = false;
+    answerDeadlineAt.value = null;
     channelStore.setGameRunning(false);
     workerClearTimeout(buzzerTimer);
     buzzerTimer = null;
@@ -457,6 +488,7 @@ const unbindEvents = () => {
     roundTimeLimit,
     buzzerTimeLimit,
     hasAnswered,
+    answerDeadlineAt,
     startGame,
     openBuzzer,
     handleBuzz,

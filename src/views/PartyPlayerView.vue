@@ -235,7 +235,10 @@ onMounted(() => {
 .player-display {
     position: fixed;
     top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
+    max-width: 500px;
 }
 
 .timer-container {

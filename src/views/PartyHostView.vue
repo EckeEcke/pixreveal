@@ -85,7 +85,10 @@ const startTimer = () => {
   timer.value = timerDuration;
   timerId = workerSetInterval(() => {
     timer.value--;
-    if (timer.value <= 0) stopTimer();
+    if (timer.value <= 0) {
+      timer.value = 0;
+      stopTimer();
+    }
   }, 1000);
 };
 
