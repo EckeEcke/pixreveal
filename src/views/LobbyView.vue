@@ -3,8 +3,8 @@
     <div class="lobby-card">
       <h1>{{ isParty ? "Party Lobby" : "Lobby" }}</h1>
       <template v-if="!isParty">
-        <div>ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
-        <div>ROUND DURATION: {{ configStore.revealTime }}</div>
+        <div class="room-id">ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
+        <div class="room-id">ROUND DURATION: {{ configStore.revealTime }}</div>
       </template>
       <div class="room-id">
         ROOM ID:
@@ -13,12 +13,24 @@
           <Icon icon="pixel:copy" />
         </span>
       </div>
+      <div class="qr-code">
+        <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
+      </div>
       <div class="share-room-buttons">
-        <button @click="copyLinkToClipboard" class="btn-outline" data-sfx="click">
+        <button
+          @click="copyLinkToClipboard"
+          class="btn-outline"
+          data-sfx="click"
+        >
           <Icon icon="pixel:link-solid" />
           COPY INVITE LINK
         </button>
-        <button v-if="canNativeShare" class="btn-outline" @click="shareNative" data-sfx="click">
+        <button
+          v-if="canNativeShare"
+          class="btn-outline"
+          @click="shareNative"
+          data-sfx="click"
+        >
           <Icon icon="pixel:share" />
           SHARE
         </button>
@@ -33,11 +45,13 @@
         v-for="player in players"
         :key="player.playerId"
         :name="isParty && player.isHost ? 'HOST' : player.username"
-        :avatar-index="(isParty && player.isHost) ? undefined : player.avatarIndex"
+        :avatar-index="
+          isParty && player.isHost ? undefined : player.avatarIndex
+        "
         :is-host="player.isHost"
         :show-you-indicator="isMe(player.playerId)"
       />
-      {{ mode}}
+      {{ mode }}
     </div>
 
     <template v-if="channelStore.isHost && players.length > 1">
@@ -69,6 +83,7 @@ import { useSoundStore } from "@/stores/sound";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import { Icon } from "@iconify/vue";
+import QrcodeVue from "qrcode.vue";
 
 const channelStore = useChannelStore();
 const onlineStore = useOnlineStore();
@@ -95,7 +110,9 @@ const inviteLink = computed(
     `${window.location.origin}?id=${channelStore.currentRoomId}&mode=${shareModeParam.value}`,
 );
 
-const players = computed(() => channelStore.playersOnline.filter((p) => p.isOnline));
+const players = computed(() =>
+  channelStore.playersOnline.filter((p) => p.isOnline),
+);
 const isMe = (id) => id === channelStore.playerId;
 
 const startGame = () => {
@@ -155,6 +172,7 @@ onMounted(() => {
 }
 
 .room-id {
+  text-align: center;
   span {
     display: inline-flex;
     align-items: center;
@@ -190,5 +208,11 @@ onMounted(() => {
   display: grid;
   grid-template-columns: 1fr;
   margin-bottom: 32px;
+}
+
+.qr-code {
+  display: flex;
+  justify-content: center;
+  margin: 16px auto;
 }
 </style>
