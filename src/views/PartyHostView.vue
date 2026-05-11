@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { ref, onUnmounted, computed, watch } from "vue";
-import { useRouter } from "vue-router";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -50,7 +49,6 @@ import GameTransition from "@/components/page-layout/GameTransition.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
-import { useChannelStore } from "@/stores/channel";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import {
   workerClearInterval,
@@ -59,11 +57,9 @@ import {
   workerSetTimeout,
 } from "@/services/workerTimers";
 
-const router = useRouter();
 const gameStore = useGameStore();
 const configStore = useConfigStore();
 const partyStore = usePartyStore();
-const channelStore = useChannelStore();
 
 const showTransition = ref(true);
 const pixelData = ref(Array(256).fill(0));

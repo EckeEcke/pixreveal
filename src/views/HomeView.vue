@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
@@ -86,15 +86,6 @@ const showJoinModal = ref(false);
 const joinRoomId = ref(route.query.id ?? "");
 const multiplayerMode = ref("online");
 const multiplayerRole = ref("join");
-const hasExplicitJoinIntent = computed(() => {
-  const id = route.query.id;
-  const mode = route.query.mode;
-  return (
-    (typeof id === "string" && id.trim().length > 0) ||
-    mode === "online" ||
-    mode === "party"
-  );
-});
 
 const setUser = () =>
   playerStore.setUser({
@@ -103,14 +94,6 @@ const setUser = () =>
   });
 
 setUser();
-
-onMounted(() => {
-  // If the user opened an invitation link, don't try to reconnect to a stale
-  // persisted session first (it can navigate away and force a second open).
-  if (!hasExplicitJoinIntent.value) {
-    channelStore.tryReconnect?.();
-  }
-});
 
 const openSingleplayer = () => {
   soundStore.playSound("click");

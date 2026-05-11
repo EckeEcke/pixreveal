@@ -35,9 +35,6 @@
           <Icon icon="pixel:copy" />
         </span>
       </div>
-      <div v-if="showClipboardInfo" class="clipboard-info">
-        COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
-      </div>
       <button
         v-if="channelStore.isHost && players.length > 1"
         class="start-btn pulse-btn"
@@ -84,6 +81,7 @@ import { useSoundStore } from "@/stores/sound";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import { Icon } from "@iconify/vue";
+import { toast } from "vue3-toastify";
 import QrcodeVue from "qrcode.vue";
 
 const channelStore = useChannelStore();
@@ -103,7 +101,6 @@ watch(
   { immediate: true },
 );
 
-const showClipboardInfo = ref(false);
 const canNativeShare = ref(false);
 const shareModeParam = computed(() => (isParty.value ? "party" : "online"));
 const inviteLink = computed(
@@ -128,16 +125,14 @@ const startGame = () => {
 const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(channelStore.currentRoomId);
-    showClipboardInfo.value = true;
-    setTimeout(() => (showClipboardInfo.value = false), 2000);
+    toast.success("Room ID copied to clipboard");
   } catch {}
 };
 
 const copyLinkToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(inviteLink.value);
-    showClipboardInfo.value = true;
-    setTimeout(() => (showClipboardInfo.value = false), 2000);
+    toast.success("Invite link copied to clipboard");
   } catch {}
 };
 
@@ -181,6 +176,7 @@ onMounted(() => {
     margin-left: 2px;
     color: var(--primary);
     font-weight: 700;
+    cursor: pointer;
   }
 }
 
