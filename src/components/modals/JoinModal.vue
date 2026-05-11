@@ -226,7 +226,7 @@ h2 {
 
 .join-terminal {
   display: grid;
-  grid-template-columns: 40% 1fr;
+  grid-template-columns: 160px 1fr;
   gap: 8px;
 }
 
@@ -237,7 +237,7 @@ h2 {
   color: #fff;
   padding: 12px;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 20px;
   outline: none;
 }
 

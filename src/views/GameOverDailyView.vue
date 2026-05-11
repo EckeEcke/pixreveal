@@ -19,6 +19,7 @@
       <GameOverStats />
     </div>
     <div v-if="!dailyStore.hasSubmitted">
+    <p>Submit your score to the daily leaderboard and compete for the top position!</p>
       <button
         v-if="!isPosting"
         class="confirm-btn"
@@ -114,6 +115,10 @@ h3 {
 }
 h3 {
   margin-top: 0;
+}
+
+p {
+  line-height: 1.5;
 }
 
 .ranking-card {
