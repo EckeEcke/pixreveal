@@ -229,6 +229,7 @@ onMounted(() => {
   min-height: 100dvh;
   padding: 32px 16px;
   width: 100%;
+  max-width: 500px;
 }
 
 .player-display {

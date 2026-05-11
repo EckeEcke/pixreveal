@@ -60,6 +60,7 @@ const checkAnswer = (answer, event) => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
