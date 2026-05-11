@@ -6,13 +6,6 @@
         <div class="room-id">ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
         <div class="room-id">ROUND DURATION: {{ configStore.revealTime }}</div>
       </template>
-      <div class="room-id">
-        ROOM ID:
-        <span @click="copyToClipboard" data-sfx="click">
-          {{ channelStore.currentRoomId }}
-          <Icon icon="pixel:copy" />
-        </span>
-      </div>
       <div class="qr-code">
         <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
       </div>
@@ -35,9 +28,31 @@
           SHARE
         </button>
       </div>
+      <div class="room-id">
+        ROOM ID:
+        <span @click="copyToClipboard" data-sfx="click">
+          {{ channelStore.currentRoomId }}
+          <Icon icon="pixel:copy" />
+        </span>
+      </div>
       <div v-if="showClipboardInfo" class="clipboard-info">
         COPIED TO CLIPBOARD <Icon icon="pixel:check-box-solid" />
       </div>
+      <button
+        v-if="channelStore.isHost && players.length > 1"
+        class="start-btn pulse-btn"
+        @click="startGame"
+        data-sfx="click"
+      >
+        {{ isParty ? "START PARTY" : "START GAME" }}
+      </button>
+      <LoadingAnimation
+        v-if="
+          (channelStore.isHost && players.length === 1) || !channelStore.isHost
+        "
+        :text="channelStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
+        class="loading-animation"
+      />
     </div>
 
     <div class="players-grid">
@@ -53,20 +68,6 @@
       />
       {{ mode }}
     </div>
-
-    <template v-if="channelStore.isHost && players.length > 1">
-      <button class="start-btn pulse-btn" @click="startGame" data-sfx="click">
-        {{ isParty ? "START PARTY" : "START GAME" }}
-      </button>
-    </template>
-
-    <LoadingAnimation
-      v-if="
-        (channelStore.isHost && players.length === 1) || !channelStore.isHost
-      "
-      :text="channelStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
-    />
-
     <LobbyChat />
   </div>
 </template>
@@ -166,7 +167,7 @@ onMounted(() => {
   margin-bottom: 32px;
   border-radius: 8px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
 }
@@ -214,5 +215,13 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   margin: 16px auto;
+}
+
+.loading-animation {
+  margin-top: 16px;
+}
+
+.start-btn {
+  margin-top: 16px;
 }
 </style>

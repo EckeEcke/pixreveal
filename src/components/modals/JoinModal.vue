@@ -82,7 +82,7 @@
         />
         <button
           class="terminal-btn"
-          :disabled="!joinRoomId"
+          :disabled="!joinRoomId || joinRoomId.length < 6"
           data-sfx="click"
           @click="joinGame"
         >
@@ -251,12 +251,14 @@ h2 {
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 900;
+  animation: pulse 3s infinite;
 }
 
 .terminal-btn:disabled {
   background: #333;
   color: #666;
   cursor: not-allowed;
+  animation: none;
 }
 
 .terminal-btn:not(:disabled):hover {
@@ -265,7 +267,7 @@ h2 {
 }
 
 .setup-section {
-  margin: 32px 0;
+  margin: 48px 0;
 }
 
 .section-label {
@@ -306,8 +308,9 @@ h2 {
   background: var(--primary);
   border-radius: 50%;
   padding: 4px;
-  font-size: 16px;
+  font-size: 18px;
   color: white;
+  animation: pulse 3s infinite;
 }
 
 .player-name {

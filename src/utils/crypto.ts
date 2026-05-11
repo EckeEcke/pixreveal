@@ -1,3 +1,10 @@
 export const generateRoomId = () => {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
+  const alphabet = "ABCDEFGHJKLMNPQRTVWXY346789";
+  let result = "";
+
+  for (let i = 0; i < 6; i++) {
+    result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  }
+
+  return result;
 };

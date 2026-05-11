@@ -18,7 +18,7 @@ defineProps({
   justify-content: center;
   align-items: center;
   gap: 16px;
-  margin: 64px 0;
+  margin: 0;
 }
 
 .loading-wrapper.small {
