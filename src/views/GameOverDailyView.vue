@@ -19,7 +19,10 @@
       <GameOverStats />
     </div>
     <div v-if="!dailyStore.hasSubmitted">
-    <p>Submit your score to the daily leaderboard and compete for the top position!</p>
+      <p>
+        Submit your score to the daily leaderboard and compete for the top
+        position!
+      </p>
       <button
         v-if="!isPosting"
         class="confirm-btn"
@@ -31,11 +34,6 @@
       <LoadingAnimation v-else :text="'SUBMITTING...'" />
     </div>
     <div v-else>
-      <InfoBox
-        class="confirmation"
-        icon="✅"
-        message="Your score has been submitted! Check the rankings below to see how you did today."
-      />
       <button class="confirm-btn" @click="$router.push('/')" data-sfx="click">
         <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
       </button>
@@ -68,8 +66,8 @@ import DailyRankings from "@/components/game-ui/DailyRankings.vue";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
-import InfoBox from "@/components/game-ui/InfoBox.vue";
 import ShareIcons from "@/components/page-ui/ShareIcons.vue";
+import { toast } from "vue3-toastify";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
@@ -103,6 +101,8 @@ const post = async () => {
     playerStore.avatarIndex,
     dailyStore.date,
   );
+  toast.success("Score submitted. Check your position on the daily leaderboard!");
+
   isPosting.value = false;
   soundStore.playSound("confirm");
 };
