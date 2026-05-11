@@ -171,4 +171,8 @@ import RankOverview from "@/components/game-ui/RankOverview.vue";
 h1 {
   text-align: left;
 }
+
+h3, h4 {
+  margin-top: 32px;
+}
 </style>

@@ -14,7 +14,9 @@
           When the game is displayed on the home device, simply scan the QR code
           from the TV/monitor and you can join immidiately. No need to type in
           the room id manually or trying to figure out how to get the invite
-          link sent from PC to a smartphone.
+          link sent from PC to a smartphone. I am also working on further
+          improving the connection handling and adding more gameplay features to
+          the multiplayer. So stay tuned!
         </p>
       </div>
       <div class="log-card">
