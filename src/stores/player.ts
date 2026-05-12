@@ -1,21 +1,45 @@
-import { ref, type Ref } from "vue";
+import { ref, type Ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
 
+const STORAGE_KEY = "pixreveal:playerProfile";
+
 export const usePlayerStore = defineStore("player", () => {
-  const playerName: Ref<string> = ref("");
-  const avatarIndex: Ref<number> = ref(0);
+  const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+  const playerName: Ref<string> = ref(savedProfile.name || "");
+  const avatarIndex: Ref<number> = ref(savedProfile.avatar ?? 0);
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const isCreatorMode = ref(false);
 
+  watch([playerName, avatarIndex], ([newName, newAvatar]) => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        name: newName,
+        avatar: newAvatar,
+      }),
+    );
+  });
+
   const setUser = (user: { username: string; avatar: number }) => {
-    playerName.value =
-      user && user.username.length > 0 ? user.username : getRandomUserName();
-    avatarIndex.value = user ? user.avatar : 0;
+    setPlayerName(user.username);
+    setAvatar(user.avatar);
     points.value = 0;
     correctAnswers.value = 0;
+  };
+
+  const setPlayerName = (newName: string) => {
+    playerName.value =
+      newName.trim().length > 0
+        ? newName
+        : playerName.value || getRandomUserName();
+  };
+
+  const setAvatar = (newIndex: number) => {
+    avatarIndex.value = newIndex ?? 0;
   };
 
   const addPoints = (earnedPoints: number) => {
@@ -31,6 +55,7 @@ export const usePlayerStore = defineStore("player", () => {
     correctAnswers,
     isCreatorMode,
     setUser,
+    setAvatar,
     addPoints,
   };
 });

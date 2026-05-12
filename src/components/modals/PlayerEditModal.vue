@@ -68,7 +68,7 @@ const getAvatarStyle = (index) => {
 };
 
 const selectAvatar = (id) => {
-  playerStore.avatarIndex = id;
+  playerStore.setAvatar(id);
 };
 </script>
 
