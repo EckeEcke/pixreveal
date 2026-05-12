@@ -163,7 +163,7 @@
         </div>
       </section>
     </main>
-    <router-link to="/user-gallery">User Art Gallery</router-link>
+    <router-link to="/user-gallery"><Icon icon="pixel:image-solid" /> User Art Gallery</router-link>
   </div>
 </template>
 
@@ -502,6 +502,14 @@ const downloadDrawing = () => {
 
 h3 {
   margin-bottom: 8px;
+}
+
+a {
+  display: flex;
+  place-items: center;
+  gap: 8px;
+  color: white;
+  margin: 16px;
 }
 
 @media (min-width: 1024px) {
