@@ -127,7 +127,7 @@ const router = createRouter({
       path: "/user-gallery",
       name: "gallery",
       component: () => import("@/views/GalleryView.vue"),
-      meta: { robots: "index, follow" },
+      meta: { robots: "noindex" },
     },
     // Path Guard: always put at the bottom!
     {
