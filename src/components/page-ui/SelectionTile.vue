@@ -82,6 +82,10 @@ const soundStore = useSoundStore();
   animation: shine 4s infinite;
 }
 
+.neon-btn:hover .background-icon {
+  opacity: 0.1;
+}
+
 .neon-btn:disabled {
   opacity: 0.3;
   box-shadow: none;
@@ -178,5 +182,6 @@ const soundStore = useSoundStore();
   color: var(--btn-color);
   font-size: 120px;
   opacity: 0.05;
+  transition: 0.3s all;
 }
 </style>
