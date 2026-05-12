@@ -14,7 +14,6 @@
     </InfoBox>
     <label for="art">Choose user art</label>
     <select v-model="selectedDrawingIndex" id="art" class="drawing-select">
-      <option value="" disabled>Select a drawing...</option>
       <option
         v-for="(drawing, index) in userDrawings"
         :key="index"
@@ -53,7 +52,7 @@ const selectedDrawing = computed(() => {
 .container {
   width: 600px;
   max-width: 100%;
-  margin-bottom: 64px;
+  padding-bottom: 64px;
 }
 
 label {
