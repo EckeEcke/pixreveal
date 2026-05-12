@@ -509,7 +509,7 @@ a {
   place-items: center;
   gap: 8px;
   color: white;
-  margin: 16px;
+  margin: 32px;
 }
 
 @media (min-width: 1024px) {
