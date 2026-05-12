@@ -96,7 +96,7 @@
       <p>
         Have you created your own pixelart? Share it with the PixReveal
         community! Use the
-        <strong>Editor</strong> to upload your drawings and submit them for
+        <router-link to="/editor">Editor</router-link> to upload your drawings and submit them for
         others to guess. Community-made content expands the pool of drawings and
         keeps the game fresh for everyone. Enable user art via the settings.
         Once approved, your art will be available in the game. Additionally
