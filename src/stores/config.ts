@@ -164,6 +164,7 @@ export const useConfigStore = defineStore("config", () => {
     categoriesWithCounts,
     revealTime,
     includeUgc,
+    ugcDrawings,
     selectedCategories,
     isCategorySelected,
     hasActiveFilters,

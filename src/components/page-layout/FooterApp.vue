@@ -1,7 +1,7 @@
 <template>
   <footer>
     <PlatformBar />
-    <div>
+    <div class="link-wrapper">
       <button class="internal-link" data-sfx="click" @click="openManual">
         <Icon icon="pixel:book" /> HOW TO PLAY
       </button>
@@ -18,6 +18,13 @@
         @click="router.push('/updates')"
       >
         <Icon icon="pixel:bullhorn" /> UPDATES
+      </button>
+      <button
+        class="internal-link"
+        data-sfx="click"
+        @click="router.push('/user-gallery')"
+      >
+        <Icon icon="pixel:image-solid" /> USER ART GALLERY
       </button>
     </div>
 
@@ -45,7 +52,7 @@
 <script setup>
 import { useConfigStore } from "@/stores/config";
 import { useRouter } from "vue-router";
-import PlatformBar from "@/components/page-ui/PlatformBar.vue"
+import PlatformBar from "@/components/page-ui/PlatformBar.vue";
 import { Icon } from "@iconify/vue";
 
 const configStore = useConfigStore();
@@ -87,5 +94,19 @@ footer {
   border: none;
   text-decoration: underline;
   font-family: inherit;
+}
+
+.link-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  justify-content: center;
+  align-items: center;
+  margin: 32px 0;
+  @media(min-width: 768px) {
+    flex-direction: row;
+    gap: 16px;
+    margin: 0;
+  }
 }
 </style>

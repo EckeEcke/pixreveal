@@ -163,6 +163,7 @@
         </div>
       </section>
     </main>
+    <router-link to="/user-gallery">User Art Gallery</router-link>
   </div>
 </template>
 

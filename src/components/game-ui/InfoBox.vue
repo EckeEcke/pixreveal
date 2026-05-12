@@ -1,7 +1,8 @@
 <template>
   <div class="info-box">
     <span>{{ icon }}</span>
-    <p>{{ message }}</p>
+    <p v-if="message">{{ message }}</p>
+    <slot></slot>
   </div>
 </template>
 
@@ -9,7 +10,6 @@
 defineProps({
   message: {
     type: String,
-    required: true,
   },
   icon: {
     type: String,
@@ -23,8 +23,8 @@ defineProps({
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  background: #2D1B4D;
-  border: 1px solid #4D3182;
+  background: #2d1b4d;
+  border: 1px solid #4d3182;
   border-radius: 4px;
   padding: 12px;
   padding: 8px;

@@ -99,8 +99,11 @@
         <strong>Editor</strong> to upload your drawings and submit them for
         others to guess. Community-made content expands the pool of drawings and
         keeps the game fresh for everyone. Enable user art via the settings.
-        Once approved, your art will be available in the game. You can also find
-        user art in the editor under Presets (marked as [User Art])
+        Once approved, your art will be available in the game. Additionally
+        PixReveal provides a
+        <router-link to="/user-gallery">user art gallery</router-link>. Check
+        out art created by other players. If your art is not listed yet, then it
+        is still waiting for approval.
       </p>
 
       <h3>Settings & Customization</h3>
@@ -172,7 +175,13 @@ h1 {
   text-align: left;
 }
 
-h3, h4 {
+h3,
+h4 {
   margin-top: 32px;
+}
+
+a {
+  color: var(--primary);
+  font-weight: 700;
 }
 </style>

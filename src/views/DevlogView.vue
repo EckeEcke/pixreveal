@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-12-26</span>
+        </div>
+        <h3 class="log-title">User Art Gallery</h3>
+        <p>
+          PixReveal features a pixel art editor to submit your own pixel art to
+          be added to the game. Out of appreciation for art created, I built a
+          <router-link to="/user/gallery">user art gallery</router-link> page
+          displaying all (approved) user generated drawings. You can also use
+          the gallery to check if your drawing was already approved. If it is
+          not listed yet, then approval is still pending.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-11-26</span>
         </div>
         <h3 class="log-title">QR codes for sharing multiplayer invite link</h3>
@@ -59,16 +73,16 @@
         </h3>
         <p>
           The core of PixReveal is its art, and now you can be a part of it. I
-          have officially launched the User-Generated Content (UGC) Editor,
-          allowing players to create and submit their own pixel art masterpieces
-          directly within pixreveal.com. Once a design is submitted, it enters
-          my moderation queue for a quick quality check. As soon as I’ve
-          approved the submission, your artwork will be seamlessly integrated
-          into the game, making it playable for everyone in both Solo and
-          Multiplayer modes. To include user generated content, activate UGC in
-          the settings. The bridge between the editor and the live game ensures
-          a constantly evolving library of fresh, high-quality challenges for
-          the community.
+          have officially launched the User-Generated Content (UGC)
+          <router-link to="/editor">Editor</router-link>, allowing players
+          to create and submit their own pixel art masterpieces directly within
+          pixreveal.com. Once a design is submitted, it enters my moderation
+          queue for a quick quality check. As soon as I’ve approved the
+          submission, your artwork will be seamlessly integrated into the game,
+          making it playable for everyone in both Solo and Multiplayer modes. To
+          include user generated content, activate UGC in the settings. The
+          bridge between the editor and the live game ensures a constantly
+          evolving library of fresh, high-quality challenges for the community.
         </p>
       </div>
 
@@ -158,5 +172,10 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
   border-radius: 4px;
   cursor: pointer;
   margin-top: 32px;
+}
+
+a {
+  color: var(--primary);
+  font-weight: 700;
 }
 </style>
