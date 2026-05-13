@@ -17,6 +17,7 @@
         before the final pixel drops.
       </p>
     </div>
+    <Icon icon="pixel:question-circle" class="background-icon" />
   </div>
 </template>
 
@@ -24,6 +25,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import allDrawings from "@/data/drawings.json";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
+import { Icon } from "@iconify/vue";
 
 const currentDisplayData = ref(allDrawings[0].data);
 let intervalId;
@@ -46,6 +48,8 @@ onUnmounted(() => {
 }
 
 .info-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -58,6 +62,15 @@ onUnmounted(() => {
   max-width: 850px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+}
+
+.background-icon {
+  position: absolute;
+  font-size: 200px;
+  right: -50px;
+  bottom: -30px;
+  color: var(--primary);
+  opacity: 0.1;
 }
 
 .canvas-preview {

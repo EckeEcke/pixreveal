@@ -163,7 +163,9 @@
         </div>
       </section>
     </main>
-    <router-link to="/user-gallery"><Icon icon="pixel:image-solid" /> User Art Gallery</router-link>
+    <router-link to="/user-gallery">
+      <Icon icon="pixel:image-solid" /> User Art Gallery
+    </router-link>
   </div>
 </template>
 
@@ -386,6 +388,7 @@ const downloadDrawing = () => {
   width: 100%;
   position: relative;
   background: #000;
+  box-sizing: border-box;
 }
 
 .interaction-layer {
@@ -397,6 +400,7 @@ const downloadDrawing = () => {
   display: grid;
   z-index: 10;
   border: 2px solid transparent;
+  box-sizing: border-box;
 }
 
 .pixel-cell {
