@@ -40,6 +40,7 @@ const soundStore = useSoundStore();
 const dailyStore = useDailyStore();
 
 const audio = ref(null);
+const audioUnlocked = ref(false);
 
 const handleAudioState = async (isEnabled) => {
   if (!audio.value || playerStore.isCreatorMode) return;
@@ -53,6 +54,7 @@ const handleAudioState = async (isEnabled) => {
 
     try {
       await audio.value.play();
+      audioUnlocked.value = true;
     } catch (err) {
       console.warn("Autoplay blocked. Waiting for user interaction.");
     }
@@ -136,10 +138,17 @@ onMounted(() => {
     }
     document.removeEventListener("click", startAudioOnFirstInteraction);
     document.removeEventListener("pointerdown", startAudioOnFirstInteraction);
+    document.removeEventListener("keydown", onKeydownUnlock);
+  };
+
+  const onKeydownUnlock = (e) => {
+    if (e.key === "Enter" || e.keyCode === 13) startAudioOnFirstInteraction();
   };
 
   document.addEventListener("click", startAudioOnFirstInteraction);
   document.addEventListener("pointerdown", startAudioOnFirstInteraction);
+  // Smart TV remotes often only dispatch keyboard events.
+  document.addEventListener("keydown", onKeydownUnlock);
 });
 
 watch(
