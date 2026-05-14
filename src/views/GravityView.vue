@@ -1,8 +1,13 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+      <GameTransition
+        v-if="gameStore.gameState === 'starting'"
+        message="GET READY"
+        @done="gameStore.setGameState('revealing')"
+      />
     </transition>
+
     <section class="canvas-section">
       <GameHeader
         :max="timerDuration"
@@ -18,14 +23,14 @@
       <PixelCanvasGravity
         :pixel-array="pixelData"
         :is-status-icon="isStatusIcon"
-        :is-revealing="!hasAnswered || isStatusIcon"
+        :is-revealing="gameStore.gameState === 'revealing' || isStatusIcon"
       />
     </section>
 
     <section class="answer-section">
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
-        :answers="rounds[currentRoundIndex].options"
+        :answers="currentRound?.options || []"
         @answered="handleAnswer"
       />
     </section>
@@ -33,7 +38,8 @@
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from "vue";
+import { computed, ref, onUnmounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue";
 import GameTransition from "@/components/page-layout/GameTransition.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
@@ -44,7 +50,6 @@ import { useConfigStore } from "@/stores/config";
 import { useSoundStore } from "@/stores/sound";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
-import router from "@/router";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -52,6 +57,7 @@ import {
   workerSetTimeout,
 } from "@/services/workerTimers";
 
+const router = useRouter();
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
 const configStore = useConfigStore();
@@ -64,45 +70,57 @@ const isStatusIcon = ref(false);
 const hasAnsweredCorrectly = ref(false);
 const timerDuration = configStore.revealTime || 15;
 const timer = ref(timerDuration);
-const showTransition = ref(true);
 
-let revealTimeoutId = null;
-let nextRoundTimeoutId = null;
 let timerIntervalId = null;
+let feedbackTimeoutId = null;
+let solutionTimeoutId = null;
 
-const rounds = computed(() => gameStore.rounds);
-const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
-const maxRounds = configStore.maxRounds;
+const currentRound = computed(() => gameStore.currentRound);
+const maxRounds = computed(() => configStore.maxRounds);
+
+const clearAllLocalTimers = () => {
+  workerClearInterval(timerIntervalId);
+  workerClearTimeout(feedbackTimeoutId);
+  workerClearTimeout(solutionTimeoutId);
+  timerIntervalId = null;
+  feedbackTimeoutId = null;
+  solutionTimeoutId = null;
+};
 
 const startTimer = () => {
   workerClearInterval(timerIntervalId);
   timer.value = timerDuration;
+
   timerIntervalId = workerSetInterval(() => {
     timer.value--;
     if (timer.value <= 3 && timer.value > 0) soundStore.playSound("timer");
+
     if (timer.value <= 0) {
-      soundStore.playSound("incorrect");
       workerClearInterval(timerIntervalId);
-      timerIntervalId = null;
-      handleAnswer(false);
+      handleAnswer(null);
     }
   }, 1000);
 };
 
-const setDrawing = (data) => {
+const setupDrawing = () => {
+  if (!currentRound.value) return;
+
+  clearAllLocalTimers();
   hasAnswered.value = false;
   isStatusIcon.value = false;
-  pixelData.value = data;
   hasAnsweredCorrectly.value = false;
-  timer.value = timerDuration;
+
+  pixelData.value = currentRound.value.data;
+
   startTimer();
 };
 
 const handleAnswer = (selectedAnswer) => {
-  if (hasAnswered.value) return;
+  if (gameStore.gameState !== "revealing" || hasAnswered.value) return;
+
   hasAnswered.value = true;
-  workerClearInterval(timerIntervalId);
-  timerIntervalId = null;
+  gameStore.setGameState("feedback");
+  clearAllLocalTimers();
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
@@ -113,37 +131,43 @@ const handleAnswer = (selectedAnswer) => {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(timer.value);
-    soundStore.playSound("success");
+    soundStore.playSound("correct");
   }
   isStatusIcon.value = true;
 
-  workerClearTimeout(revealTimeoutId);
-  revealTimeoutId = workerSetTimeout(() => {
+  feedbackTimeoutId = workerSetTimeout(() => {
     isStatusIcon.value = false;
-    pixelData.value = rounds.value[currentRoundIndex.value].data;
+    if (currentRound.value) {
+      pixelData.value = currentRound.value.data;
+    }
+    gameStore.setGameState("revealed");
 
-    workerClearTimeout(nextRoundTimeoutId);
-    nextRoundTimeoutId = workerSetTimeout(() => {
-      gameStore.nextRound();
-      if (gameStore.isGameOver) {
+    solutionTimeoutId = workerSetTimeout(() => {
+      if (gameStore.currentRoundIndex >= configStore.maxRounds - 1) {
         onlineStore.broadcastScore();
+        gameStore.setGameState("gameover");
         router.push("/gameover");
       } else {
-        setDrawing(rounds.value[currentRoundIndex.value].data);
+        hasAnswered.value = false;
+        hasAnsweredCorrectly.value = false;
+        gameStore.nextRound();
       }
     }, 1500);
   }, 1500);
 };
 
-const start = () => {
-  showTransition.value = false;
-  setDrawing(rounds.value[currentRoundIndex.value].data);
-};
+watch(
+  () => gameStore.gameState,
+  (newState) => {
+    if (newState === "revealing") {
+      setupDrawing();
+    }
+  },
+  { immediate: true },
+);
 
 onUnmounted(() => {
-  workerClearTimeout(revealTimeoutId);
-  workerClearTimeout(nextRoundTimeoutId);
-  workerClearInterval(timerIntervalId);
+  clearAllLocalTimers();
 });
 </script>
 
@@ -159,6 +183,7 @@ onUnmounted(() => {
 
 @media (min-width: 1024px) {
   .game-layout {
+    position: relative;
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
@@ -170,5 +195,14 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   margin: 16px 0 32px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

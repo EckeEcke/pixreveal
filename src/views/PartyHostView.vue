@@ -1,8 +1,13 @@
 <template>
   <main class="host-layout setup-card">
     <Transition name="fade" mode="out-in">
-      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
-    </Transition>
+      <GameTransition 
+        v-if="gameStore.gameState === 'starting'" 
+        message="GET READY" 
+        @done="gameStore.setGameState('revealing')" 
+      />
+    </transition>
+
     <div>
       <GameHeader
         :max="timerDuration"
@@ -25,9 +30,10 @@
       />
       <BuzzerStatus />
     </div>
+
     <div class="rankings">
       <h1 class="logo">PARTY<span>RANKINGS</span></h1>
-      <div v-for="(player, index) in partyPlayersSorted" :key="index">
+      <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId || index">
         <PlayerDisplay
           :position="index + 1"
           :name="player.username"
@@ -46,10 +52,10 @@ import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import GameTransition from "@/components/page-layout/GameTransition.vue";
+import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
-import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -61,10 +67,9 @@ const gameStore = useGameStore();
 const configStore = useConfigStore();
 const partyStore = usePartyStore();
 
-const showTransition = ref(true);
 const pixelData = ref(Array(256).fill(0));
 const resolution = ref(16);
-const timerDuration = gameStore.revealTime;
+const timerDuration = configStore.revealTime;
 const timer = ref(timerDuration);
 let timerId: number | null = null;
 let navigationTimeout: number | null = null;
@@ -74,83 +79,79 @@ const partyPlayersSorted = computed(() =>
 );
 
 const currentRound = computed(() => gameStore.currentRound);
-const isRevealing = computed(() => partyStore.isRevealing);
+const isRevealing = computed(() => gameStore.gameState === 'revealing');
+
+const clearAllTimers = () => {
+  workerClearInterval(timerId);
+  workerClearTimeout(navigationTimeout);
+  timerId = null;
+  navigationTimeout = null;
+};
 
 const startTimer = () => {
-  stopTimer();
+  workerClearInterval(timerId);
   timer.value = timerDuration;
   timerId = workerSetInterval(() => {
     timer.value--;
     if (timer.value <= 0) {
-      timer.value = 0;
-      stopTimer();
+      workerClearInterval(timerId);
+      partyStore.handleRoundTimeout(); 
     }
   }, 1000);
 };
 
-const stopTimer = () => {
-  if (timerId) {
-    workerClearInterval(timerId);
-    timerId = null;
-  }
-};
-
-const setDrawing = (data: any) => {
-  if (!data) return;
-  pixelData.value = data;
-  resolution.value = Math.sqrt(data.length);
-  startTimer();
-};
-
-const clearNavigationTimeout = () => {
-  if (navigationTimeout) {
-    workerClearTimeout(navigationTimeout);
-    navigationTimeout = null;
-  }
-};
-
-const start = () => {
-  showTransition.value = false;
-  setDrawing(currentRound.value?.data);
+const setupDrawing = () => {
+  if (!currentRound.value) return;
+  
+  clearAllTimers();
+  pixelData.value = currentRound.value.data;
+  resolution.value = Math.sqrt(pixelData.value.length);
+  
   partyStore.openBuzzer();
+  startTimer();
 };
 
 watch(
   () => partyStore.roundResult,
   (newResult) => {
     if (newResult) {
-      stopTimer();
-      clearNavigationTimeout();
+      clearAllTimers();
+      gameStore.setGameState("feedback");
 
       navigationTimeout = workerSetTimeout(() => {
-        const isLastRound =
-          gameStore.currentRoundIndex >= configStore.maxRounds - 1;
+        const isLastRound = gameStore.currentRoundIndex >= configStore.maxRounds - 1;
 
         if (isLastRound) {
           partyStore.endGame();
         } else {
           partyStore.nextRound();
-          setDrawing(currentRound.value?.data);
         }
-      }, 3000);
-    } else {
-      clearNavigationTimeout();
+      }, 4000);
+    }
+  }
+);
+
+watch(
+  () => gameStore.gameState,
+  (newState) => {
+    if (newState === "revealing") {
+      setupDrawing();
     }
   },
+  { immediate: true }
 );
 
 watch(
   () => partyStore.buzzerState,
   (newState) => {
-    if (newState === "answering" || newState === "locked") {
-      stopTimer();
+    if (newState === "answering") {
+      workerClearInterval(timerId);
     }
-  },
+  }
 );
 
 onUnmounted(() => {
-  stopTimer();
-  clearNavigationTimeout();
+  clearAllTimers();
 });
 </script>
 

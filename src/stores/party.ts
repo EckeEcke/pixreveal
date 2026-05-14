@@ -55,26 +55,27 @@ export const usePartyStore = defineStore("party", () => {
   );
 
   const isHost = computed(() => channelStore.isHost);
-const channel = computed(() => channelStore.activeChannel);
-const eventsBound = ref(false);
-const boundChannel = ref<any>(null);
-let boundIsHost: boolean | null = null;
-const eventBindings: { event: string; handler: (...args: any[]) => void }[] = [];
+  const channel = computed(() => channelStore.activeChannel);
+  const eventsBound = ref(false);
+  const boundChannel = ref<any>(null);
+  let boundIsHost: boolean | null = null;
+  const eventBindings: { event: string; handler: (...args: any[]) => void }[] =
+    [];
 
-const unbindEvents = () => {
-  if (!boundChannel.value) return;
-  eventBindings.forEach(({ event, handler }) => {
-    boundChannel.value.unbind(event, handler);
-  });
-  eventBindings.length = 0;
-  boundChannel.value = null;
-  eventsBound.value = false;
-  boundIsHost = null;
-  if (stateBroadcastInterval) {
-    workerClearInterval(stateBroadcastInterval);
-    stateBroadcastInterval = null;
-  }
-};
+  const unbindEvents = () => {
+    if (!boundChannel.value) return;
+    eventBindings.forEach(({ event, handler }) => {
+      boundChannel.value.unbind(event, handler);
+    });
+    eventBindings.length = 0;
+    boundChannel.value = null;
+    eventsBound.value = false;
+    boundIsHost = null;
+    if (stateBroadcastInterval) {
+      workerClearInterval(stateBroadcastInterval);
+      stateBroadcastInterval = null;
+    }
+  };
 
   const clearStateBroadcastInterval = () => {
     if (!stateBroadcastInterval) return;
@@ -157,6 +158,7 @@ const unbindEvents = () => {
   };
 
   const openBuzzer = () => {
+    gameStore.setGameState("revealing");
     buzzerState.value = "open";
     activePlayerId.value = null;
     roundResult.value = null;
@@ -194,22 +196,27 @@ const unbindEvents = () => {
     ensureAnswerTimer();
   };
 
+  const handleRoundTimeout = () => {
+    if (!isHost.value) return;
+    workerClearTimeout(buzzerTimer);
+    skipRound();
+  };
+
   const resolveAnswer = (playerId: string, isCorrect: boolean) => {
     workerClearTimeout(answerTimer);
     answerTimer = null;
     answerDeadlineAt.value = null;
 
-    roundResult.value = isCorrect ? "correct" : "incorrect";
-
-    const player = players.value.find((p) => p.playerId === playerId);
-    if (player) player.points += isCorrect ? 1 : -2;
-
-    if (isCorrect) {
-    }
-
     if (isHost.value) {
       isRevealing.value = false;
     }
+
+    const player = players.value.find((p) => p.playerId === playerId);
+    if (player) {
+      player.points += isCorrect ? 1 : -2;
+    }
+
+    roundResult.value = isCorrect ? "correct" : "incorrect";
 
     workerSetTimeout(() => {
       channel.value?.trigger("client-party-round-result", {
@@ -240,19 +247,22 @@ const unbindEvents = () => {
   };
 
   const skipRound = () => {
+    if (!isHost.value) return;
+
     channel.value?.trigger("client-party-round-result", {
       playerId: null,
       isCorrect: false,
       correctAnswer: gameStore.currentRound?.answer,
     });
-    if (isHost.value) {
-      isRevealing.value = false;
-    }
+
+    isRevealing.value = false;
     buzzerState.value = "locked";
     roundResult.value = "incorrect";
     activePlayerId.value = null;
     hasAnswered.value = false;
     answerDeadlineAt.value = null;
+
+    broadcastPlayerScores();
     broadcastPartyState("skip-round");
   };
 
@@ -332,7 +342,9 @@ const unbindEvents = () => {
       bindEvent(
         "client-party-state-request",
         (data: { requestedBy?: string }) => {
-          broadcastPartyState(`state-request:${data?.requestedBy || "unknown"}`);
+          broadcastPartyState(
+            `state-request:${data?.requestedBy || "unknown"}`,
+          );
         },
       );
     }
@@ -366,9 +378,12 @@ const unbindEvents = () => {
       answerDeadlineAt.value = null;
     });
 
-    bindEvent("client-party-player-scores", (data: { players: PartyPlayer[] }) => {
-      players.value = data.players;
-    });
+    bindEvent(
+      "client-party-player-scores",
+      (data: { players: PartyPlayer[] }) => {
+        players.value = data.players;
+      },
+    );
 
     bindEvent("client-party-next-round", () => {
       gameStore.nextRound();
@@ -395,7 +410,9 @@ const unbindEvents = () => {
         activePlayerId.value = state.activePlayerId ?? null;
         buzzerState.value = state.buzzerState ?? buzzerState.value;
         answerDeadlineAt.value =
-          typeof state.answerDeadlineAt === "number" ? state.answerDeadlineAt : null;
+          typeof state.answerDeadlineAt === "number"
+            ? state.answerDeadlineAt
+            : null;
 
         if (
           buzzerState.value !== "answering" ||
@@ -492,6 +509,7 @@ const unbindEvents = () => {
     startGame,
     openBuzzer,
     handleBuzz,
+    handleRoundTimeout,
     resolveAnswer,
     nextRound,
     endGame,

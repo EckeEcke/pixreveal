@@ -1,8 +1,12 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+      <GameTransition
+        v-if="gameStore.gameState === 'starting'"
+        @done="gameStore.setGameState('revealing')"
+      />
     </transition>
+
     <section class="canvas-section">
       <GameHeader
         :max="timerDuration"
@@ -14,23 +18,25 @@
         :max-rounds="maxRounds"
         :is-survival="false"
       />
+
       <PixelCanvas
         :pixel-array="pixelData"
         :resolution="resolution"
         :is-revealing="false"
         :is-status-icon="hasAnswered"
         :timer-duration="timerDuration"
-        :is-magnifier-mode="true"
+        :is-magnifier-mode="gameStore.gameState === 'revealing'"
         :mouse-pos="mousePos"
         @mousemove="updateMousePos"
         @touchstart="updateTouchPos"
         @touchmove="updateTouchPos"
       />
     </section>
+
     <section class="answer-section">
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
-        :answers="rounds[currentRoundIndex].options"
+        :answers="currentRound?.options || []"
         @answered="handleAnswer"
       />
     </section>
@@ -38,18 +44,18 @@
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from "vue";
+import { computed, ref, onUnmounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import GameTransition from "@/components/page-layout/GameTransition.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
-import router from "@/router";
+import { useConfigStore } from "@/stores/config";
 import { useOnlineStore } from "@/stores/online";
 import { useSoundStore } from "@/stores/sound";
 import { statusIcons } from "@/data/statusIcons";
-import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
-import { useConfigStore } from "@/stores/config";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -57,98 +63,106 @@ import {
   workerSetTimeout,
 } from "@/services/workerTimers";
 
+const router = useRouter();
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
 const configStore = useConfigStore();
 const gameStore = useGameStore();
+const soundStore = useSoundStore();
+
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
-const isRevealing = ref(true);
-const timerDuration = configStore.revealTime;
-const timer = ref(timerDuration);
-let timerId = null;
-let revealTimeoutId = null;
-let nextRoundTimeoutId = null;
 const hasAnsweredCorrectly = ref(false);
-const showTransition = ref(true);
+const timer = ref(configStore.revealTime);
+const timerDuration = configStore.revealTime;
+const mousePos = ref({ x: 300, y: 300 });
 
-const rounds = computed(() => gameStore.rounds);
-const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
+let timerId = null;
+let feedbackTimeoutId = null;
+let solutionTimeoutId = null;
 
-const nextRound = useGameStore().nextRound;
-const maxRounds = useConfigStore().maxRounds;
+const currentRound = computed(() => gameStore.currentRound);
+const maxRounds = computed(() => configStore.maxRounds);
+
+const clearAllLocalTimers = () => {
+  workerClearInterval(timerId);
+  workerClearTimeout(feedbackTimeoutId);
+  workerClearTimeout(solutionTimeoutId);
+  timerId = null;
+  feedbackTimeoutId = null;
+  solutionTimeoutId = null;
+};
 
 const startTimer = () => {
-  if (!pixelData.value || !pixelData.value[0]) return;
-  if (timer.value < timerDuration) timer.value = timerDuration;
   workerClearInterval(timerId);
+  timer.value = timerDuration;
+
   timerId = workerSetInterval(() => {
     timer.value--;
-    if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
+    if (timer.value <= 3 && timer.value > 0) soundStore.playSound("timer");
+
     if (timer.value <= 0) {
-      useSoundStore().playSound("incorrect");
       workerClearInterval(timerId);
-      timerId = null;
-      handleAnswer(false);
+      handleAnswer(null);
     }
   }, 1000);
 };
 
-const setDrawing = (data) => {
+const setupDrawing = () => {
+  if (!currentRound.value) return;
+
+  clearAllLocalTimers();
   hasAnswered.value = false;
-  isRevealing.value = true;
-  pixelData.value = data;
-  resolution.value = Math.sqrt(data.length);
   hasAnsweredCorrectly.value = false;
-  timer.value = timerDuration;
+
+  pixelData.value = currentRound.value.data;
+  resolution.value = Math.sqrt(pixelData.value.length);
+
   startTimer();
 };
 
-const handleAnswer = (selectedAnswer) => {
-  if (hasAnswered.value) return;
+const handleAnswer = (selectedOption) => {
+  if (gameStore.gameState !== "revealing" || hasAnswered.value) return;
+
   hasAnswered.value = true;
-  workerClearInterval(timerId);
-  timerId = null;
+  gameStore.setGameState("feedback");
+  clearAllLocalTimers();
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
-  } else if (!selectedAnswer?.isCorrect) {
-    pixelData.value = statusIcons.failure;
-    useSoundStore().playSound("incorrect");
-  } else {
+  } else if (selectedOption?.isCorrect) {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(timer.value);
-    useSoundStore().playSound("correct");
+    soundStore.playSound("correct");
+  } else {
+    pixelData.value = statusIcons.failure;
+    hasAnsweredCorrectly.value = false;
+    soundStore.playSound("incorrect");
   }
 
-  workerClearTimeout(revealTimeoutId);
-  revealTimeoutId = workerSetTimeout(() => {
-    isRevealing.value = false;
-    pixelData.value = rounds.value[currentRoundIndex.value].data;
+  feedbackTimeoutId = workerSetTimeout(() => {
+    if (currentRound.value) {
+      pixelData.value = currentRound.value.data;
+    }
+    gameStore.setGameState("revealed");
 
-    workerClearTimeout(nextRoundTimeoutId);
-    nextRoundTimeoutId = workerSetTimeout(() => {
-      nextRound();
-      if (gameStore.isGameOver) {
+    solutionTimeoutId = workerSetTimeout(() => {
+      if (gameStore.currentRoundIndex >= maxRounds.value - 1) {
         onlineStore.broadcastScore();
+        gameStore.setGameState("gameover");
         router.push("/gameover");
       } else {
-        setDrawing(rounds.value[currentRoundIndex.value].data);
+        gameStore.nextRound();
       }
     }, 1500);
   }, 1500);
 };
 
-const start = () => {
-  showTransition.value = false;
-  setDrawing(rounds.value[currentRoundIndex.value].data);
-};
-
-const mousePos = ref({ x: 300, y: 300 });
-
+// Lupe/Magnifier Positionen
 const updateMousePos = (event) => {
+  if (gameStore.gameState !== "revealing") return;
   const rect = event.target.getBoundingClientRect();
   const scaleX = 600 / rect.width;
   const scaleY = 600 / rect.height;
@@ -159,28 +173,32 @@ const updateMousePos = (event) => {
 };
 
 const updateTouchPos = (event) => {
+  if (gameStore.gameState !== "revealing") return;
   if (event.cancelable) event.preventDefault();
-
   const touch = event.touches[0];
-  const canvasElement = event.currentTarget.$el
-    ? event.currentTarget.$el.querySelector("canvas")
-    : event.target;
-
+  const canvasElement =
+    event.currentTarget.$el?.querySelector("canvas") || event.target;
   const rect = canvasElement.getBoundingClientRect();
-
   const scaleX = 600 / rect.width;
   const scaleY = 600 / rect.height;
-
   mousePos.value = {
     x: (touch.clientX - rect.left) * scaleX,
     y: (touch.clientY - rect.top) * scaleY,
   };
 };
 
+watch(
+  () => gameStore.gameState,
+  (newState) => {
+    if (newState === "revealing") {
+      setupDrawing();
+    }
+  },
+  { immediate: true },
+);
+
 onUnmounted(() => {
-  workerClearTimeout(revealTimeoutId);
-  workerClearTimeout(nextRoundTimeoutId);
-  workerClearInterval(timerId);
+  clearAllLocalTimers();
 });
 </script>
 

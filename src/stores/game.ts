@@ -24,10 +24,20 @@ export type Round = {
   options: RoundOption[];
 };
 
+export type GameState =
+  | "starting"
+  | "revealing"
+  | "answering"
+  | "feedback"
+  | "revealed"
+  | "gameover";
+
 export const useGameStore = defineStore("game", () => {
   // =============================
   // STATE
   // =============================
+
+  const gameState = ref<GameState>("starting");
 
   const rounds = ref<Round[]>([]);
   const currentRoundIndex = ref(0);
@@ -111,53 +121,64 @@ export const useGameStore = defineStore("game", () => {
   // ACTIONS
   // =============================
 
+  const setGameState = (newState: GameState) => {
+    gameState.value = newState;
+  };
+
+  const stopAllTimers = () => {
+    // Platzhalter für timer cleanup
+  };
+
   const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
+    stopAllTimers();
+
     if (customRounds) {
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
       configStore.revealTime = customRevealTime;
     } else {
-      const shuffled = shuffle([...filteredDrawings.value]); // defensive copy
+      const shuffled = shuffle([...filteredDrawings.value]);
       const selectedDrawings = shuffled.slice(0, maxRounds.value);
-
       rounds.value = buildRounds(selectedDrawings);
     }
 
-    // reset state
     currentRoundIndex.value = 0;
     isGameOver.value = false;
     selectedOption.value = null;
+    setGameState("starting"); // Erste Runde zeigt die Transition
   };
 
   const nextRound = () => {
     if (currentRoundIndex.value < rounds.value.length - 1) {
       currentRoundIndex.value++;
-      selectedOption.value = null;
+      setGameState("revealing");
     } else {
       isGameOver.value = true;
+      setGameState("gameover");
     }
   };
 
   const setRoundIndex = (index: number) => {
+    stopAllTimers();
     const next = Math.max(0, Math.min(index, rounds.value.length - 1));
     currentRoundIndex.value = next;
     selectedOption.value = null;
     isGameOver.value = false;
+    setGameState("revealing");
   };
 
   const reset = () => {
+    stopAllTimers();
     rounds.value = [];
     currentRoundIndex.value = 0;
     selectedOption.value = null;
     isGameOver.value = false;
     playSound.value = false;
+    setGameState("starting");
   };
 
-  // =============================
-  // EXPORT
-  // =============================
-
   return {
+    gameState,
     rounds,
     currentRound,
     currentRoundIndex,
@@ -168,6 +189,7 @@ export const useGameStore = defineStore("game", () => {
     prepareGame,
     nextRound,
     setRoundIndex,
+    setGameState,
     reset,
   };
 });

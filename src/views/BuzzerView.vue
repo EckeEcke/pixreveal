@@ -1,8 +1,13 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+      <GameTransition
+        v-if="gameStore.gameState === 'starting'"
+        message="GET READY"
+        @done="gameStore.setGameState('revealing')"
+      />
     </transition>
+
     <section class="canvas-section">
       <GameHeader
         :max="timerDuration"
@@ -14,6 +19,7 @@
         :max-rounds="maxRounds"
         :is-survival="false"
       />
+
       <PixelCanvas
         :pixel-array="pixelData"
         :resolution="resolution"
@@ -23,36 +29,39 @@
         :pauseReveal="pauseReveal"
       />
     </section>
+
     <section class="answer-section">
-      <AnswerButtons
-        v-if="showAnswers"
-        :hasAnswered="hasAnswered"
-        :answers="rounds[currentRoundIndex].options"
-        @answered="handleAnswer"
-      />
-      <div v-else class="buzzer-container">
-        <button @click="handleBuzzerPress" class="neon-buzzer">
-          <span class="buzzer-text">I KNOW IT!</span>
-          <div class="glow-layer"></div>
-        </button>
-      </div>
+      <transition name="fade" mode="out-in">
+        <AnswerButtons
+          v-if="showAnswers"
+          :hasAnswered="hasAnswered"
+          :answers="currentRound?.options || []"
+          @answered="handleAnswer"
+        />
+        <div v-else class="buzzer-container">
+          <button @click="handleBuzzerPress" class="neon-buzzer">
+            <span class="buzzer-text">I KNOW IT!</span>
+            <div class="glow-layer"></div>
+          </button>
+        </div>
+      </transition>
     </section>
   </main>
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from "vue";
+import { computed, ref, onUnmounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
-import GameTransition from "@/components/page-layout/GameTransition.vue";
-import GameHeader from "@/components/game-ui/GameHeader.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
-import router from "@/router";
-import { useOnlineStore } from "@/stores/online";
-import { statusIcons } from "@/data/statusIcons";
-import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useSoundStore } from "@/stores/sound";
 import { useConfigStore } from "@/stores/config";
+import { useOnlineStore } from "@/stores/online";
+import GameTransition from "@/components/page-layout/GameTransition.vue";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
+import { statusIcons } from "@/data/statusIcons";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -60,110 +69,153 @@ import {
   workerSetTimeout,
 } from "@/services/workerTimers";
 
+const router = useRouter();
 const playerStore = usePlayerStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const configStore = useConfigStore();
+const soundStore = useSoundStore();
+
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const isRevealing = ref(true);
-const timerDuration = configStore.revealTime;
-const timer = ref(timerDuration);
-let timerId = null;
-let revealTimeoutId = null;
-let nextRoundTimeoutId = null;
 const hasAnsweredCorrectly = ref(false);
+const timer = ref(configStore.revealTime);
+const timerDuration = configStore.revealTime;
+
 const showAnswers = ref(false);
 const potentialPoints = ref(0);
 const pauseReveal = ref(false);
-const showTransition = ref(true);
 
-const rounds = computed(() => gameStore.rounds);
-const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
+let timerId = null;
+let feedbackTimeoutId = null;
+let solutionTimeoutId = null;
 
-const nextRound = gameStore.nextRound;
-const maxRounds = configStore.maxRounds;
+const currentRound = computed(() => gameStore.currentRound);
+const maxRounds = computed(() => configStore.maxRounds);
+
+const clearAllLocalTimers = () => {
+  workerClearInterval(timerId);
+  workerClearTimeout(feedbackTimeoutId);
+  workerClearTimeout(solutionTimeoutId);
+  timerId = null;
+  feedbackTimeoutId = null;
+  solutionTimeoutId = null;
+};
 
 const startTimer = () => {
-  if (!pixelData.value || !pixelData.value[0]) return;
-  if (timer.value < timerDuration) timer.value = timerDuration;
   workerClearInterval(timerId);
+  timer.value = timerDuration;
+
   timerId = workerSetInterval(() => {
     timer.value--;
-    if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
+    if (timer.value <= 3 && timer.value > 0) soundStore.playSound("timer");
+
     if (timer.value <= 0) {
-      useSoundStore().playSound("incorrect");
       workerClearInterval(timerId);
-      timerId = null;
-      handleAnswer(false);
+      if (!showAnswers.value) {
+        gameStore.setGameState("answering");
+      }
+      
+      handleAnswer(null);
     }
   }, 1000);
 };
 
-const setDrawing = (data) => {
+const setupDrawing = () => {
+  if (!currentRound.value) return;
+
+  clearAllLocalTimers();
   hasAnswered.value = false;
-  isRevealing.value = true;
-  pixelData.value = data;
-  resolution.value = Math.sqrt(data.length);
   hasAnsweredCorrectly.value = false;
-  timer.value = timerDuration;
+  isRevealing.value = true;
+  showAnswers.value = false;
+  pauseReveal.value = false;
+
+  pixelData.value = currentRound.value.data;
+  resolution.value = Math.sqrt(pixelData.value.length);
+
   startTimer();
 };
 
 const handleBuzzerPress = () => {
+  if (gameStore.gameState !== "revealing" || showAnswers.value || hasAnswered.value) {
+    return;
+  }
+
   potentialPoints.value = timer.value;
   showAnswers.value = true;
-  timer.value = 5;
   pauseReveal.value = true;
-  useSoundStore().playSound("buzz");
+  gameStore.setGameState("answering");
+  soundStore.playSound("buzz");
+  workerClearInterval(timerId);
+  timer.value = 5; 
+  
+  timerId = workerSetInterval(() => {
+    timer.value--;
+    
+    if (timer.value <= 2 && timer.value > 0) {
+      soundStore.playSound("timer");
+    }
+
+    if (timer.value <= 0) {
+      workerClearInterval(timerId);
+      handleAnswer(null);
+    }
+  }, 1000);
 };
 
-const handleAnswer = (selectedAnswer) => {
-  if (hasAnswered.value) return;
+const handleAnswer = (selectedOption) => {
+  if (gameStore.gameState !== "answering" || hasAnswered.value) return;
+
   hasAnswered.value = true;
   pauseReveal.value = false;
-  workerClearInterval(timerId);
-  timerId = null;
+  gameStore.setGameState("feedback");
+  clearAllLocalTimers();
 
-  if (!selectedAnswer?.isCorrect) {
-    pixelData.value = statusIcons.failure;
-    useSoundStore().playSound("incorrect");
-  } else {
+  if (selectedOption?.isCorrect) {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(potentialPoints.value);
-    useSoundStore().playSound("correct");
+    soundStore.playSound("correct");
+  } else {
+    pixelData.value = statusIcons.failure;
+    hasAnsweredCorrectly.value = false;
+    soundStore.playSound("incorrect");
   }
 
-  workerClearTimeout(revealTimeoutId);
-  revealTimeoutId = workerSetTimeout(() => {
+  feedbackTimeoutId = workerSetTimeout(() => {
     isRevealing.value = false;
-    pixelData.value = rounds.value[currentRoundIndex.value].data;
+    if (currentRound.value) {
+      pixelData.value = currentRound.value.data;
+    }
+    gameStore.setGameState("revealed");
 
-    workerClearTimeout(nextRoundTimeoutId);
-    nextRoundTimeoutId = workerSetTimeout(() => {
-      showAnswers.value = false;
-      nextRound();
-      if (gameStore.isGameOver) {
+    solutionTimeoutId = workerSetTimeout(() => {
+      if (gameStore.currentRoundIndex >= maxRounds.value - 1) {
         onlineStore.broadcastScore();
+        gameStore.setGameState("gameover");
         router.push("/gameover");
       } else {
-        setDrawing(rounds.value[currentRoundIndex.value].data);
+        gameStore.nextRound();
       }
     }, 1500);
   }, 1500);
 };
 
-const start = () => {
-  showTransition.value = false;
-  setDrawing(rounds.value[currentRoundIndex.value].data);
-};
+watch(
+  () => gameStore.gameState,
+  (newState) => {
+    if (newState === "revealing") {
+      setupDrawing();
+    }
+  },
+  { immediate: true },
+);
 
 onUnmounted(() => {
-  workerClearTimeout(revealTimeoutId);
-  workerClearTimeout(nextRoundTimeoutId);
-  workerClearInterval(timerId);
+  clearAllLocalTimers();
 });
 </script>
 
@@ -174,7 +226,11 @@ onUnmounted(() => {
   gap: 0;
   max-width: 500px;
   width: 100%;
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
+  .game-layout {
+    position: relative;
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
@@ -186,15 +242,11 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   margin: 16px 0 32px;
+  min-height: 200px; /* Verhindert Layout-Jumping beim Umschalten */
 }
 
 .buzzer-container {
   margin: 32px 0;
-}
-
-.buzzer-wrapper {
-  padding: 16px;
-  width: 100%;
 }
 
 .neon-buzzer {
@@ -211,36 +263,26 @@ onUnmounted(() => {
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
-  text-shadow: 0 0 8px #ec4899;
-}
-
-@keyframes pulse-glow {
-  0% {
-    box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(236, 72, 153, 0.8);
-  }
-  100% {
-    box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
-  }
-}
-
-.neon-buzzer {
-  animation: pulse-glow 1.5s infinite ease-in-out;
+  box-sizing: border-box;
 }
 
 .neon-buzzer:active {
   background: #ec4899;
-  box-shadow: 0 0 40px #ec4899;
   transform: scale(0.98);
   color: #000;
-  text-shadow: none;
 }
 
 .buzzer-text {
   position: relative;
   z-index: 2;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

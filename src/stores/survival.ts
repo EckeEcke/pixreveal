@@ -1,11 +1,15 @@
 import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { defineStore } from "pinia";
-import type { Drawing } from "./game";
+import type { Drawing, RoundOption } from "./game";
 import allDrawings from "@/data/drawings.json";
 import { useConfigStore } from "./config";
 import { useSoundStore } from "./sound";
-import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
+import { useGameStore } from "./game";
+import {
+  workerClearInterval,
+  workerSetInterval,
+} from "@/services/workerTimers";
 
 export const useSurvivalStore = defineStore("survival", () => {
   const drawings: Ref<Drawing[]> = ref([]);
@@ -22,6 +26,8 @@ export const useSurvivalStore = defineStore("survival", () => {
   const newHighscore = ref(false);
   const timerInterval = ref<number | null>(null);
 
+  const gameStore = useGameStore(); // Zugriff auf den globalen GameState
+
   const timerPercentage = computed(
     () => (timeLeft.value / maxTime.value) * 100,
   );
@@ -30,6 +36,7 @@ export const useSurvivalStore = defineStore("survival", () => {
     const configStore = useConfigStore();
     newHighscore.value = false;
 
+    // Filterung & Shuffle
     const preferred = (allDrawings as Drawing[]).filter((d) =>
       configStore.selectedCategories.includes(d.category),
     );
@@ -46,6 +53,7 @@ export const useSurvivalStore = defineStore("survival", () => {
     timeLeft.value = 30;
     isGameOver.value = false;
     isActive.value = true;
+
     setNextDrawing();
     runTimer();
   };
@@ -56,13 +64,15 @@ export const useSurvivalStore = defineStore("survival", () => {
       if (next) {
         next.options = generateOptions(next);
         currentDrawing.value = next;
+        // WICHTIG: Setze den globalen State auf revealing, damit die View reagiert
+        gameStore.setGameState("revealing");
       }
     } else {
       triggerGameOver();
     }
   };
 
-  const generateOptions = (correctDrawing: Drawing) => {
+  const generateOptions = (correctDrawing: Drawing): RoundOption[] => {
     const selectedDistractors = (allDrawings as Drawing[])
       .filter((d) => d.name !== correctDrawing.name)
       .sort(() => Math.random() - 0.5)
@@ -78,7 +88,8 @@ export const useSurvivalStore = defineStore("survival", () => {
   const runTimer = () => {
     workerClearInterval(timerInterval.value);
     timerInterval.value = workerSetInterval(() => {
-      if (hasAnswered.value) return;
+      // NUR abziehen, wenn wir wirklich im Spielprozess sind
+      if (gameStore.gameState !== "revealing") return;
 
       if (timeLeft.value > 0) {
         timeLeft.value--;
@@ -117,6 +128,8 @@ export const useSurvivalStore = defineStore("survival", () => {
     if (isGameOver.value) return;
     isActive.value = false;
     isGameOver.value = true;
+    gameStore.setGameState("gameover");
+
     if (timerInterval.value) {
       workerClearInterval(timerInterval.value);
       timerInterval.value = null;
@@ -125,6 +138,14 @@ export const useSurvivalStore = defineStore("survival", () => {
 
   const saveHighscore = () => {
     localStorage.setItem("survival_highscore", highscore.value.toString());
+  };
+
+  const reset = () => {
+    workerClearInterval(timerInterval.value);
+    timerInterval.value = null;
+    isActive.value = false;
+    isGameOver.value = false;
+    solvedCount.value = 0;
   };
 
   return {
@@ -144,5 +165,6 @@ export const useSurvivalStore = defineStore("survival", () => {
     handleWrongAnswer,
     setNextDrawing,
     triggerGameOver,
+    reset,
   };
 });

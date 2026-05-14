@@ -1,30 +1,34 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+      <GameTransition
+        v-if="gameStore.gameState === 'starting'"
+        message="GET READY"
+        @done="start"
+      />
     </transition>
 
     <section class="canvas-section">
       <GameHeader
-        :max="store.maxTime"
-        :count="store.timeLeft"
-        :total-score="store.solvedCount"
+        :max="survivalStore.maxTime"
+        :count="survivalStore.timeLeft"
+        :total-score="survivalStore.solvedCount"
         :is-survival="true"
-        :highscore="store.highscore"
+        :highscore="survivalStore.highscore"
       />
       <PixelCanvas
         :pixel-array="pixelData"
         :resolution="resolution"
         :is-revealing="isRevealing"
-        :is-status-icon="store.hasAnswered"
-        :timer-duration="useConfigStore().revealTime"
+        :is-status-icon="survivalStore.hasAnswered"
+        :timer-duration="configStore.revealTime"
       />
     </section>
 
     <section class="answer-section">
       <AnswerButtons
-        :hasAnswered="store.hasAnswered"
-        :answers="store.currentDrawing?.options"
+        :hasAnswered="survivalStore.hasAnswered"
+        :answers="survivalStore.currentDrawing?.options || []"
         @answered="handleAnswer"
       />
     </section>
@@ -32,77 +36,117 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, watch } from "vue";
+import { ref, onUnmounted, watch, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useSurvivalStore } from "@/stores/survival";
+import { useGameStore } from "@/stores/game";
+import { useConfigStore } from "@/stores/config";
+import { useSoundStore } from "@/stores/sound";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import GameTransition from "@/components/page-layout/GameTransition.vue";
-import router from "@/router";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
-import { useConfigStore } from "@/stores/config";
+import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers";
 
-const store = useSurvivalStore();
+const router = useRouter();
+const survivalStore = useSurvivalStore();
+const gameStore = useGameStore();
+const configStore = useConfigStore();
+const soundStore = useSoundStore();
 
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const isRevealing = ref(true);
-const showTransition = ref(true);
 
-const setDrawing = () => {
-  if (store.currentDrawing) {
-    store.hasAnswered = false;
+let feedbackTimeoutId = null;
+let nextRoundTimeoutId = null;
+
+/**
+ * Bereitet die Anzeige für das aktuelle Bild vor
+ */
+const setupDrawing = () => {
+  if (survivalStore.currentDrawing) {
+    survivalStore.hasAnswered = false;
     isRevealing.value = true;
-    pixelData.value = store.currentDrawing.data;
+    pixelData.value = survivalStore.currentDrawing.data;
     resolution.value = Math.sqrt(pixelData.value.length);
   }
 };
 
+/**
+ * Verarbeitet die Antwort im Survival-Modus
+ */
 const handleAnswer = (answer) => {
-  if (store.hasAnswered || store.timeLeft <= 0) return;
+  // Guard: Nur Antworten zulassen, wenn wir in der Revealing-Phase sind und Zeit da ist
+  if (
+    gameStore.gameState !== "revealing" ||
+    survivalStore.hasAnswered ||
+    survivalStore.timeLeft <= 0
+  )
+    return;
 
-  store.isRevealing = false;
-  store.hasAnswered = true;
+  survivalStore.hasAnswered = true;
+  gameStore.setGameState("feedback");
 
+  workerClearTimeout(feedbackTimeoutId);
+  workerClearTimeout(nextRoundTimeoutId);
+
+  // 1. Visuelles Feedback
   if (answer.isCorrect) {
-    store.handleCorrectAnswer();
+    survivalStore.handleCorrectAnswer();
     pixelData.value = statusIcons.success;
+    soundStore.playSound("correct");
   } else {
-    store.handleWrongAnswer();
+    survivalStore.handleWrongAnswer();
     pixelData.value = statusIcons.failure;
+    // Sound wird bereits im Store abgespielt
   }
 
-  setTimeout(() => {
-    if (store.isGameOver) return;
+  // 2. Feedback-Phase (Icon zeigen)
+  feedbackTimeoutId = workerSetTimeout(() => {
+    if (survivalStore.isGameOver) return;
 
     isRevealing.value = false;
-    pixelData.value = store.currentDrawing.data;
+    pixelData.value = survivalStore.currentDrawing.data;
+    gameStore.setGameState("revealed");
 
-    setTimeout(() => {
-      if (store.isGameOver) return;
+    // 3. Kurze Pause, dann nächstes Bild
+    nextRoundTimeoutId = workerSetTimeout(() => {
+      if (survivalStore.isGameOver) return;
 
-      store.setNextDrawing();
-      setDrawing();
+      survivalStore.setNextDrawing(); // Setzt gameState intern wieder auf 'revealing'
+      setupDrawing();
     }, 1000);
   }, 1000);
 };
 
+/**
+ * Initialer Start nach der Transition
+ */
+const start = () => {
+  survivalStore.startSurvival();
+  setupDrawing();
+};
+
+/**
+ * Überwacht den Game-Over Status für den Redirect
+ */
 watch(
-  () => store.isGameOver,
+  () => survivalStore.isGameOver,
   (over) => {
-    if (over) router.push("/gameover");
+    if (over) {
+      gameStore.setGameState("gameover");
+      router.push("/gameover");
+    }
   },
 );
 
-const start = () => {
-  store.startSurvival();
-  showTransition.value = false;
-  setDrawing();
-};
-
 onUnmounted(() => {
-  if (store.timerInterval) clearInterval(store.timerInterval);
-  store.triggerGameOver();
+  workerClearTimeout(feedbackTimeoutId);
+  workerClearTimeout(nextRoundTimeoutId);
+  survivalStore.reset();
+  gameStore.setGameState("starting");
 });
 </script>
 
@@ -113,7 +157,11 @@ onUnmounted(() => {
   gap: 0;
   max-width: 500px;
   width: 100%;
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
+  .game-layout {
+    position: relative;
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
@@ -125,5 +173,14 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   margin: 16px 0 32px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
