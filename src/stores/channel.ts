@@ -5,28 +5,17 @@ import { createApinatorClient } from "@/services/apinator";
 import { useRouter } from "vue-router";
 import { useConfigStore } from "./config";
 import { usePlayerStore } from "./player";
-import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
+import { workerClearInterval, workerSetInterval, workerSetTimeout } from "@/services/workerTimers";
 import { toast } from "vue3-toastify";
-
-export interface UserData {
-  playerId: string;
-  username: string;
-  avatarIndex: number;
-  isHost: boolean;
-  rounds?: number;
-  revealTime?: number;
-}
-
-export interface Player {
-  playerId: string;
-  username: string;
-  avatarIndex: number;
-  isHost: boolean;
-  isOnline: boolean;
-  points: number;
-  hasFinished: boolean;
-  correctAnswers: number;
-}
+import type { Player, UserData } from "@/types/channel";
+import {
+  readAllowedIds,
+  readPersistedSession,
+  writeAllowedIds,
+  writePersistedSession,
+} from "@/services/channelPersistence";
+import { isHostFlag } from "@/utils/realtime";
+import { usePartyStore } from "./party";
 
 export const useChannelStore = defineStore("channel", () => {
   const router = useRouter();
@@ -60,68 +49,11 @@ export const useChannelStore = defineStore("channel", () => {
   const inactivityNotified = ref(false);
   const inactivityGraceTimeoutId = ref<number | null>(null);
   const allowedIdsDuringGame = ref<Set<string> | null>(null);
-  const ALLOWED_IDS_PREFIX = "pixreveal:allowedIds:";
 
-  const STORAGE_KEY = "pixreveal:lastSession";
-  type PersistedSession = {
-    roomId: string;
-    userData: UserData;
-    mode: "regular" | "party";
-    wasInGame: boolean;
-    lastRole: "host" | "player";
-  };
+  type PersistedSession = import("@/services/channelPersistence").PersistedSession<UserData>;
 
   const persistSession = (session: PersistedSession | null) => {
-    try {
-      if (!session) {
-        sessionStorage.removeItem(STORAGE_KEY);
-        return;
-      }
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-    } catch {
-      // ignore storage failures
-    }
-  };
-
-  const allowedIdsStorageKey = (roomId: string) => `${ALLOWED_IDS_PREFIX}${roomId}`;
-
-  const isHostFlag = (value: any) =>
-    value === true || value === 1 || value === "1" || value === "true";
-
-  const readAllowedIds = (roomId: string): Set<string> | null => {
-    try {
-      const raw = localStorage.getItem(allowedIdsStorageKey(roomId));
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return null;
-      return new Set(parsed.filter((v) => typeof v === "string" && v));
-    } catch {
-      return null;
-    }
-  };
-
-  const writeAllowedIds = (roomId: string, ids: Set<string> | null) => {
-    try {
-      if (!ids) {
-        localStorage.removeItem(allowedIdsStorageKey(roomId));
-        return;
-      }
-      localStorage.setItem(allowedIdsStorageKey(roomId), JSON.stringify([...ids]));
-    } catch {
-      // ignore storage failures
-    }
-  };
-
-  const readPersistedSession = (): PersistedSession | null => {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw) as PersistedSession;
-      if (!parsed?.roomId || !parsed?.userData?.playerId) return null;
-      return parsed;
-    } catch {
-      return null;
-    }
+    writePersistedSession<UserData>(session);
   };
 
   const clearInactivityGrace = () => {
@@ -182,7 +114,6 @@ export const useChannelStore = defineStore("channel", () => {
     const prevGameRunning = onlineGameRunning.value;
     const prevMode = mode.value;
     if (activeChannel.value?.unbind) {
-      // defensive: remove any lingering handlers before dropping references
       activeChannel.value.unbind();
     }
     if (client.value && currentRoomId.value) {
@@ -476,7 +407,19 @@ export const useChannelStore = defineStore("channel", () => {
         isLoading.value = false;
       }
 
-      const persisted = readPersistedSession();
+      // On host reconnect, proactively broadcast the current party state so
+      // controllers resync immediately without waiting for periodic updates.
+      if (isHost.value && mode.value === "party" && onlineGameRunning.value) {
+        workerSetTimeout(() => {
+          try {
+            usePartyStore().broadcastPartyState?.("host-resubscribed");
+          } catch {
+            // ignore
+          }
+        }, 0);
+      }
+
+      const persisted = readPersistedSession<UserData>();
       if (persisted?.wasInGame && persisted?.mode === mode.value) {
         // mark as running (but keep player list from presence)
         setGameRunning(true);
@@ -595,8 +538,6 @@ export const useChannelStore = defineStore("channel", () => {
     const clientInstance = createApinatorClient(userData);
     client.value = clientInstance;
 
-    // Observe connection state changes so we can show a reconnect overlay and
-    // re-request state after transient connection losses (without reload).
     stateChangeHandler.value = ({ current }: { previous: string; current: string }) => {
       debug("state_change", { current });
       connectionState.value = current ?? "unknown";
@@ -626,7 +567,6 @@ export const useChannelStore = defineStore("channel", () => {
         clearConnectionLossTimeout();
         connectionLossTimeoutId.value = window.setTimeout(() => {
           connectionLossTimeoutId.value = null;
-          // If we cannot recover after a while, treat it as inactivity.
           handleInactivity();
         }, 60000);
       }
@@ -730,7 +670,7 @@ export const useChannelStore = defineStore("channel", () => {
     setGameRunning(value);
     if (value) lockAllowedIdsForRunningGame();
 
-    const persisted = readPersistedSession();
+    const persisted = readPersistedSession<UserData>();
     if (persisted) {
       persistSession({
         ...persisted,
@@ -747,7 +687,7 @@ export const useChannelStore = defineStore("channel", () => {
 
   const tryReconnect = ({ force = false }: { force?: boolean } = {}) => {
     if ((activeChannel.value || client.value) && !force) return false;
-    const persisted = readPersistedSession();
+    const persisted = readPersistedSession<UserData>();
     if (!persisted) return false;
 
     if (force) {

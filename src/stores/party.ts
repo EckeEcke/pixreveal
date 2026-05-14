@@ -10,15 +10,9 @@ import {
   workerSetInterval,
   workerSetTimeout,
 } from "@/services/workerTimers";
+import { backoffDelay, hashStringToRange } from "@/utils/realtime";
+import type { BuzzerState, PartyPlayer, PartyStatePayload } from "@/types/party";
 
-type BuzzerState = "open" | "locked" | "answering";
-
-type PartyPlayer = {
-  playerId: string;
-  username: string;
-  avatarIndex: number;
-  points: number;
-};
 
 export const usePartyStore = defineStore("party", () => {
   const channelStore = useChannelStore();
@@ -91,29 +85,8 @@ export const usePartyStore = defineStore("party", () => {
     resyncBackoffMs.value = 0;
   };
 
-  const backoffDelay = (baseMs: number, attempt: number, maxMs: number) =>
-    Math.min(maxMs, baseMs * Math.pow(2, Math.max(0, attempt - 1)));
-
-  const controllerJitterMs = () => {
-    const id = String(channelStore.playerId || "");
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-    }
-    return HEARTBEAT_JITTER_MS > 0 ? hash % HEARTBEAT_JITTER_MS : 0;
-  };
-
-  type PartyStatePayload = {
-    sentAt: number;
-    roundIndex: number;
-    buzzerState: BuzzerState;
-    activePlayerId: string | null;
-    answerDeadlineAt: number | null;
-    playerLastSeen?: Record<string, number>;
-    players: PartyPlayer[];
-    roundTimeLimit: number;
-    buzzerTimeLimit: number;
-  };
+  const controllerJitterMs = () =>
+    hashStringToRange(String(channelStore.playerId || ""), HEARTBEAT_JITTER_MS);
 
   const activePlayer = computed(() =>
     players.value.find((p) => p.playerId === activePlayerId.value),
@@ -400,8 +373,6 @@ export const usePartyStore = defineStore("party", () => {
       eventBindings.push({ event: name, handler });
     };
 
-    // Any inbound game/control event means the connection is alive enough to
-    // receive host updates.
     markHostActivity();
 
     bindEvent("client-join-blocked", (data: { targetId?: string }) => {
@@ -423,9 +394,6 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent("client-host-inactive", (data: { playerId: string }) => {
       markHostActivity();
       if (data.playerId === channelStore.playerId) return;
-      // Don't hard-kick players to home on a single host-inactive signal.
-      // Connection loss/reconnects can produce false positives; keep the controller
-      // on the current view and let reconnect logic recover.
       channelStore.resetConnection?.();
       router.push("/party-player");
     });
@@ -856,6 +824,7 @@ export const usePartyStore = defineStore("party", () => {
     sendEmoji,
     pendingBuzz,
     pendingAnswer,
+    broadcastPartyState,
     reset,
   };
 });
