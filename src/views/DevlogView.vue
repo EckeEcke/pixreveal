@@ -4,6 +4,19 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-14-26</span>
+        </div>
+        <h3 class="log-title">Emotes in Party Multiplayer</h3>
+        <p>
+          To improve the "party feeling" of the jackbox style party multiplayer,
+          I added an emote feature. Send reactions from your phone to the host
+          device to react to the current game (or distract other players).
+          Following soon is statistics about used emotes in the end of the
+          round.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-12-26</span>
         </div>
         <h3 class="log-title">User Art Gallery</h3>
@@ -74,8 +87,8 @@
         <p>
           The core of PixReveal is its art, and now you can be a part of it. I
           have officially launched the User-Generated Content (UGC)
-          <router-link to="/editor">Editor</router-link>, allowing players
-          to create and submit their own pixel art masterpieces directly within
+          <router-link to="/editor">Editor</router-link>, allowing players to
+          create and submit their own pixel art masterpieces directly within
           pixreveal.com. Once a design is submitted, it enters my moderation
           queue for a quick quality check. As soon as I’ve approved the
           submission, your artwork will be seamlessly integrated into the game,

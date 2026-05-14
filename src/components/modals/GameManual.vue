@@ -89,18 +89,20 @@
         around a single screen, and everyone can join the fun by buzzing in with
         their own devices. No need for multiple screens or complex setups. Just
         one host starts the game, and everyone else can join as a player on
-        their phones. The game is designed to be enjoyed in a social setting,
-        making it perfect for parties, family gatherings, or casual game nights.
+        their phones. Send emotes from your phone to the host screen to react to
+        the current game (or distract other players). The game is designed to be
+        enjoyed in a social setting, making it perfect for parties, family
+        gatherings, or casual game nights.
       </p>
       <h4>Submit your Art - User Generat content</h4>
       <p>
         Have you created your own pixelart? Share it with the PixReveal
         community! Use the
-        <router-link to="/editor">Editor</router-link> to upload your drawings and submit them for
-        others to guess. Community-made content expands the pool of drawings and
-        keeps the game fresh for everyone. Enable user art via the settings.
-        Once approved, your art will be available in the game. Additionally
-        PixReveal provides a
+        <router-link to="/editor">Editor</router-link> to upload your drawings
+        and submit them for others to guess. Community-made content expands the
+        pool of drawings and keeps the game fresh for everyone. Enable user art
+        via the settings. Once approved, your art will be available in the game.
+        Additionally PixReveal provides a
         <router-link to="/user-gallery">user art gallery</router-link>. Check
         out art created by other players. If your art is not listed yet, then it
         is still waiting for approval.
