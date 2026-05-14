@@ -29,6 +29,8 @@ export const usePartyStore = defineStore("party", () => {
   const HEARTBEAT_PERIOD_MS = 12000;
   const STALE_AFTER_MS = 25000;
   const RESYNC_PERIOD_MS = 5000;
+  const STALE_CONFIRM_AFTER_MS = 12000;
+  const MAX_RESYNC_ATTEMPTS = 3;
 
   const players = ref<PartyPlayer[]>([]);
   const buzzerState = ref<BuzzerState>("locked");
@@ -50,10 +52,16 @@ export const usePartyStore = defineStore("party", () => {
   const lastHostActivityAt = ref<number>(Date.now());
   const connectionStale = ref(false);
   const playerLastSeen = ref<Record<string, number>>({});
+  const staleSuspectedAt = ref<number | null>(null);
+  const lastResyncRequestAt = ref<number>(0);
+  const resyncAttempts = ref(0);
 
   const markHostActivity = () => {
     lastHostActivityAt.value = Date.now();
     connectionStale.value = false;
+    staleSuspectedAt.value = null;
+    resyncAttempts.value = 0;
+    lastResyncRequestAt.value = 0;
   };
 
   type PartyStatePayload = {
@@ -533,17 +541,53 @@ export const usePartyStore = defineStore("party", () => {
       staleCheckIntervalId = workerSetInterval(() => {
         if (isHost.value) return;
         const age = Date.now() - lastHostActivityAt.value;
-        connectionStale.value = age > STALE_AFTER_MS;
+
+        // Don't immediately show "RECONNECTING" just because the host didn't send
+        // updates for a while. First, actively try to resync a few times.
+        if (age <= STALE_AFTER_MS) {
+          connectionStale.value = false;
+          staleSuspectedAt.value = null;
+          resyncAttempts.value = 0;
+          lastResyncRequestAt.value = 0;
+          return;
+        }
+
+        if (!staleSuspectedAt.value) {
+          staleSuspectedAt.value = Date.now();
+          resyncAttempts.value = 0;
+          lastResyncRequestAt.value = 0;
+        }
       }, 1000);
     }
 
     if (!resyncIntervalId) {
       resyncIntervalId = workerSetInterval(() => {
         if (isHost.value) return;
-        if (!connectionStale.value) return;
-        channel.value?.trigger("client-party-state-request", {
-          requestedBy: channelStore.playerId,
-        });
+        if (!staleSuspectedAt.value) return;
+
+        const now = Date.now();
+        const age = now - lastHostActivityAt.value;
+        if (age <= STALE_AFTER_MS) return;
+
+        if (
+          resyncAttempts.value < MAX_RESYNC_ATTEMPTS &&
+          now - lastResyncRequestAt.value >= RESYNC_PERIOD_MS
+        ) {
+          lastResyncRequestAt.value = now;
+          resyncAttempts.value++;
+          channel.value?.trigger("client-party-state-request", {
+            requestedBy: channelStore.playerId,
+          });
+        }
+
+        // Only after repeated failed resync attempts (time-based) show reconnect UI.
+        if (
+          staleSuspectedAt.value &&
+          now - staleSuspectedAt.value >= STALE_CONFIRM_AFTER_MS &&
+          age > STALE_AFTER_MS
+        ) {
+          connectionStale.value = true;
+        }
       }, RESYNC_PERIOD_MS);
     }
   };
