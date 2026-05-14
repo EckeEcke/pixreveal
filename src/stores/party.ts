@@ -26,11 +26,11 @@ export const usePartyStore = defineStore("party", () => {
   const configStore = useConfigStore();
   const router = useRouter();
 
-  const HEARTBEAT_PERIOD_MS = 12000;
-  const STALE_AFTER_MS = 25000;
-  const RESYNC_PERIOD_MS = 5000;
-  const STALE_CONFIRM_AFTER_MS = 12000;
-  const MAX_RESYNC_ATTEMPTS = 3;
+  const HEARTBEAT_PERIOD_MS = 6000;
+  const STALE_AFTER_MS = 15000;
+  const RESYNC_PERIOD_MS = 2000;
+  const STALE_CONFIRM_AFTER_MS = 7000;
+  const MAX_RESYNC_ATTEMPTS = 4;
 
   const players = ref<PartyPlayer[]>([]);
   const buzzerState = ref<BuzzerState>("locked");

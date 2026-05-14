@@ -132,6 +132,7 @@ let timeoutId = null;
 let watchdogInterval = null;
 let lingerTimeoutId = null;
 const lingerAnswerUi = ref(false);
+let hardReconnectIntervalId = null;
 
 const startLinger = () => {
   lingerAnswerUi.value = true;
@@ -183,6 +184,10 @@ onBeforeUnmount(() => {
   if (lingerTimeoutId) {
     workerClearTimeout(lingerTimeoutId);
     lingerTimeoutId = null;
+  }
+  if (hardReconnectIntervalId) {
+    workerClearInterval(hardReconnectIntervalId);
+    hardReconnectIntervalId = null;
   }
   if (watchdogInterval) {
     workerClearInterval(watchdogInterval);
@@ -271,6 +276,15 @@ onMounted(() => {
   channelStore.activeChannel?.trigger("client-party-state-request", {
     requestedBy: channelStore.playerId,
   });
+
+  // If the connection is truly stale, soft resync triggers may not reach the host.
+  // As a fallback, periodically hard-reset and reconnect using the persisted session.
+  hardReconnectIntervalId = workerSetInterval(() => {
+    if (!partyStore.connectionStale) return;
+    channelStore.reset?.();
+    channelStore.tryReconnect?.();
+  }, 8000);
+
   watchdogInterval = workerSetInterval(() => {
     if (isMyTurn.value && !hasAnswered.value && !timerInterval) {
       startTimer();
