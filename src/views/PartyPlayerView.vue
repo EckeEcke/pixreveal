@@ -277,11 +277,9 @@ onMounted(() => {
     requestedBy: channelStore.playerId,
   });
 
-  // If the connection is truly stale, soft resync triggers may not reach the host.
-  // As a fallback, periodically hard-reset and reconnect using the persisted session.
   hardReconnectIntervalId = workerSetInterval(() => {
     if (!partyStore.connectionStale) return;
-    channelStore.reset?.();
+    channelStore.resetConnection?.();
     channelStore.tryReconnect?.();
   }, 8000);
 

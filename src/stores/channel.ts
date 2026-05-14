@@ -106,7 +106,9 @@ export const useChannelStore = defineStore("channel", () => {
     connectionLossTimeoutId.value = null;
   };
 
-  const reset = () => {
+  type ResetOptions = { clearPersisted?: boolean };
+
+  const reset = ({ clearPersisted = true }: ResetOptions = {}) => {
     if (activeChannel.value?.unbind) {
       // defensive: remove any lingering handlers before dropping references
       activeChannel.value.unbind();
@@ -133,7 +135,9 @@ export const useChannelStore = defineStore("channel", () => {
     clearInactivityGrace();
     clearConnectionLossTimeout();
     allowedIdsDuringGame.value = null;
-    persistSession(null);
+    if (clearPersisted) {
+      persistSession(null);
+    }
 
     if (heartbeatIntervalId.value) {
       workerClearInterval(heartbeatIntervalId.value);
@@ -200,6 +204,8 @@ export const useChannelStore = defineStore("channel", () => {
       handleInactivity();
     }, 30000);
   };
+
+  const resetConnection = () => reset({ clearPersisted: false });
 
   const handleBeforeUnload = () => {
     handleInactivity({ skipNavigation: true });
@@ -598,5 +604,6 @@ export const useChannelStore = defineStore("channel", () => {
     sendChatMessage,
     removePlayer,
     reset,
+    resetConnection,
   };
 });

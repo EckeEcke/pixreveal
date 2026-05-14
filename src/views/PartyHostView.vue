@@ -155,9 +155,6 @@ watch(
         clearAllTimers();
       }
 
-      // If the round ended due to a timeout / no active answering player,
-      // force the header timer to 0 so "TIME UP" is rendered (it can otherwise
-      // remain at 1 if the last tick was missed).
       if (!partyStore.activePlayerId) {
         timer.value = 0;
       }
@@ -215,7 +212,7 @@ onUnmounted(() => {
 <style scoped>
 .host-layout {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: max(600px) minmax(400px,100%);
   align-items: start;
   gap: 32px;
   max-width: 1200px;
