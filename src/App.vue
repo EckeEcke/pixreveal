@@ -40,45 +40,46 @@ const soundStore = useSoundStore();
 const dailyStore = useDailyStore();
 
 const audio = ref(null);
-const audioUnlocked = ref(false);
 
-const handleAudioState = async (isEnabled) => {
-  if (!audio.value || playerStore.isCreatorMode) return;
+const MUSIC_ROUTES = new Set(["game", "inspect", "buzzer", "party-host", "survival"]);
 
-  if (isEnabled) {
-    if (!audio.value.src) {
-      const musicPath = new URL("./assets/audio/music.mp3", import.meta.url)
-        .href;
-      audio.value.src = musicPath;
-    }
+const ensureMusicSrc = () => {
+  if (!audio.value) return;
+  if (audio.value.src) return;
+  const musicPath = new URL("./assets/audio/music.mp3", import.meta.url).href;
+  audio.value.src = musicPath;
+  audio.value.load?.();
+};
 
-    try {
-      await audio.value.play();
-      audioUnlocked.value = true;
-    } catch (err) {
-      console.warn("Autoplay blocked. Waiting for user interaction.");
-    }
-  } else {
+const shouldPlayMusic = () => {
+  const routeName = String(route.name ?? "");
+  return (
+    !!audio.value &&
+    !playerStore.isCreatorMode &&
+    soundStore.isAudioEnabled.value &&
+    MUSIC_ROUTES.has(routeName)
+  );
+};
+
+const syncMusicPlayback = async () => {
+  if (!audio.value) return;
+
+  if (!shouldPlayMusic()) {
     audio.value.pause();
+    return;
+  }
+
+  ensureMusicSrc();
+  try {
+    await audio.value.play();
+  } catch {
   }
 };
 
 watch(
-  () => soundStore.isAudioEnabled,
-  (isEnabled) => {
-    handleAudioState(isEnabled);
-  },
-);
-
-watch(
-  () => route.name,
-  (newRouteName) => {
-    if (newRouteName === "party-player") {
-      audio.value?.pause();
-    } else if (soundStore.isAudioEnabled && audio.value?.paused) {
-      audio.value?.play().catch(() => {});
-    }
-  },
+  [() => route.name, () => soundStore.isAudioEnabled.value, () => playerStore.isCreatorMode],
+  () => syncMusicPlayback(),
+  { immediate: true },
 );
 
 let wakeLock = null;
@@ -91,11 +92,7 @@ const requestWakeLock = async () => {
     wakeLock = await navigator.wakeLock.request("screen");
     wakeLock.addEventListener("release", () => {
       console.log("WakeLock released");
-      // Android/Chromium may revoke wake locks unexpectedly (OS policy).
-      // If we're still visible, try to reacquire so the device doesn't drift into
-      // a low-power state that can break realtime connections.
       if (document.visibilityState === "visible") {
-        // Mark as released so the re-acquire guard doesn't block.
         wakeLock = null;
         setTimeout(() => {
           requestWakeLock();
@@ -133,9 +130,7 @@ onMounted(() => {
     playerStore.isCreatorMode = true;
   }
   const startAudioOnFirstInteraction = async () => {
-    if (soundStore.isAudioEnabled) {
-      await handleAudioState(true);
-    }
+    await syncMusicPlayback();
     document.removeEventListener("click", startAudioOnFirstInteraction);
     document.removeEventListener("pointerdown", startAudioOnFirstInteraction);
     document.removeEventListener("keydown", onKeydownUnlock);
@@ -147,7 +142,6 @@ onMounted(() => {
 
   document.addEventListener("click", startAudioOnFirstInteraction);
   document.addEventListener("pointerdown", startAudioOnFirstInteraction);
-  // Smart TV remotes often only dispatch keyboard events.
   document.addEventListener("keydown", onKeydownUnlock);
 });
 
