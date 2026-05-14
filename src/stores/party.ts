@@ -26,6 +26,10 @@ export const usePartyStore = defineStore("party", () => {
   const configStore = useConfigStore();
   const router = useRouter();
 
+  const HEARTBEAT_PERIOD_MS = 12000;
+  const STALE_AFTER_MS = 25000;
+  const RESYNC_PERIOD_MS = 5000;
+
   const players = ref<PartyPlayer[]>([]);
   const buzzerState = ref<BuzzerState>("locked");
   const activePlayerId = ref<string | null>(null);
@@ -38,7 +42,19 @@ export const usePartyStore = defineStore("party", () => {
   let answerTimer: number | null = null;
   let stateBroadcastInterval: number | null = null;
   let buzzAckTimeout: number | null = null;
+  let heartbeatIntervalId: number | null = null;
+  let staleCheckIntervalId: number | null = null;
+  let resyncIntervalId: number | null = null;
   const answerDeadlineAt = ref<number | null>(null);
+
+  const lastHostActivityAt = ref<number>(Date.now());
+  const connectionStale = ref(false);
+  const playerLastSeen = ref<Record<string, number>>({});
+
+  const markHostActivity = () => {
+    lastHostActivityAt.value = Date.now();
+    connectionStale.value = false;
+  };
 
   type PartyStatePayload = {
     sentAt: number;
@@ -46,6 +62,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState: BuzzerState;
     activePlayerId: string | null;
     answerDeadlineAt: number | null;
+    playerLastSeen?: Record<string, number>;
     players: PartyPlayer[];
     roundTimeLimit: number;
     buzzerTimeLimit: number;
@@ -78,6 +95,19 @@ export const usePartyStore = defineStore("party", () => {
     }
     workerClearTimeout(buzzAckTimeout);
     buzzAckTimeout = null;
+
+    if (heartbeatIntervalId) {
+      workerClearInterval(heartbeatIntervalId);
+      heartbeatIntervalId = null;
+    }
+    if (staleCheckIntervalId) {
+      workerClearInterval(staleCheckIntervalId);
+      staleCheckIntervalId = null;
+    }
+    if (resyncIntervalId) {
+      workerClearInterval(resyncIntervalId);
+      resyncIntervalId = null;
+    }
   };
 
   const clearStateBroadcastInterval = () => {
@@ -92,6 +122,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState: buzzerState.value,
     activePlayerId: activePlayerId.value,
     answerDeadlineAt: answerDeadlineAt.value,
+    playerLastSeen: isHost.value ? playerLastSeen.value : undefined,
     players: players.value,
     roundTimeLimit: roundTimeLimit.value,
     buzzerTimeLimit: buzzerTimeLimit.value,
@@ -307,12 +338,18 @@ export const usePartyStore = defineStore("party", () => {
       eventBindings.push({ event: name, handler });
     };
 
+    // Any inbound game/control event means the connection is alive enough to
+    // receive host updates.
+    markHostActivity();
+
     bindEvent("client-join-blocked", () => {
+      markHostActivity();
       channelStore.reset();
       router.push("/");
     });
 
     bindEvent("client-player-inactive", (data: { playerId: string }) => {
+      markHostActivity();
       if (!isHost.value) return;
       players.value = players.value.filter(
         (player) => player.playerId !== data.playerId,
@@ -321,12 +358,14 @@ export const usePartyStore = defineStore("party", () => {
     });
 
     bindEvent("client-host-inactive", (data: { playerId: string }) => {
+      markHostActivity();
       if (data.playerId === channelStore.playerId) return;
       channelStore.reset();
       router.push("/");
     });
 
     bindEvent("client-party-game-started", (data: any) => {
+      markHostActivity();
       channelStore.setGameRunning(true);
       gameStore.prepareGame(data.revealTime, data.rounds);
       router.push("/party-player");
@@ -334,12 +373,14 @@ export const usePartyStore = defineStore("party", () => {
 
     if (isHost.value) {
       bindEvent("client-party-buzz", (data: { playerId: string }) => {
+        markHostActivity();
         handleBuzz(data.playerId);
       });
 
       bindEvent(
         "client-party-answer",
         (data: { playerId: string; isCorrect: boolean }) => {
+          markHostActivity();
           if (
             buzzerState.value === "answering" &&
             activePlayerId.value === data.playerId
@@ -350,14 +391,26 @@ export const usePartyStore = defineStore("party", () => {
       );
 
       bindEvent("client-party-emoji", (data: { emoji: string }) => {
+        markHostActivity();
         window.dispatchEvent(
           new CustomEvent("emoji-received", { detail: data.emoji }),
         );
       });
 
       bindEvent(
+        "client-party-heartbeat",
+        (data: { playerId?: string; ts?: number }) => {
+          const id = data?.playerId;
+          if (!id) return;
+          const ts = typeof data.ts === "number" ? data.ts : Date.now();
+          playerLastSeen.value = { ...playerLastSeen.value, [id]: ts };
+        },
+      );
+
+      bindEvent(
         "client-party-state-request",
         (data: { requestedBy?: string }) => {
+          markHostActivity();
           broadcastPartyState(
             `state-request:${data?.requestedBy || "unknown"}`,
           );
@@ -366,6 +419,7 @@ export const usePartyStore = defineStore("party", () => {
     }
 
     bindEvent("client-party-buzzer-open", () => {
+      markHostActivity();
       buzzerState.value = "open";
       roundResult.value = null;
       activePlayerId.value = null;
@@ -378,6 +432,7 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent(
       "client-party-buzzer-locked",
       (data: { playerId: string; options?: any[] }) => {
+        markHostActivity();
         workerClearTimeout(buzzAckTimeout);
         buzzAckTimeout = null;
         activePlayerId.value = data.playerId;
@@ -392,6 +447,7 @@ export const usePartyStore = defineStore("party", () => {
     );
 
     bindEvent("client-party-round-result", (data: any) => {
+      markHostActivity();
       roundResult.value = data.isCorrect ? "correct" : "incorrect";
       buzzerState.value = "locked";
       activePlayerId.value = data.playerId;
@@ -406,6 +462,7 @@ export const usePartyStore = defineStore("party", () => {
     );
 
     bindEvent("client-party-next-round", () => {
+      markHostActivity();
       gameStore.nextRound();
       hasAnswered.value = false;
     });
@@ -414,6 +471,7 @@ export const usePartyStore = defineStore("party", () => {
       "client-party-state",
       (data: { state?: PartyStatePayload; reason?: string }) => {
         if (isHost.value) return;
+        markHostActivity();
         const state = data?.state;
         if (!state) return;
 
@@ -433,6 +491,9 @@ export const usePartyStore = defineStore("party", () => {
           typeof state.answerDeadlineAt === "number"
             ? state.answerDeadlineAt
             : null;
+        if (state.playerLastSeen && typeof state.playerLastSeen === "object") {
+          playerLastSeen.value = state.playerLastSeen;
+        }
 
         if (
           buzzerState.value !== "answering" ||
@@ -452,11 +513,39 @@ export const usePartyStore = defineStore("party", () => {
     }
 
     bindEvent("client-party-game-over", (data: { players: PartyPlayer[] }) => {
+      markHostActivity();
       players.value = data.players;
       gameStore.isGameOver = true;
       channelStore.setGameRunning(false);
       router.push("/gameover");
     });
+
+    if (!heartbeatIntervalId) {
+      heartbeatIntervalId = workerSetInterval(() => {
+        channel.value?.trigger("client-party-heartbeat", {
+          playerId: channelStore.playerId,
+          ts: Date.now(),
+        });
+      }, HEARTBEAT_PERIOD_MS);
+    }
+
+    if (!staleCheckIntervalId) {
+      staleCheckIntervalId = workerSetInterval(() => {
+        if (isHost.value) return;
+        const age = Date.now() - lastHostActivityAt.value;
+        connectionStale.value = age > STALE_AFTER_MS;
+      }, 1000);
+    }
+
+    if (!resyncIntervalId) {
+      resyncIntervalId = workerSetInterval(() => {
+        if (isHost.value) return;
+        if (!connectionStale.value) return;
+        channel.value?.trigger("client-party-state-request", {
+          requestedBy: channelStore.playerId,
+        });
+      }, RESYNC_PERIOD_MS);
+    }
   };
 
   watch(
@@ -533,6 +622,8 @@ export const usePartyStore = defineStore("party", () => {
     buzzerTimeLimit,
     hasAnswered,
     answerDeadlineAt,
+    connectionStale,
+    playerLastSeen,
     startGame,
     openBuzzer,
     handleBuzz,

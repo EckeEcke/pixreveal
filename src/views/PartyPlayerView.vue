@@ -16,6 +16,14 @@
         </div>
 
         <div
+          v-else-if="partyStore.connectionStale"
+          key="reconnecting"
+          class="centered placeholder"
+        >
+          <p class="waiting-label">RECONNECTING...</p>
+        </div>
+
+        <div
           v-else-if="partyStore.buzzerState === 'open'"
           key="buzzer"
           class="centered"
@@ -68,14 +76,12 @@
       </Transition>
     </div>
 
-    <div
-      :disabled="emojiCooldown"
-      class="emoji-btns"
-    >
+    <div class="emoji-btns">
       <button
         v-for="emoji in emojis"
         :key="emoji"
         class="emoji-btn"
+        :disabled="emojiCooldown || partyStore.connectionStale"
         @click="sendEmoji(emoji)"
       >
         {{ emoji }}
@@ -167,6 +173,7 @@ watch(isMyTurn, (newValue) => {
 });
 
 const handleBuzz = () => {
+  if (partyStore.connectionStale) return;
   vibrateBuzz();
   partyStore.pressBuzzer();
 };

@@ -98,7 +98,6 @@ const startTimer = () => {
   workerClearTimeout(timerEndTimeoutId);
   timer.value = timerDuration.value;
   
-  // Hard stop to avoid missing the last tick (interval drift / race with other timers).
   timerEndTimeoutId = workerSetTimeout(() => {
     timerEndTimeoutId = null;
     timer.value = 0;
