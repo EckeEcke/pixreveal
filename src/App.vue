@@ -129,11 +129,19 @@ onMounted(() => {
   if (urlParams.get("creator") === "true") {
     playerStore.isCreatorMode = true;
   }
+
+  syncMusicPlayback();
+
   const startAudioOnFirstInteraction = async () => {
+    if (!shouldPlayMusic()) return;
+
     await syncMusicPlayback();
-    document.removeEventListener("click", startAudioOnFirstInteraction);
-    document.removeEventListener("pointerdown", startAudioOnFirstInteraction);
-    document.removeEventListener("keydown", onKeydownUnlock);
+
+    if (!audio.value?.paused) {
+      document.removeEventListener("click", startAudioOnFirstInteraction);
+      document.removeEventListener("pointerdown", startAudioOnFirstInteraction);
+      document.removeEventListener("keydown", onKeydownUnlock);
+    }
   };
 
   const onKeydownUnlock = (e) => {
