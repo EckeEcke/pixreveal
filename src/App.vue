@@ -56,7 +56,7 @@ const shouldPlayMusic = () => {
   return (
     !!audio.value &&
     !playerStore.isCreatorMode &&
-    soundStore.isAudioEnabled.value &&
+    soundStore.isAudioEnabled &&
     MUSIC_ROUTES.has(routeName)
   );
 };
@@ -77,7 +77,7 @@ const syncMusicPlayback = async () => {
 };
 
 watch(
-  [() => route.name, () => soundStore.isAudioEnabled.value, () => playerStore.isCreatorMode],
+  [() => route.name, () => soundStore.isAudioEnabled, () => playerStore.isCreatorMode],
   () => syncMusicPlayback(),
   { immediate: true },
 );
