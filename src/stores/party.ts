@@ -37,6 +37,7 @@ export const usePartyStore = defineStore("party", () => {
   let buzzerTimer: number | null = null;
   let answerTimer: number | null = null;
   let stateBroadcastInterval: number | null = null;
+  let buzzAckTimeout: number | null = null;
   const answerDeadlineAt = ref<number | null>(null);
 
   type PartyStatePayload = {
@@ -75,6 +76,8 @@ export const usePartyStore = defineStore("party", () => {
       workerClearInterval(stateBroadcastInterval);
       stateBroadcastInterval = null;
     }
+    workerClearTimeout(buzzAckTimeout);
+    buzzAckTimeout = null;
   };
 
   const clearStateBroadcastInterval = () => {
@@ -368,11 +371,15 @@ export const usePartyStore = defineStore("party", () => {
       activePlayerId.value = null;
       hasAnswered.value = false;
       answerDeadlineAt.value = null;
+      workerClearTimeout(buzzAckTimeout);
+      buzzAckTimeout = null;
     });
 
     bindEvent(
       "client-party-buzzer-locked",
       (data: { playerId: string; options?: any[] }) => {
+        workerClearTimeout(buzzAckTimeout);
+        buzzAckTimeout = null;
         activePlayerId.value = data.playerId;
 
         if (data.playerId === channelStore.playerId) {
@@ -469,6 +476,16 @@ export const usePartyStore = defineStore("party", () => {
     channel.value?.trigger("client-party-buzz", {
       playerId: channelStore.playerId,
     });
+
+    workerClearTimeout(buzzAckTimeout);
+    buzzAckTimeout = workerSetTimeout(() => {
+      buzzAckTimeout = null;
+      if (buzzerState.value === "open") {
+        channel.value?.trigger("client-party-state-request", {
+          requestedBy: channelStore.playerId,
+        });
+      }
+    }, 400);
   };
 
   const submitAnswer = (
