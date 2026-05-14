@@ -354,9 +354,15 @@ export const useChannelStore = defineStore("channel", () => {
           const stillNoHost = !playersOnline.value.some((p) => p.isHost);
           if (stillNoHost) {
             console.error("Kein Host gefunden (nach Grace Period).");
-            reset();
-            isLoading.value = false;
-            router.push("/");
+            // Don't hard-kick immediately; stay on the current view and keep trying to recover.
+            // This avoids players being sent to home due to transient presence gaps.
+            if (!isLoading.value) isLoading.value = true;
+            loadingText.value = "RECONNECTING...";
+
+            // Keep requesting state periodically; party store / player view will handle further recovery.
+            activeChannel.value?.trigger("client-party-state-request", {
+              requestedBy: playerId.value,
+            });
             return;
           }
         }, 8000);

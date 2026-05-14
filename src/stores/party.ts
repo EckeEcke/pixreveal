@@ -415,8 +415,11 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent("client-host-inactive", (data: { playerId: string }) => {
       markHostActivity();
       if (data.playerId === channelStore.playerId) return;
-      channelStore.reset();
-      router.push("/");
+      // Don't hard-kick players to home on a single host-inactive signal.
+      // Connection loss/reconnects can produce false positives; keep the controller
+      // on the current view and let reconnect logic recover.
+      channelStore.resetConnection?.();
+      router.push("/party-player");
     });
 
     bindEvent("client-party-game-started", (data: any) => {
