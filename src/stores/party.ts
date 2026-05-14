@@ -479,10 +479,7 @@ export const usePartyStore = defineStore("party", () => {
       answer: option ? option.name : "Time up",
       isCorrect: option ? option.isCorrect : false,
     };
-    workerSetTimeout(
-      () => channel.value?.trigger("client-party-answer", payload),
-      1000,
-    );
+    channel.value?.trigger("client-party-answer", payload);
 
     if (isHost.value) {
       resolveAnswer(channelStore.playerId, payload.isCorrect);

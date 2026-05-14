@@ -30,7 +30,7 @@
           </button>
         </div>
 
-        <div v-else-if="isMyTurn" key="answers" class="centered">
+        <div v-else-if="isMyTurn || lingerAnswerUi" key="answers" class="centered">
           <AnswerButtons
             :hasAnswered="hasAnswered"
             :answers="gameStore.currentRound.options"
@@ -117,12 +117,24 @@ const player = computed(() => {
 });
 
 const ANSWER_TIMEOUT = 5000;
+const ANSWER_UI_LINGER_MS = 900;
 
 const timeRemaining = ref(5);
 const timerStartTime = ref(null);
 let timerInterval = null;
 let timeoutId = null;
 let watchdogInterval = null;
+let lingerTimeoutId = null;
+const lingerAnswerUi = ref(false);
+
+const startLinger = () => {
+  lingerAnswerUi.value = true;
+  if (lingerTimeoutId) workerClearTimeout(lingerTimeoutId);
+  lingerTimeoutId = workerSetTimeout(() => {
+    lingerTimeoutId = null;
+    lingerAnswerUi.value = false;
+  }, ANSWER_UI_LINGER_MS);
+};
 
 const isMyTurn = computed(
   () =>
@@ -161,6 +173,10 @@ const handleBuzz = () => {
 
 onBeforeUnmount(() => {
   cancelTimer();
+  if (lingerTimeoutId) {
+    workerClearTimeout(lingerTimeoutId);
+    lingerTimeoutId = null;
+  }
   if (watchdogInterval) {
     workerClearInterval(watchdogInterval);
     watchdogInterval = null;
@@ -205,12 +221,16 @@ const handleAnswer = (selectedAnswer) => {
 
   cancelTimer();
 
+  startLinger();
+
   partyStore.hasAnswered = true;
   partyStore.submitAnswer(selectedAnswer);
 };
 
 const handleTimeoutAnswer = () => {
   if (hasAnswered.value) return;
+
+  startLinger();
 
   partyStore.hasAnswered = true;
   partyStore.submitAnswer(undefined);
