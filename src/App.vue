@@ -116,8 +116,7 @@ const releaseWakeLock = async () => {
 
 const handleVisibilityChange = () => {
   if (document.visibilityState === "visible") {
-    // Prefer wake lock on the host view; players don't strictly need it.
-    if (route.name === "party-host") requestWakeLock();
+    requestWakeLock();
   } else {
     releaseWakeLock();
   }
@@ -125,7 +124,7 @@ const handleVisibilityChange = () => {
 
 onMounted(() => {
   dailyStore.fetchDailyData();
-  if (route.name === "party-host") requestWakeLock();
+  requestWakeLock();
   document.addEventListener("visibilitychange", handleVisibilityChange);
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("creator") === "true") {
@@ -146,9 +145,7 @@ onMounted(() => {
 watch(
   () => route.name,
   (name) => {
-    // Keep wake lock primarily for the host device to reduce mobile OS throttling.
-    if (name === "party-host") requestWakeLock();
-    else releaseWakeLock();
+    if (document.visibilityState === "visible") requestWakeLock();
   },
   { immediate: true },
 );
