@@ -350,8 +350,9 @@ export const usePartyStore = defineStore("party", () => {
     // receive host updates.
     markHostActivity();
 
-    bindEvent("client-join-blocked", () => {
+    bindEvent("client-join-blocked", (data: { targetId?: string }) => {
       markHostActivity();
+      if (data?.targetId && data.targetId !== channelStore.playerId) return;
       channelStore.reset();
       router.push("/");
     });

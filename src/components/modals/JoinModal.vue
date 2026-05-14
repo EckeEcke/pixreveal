@@ -121,7 +121,6 @@ const props = defineProps({
 defineEmits(["close"]);
 
 const showAvatarModal = ref(false);
-const playerId = Math.random().toString(36).substring(2, 9);
 
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
@@ -170,6 +169,7 @@ const avatarStyle = computed(() => {
 const hostGame = () => {
   channelStore.setMode(props.mode === "party" ? "party" : "regular");
   soundStore.playSound("click");
+  const playerId = playerStore.controllerId;
   channelStore.playerId = playerId;
   channelStore.isLoading = true;
 
@@ -200,6 +200,7 @@ const joinGame = () => {
   if (!joinRoomId.value) return;
   channelStore.setMode(props.mode === "party" ? "party" : "regular");
   soundStore.playSound("click");
+  const playerId = playerStore.controllerId;
   channelStore.playerId = playerId;
   channelStore.isLoading = true;
   channelStore.loadingText = "JOINING...";

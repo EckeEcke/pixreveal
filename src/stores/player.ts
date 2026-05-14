@@ -4,9 +4,22 @@ import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
 
 const STORAGE_KEY = "pixreveal:playerProfile";
+const CONTROLLER_ID_KEY = "pixreveal:controllerId";
 
 export const usePlayerStore = defineStore("player", () => {
   const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+  // Controller identity must be unique per controller instance/tab. If we persist
+  // it in localStorage, multiple tabs on the same device end up with the same
+  // user_id and presence will deduplicate them (host/player won't see each other).
+  // sessionStorage survives reloads in the same tab, which is enough for reconnects.
+  const savedControllerId = sessionStorage.getItem(CONTROLLER_ID_KEY) || "";
+
+  const controllerId: Ref<string> = ref(savedControllerId);
+  if (!controllerId.value) {
+    controllerId.value = crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+    sessionStorage.setItem(CONTROLLER_ID_KEY, controllerId.value);
+  }
 
   const playerName: Ref<string> = ref(savedProfile.name || "");
   const avatarIndex: Ref<number> = ref(savedProfile.avatar ?? 0);
@@ -49,6 +62,7 @@ export const usePlayerStore = defineStore("player", () => {
   };
 
   return {
+    controllerId,
     playerName,
     avatarIndex,
     points,

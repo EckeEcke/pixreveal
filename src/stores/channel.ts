@@ -53,6 +53,7 @@ export const useChannelStore = defineStore("channel", () => {
   const inactivityNotified = ref(false);
   const inactivityGraceTimeoutId = ref<number | null>(null);
   const allowedIdsDuringGame = ref<Set<string> | null>(null);
+  const ALLOWED_IDS_PREFIX = "pixreveal:allowedIds:";
 
   const STORAGE_KEY = "pixreveal:lastSession";
   type PersistedSession = {
@@ -70,6 +71,35 @@ export const useChannelStore = defineStore("channel", () => {
         return;
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    } catch {
+      // ignore storage failures
+    }
+  };
+
+  const allowedIdsStorageKey = (roomId: string) => `${ALLOWED_IDS_PREFIX}${roomId}`;
+
+  const isHostFlag = (value: any) =>
+    value === true || value === 1 || value === "1" || value === "true";
+
+  const readAllowedIds = (roomId: string): Set<string> | null => {
+    try {
+      const raw = localStorage.getItem(allowedIdsStorageKey(roomId));
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return null;
+      return new Set(parsed.filter((v) => typeof v === "string" && v));
+    } catch {
+      return null;
+    }
+  };
+
+  const writeAllowedIds = (roomId: string, ids: Set<string> | null) => {
+    try {
+      if (!ids) {
+        localStorage.removeItem(allowedIdsStorageKey(roomId));
+        return;
+      }
+      localStorage.setItem(allowedIdsStorageKey(roomId), JSON.stringify([...ids]));
     } catch {
       // ignore storage failures
     }
@@ -136,6 +166,9 @@ export const useChannelStore = defineStore("channel", () => {
     clearInactivityGrace();
     clearConnectionLossTimeout();
     allowedIdsDuringGame.value = null;
+    if (clearPersisted && currentRoomId.value) {
+      writeAllowedIds(currentRoomId.value, null);
+    }
     if (clearPersisted) {
       persistSession(null);
     }
@@ -226,6 +259,16 @@ export const useChannelStore = defineStore("channel", () => {
     const ids = new Set(playersOnline.value.map((p) => p.playerId));
     if (playerId.value) ids.add(playerId.value);
     allowedIdsDuringGame.value = ids;
+    if (currentRoomId.value) writeAllowedIds(currentRoomId.value, ids);
+  };
+
+  const allowRejoinDuringRunningGame = (id: string) => {
+    if (!isHost.value || !onlineGameRunning.value) return;
+    if (!allowedIdsDuringGame.value) {
+      allowedIdsDuringGame.value = new Set<string>();
+    }
+    allowedIdsDuringGame.value.add(id);
+    if (currentRoomId.value) writeAllowedIds(currentRoomId.value, allowedIdsDuringGame.value);
   };
 
   const startSubscribeTimeout = () => {
@@ -290,7 +333,7 @@ export const useChannelStore = defineStore("channel", () => {
       }
       const hash = members.presence?.hash || {};
       const totalMembers = Object.keys(hash).length;
-      const hasHost = Object.keys(hash).some((id) => !!hash[id]?.host);
+      const hasHost = Object.keys(hash).some((id) => isHostFlag(hash[id]?.host));
 
       if (!isHost.value && !hasHost) {
         console.warn(
@@ -316,20 +359,20 @@ export const useChannelStore = defineStore("channel", () => {
             router.push("/");
             return;
           }
-        }, 2500);
+        }, 8000);
       }
 
       const nextPlayers: Player[] = Object.keys(hash).map((id) => {
-        if (hash[id].host && hash[id].rounds)
+        if (isHostFlag(hash[id].host) && hash[id].rounds)
           configStore.maxRounds = hash[id].rounds;
-        if (hash[id].host && hash[id].duration)
+        if (isHostFlag(hash[id].host) && hash[id].duration)
           configStore.revealTime = hash[id].duration;
 
         return {
           playerId: id,
           username: hash[id].name,
           avatarIndex: hash[id].avatar,
-          isHost: hash[id].host,
+          isHost: isHostFlag(hash[id].host),
           isOnline: true,
           points: 0,
           hasFinished: false,
@@ -339,7 +382,25 @@ export const useChannelStore = defineStore("channel", () => {
 
       // Replace list to avoid stale/duplicate entries across reconnects.
       playersOnline.value = nextPlayers;
-      lockAllowedIdsForRunningGame();
+
+      // Rehydrate allowlist on host reconnect so previously connected controllers
+      // aren't incorrectly kicked due to partial presence snapshots.
+      if (isHost.value && onlineGameRunning.value && currentRoomId.value) {
+        const persistedAllow = readAllowedIds(currentRoomId.value);
+        if (persistedAllow) {
+          if (!allowedIdsDuringGame.value) {
+            allowedIdsDuringGame.value = persistedAllow;
+          } else {
+            persistedAllow.forEach((id) => allowedIdsDuringGame.value?.add(id));
+          }
+          writeAllowedIds(currentRoomId.value, allowedIdsDuringGame.value);
+        } else {
+          // fall back to current presence if no storage
+          lockAllowedIdsForRunningGame();
+        }
+      } else {
+        lockAllowedIdsForRunningGame();
+      }
 
       // If we were showing a reconnect overlay, hide it after we are back.
       if (isLoading.value && loadingText.value === "RECONNECTING...") {
@@ -407,7 +468,7 @@ export const useChannelStore = defineStore("channel", () => {
         playerId: member.user_id,
         username: member.user_info.name,
         avatarIndex: member.user_info.avatar,
-        isHost: member.user_info.host,
+        isHost: isHostFlag(member.user_info.host),
         isOnline: true,
         points: 0,
         hasFinished: false,
@@ -420,12 +481,25 @@ export const useChannelStore = defineStore("channel", () => {
         isSystem: true,
       });
 
+      // If we were waiting for a host to appear (grace period), cancel as soon as we see one.
+      if (!isHost.value && isHostFlag(member.user_info.host) && noHostGraceTimeoutId.value) {
+        window.clearTimeout(noHostGraceTimeoutId.value);
+        noHostGraceTimeoutId.value = null;
+        if (isLoading.value && loadingText.value === "RECONNECTING...") {
+          isLoading.value = false;
+        }
+      }
+
       if (isHost.value && onlineGameRunning.value) {
         const allowed = allowedIdsDuringGame.value;
-        if (!allowed || !allowed.has(member.user_id)) {
-          channel.trigger("client-join-blocked", {
-            targetId: member.user_id,
-          });
+        // If the host reconnected, allowedIdsDuringGame may have been rebuilt from a
+        // partial presence hash (missing temporarily disconnected players). Allow
+        // rejoiners to prevent false kicks mid-game.
+        allowRejoinDuringRunningGame(member.user_id);
+        if (allowed && !allowed.has(member.user_id)) {
+          // Should be rare now, but keep the kick as a safeguard if allow set is present
+          // and still doesn't include the id (e.g. truly new joiner with different id).
+          channel.trigger("client-join-blocked", { targetId: member.user_id });
         }
       }
     });
@@ -636,5 +710,6 @@ export const useChannelStore = defineStore("channel", () => {
     removePlayer,
     reset,
     resetConnection,
+    allowRejoinDuringRunningGame,
   };
 });
