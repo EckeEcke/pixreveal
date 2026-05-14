@@ -263,12 +263,13 @@ const emojis = [
   "✅",
 ];
 const emojiCooldown = ref(false);
+const EMOJI_COOLDOWN_MS = 2000;
 
 const sendEmoji = (emoji) => {
   if (emojiCooldown.value) return;
   partyStore.sendEmoji(emoji);
   emojiCooldown.value = true;
-  setTimeout(() => (emojiCooldown.value = false), 1000);
+  setTimeout(() => (emojiCooldown.value = false), EMOJI_COOLDOWN_MS);
 };
 
 onMounted(() => {

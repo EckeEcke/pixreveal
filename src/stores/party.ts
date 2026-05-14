@@ -26,11 +26,20 @@ export const usePartyStore = defineStore("party", () => {
   const configStore = useConfigStore();
   const router = useRouter();
 
-  const HEARTBEAT_PERIOD_MS = 6000;
-  const STALE_AFTER_MS = 15000;
-  const RESYNC_PERIOD_MS = 2000;
+  const HEARTBEAT_PERIOD_MS = 15000;
+  const HEARTBEAT_JITTER_MS = 6000;
+  const STALE_AFTER_MS = 20000;
   const STALE_CONFIRM_AFTER_MS = 7000;
   const MAX_RESYNC_ATTEMPTS = 4;
+
+  const BUZZ_RETRY_BASE_MS = 350;
+  const BUZZ_RETRY_MAX_MS = 2500;
+  const BUZZ_RETRY_MAX_ATTEMPTS = 6;
+
+  const ANSWER_RETRY_BASE_MS = 350;
+  const ANSWER_RETRY_MAX_MS = 2500;
+  const ANSWER_RETRY_MAX_ATTEMPTS = 6;
+
 
   const players = ref<PartyPlayer[]>([]);
   const buzzerState = ref<BuzzerState>("locked");
@@ -44,9 +53,12 @@ export const usePartyStore = defineStore("party", () => {
   let answerTimer: number | null = null;
   let stateBroadcastInterval: number | null = null;
   let buzzAckTimeout: number | null = null;
+  let buzzRetryTimeoutId: number | null = null;
   let heartbeatIntervalId: number | null = null;
+  let heartbeatStartTimeoutId: number | null = null;
   let staleCheckIntervalId: number | null = null;
   let resyncIntervalId: number | null = null;
+  let answerRetryTimeoutId: number | null = null;
   const answerDeadlineAt = ref<number | null>(null);
 
   const lastHostActivityAt = ref<number>(Date.now());
@@ -54,7 +66,15 @@ export const usePartyStore = defineStore("party", () => {
   const playerLastSeen = ref<Record<string, number>>({});
   const staleSuspectedAt = ref<number | null>(null);
   const lastResyncRequestAt = ref<number>(0);
+  const nextResyncAt = ref<number>(0);
+  const resyncBackoffMs = ref<number>(0);
   const resyncAttempts = ref(0);
+
+  const nextBuzzSeq = ref(1);
+  const pendingBuzz = ref<{ seq: number; attempts: number } | null>(null);
+
+  const nextAnswerSeq = ref(1);
+  const pendingAnswer = ref<{ seq: number; attempts: number; payload: any } | null>(null);
 
   const markHostActivity = () => {
     lastHostActivityAt.value = Date.now();
@@ -62,7 +82,22 @@ export const usePartyStore = defineStore("party", () => {
     staleSuspectedAt.value = null;
     resyncAttempts.value = 0;
     lastResyncRequestAt.value = 0;
+    nextResyncAt.value = 0;
+    resyncBackoffMs.value = 0;
   };
+
+  const backoffDelay = (baseMs: number, attempt: number, maxMs: number) =>
+    Math.min(maxMs, baseMs * Math.pow(2, Math.max(0, attempt - 1)));
+
+  const controllerJitterMs = () => {
+    const id = String(channelStore.playerId || "");
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+    }
+    return HEARTBEAT_JITTER_MS > 0 ? hash % HEARTBEAT_JITTER_MS : 0;
+  };
+
 
   type PartyStatePayload = {
     sentAt: number;
@@ -103,7 +138,14 @@ export const usePartyStore = defineStore("party", () => {
     }
     workerClearTimeout(buzzAckTimeout);
     buzzAckTimeout = null;
+    workerClearTimeout(buzzRetryTimeoutId);
+    buzzRetryTimeoutId = null;
+    pendingBuzz.value = null;
 
+    if (heartbeatStartTimeoutId) {
+      workerClearTimeout(heartbeatStartTimeoutId);
+      heartbeatStartTimeoutId = null;
+    }
     if (heartbeatIntervalId) {
       workerClearInterval(heartbeatIntervalId);
       heartbeatIntervalId = null;
@@ -116,6 +158,10 @@ export const usePartyStore = defineStore("party", () => {
       workerClearInterval(resyncIntervalId);
       resyncIntervalId = null;
     }
+
+    workerClearTimeout(answerRetryTimeoutId);
+    answerRetryTimeoutId = null;
+    pendingAnswer.value = null;
   };
 
   const clearStateBroadcastInterval = () => {
@@ -381,20 +427,34 @@ export const usePartyStore = defineStore("party", () => {
     });
 
     if (isHost.value) {
-      bindEvent("client-party-buzz", (data: { playerId: string }) => {
+      bindEvent("client-party-buzz", (data: { playerId: string; seq?: number }) => {
         markHostActivity();
+        const canAccept = buzzerState.value === "open";
         handleBuzz(data.playerId);
+        if (data?.seq) {
+          channel.value?.trigger("client-party-buzz-ack", {
+            targetId: data.playerId,
+            seq: data.seq,
+            accepted: canAccept,
+          });
+        }
       });
 
       bindEvent(
         "client-party-answer",
-        (data: { playerId: string; isCorrect: boolean }) => {
+        (data: { playerId: string; isCorrect: boolean; seq?: number }) => {
           markHostActivity();
           if (
             buzzerState.value === "answering" &&
             activePlayerId.value === data.playerId
           ) {
             resolveAnswer(data.playerId, data.isCorrect);
+          }
+          if (data?.seq) {
+            channel.value?.trigger("client-party-answer-ack", {
+              targetId: data.playerId,
+              seq: data.seq,
+            });
           }
         },
       );
@@ -405,6 +465,7 @@ export const usePartyStore = defineStore("party", () => {
           new CustomEvent("emoji-received", { detail: data.emoji }),
         );
       });
+
 
       bindEvent(
         "client-party-heartbeat",
@@ -436,6 +497,9 @@ export const usePartyStore = defineStore("party", () => {
       answerDeadlineAt.value = null;
       workerClearTimeout(buzzAckTimeout);
       buzzAckTimeout = null;
+      workerClearTimeout(buzzRetryTimeoutId);
+      buzzRetryTimeoutId = null;
+      pendingBuzz.value = null;
     });
 
     bindEvent(
@@ -444,6 +508,9 @@ export const usePartyStore = defineStore("party", () => {
         markHostActivity();
         workerClearTimeout(buzzAckTimeout);
         buzzAckTimeout = null;
+        workerClearTimeout(buzzRetryTimeoutId);
+        buzzRetryTimeoutId = null;
+        pendingBuzz.value = null;
         activePlayerId.value = data.playerId;
 
         if (data.playerId === channelStore.playerId) {
@@ -452,6 +519,30 @@ export const usePartyStore = defineStore("party", () => {
         } else {
           buzzerState.value = "locked";
         }
+      },
+    );
+
+    bindEvent(
+      "client-party-buzz-ack",
+      (data: { targetId?: string; seq?: number; accepted?: boolean }) => {
+        if (!data?.targetId || data.targetId !== channelStore.playerId) return;
+        if (!pendingBuzz.value) return;
+        if (data.seq !== pendingBuzz.value.seq) return;
+        workerClearTimeout(buzzRetryTimeoutId);
+        buzzRetryTimeoutId = null;
+        pendingBuzz.value = null;
+      },
+    );
+
+    bindEvent(
+      "client-party-answer-ack",
+      (data: { targetId?: string; seq?: number }) => {
+        if (!data?.targetId || data.targetId !== channelStore.playerId) return;
+        if (!pendingAnswer.value) return;
+        if (data.seq !== pendingAnswer.value.seq) return;
+        workerClearTimeout(answerRetryTimeoutId);
+        answerRetryTimeoutId = null;
+        pendingAnswer.value = null;
       },
     );
 
@@ -530,12 +621,20 @@ export const usePartyStore = defineStore("party", () => {
     });
 
     if (!heartbeatIntervalId) {
-      heartbeatIntervalId = workerSetInterval(() => {
-        channel.value?.trigger("client-party-heartbeat", {
-          playerId: channelStore.playerId,
-          ts: Date.now(),
-        });
-      }, HEARTBEAT_PERIOD_MS);
+      const start = () => {
+        // Only controllers (non-hosts) need to heartbeat; and only while a game is running.
+        if (isHost.value || !channelStore.onlineGameRunning) return;
+        heartbeatIntervalId = workerSetInterval(() => {
+          if (!channelStore.onlineGameRunning) return;
+          channel.value?.trigger("client-party-heartbeat", {
+            playerId: channelStore.playerId,
+            ts: Date.now(),
+          });
+        }, HEARTBEAT_PERIOD_MS);
+      };
+
+      // Stagger heartbeats per controller to avoid synchronized bursts.
+      heartbeatStartTimeoutId = workerSetTimeout(start, controllerJitterMs());
     }
 
     if (!staleCheckIntervalId) {
@@ -570,15 +669,17 @@ export const usePartyStore = defineStore("party", () => {
         const age = now - lastHostActivityAt.value;
         if (age <= STALE_AFTER_MS) return;
 
-        if (
-          resyncAttempts.value < MAX_RESYNC_ATTEMPTS &&
-          now - lastResyncRequestAt.value >= RESYNC_PERIOD_MS
-        ) {
+        // Exponential backoff resync to keep request rate low under poor networks.
+        if (resyncAttempts.value < MAX_RESYNC_ATTEMPTS && now >= nextResyncAt.value) {
+          if (!resyncBackoffMs.value) resyncBackoffMs.value = 2000;
           lastResyncRequestAt.value = now;
           resyncAttempts.value++;
           channel.value?.trigger("client-party-state-request", {
             requestedBy: channelStore.playerId,
           });
+          const next = Math.min(resyncBackoffMs.value * 2, 20000);
+          resyncBackoffMs.value = next;
+          nextResyncAt.value = now + next;
         }
 
         // Only after repeated failed resync attempts (time-based) show reconnect UI.
@@ -589,7 +690,7 @@ export const usePartyStore = defineStore("party", () => {
         ) {
           connectionStale.value = true;
         }
-      }, RESYNC_PERIOD_MS);
+      }, 1000);
     }
   };
 
@@ -607,9 +708,14 @@ export const usePartyStore = defineStore("party", () => {
 
   const pressBuzzer = () => {
     if (buzzerState.value !== "open") return;
-    channel.value?.trigger("client-party-buzz", {
-      playerId: channelStore.playerId,
-    });
+    const seq = nextBuzzSeq.value++;
+    const payload = { playerId: channelStore.playerId, seq };
+    pendingBuzz.value = { seq, attempts: 0 };
+
+    const send = () => {
+      channel.value?.trigger("client-party-buzz", payload);
+    };
+    send();
 
     workerClearTimeout(buzzAckTimeout);
     buzzAckTimeout = workerSetTimeout(() => {
@@ -620,17 +726,56 @@ export const usePartyStore = defineStore("party", () => {
         });
       }
     }, 400);
+
+    const retry = () => {
+      if (!pendingBuzz.value) return;
+      if (buzzerState.value !== "open") {
+        pendingBuzz.value = null;
+        return;
+      }
+      if (pendingBuzz.value.attempts >= BUZZ_RETRY_MAX_ATTEMPTS) return;
+      pendingBuzz.value.attempts++;
+      send();
+      const delay = backoffDelay(
+        BUZZ_RETRY_BASE_MS,
+        pendingBuzz.value.attempts,
+        BUZZ_RETRY_MAX_MS,
+      );
+      buzzRetryTimeoutId = workerSetTimeout(retry, delay);
+    };
+    workerClearTimeout(buzzRetryTimeoutId);
+    buzzRetryTimeoutId = workerSetTimeout(retry, BUZZ_RETRY_BASE_MS);
   };
 
   const submitAnswer = (
     option: { name: string; isCorrect: boolean } | undefined,
   ) => {
+    const seq = nextAnswerSeq.value++;
     const payload = {
       playerId: channelStore.playerId,
+      seq,
       answer: option ? option.name : "Time up",
       isCorrect: option ? option.isCorrect : false,
     };
-    channel.value?.trigger("client-party-answer", payload);
+    pendingAnswer.value = { seq, attempts: 0, payload };
+
+    const send = () => channel.value?.trigger("client-party-answer", payload);
+    send();
+
+    const retry = () => {
+      if (!pendingAnswer.value) return;
+      if (pendingAnswer.value.attempts >= ANSWER_RETRY_MAX_ATTEMPTS) return;
+      pendingAnswer.value.attempts++;
+      send();
+      const delay = backoffDelay(
+        ANSWER_RETRY_BASE_MS,
+        pendingAnswer.value.attempts,
+        ANSWER_RETRY_MAX_MS,
+      );
+      answerRetryTimeoutId = workerSetTimeout(retry, delay);
+    };
+    workerClearTimeout(answerRetryTimeoutId);
+    answerRetryTimeoutId = workerSetTimeout(retry, ANSWER_RETRY_BASE_MS);
 
     if (isHost.value) {
       resolveAnswer(channelStore.playerId, payload.isCorrect);
@@ -638,6 +783,7 @@ export const usePartyStore = defineStore("party", () => {
   };
 
   const sendEmoji = (emoji: string) => {
+    if (!emoji) return;
     channel.value?.trigger("client-party-emoji", { emoji });
   };
 
@@ -680,6 +826,8 @@ export const usePartyStore = defineStore("party", () => {
     submitAnswer,
     setupEvents,
     sendEmoji,
+    pendingBuzz,
+    pendingAnswer,
     reset,
   };
 });
