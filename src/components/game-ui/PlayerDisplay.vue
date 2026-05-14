@@ -46,7 +46,7 @@
       <div v-if="points || points === 0" class="hud-points">
         <transition name="score-pop" mode="out-in">
           <div :key="points" class="score-wrapper">
-            <Icon icon="pixel:star-solid" class="star-icon" /> {{ points }}
+            <Icon icon="pixel:star-solid" class="star-icon" /> <span :class="{negative: points < 0}">{{ points }}</span>
           </div>
         </transition>
         <transition name="float-bonus">
@@ -178,6 +178,10 @@ const avatarStyle = computed<CSSProperties>(() => {
 .hud-points,
 .hud-correct {
   position: relative;
+}
+
+.negative {
+  color: var(--neon-error);
 }
 
 .round-counter-view {
