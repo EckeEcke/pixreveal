@@ -16,7 +16,7 @@
         {{ partyStore.activePlayer?.username }} IS ANSWERING
       </div>
       <div
-        v-else-if="partyStore.roundResult"
+        v-else-if="partyStore.roundResult && gameStore.gameState !== 'revealing'""
         key="result"
         class="status-pill"
         :class="partyStore.roundResult"

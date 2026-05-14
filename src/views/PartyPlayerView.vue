@@ -6,64 +6,81 @@
       :points="player.points"
       class="player-display"
     />
-    <Transition name="fade" mode="out-in">
-      <div v-if="partyOver" key="party-over" class="centered placeholder">
-        <p class="waiting-label">PARTY IS OVER</p>
-        <button class="neon-buzzer" data-sfx="click" @click="goHome">
-          <span class="buzzer-text">GO HOME</span>
-        </button>
-      </div>
-      <div
-        v-else-if="partyStore.buzzerState === 'open'"
-        key="buzzer"
-        class="centered"
-      >
-        <button
-          class="neon-buzzer"
-          aria-label="Buzz to answer"
-          data-sfx="buzz"
-          @click="handleBuzz"
-        >
-          <span class="buzzer-text">BUZZ!</span>
-        </button>
-      </div>
-
-      <div v-else-if="isMyTurn" key="answers" class="centered">
-        <AnswerButtons
-          :hasAnswered="hasAnswered"
-          :answers="gameStore.currentRound.options"
-          @answered="handleAnswer"
-        />
-        <div class="timer-container">
-          <GameHeader
-            :max="5"
-            :count="timeRemaining"
-            :is-correct="false"
-            :is-incorrect="false"
-            :total-score="undefined"
-            :currentRound="undefined"
-            :maxRounds="undefined"
-            :isSurvival="false"
-          />
+    <div class="container">
+      <Transition name="fade" mode="out-in">
+        <div v-if="partyOver" key="party-over" class="centered placeholder">
+          <p class="waiting-label">PARTY IS OVER</p>
+          <button class="neon-buzzer" data-sfx="click" @click="goHome">
+            <span class="buzzer-text">GO HOME</span>
+          </button>
         </div>
-      </div>
 
-      <div
-        v-else-if="partyStore.buzzerState === 'answering'"
-        key="waiting"
-        class="centered placeholder"
-      >
-        <p class="waiting-label">{{ activePlayerDisplay }} IS ANSWERING...</p>
-      </div>
+        <div
+          v-else-if="partyStore.buzzerState === 'open'"
+          key="buzzer"
+          class="centered"
+        >
+          <button
+            class="neon-buzzer"
+            aria-label="Buzz to answer"
+            data-sfx="buzz"
+            @click="handleBuzz"
+          >
+            <span class="buzzer-text">BUZZ!</span>
+          </button>
+        </div>
 
-      <div
-        v-else-if="partyStore.buzzerState === 'locked'"
-        key="result"
-        class="centered"
+        <div v-else-if="isMyTurn" key="answers" class="centered">
+          <AnswerButtons
+            :hasAnswered="hasAnswered"
+            :answers="gameStore.currentRound.options"
+            @answered="handleAnswer"
+          />
+          <div class="timer-container">
+            <GameHeader
+              :max="5"
+              :count="timeRemaining"
+              :is-correct="false"
+              :is-incorrect="false"
+              :total-score="undefined"
+              :currentRound="undefined"
+              :maxRounds="undefined"
+              :isSurvival="false"
+            />
+          </div>
+        </div>
+
+        <div
+          v-else-if="partyStore.buzzerState === 'answering'"
+          key="waiting"
+          class="centered placeholder"
+        >
+          <p class="waiting-label">{{ activePlayerDisplay }} IS ANSWERING...</p>
+        </div>
+
+        <div
+          v-else-if="partyStore.buzzerState === 'locked'"
+          key="result"
+          class="centered"
+        >
+          <p class="waiting-label">Waiting for host...</p>
+        </div>
+      </Transition>
+    </div>
+
+    <div
+      :disabled="emojiCooldown"
+      class="emoji-btns"
+    >
+      <button
+        v-for="emoji in emojis"
+        :key="emoji"
+        class="emoji-btn"
+        @click="sendEmoji(emoji)"
       >
-        <p class="waiting-label">Waiting for host...</p>
-      </div>
-    </Transition>
+        {{ emoji }}
+      </button>
+    </div>
   </main>
 </template>
 
@@ -90,9 +107,13 @@ const channelStore = useChannelStore();
 const router = useRouter();
 
 const player = computed(() => {
-  return partyStore.players.find(
-    (p) => p.playerId === channelStore.playerId,
-  ) || { username: "Unknown", avatarIndex: 0, points: 0 };
+  return (
+    partyStore.players.find((p) => p.playerId === channelStore.playerId) || {
+      username: "Unknown",
+      avatarIndex: 0,
+      points: 0,
+    }
+  );
 });
 
 const ANSWER_TIMEOUT = 5000;
@@ -195,6 +216,29 @@ const handleTimeoutAnswer = () => {
   partyStore.submitAnswer(undefined);
 };
 
+const emojis = [
+  "🤔",
+  "💩",
+  "😆",
+  "😭",
+  "👏🏻",
+  "👍🏻",
+  "👎🏻",
+  "😠",
+  "♥️",
+  "⏱️",
+  "❌",
+  "✅",
+];
+const emojiCooldown = ref(false);
+
+const sendEmoji = (emoji) => {
+  if (emojiCooldown.value) return;
+  partyStore.sendEmoji(emoji);
+  emojiCooldown.value = true;
+  setTimeout(() => (emojiCooldown.value = false), 1000);
+};
+
 onMounted(() => {
   partyStore.setupEvents();
   channelStore.activeChannel?.trigger("client-party-state-request", {
@@ -233,12 +277,18 @@ onMounted(() => {
 }
 
 .player-display {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 500px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+}
+
+.container {
+  display: flex;
+  place-items: center;
+  min-height: 220px;
 }
 
 .timer-container {
@@ -259,7 +309,7 @@ onMounted(() => {
   height: clamp(160px, 50vw, 220px);
   border-radius: 50%;
   background: rgba(236, 72, 153, 0.1);
-  border: 3px solid var(--neon-pink);
+  border: 8px solid var(--neon-pink);
   color: #fff;
   font-family: inherit;
   font-size: 2rem;
@@ -269,6 +319,7 @@ onMounted(() => {
   animation: pulse-glow 1.5s infinite ease-in-out;
   text-shadow: 0 0 8px var(--neon-pink);
   transition: all 0.15s ease;
+  background: var(--primary);
 }
 
 .neon-buzzer:hover {
@@ -303,6 +354,34 @@ onMounted(() => {
 
 .placeholder {
   opacity: 0.5;
+}
+
+.emoji-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  margin: 64px auto 32px;
+  border: 2px solid var(--neon-pink);
+  box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.emoji-btn {
+  font-size: 32px;
+  transition: all 0.3s ease-in-out;
+}
+
+.emoji-btn:hover {
+  text-shadow: 0 0 8px var(--neon-pink);
+  transform: scale(1.2);
+  filter: contrast(1.5);
+}
+
+.emoji-btn:disabled {
+  opacity: 0.7;
 }
 
 @keyframes pulse-glow {

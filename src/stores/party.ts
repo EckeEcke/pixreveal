@@ -199,36 +199,43 @@ export const usePartyStore = defineStore("party", () => {
   const handleRoundTimeout = () => {
     if (!isHost.value) return;
     workerClearTimeout(buzzerTimer);
-    skipRound();
+    buzzerTimer = null;
+    resolveAnswer(null, false);
   };
 
-  const resolveAnswer = (playerId: string, isCorrect: boolean) => {
+  const resolveAnswer = (playerId: string | null, isCorrect: boolean) => {
     workerClearTimeout(answerTimer);
     answerTimer = null;
     answerDeadlineAt.value = null;
 
-    if (isHost.value) {
-      isRevealing.value = false;
-    }
-
-    const player = players.value.find((p) => p.playerId === playerId);
-    if (player) {
-      player.points += isCorrect ? 1 : -2;
-    }
-
     roundResult.value = isCorrect ? "correct" : "incorrect";
 
-    workerSetTimeout(() => {
+    if (!playerId) {
+      activePlayerId.value = null;
+      hasAnswered.value = false;
+    }
+
+    if (playerId) {
+      const player = players.value.find((p) => p.playerId === playerId);
+      if (player) {
+        player.points += isCorrect ? 1 : -2;
+      }
+    }
+
+    if (isHost.value) {
+      isRevealing.value = false;
       channel.value?.trigger("client-party-round-result", {
         playerId,
         isCorrect,
         correctAnswer: gameStore.currentRound?.answer,
       });
 
-      buzzerState.value = "locked";
-      broadcastPlayerScores();
-      broadcastPartyState("round-result");
-    }, 1000);
+      workerSetTimeout(() => {
+        buzzerState.value = "locked";
+        broadcastPlayerScores();
+        broadcastPartyState("round-result-finalized");
+      }, 1000);
+    }
   };
 
   const nextRound = () => {
@@ -338,6 +345,12 @@ export const usePartyStore = defineStore("party", () => {
           }
         },
       );
+
+      bindEvent("client-party-emoji", (data: { emoji: string }) => {
+        window.dispatchEvent(
+          new CustomEvent("emoji-received", { detail: data.emoji }),
+        );
+      });
 
       bindEvent(
         "client-party-state-request",
@@ -461,23 +474,23 @@ export const usePartyStore = defineStore("party", () => {
   const submitAnswer = (
     option: { name: string; isCorrect: boolean } | undefined,
   ) => {
-    if (!option) {
-      channel.value?.trigger("client-party-answer", {
-        playerId: channelStore.playerId,
-        answer: "Time up",
-        isCorrect: false,
-      });
-      return;
-    }
-    channel.value?.trigger("client-party-answer", {
+    const payload = {
       playerId: channelStore.playerId,
-      answer: option.name,
-      isCorrect: option.isCorrect,
-    });
+      answer: option ? option.name : "Time up",
+      isCorrect: option ? option.isCorrect : false,
+    };
+    workerSetTimeout(
+      () => channel.value?.trigger("client-party-answer", payload),
+      1000,
+    );
 
     if (isHost.value) {
-      resolveAnswer(channelStore.playerId, option.isCorrect);
+      resolveAnswer(channelStore.playerId, payload.isCorrect);
     }
+  };
+
+  const sendEmoji = (emoji: string) => {
+    channel.value?.trigger("client-party-emoji", { emoji });
   };
 
   const reset = () => {
@@ -516,6 +529,7 @@ export const usePartyStore = defineStore("party", () => {
     pressBuzzer,
     submitAnswer,
     setupEvents,
+    sendEmoji,
     reset,
   };
 });

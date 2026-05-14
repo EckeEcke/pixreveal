@@ -44,10 +44,11 @@
       </div>
     </div>
   </main>
+  <EmojiOverlay :new-emoji="lastEmoji" />
 </template>
 
 <script setup lang="ts">
-import { ref, onUnmounted, computed, watch } from "vue";
+import { nextTick, ref, onMounted, onUnmounted, computed, watch, unref } from "vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -62,6 +63,7 @@ import {
   workerSetInterval,
   workerSetTimeout,
 } from "@/services/workerTimers";
+import EmojiOverlay from "@/components/game-ui/EmojiOverlay.vue";
 
 const gameStore = useGameStore();
 const configStore = useConfigStore();
@@ -69,9 +71,10 @@ const partyStore = usePartyStore();
 
 const pixelData = ref(Array(256).fill(0));
 const resolution = ref(16);
-const timerDuration = configStore.revealTime;
-const timer = ref(timerDuration);
+const timerDuration = computed(() => unref(configStore.revealTime));
+const timer = ref(timerDuration.value);
 let timerId: number | null = null;
+let timerEndTimeoutId: number | null = null;
 let navigationTimeout: number | null = null;
 
 const partyPlayersSorted = computed(() =>
@@ -83,20 +86,44 @@ const isRevealing = computed(() => gameStore.gameState === 'revealing');
 
 const clearAllTimers = () => {
   workerClearInterval(timerId);
+  workerClearTimeout(timerEndTimeoutId);
   workerClearTimeout(navigationTimeout);
   timerId = null;
+  timerEndTimeoutId = null;
   navigationTimeout = null;
 };
 
 const startTimer = () => {
   workerClearInterval(timerId);
-  timer.value = timerDuration;
+  workerClearTimeout(timerEndTimeoutId);
+  timer.value = timerDuration.value;
+  
+  // Hard stop to avoid missing the last tick (interval drift / race with other timers).
+  timerEndTimeoutId = workerSetTimeout(() => {
+    timerEndTimeoutId = null;
+    timer.value = 0;
+    workerClearInterval(timerId);
+    timerId = null;
+    nextTick().then(() => {
+      partyStore.handleRoundTimeout();
+    });
+  }, timerDuration.value * 1000);
+
   timerId = workerSetInterval(() => {
     timer.value--;
-    if (timer.value <= 0) {
-      workerClearInterval(timerId);
-      partyStore.handleRoundTimeout(); 
-    }
+
+    if (timer.value > 0) return;
+
+    timer.value = 0;
+    workerClearInterval(timerId);
+    timerId = null;
+    workerClearTimeout(timerEndTimeoutId);
+    timerEndTimeoutId = null;
+    // Let Vue paint the "0" before triggering the timeout flow
+    // (which can immediately transition the UI to feedback/locked state).
+    nextTick().then(() => {
+      partyStore.handleRoundTimeout();
+    });
   }, 1000);
 };
 
@@ -111,16 +138,35 @@ const setupDrawing = () => {
   startTimer();
 };
 
+const lastEmoji = ref("")
+
+const handleIncomingEmoji = (emojiChar: string) => {
+  lastEmoji.value = emojiChar
+  
+  nextTick(() => {
+    lastEmoji.value = ""
+  })
+}
+
 watch(
   () => partyStore.roundResult,
   (newResult) => {
     if (newResult) {
-      clearAllTimers();
+      if (timer.value > 0) {
+        clearAllTimers();
+      }
+
+      // If the round ended due to a timeout / no active answering player,
+      // force the header timer to 0 so "TIME UP" is rendered (it can otherwise
+      // remain at 1 if the last tick was missed).
+      if (!partyStore.activePlayerId) {
+        timer.value = 0;
+      }
+      
       gameStore.setGameState("feedback");
 
       navigationTimeout = workerSetTimeout(() => {
         const isLastRound = gameStore.currentRoundIndex >= configStore.maxRounds - 1;
-
         if (isLastRound) {
           partyStore.endGame();
         } else {
@@ -144,13 +190,25 @@ watch(
 watch(
   () => partyStore.buzzerState,
   (newState) => {
-    if (newState === "answering") {
+    if (newState === "answering" && timer.value > 0) {
       workerClearInterval(timerId);
+      timerId = null;
+      workerClearTimeout(timerEndTimeoutId);
+      timerEndTimeoutId = null;
     }
   }
 );
 
+const emojiListener = (event: any) => {
+  handleIncomingEmoji(event.detail);
+};
+
+onMounted(() => {
+  window.addEventListener("emoji-received", emojiListener);
+});
+
 onUnmounted(() => {
+  window.removeEventListener("emoji-received", emojiListener);
   clearAllTimers();
 });
 </script>
