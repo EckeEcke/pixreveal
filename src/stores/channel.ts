@@ -97,6 +97,7 @@ export const useChannelStore = defineStore("channel", () => {
   const visibilityHandler = ref<(() => void) | null>(null);
   const heartbeatIntervalId = ref<number | null>(null);
   const subscribeTimeoutId = ref<number | null>(null);
+  const noHostGraceTimeoutId = ref<number | null>(null);
   const connectionLossTimeoutId = ref<number | null>(null);
   const stateChangeHandler = ref<((data: any) => void) | null>(null);
 
@@ -146,6 +147,10 @@ export const useChannelStore = defineStore("channel", () => {
     if (subscribeTimeoutId.value) {
       window.clearTimeout(subscribeTimeoutId.value);
       subscribeTimeoutId.value = null;
+    }
+    if (noHostGraceTimeoutId.value) {
+      window.clearTimeout(noHostGraceTimeoutId.value);
+      noHostGraceTimeoutId.value = null;
     }
 
     if (unloadHandler.value) {
@@ -285,13 +290,33 @@ export const useChannelStore = defineStore("channel", () => {
       }
       const hash = members.presence?.hash || {};
       const totalMembers = Object.keys(hash).length;
+      const hasHost = Object.keys(hash).some((id) => !!hash[id]?.host);
 
-      if (!isHost.value && totalMembers <= 1) {
-        console.error("Kein Host gefunden. Raum ist leer.");
-        reset();
-        isLoading.value = false;
-        router.push("/");
-        return;
+      if (!isHost.value && !hasHost) {
+        console.warn(
+          "Kein Host in Presence-Hash gefunden. Warte kurz auf Presence sync...",
+          { totalMembers },
+        );
+
+        if (!isLoading.value) {
+          isLoading.value = true;
+          loadingText.value = "RECONNECTING...";
+        }
+
+        if (noHostGraceTimeoutId.value) {
+          window.clearTimeout(noHostGraceTimeoutId.value);
+        }
+        noHostGraceTimeoutId.value = window.setTimeout(() => {
+          noHostGraceTimeoutId.value = null;
+          const stillNoHost = !playersOnline.value.some((p) => p.isHost);
+          if (stillNoHost) {
+            console.error("Kein Host gefunden (nach Grace Period).");
+            reset();
+            isLoading.value = false;
+            router.push("/");
+            return;
+          }
+        }, 2500);
       }
 
       const nextPlayers: Player[] = Object.keys(hash).map((id) => {
@@ -338,6 +363,12 @@ export const useChannelStore = defineStore("channel", () => {
 
       // Always request a fresh party state after (re)subscription while a party game is running.
       if (mode.value === "party" && onlineGameRunning.value) {
+        channel.trigger("client-party-state-request", {
+          requestedBy: playerId.value,
+        });
+      }
+
+      if (!isHost.value && (!hasHost || totalMembers <= 1)) {
         channel.trigger("client-party-state-request", {
           requestedBy: playerId.value,
         });
