@@ -133,6 +133,7 @@ let watchdogInterval = null;
 let lingerTimeoutId = null;
 const lingerAnswerUi = ref(false);
 let hardReconnectIntervalId = null;
+let lastHardReconnectAt = 0;
 
 const startLinger = () => {
   lingerAnswerUi.value = true;
@@ -175,6 +176,8 @@ watch(isMyTurn, (newValue) => {
 
 const handleBuzz = () => {
   if (partyStore.connectionStale) return;
+  if (channelStore.connectionState && channelStore.connectionState !== "connected") return;
+  if (!channelStore.activeChannel) return;
   vibrateBuzz();
   partyStore.pressBuzzer();
 };
@@ -280,8 +283,12 @@ onMounted(() => {
 
   hardReconnectIntervalId = workerSetInterval(() => {
     if (!partyStore.connectionStale) return;
-    channelStore.resetConnection?.();
-    channelStore.tryReconnect?.();
+    const now = Date.now();
+    if (now - lastHardReconnectAt < 15000) return;
+    const state = channelStore.connectionState;
+    if (state === "connecting") return;
+    lastHardReconnectAt = now;
+    channelStore.tryReconnect?.({ force: true });
   }, 8000);
 
   watchdogInterval = workerSetInterval(() => {

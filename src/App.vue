@@ -83,11 +83,22 @@ let wakeLock = null;
 
 const requestWakeLock = async () => {
   if (!("wakeLock" in navigator)) return;
+  if (wakeLock) return;
 
   try {
     wakeLock = await navigator.wakeLock.request("screen");
     wakeLock.addEventListener("release", () => {
       console.log("WakeLock released");
+      // Android/Chromium may revoke wake locks unexpectedly (OS policy).
+      // If we're still visible, try to reacquire so the device doesn't drift into
+      // a low-power state that can break realtime connections.
+      if (document.visibilityState === "visible") {
+        // Mark as released so the re-acquire guard doesn't block.
+        wakeLock = null;
+        setTimeout(() => {
+          requestWakeLock();
+        }, 250);
+      }
     });
   } catch (err) {
     console.warn(`WakeLock failed: ${err.name}`);
@@ -105,7 +116,8 @@ const releaseWakeLock = async () => {
 
 const handleVisibilityChange = () => {
   if (document.visibilityState === "visible") {
-    requestWakeLock();
+    // Prefer wake lock on the host view; players don't strictly need it.
+    if (route.name === "party-host") requestWakeLock();
   } else {
     releaseWakeLock();
   }
@@ -113,7 +125,7 @@ const handleVisibilityChange = () => {
 
 onMounted(() => {
   dailyStore.fetchDailyData();
-  requestWakeLock();
+  if (route.name === "party-host") requestWakeLock();
   document.addEventListener("visibilitychange", handleVisibilityChange);
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("creator") === "true") {
@@ -130,6 +142,16 @@ onMounted(() => {
   document.addEventListener("click", startAudioOnFirstInteraction);
   document.addEventListener("pointerdown", startAudioOnFirstInteraction);
 });
+
+watch(
+  () => route.name,
+  (name) => {
+    // Keep wake lock primarily for the host device to reduce mobile OS throttling.
+    if (name === "party-host") requestWakeLock();
+    else releaseWakeLock();
+  },
+  { immediate: true },
+);
 
 onBeforeUnmount(() => {
   document.removeEventListener("visibilitychange", handleVisibilityChange);

@@ -33,9 +33,16 @@ export const useChannelStore = defineStore("channel", () => {
     const configStore = useConfigStore();
     const playerStore = usePlayerStore();
 
+  const debug = (...args: any[]) => {
+    if (import.meta.env?.DEV) {
+      console.log("[channel]", new Date().toISOString(), ...args);
+    }
+  };
+
   const playersOnline = ref<Player[]>([]);
   const activeChannel = shallowRef<any>(null);
   const client = shallowRef<any>(null);
+  const connectionState = ref<string>("unknown");
   const currentRoomId = ref<string | null>(null);
   const playerId = ref("");
   const isHost = ref(false);
@@ -67,10 +74,10 @@ export const useChannelStore = defineStore("channel", () => {
   const persistSession = (session: PersistedSession | null) => {
     try {
       if (!session) {
-        localStorage.removeItem(STORAGE_KEY);
+        sessionStorage.removeItem(STORAGE_KEY);
         return;
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     } catch {
       // ignore storage failures
     }
@@ -107,7 +114,7 @@ export const useChannelStore = defineStore("channel", () => {
 
   const readPersistedSession = (): PersistedSession | null => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = sessionStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw) as PersistedSession;
       if (!parsed?.roomId || !parsed?.userData?.playerId) return null;
@@ -130,6 +137,28 @@ export const useChannelStore = defineStore("channel", () => {
   const noHostGraceTimeoutId = ref<number | null>(null);
   const connectionLossTimeoutId = ref<number | null>(null);
   const stateChangeHandler = ref<((data: any) => void) | null>(null);
+  const connectWatchdogTimeoutId = ref<number | null>(null);
+  const lastForceReconnectAt = ref<number>(0);
+
+  const clearConnectWatchdog = () => {
+    if (!connectWatchdogTimeoutId.value) return;
+    window.clearTimeout(connectWatchdogTimeoutId.value);
+    connectWatchdogTimeoutId.value = null;
+  };
+
+  const scheduleConnectWatchdog = () => {
+    clearConnectWatchdog();
+    // If the client gets stuck in "connecting" for too long, force a reconnect.
+    connectWatchdogTimeoutId.value = window.setTimeout(() => {
+      connectWatchdogTimeoutId.value = null;
+      if (connectionState.value !== "connecting") return;
+      const now = Date.now();
+      if (now - lastForceReconnectAt.value < 8000) return;
+      lastForceReconnectAt.value = now;
+      debug("connect_watchdog_force_reconnect");
+      tryReconnect({ force: true });
+    }, 3000);
+  };
 
   const clearConnectionLossTimeout = () => {
     if (!connectionLossTimeoutId.value) return;
@@ -137,9 +166,21 @@ export const useChannelStore = defineStore("channel", () => {
     connectionLossTimeoutId.value = null;
   };
 
-  type ResetOptions = { clearPersisted?: boolean };
+  type ResetOptions = {
+    clearPersisted?: boolean;
+    keepIdentity?: boolean;
+    keepGameRunning?: boolean;
+  };
 
-  const reset = ({ clearPersisted = true }: ResetOptions = {}) => {
+  const reset = ({
+    clearPersisted = true,
+    keepIdentity = false,
+    keepGameRunning = false,
+  }: ResetOptions = {}) => {
+    const prevPlayerId = playerId.value;
+    const prevIsHost = isHost.value;
+    const prevGameRunning = onlineGameRunning.value;
+    const prevMode = mode.value;
     if (activeChannel.value?.unbind) {
       // defensive: remove any lingering handlers before dropping references
       activeChannel.value.unbind();
@@ -157,11 +198,25 @@ export const useChannelStore = defineStore("channel", () => {
     playersOnline.value = [];
     activeChannel.value = null;
     client.value = null;
+    connectionState.value = "unknown";
     currentRoomId.value = null;
     messages.value = [];
     isLoading.value = false;
-    playerId.value = "";
-    setGameRunning(false);
+    if (!keepIdentity) {
+      playerId.value = "";
+      isHost.value = false;
+      mode.value = "party";
+    } else {
+      playerId.value = prevPlayerId;
+      isHost.value = prevIsHost;
+      mode.value = prevMode;
+    }
+
+    if (!keepGameRunning) {
+      setGameRunning(false);
+    } else {
+      setGameRunning(prevGameRunning);
+    }
     inactivityNotified.value = false;
     clearInactivityGrace();
     clearConnectionLossTimeout();
@@ -185,6 +240,7 @@ export const useChannelStore = defineStore("channel", () => {
       window.clearTimeout(noHostGraceTimeoutId.value);
       noHostGraceTimeoutId.value = null;
     }
+    clearConnectWatchdog();
 
     if (unloadHandler.value) {
       window.removeEventListener("beforeunload", unloadHandler.value);
@@ -243,7 +299,8 @@ export const useChannelStore = defineStore("channel", () => {
     }, 30000);
   };
 
-  const resetConnection = () => reset({ clearPersisted: false });
+  const resetConnection = () =>
+    reset({ clearPersisted: false, keepIdentity: true, keepGameRunning: true });
 
   const handleBeforeUnload = () => {
     handleInactivity({ skipNavigation: true });
@@ -327,6 +384,11 @@ export const useChannelStore = defineStore("channel", () => {
     document.addEventListener("visibilitychange", visibilityHandler.value);
 
     channel.bind("realtime:subscription_succeeded", (members: any) => {
+      debug("subscription_succeeded", {
+        roomId: currentRoomId.value,
+        isHost: isHost.value,
+        mode: mode.value,
+      });
       if (subscribeTimeoutId.value) {
         window.clearTimeout(subscribeTimeoutId.value);
         subscribeTimeoutId.value = null;
@@ -336,6 +398,7 @@ export const useChannelStore = defineStore("channel", () => {
       const hasHost = Object.keys(hash).some((id) => isHostFlag(hash[id]?.host));
 
       if (!isHost.value && !hasHost) {
+        debug("no_host_presence", { totalMembers });
         console.warn(
           "Kein Host in Presence-Hash gefunden. Warte kurz auf Presence sync...",
           { totalMembers },
@@ -448,6 +511,7 @@ export const useChannelStore = defineStore("channel", () => {
     });
 
     channel.bind("realtime:subscription_error", (err: any) => {
+      debug("subscription_error", err);
       if (subscribeTimeoutId.value) {
         window.clearTimeout(subscribeTimeoutId.value);
         subscribeTimeoutId.value = null;
@@ -466,6 +530,7 @@ export const useChannelStore = defineStore("channel", () => {
     });
 
     channel.bind("realtime:error", (err: any) => {
+      debug("realtime_error", err);
       console.error("Realtime error:", err);
     });
 
@@ -533,7 +598,10 @@ export const useChannelStore = defineStore("channel", () => {
     // Observe connection state changes so we can show a reconnect overlay and
     // re-request state after transient connection losses (without reload).
     stateChangeHandler.value = ({ current }: { previous: string; current: string }) => {
+      debug("state_change", { current });
+      connectionState.value = current ?? "unknown";
       if (current === "connected") {
+        clearConnectWatchdog();
         clearConnectionLossTimeout();
         clearInactivityGrace();
         if (isLoading.value && loadingText.value === "RECONNECTING...") {
@@ -548,6 +616,8 @@ export const useChannelStore = defineStore("channel", () => {
       }
 
       if (current === "disconnected" || current === "unavailable") {
+        debug("connection_lost", { current });
+        clearConnectWatchdog();
         if (!isLoading.value) {
           isLoading.value = true;
           loadingText.value = "RECONNECTING...";
@@ -559,6 +629,10 @@ export const useChannelStore = defineStore("channel", () => {
           // If we cannot recover after a while, treat it as inactivity.
           handleInactivity();
         }, 60000);
+      }
+
+      if (current === "connecting") {
+        scheduleConnectWatchdog();
       }
     };
     clientInstance.bind("state_change", stateChangeHandler.value as any);
@@ -586,12 +660,19 @@ export const useChannelStore = defineStore("channel", () => {
     return roomId;
   };
 
-  const joinSession = (userData: UserData, roomId: string) => {
+  const joinSession = (
+    userData: UserData,
+    roomId: string,
+    role: "host" | "player" = "player",
+  ) => {
     const clientInstance = createApinatorClient(userData);
     client.value = clientInstance;
 
     stateChangeHandler.value = ({ current }: { previous: string; current: string }) => {
+      debug("state_change", { current });
+      connectionState.value = current ?? "unknown";
       if (current === "connected") {
+        clearConnectWatchdog();
         clearConnectionLossTimeout();
         clearInactivityGrace();
         if (isLoading.value && loadingText.value === "RECONNECTING...") {
@@ -606,6 +687,8 @@ export const useChannelStore = defineStore("channel", () => {
       }
 
       if (current === "disconnected" || current === "unavailable") {
+        debug("connection_lost", { current });
+        clearConnectWatchdog();
         if (!isLoading.value) {
           isLoading.value = true;
           loadingText.value = "RECONNECTING...";
@@ -616,6 +699,10 @@ export const useChannelStore = defineStore("channel", () => {
           connectionLossTimeoutId.value = null;
           handleInactivity();
         }, 60000);
+      }
+
+      if (current === "connecting") {
+        scheduleConnectWatchdog();
       }
     };
     clientInstance.bind("state_change", stateChangeHandler.value as any);
@@ -635,7 +722,7 @@ export const useChannelStore = defineStore("channel", () => {
       userData,
       mode: mode.value,
       wasInGame: false,
-      lastRole: "player",
+      lastRole: role,
     });
   };
 
@@ -658,16 +745,27 @@ export const useChannelStore = defineStore("channel", () => {
     }
   };
 
-  const tryReconnect = () => {
-    if (activeChannel.value || client.value) return false;
+  const tryReconnect = ({ force = false }: { force?: boolean } = {}) => {
+    if ((activeChannel.value || client.value) && !force) return false;
     const persisted = readPersistedSession();
     if (!persisted) return false;
 
+    if (force) {
+      // Tear down current connection but keep persisted session so we can rejoin.
+      resetConnection();
+    }
+
     setMode(persisted.mode);
-    isHost.value = !!persisted.userData.isHost;
+    const role = persisted.lastRole === "host" ? "host" : "player";
+    isHost.value = role === "host" || !!persisted.userData.isHost;
     playerId.value = persisted.userData.playerId;
 
-    joinSession(persisted.userData, persisted.roomId);
+    const nextUserData =
+      role === "host"
+        ? { ...persisted.userData, isHost: true }
+        : { ...persisted.userData, isHost: false };
+
+    joinSession(nextUserData, persisted.roomId, role);
     isLoading.value = true;
     loadingText.value = "RECONNECTING...";
     return true;
@@ -707,6 +805,7 @@ export const useChannelStore = defineStore("channel", () => {
     loadingText,
     mode,
     onlineGameRunning,
+    connectionState,
     setMode,
     setGameRunning: setGameRunningWithPersist,
     hostSession,

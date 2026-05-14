@@ -28,6 +28,7 @@ export const usePartyStore = defineStore("party", () => {
 
   const HEARTBEAT_PERIOD_MS = 15000;
   const HEARTBEAT_JITTER_MS = 6000;
+  const HOST_HEARTBEAT_PERIOD_MS = 8000;
   const STALE_AFTER_MS = 20000;
   const STALE_CONFIRM_AFTER_MS = 7000;
   const MAX_RESYNC_ATTEMPTS = 4;
@@ -39,7 +40,6 @@ export const usePartyStore = defineStore("party", () => {
   const ANSWER_RETRY_BASE_MS = 350;
   const ANSWER_RETRY_MAX_MS = 2500;
   const ANSWER_RETRY_MAX_ATTEMPTS = 6;
-
 
   const players = ref<PartyPlayer[]>([]);
   const buzzerState = ref<BuzzerState>("locked");
@@ -56,6 +56,7 @@ export const usePartyStore = defineStore("party", () => {
   let buzzRetryTimeoutId: number | null = null;
   let heartbeatIntervalId: number | null = null;
   let heartbeatStartTimeoutId: number | null = null;
+  let hostHeartbeatIntervalId: number | null = null;
   let staleCheckIntervalId: number | null = null;
   let resyncIntervalId: number | null = null;
   let answerRetryTimeoutId: number | null = null;
@@ -74,7 +75,11 @@ export const usePartyStore = defineStore("party", () => {
   const pendingBuzz = ref<{ seq: number; attempts: number } | null>(null);
 
   const nextAnswerSeq = ref(1);
-  const pendingAnswer = ref<{ seq: number; attempts: number; payload: any } | null>(null);
+  const pendingAnswer = ref<{
+    seq: number;
+    attempts: number;
+    payload: any;
+  } | null>(null);
 
   const markHostActivity = () => {
     lastHostActivityAt.value = Date.now();
@@ -97,7 +102,6 @@ export const usePartyStore = defineStore("party", () => {
     }
     return HEARTBEAT_JITTER_MS > 0 ? hash % HEARTBEAT_JITTER_MS : 0;
   };
-
 
   type PartyStatePayload = {
     sentAt: number;
@@ -149,6 +153,10 @@ export const usePartyStore = defineStore("party", () => {
     if (heartbeatIntervalId) {
       workerClearInterval(heartbeatIntervalId);
       heartbeatIntervalId = null;
+    }
+    if (hostHeartbeatIntervalId) {
+      workerClearInterval(hostHeartbeatIntervalId);
+      hostHeartbeatIntervalId = null;
     }
     if (staleCheckIntervalId) {
       workerClearInterval(staleCheckIntervalId);
@@ -430,18 +438,21 @@ export const usePartyStore = defineStore("party", () => {
     });
 
     if (isHost.value) {
-      bindEvent("client-party-buzz", (data: { playerId: string; seq?: number }) => {
-        markHostActivity();
-        const canAccept = buzzerState.value === "open";
-        handleBuzz(data.playerId);
-        if (data?.seq) {
-          channel.value?.trigger("client-party-buzz-ack", {
-            targetId: data.playerId,
-            seq: data.seq,
-            accepted: canAccept,
-          });
-        }
-      });
+      bindEvent(
+        "client-party-buzz",
+        (data: { playerId: string; seq?: number }) => {
+          markHostActivity();
+          const canAccept = buzzerState.value === "open";
+          handleBuzz(data.playerId);
+          if (data?.seq) {
+            channel.value?.trigger("client-party-buzz-ack", {
+              targetId: data.playerId,
+              seq: data.seq,
+              accepted: canAccept,
+            });
+          }
+        },
+      );
 
       bindEvent(
         "client-party-answer",
@@ -469,14 +480,13 @@ export const usePartyStore = defineStore("party", () => {
         );
       });
 
-
       bindEvent(
         "client-party-heartbeat",
         (data: { playerId?: string; ts?: number }) => {
           const id = data?.playerId;
           if (!id) return;
           const ts = typeof data.ts === "number" ? data.ts : Date.now();
-          playerLastSeen.value = { ...playerLastSeen.value, [id]: ts };
+          playerLastSeen.value[id] = ts;
         },
       );
 
@@ -607,12 +617,17 @@ export const usePartyStore = defineStore("party", () => {
       },
     );
 
+    bindEvent("client-party-host-heartbeat", () => {
+      if (isHost.value) return;
+      markHostActivity();
+    });
+
     clearStateBroadcastInterval();
     if (isHost.value && channelStore.onlineGameRunning) {
       stateBroadcastInterval = workerSetInterval(() => {
         ensureAnswerTimer();
         broadcastPartyState("periodic");
-      }, 3000);
+      }, 10000);
     }
 
     bindEvent("client-party-game-over", (data: { players: PartyPlayer[] }) => {
@@ -638,6 +653,13 @@ export const usePartyStore = defineStore("party", () => {
 
       // Stagger heartbeats per controller to avoid synchronized bursts.
       heartbeatStartTimeoutId = workerSetTimeout(start, controllerJitterMs());
+    }
+
+    if (!hostHeartbeatIntervalId && isHost.value && channelStore.onlineGameRunning) {
+      hostHeartbeatIntervalId = workerSetInterval(() => {
+        if (!isHost.value || !channelStore.onlineGameRunning) return;
+        channel.value?.trigger("client-party-host-heartbeat", { ts: Date.now() });
+      }, HOST_HEARTBEAT_PERIOD_MS);
     }
 
     if (!staleCheckIntervalId) {
@@ -673,7 +695,10 @@ export const usePartyStore = defineStore("party", () => {
         if (age <= STALE_AFTER_MS) return;
 
         // Exponential backoff resync to keep request rate low under poor networks.
-        if (resyncAttempts.value < MAX_RESYNC_ATTEMPTS && now >= nextResyncAt.value) {
+        if (
+          resyncAttempts.value < MAX_RESYNC_ATTEMPTS &&
+          now >= nextResyncAt.value
+        ) {
           if (!resyncBackoffMs.value) resyncBackoffMs.value = 2000;
           lastResyncRequestAt.value = now;
           resyncAttempts.value++;
