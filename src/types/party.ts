@@ -13,9 +13,15 @@ export type PartyStatePayload = {
   buzzerState: BuzzerState;
   activePlayerId: string | null;
   answerDeadlineAt: number | null;
+  lightsOutUntilAt?: number | null;
+  lightsOutUsedBy?: Record<string, boolean>;
+  xlzActiveForRoundIndex?: number | null;
+  xlzUsedBy?: Record<string, boolean>;
+  freezeUntilAt?: number | null;
+  freezeByPlayerId?: string | null;
+  freezeUsedBy?: Record<string, boolean>;
   playerLastSeen?: Record<string, number>;
   players: PartyPlayer[];
   roundTimeLimit: number;
   buzzerTimeLimit: number;
 };
-

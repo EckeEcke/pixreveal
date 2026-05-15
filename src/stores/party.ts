@@ -88,6 +88,150 @@ export const usePartyStore = defineStore("party", () => {
   const controllerJitterMs = () =>
     hashStringToRange(String(channelStore.playerId || ""), HEARTBEAT_JITTER_MS);
 
+  const isLightsOut = ref(false);
+  const lightsOutUntilAt = ref<number | null>(null);
+  const lightsOutUsedBy = ref<Record<string, boolean>>({});
+  let lightsOutTimeoutId: number | null = null;
+
+  const xlzActiveForRoundIndex = ref<number | null>(null);
+  const xlzUsedBy = ref<Record<string, boolean>>({});
+
+  const freezeUntilAt = ref<number | null>(null);
+  const freezeByPlayerId = ref<string | null>(null);
+  const freezeUsedBy = ref<Record<string, boolean>>({});
+  const isFrozen = ref(false);
+  let freezeTimeoutId: number | null = null;
+
+  const lightsOutUsedByMe = computed(() => {
+    const me = channelStore.playerId || "";
+    if (!me) return false;
+    return Boolean(lightsOutUsedBy.value?.[me]);
+  });
+
+  const xlzUsedByMe = computed(() => {
+    const me = channelStore.playerId || "";
+    if (!me) return false;
+    return Boolean(xlzUsedBy.value?.[me]);
+  });
+
+  const isXlzActive = computed(
+    () => xlzActiveForRoundIndex.value === gameStore.currentRoundIndex,
+  );
+
+  const freezeUsedByMe = computed(() => {
+    const me = channelStore.playerId || "";
+    if (!me) return false;
+    return Boolean(freezeUsedBy.value?.[me]);
+  });
+
+  const clearFreezeTimeout = () => {
+    if (!freezeTimeoutId) return;
+    workerClearTimeout(freezeTimeoutId);
+    freezeTimeoutId = null;
+  };
+
+  const setFreezeUntil = (untilAt: number, byPlayerId: string | null) => {
+    const normalizedUntilAt = Math.max(Date.now(), untilAt);
+    freezeUntilAt.value = normalizedUntilAt;
+    freezeByPlayerId.value = byPlayerId ?? null;
+
+    const me = channelStore.playerId || null;
+    // Initiator wird nicht gefreezed, aber Freeze-Zustand bleibt global sichtbar
+    isFrozen.value = Boolean(me && byPlayerId && me !== byPlayerId);
+
+    clearFreezeTimeout();
+    const delay = Math.max(0, normalizedUntilAt - Date.now());
+    freezeTimeoutId = workerSetTimeout(() => {
+      freezeTimeoutId = null;
+      if (freezeUntilAt.value !== normalizedUntilAt) return;
+      isFrozen.value = false;
+      freezeUntilAt.value = null;
+      freezeByPlayerId.value = null;
+    }, delay);
+  };
+
+  const clearLightsOutTimeout = () => {
+    if (!lightsOutTimeoutId) return;
+    workerClearTimeout(lightsOutTimeoutId);
+    lightsOutTimeoutId = null;
+  };
+
+  const setLightsOutUntil = (untilAt: number) => {
+    const normalizedUntilAt = Math.max(Date.now(), untilAt);
+    isLightsOut.value = true;
+    lightsOutUntilAt.value = normalizedUntilAt;
+
+    clearLightsOutTimeout();
+    const delay = Math.max(0, normalizedUntilAt - Date.now());
+    lightsOutTimeoutId = workerSetTimeout(() => {
+      lightsOutTimeoutId = null;
+      if (lightsOutUntilAt.value !== normalizedUntilAt) return;
+      isLightsOut.value = false;
+      lightsOutUntilAt.value = null;
+    }, delay);
+  };
+
+  const triggerLightsOut = () => {
+    if (!channel.value) return;
+    if (isLightsOut.value) return;
+    if (lightsOutUsedByMe.value) return;
+
+    if (!isHost.value) {
+      channel.value.trigger("client-party-lightsout-request", {
+        playerId: channelStore.playerId,
+        ts: Date.now(),
+      });
+      return;
+    }
+
+    const untilAt = Date.now() + 3000;
+    setLightsOutUntil(untilAt);
+    channel.value.trigger("client-party-lightsout", { untilAt });
+  };
+
+  const triggerXlz = () => {
+    if (!channel.value) return;
+    if (xlzUsedByMe.value) return;
+    if (isXlzActive.value) return;
+
+    if (!isHost.value) {
+      channel.value.trigger("client-party-xlz-request", {
+        playerId: channelStore.playerId,
+        ts: Date.now(),
+      });
+      return;
+    }
+
+    const hostId = String(channelStore.playerId || "host");
+    xlzUsedBy.value = { ...xlzUsedBy.value, [hostId]: true };
+    xlzActiveForRoundIndex.value = gameStore.currentRoundIndex;
+    channel.value.trigger("client-party-xlz", {
+      roundIndex: gameStore.currentRoundIndex,
+    });
+    broadcastPartyState("xlz");
+  };
+
+  const triggerFreeze = () => {
+    if (!channel.value) return;
+    if (freezeUsedByMe.value) return;
+
+    if (!isHost.value) {
+      channel.value.trigger("client-party-freeze-request", {
+        playerId: channelStore.playerId,
+        ts: Date.now(),
+      });
+      return;
+    }
+
+    const hostId = String(channelStore.playerId || "host");
+    freezeUsedBy.value = { ...freezeUsedBy.value, [hostId]: true };
+    const untilAt = Date.now() + 3000;
+    // Host friert sich selbst nicht ein (byPlayerId = hostId)
+    setFreezeUntil(untilAt, hostId);
+    channel.value.trigger("client-party-freeze", { untilAt, byPlayerId: hostId });
+    broadcastPartyState("freeze");
+  };
+
   const activePlayer = computed(() =>
     players.value.find((p) => p.playerId === activePlayerId.value),
   );
@@ -143,6 +287,18 @@ export const usePartyStore = defineStore("party", () => {
     workerClearTimeout(answerRetryTimeoutId);
     answerRetryTimeoutId = null;
     pendingAnswer.value = null;
+
+    clearLightsOutTimeout();
+    isLightsOut.value = false;
+    lightsOutUntilAt.value = null;
+    lightsOutUsedBy.value = {};
+    xlzActiveForRoundIndex.value = null;
+    xlzUsedBy.value = {};
+    clearFreezeTimeout();
+    isFrozen.value = false;
+    freezeUntilAt.value = null;
+    freezeByPlayerId.value = null;
+    freezeUsedBy.value = {};
   };
 
   const clearStateBroadcastInterval = () => {
@@ -157,6 +313,13 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState: buzzerState.value,
     activePlayerId: activePlayerId.value,
     answerDeadlineAt: answerDeadlineAt.value,
+    lightsOutUntilAt: lightsOutUntilAt.value,
+    lightsOutUsedBy: lightsOutUsedBy.value,
+    xlzActiveForRoundIndex: xlzActiveForRoundIndex.value,
+    xlzUsedBy: xlzUsedBy.value,
+    freezeUntilAt: freezeUntilAt.value,
+    freezeByPlayerId: freezeByPlayerId.value,
+    freezeUsedBy: freezeUsedBy.value,
     playerLastSeen: isHost.value ? playerLastSeen.value : undefined,
     players: players.value,
     roundTimeLimit: roundTimeLimit.value,
@@ -213,6 +376,13 @@ export const usePartyStore = defineStore("party", () => {
         points: 0,
       }));
 
+    lightsOutUsedBy.value = {};
+    xlzActiveForRoundIndex.value = null;
+    xlzUsedBy.value = {};
+    isFrozen.value = false;
+    freezeUntilAt.value = null;
+    freezeByPlayerId.value = null;
+    freezeUsedBy.value = {};
     gameStore.prepareGame(configStore.revealTime);
     channelStore.setGameRunning(true);
 
@@ -572,6 +742,56 @@ export const usePartyStore = defineStore("party", () => {
           typeof state.answerDeadlineAt === "number"
             ? state.answerDeadlineAt
             : null;
+
+        if (typeof state.lightsOutUntilAt === "number") {
+          if (state.lightsOutUntilAt > Date.now()) {
+            setLightsOutUntil(state.lightsOutUntilAt);
+          } else {
+            isLightsOut.value = false;
+            lightsOutUntilAt.value = null;
+            clearLightsOutTimeout();
+          }
+        } else if (state.lightsOutUntilAt === null) {
+          isLightsOut.value = false;
+          lightsOutUntilAt.value = null;
+          clearLightsOutTimeout();
+        }
+
+        if (state.lightsOutUsedBy && typeof state.lightsOutUsedBy === "object") {
+          lightsOutUsedBy.value = state.lightsOutUsedBy;
+        }
+
+        if (typeof state.xlzActiveForRoundIndex === "number") {
+          xlzActiveForRoundIndex.value = state.xlzActiveForRoundIndex;
+        } else if (state.xlzActiveForRoundIndex === null) {
+          xlzActiveForRoundIndex.value = null;
+        }
+
+        if (state.xlzUsedBy && typeof state.xlzUsedBy === "object") {
+          xlzUsedBy.value = state.xlzUsedBy;
+        }
+
+        if (typeof state.freezeUntilAt === "number") {
+          const byPlayerId =
+            typeof state.freezeByPlayerId === "string" ? state.freezeByPlayerId : null;
+          if (state.freezeUntilAt > Date.now()) {
+            setFreezeUntil(state.freezeUntilAt, byPlayerId);
+          } else {
+            clearFreezeTimeout();
+            isFrozen.value = false;
+            freezeUntilAt.value = null;
+            freezeByPlayerId.value = null;
+          }
+        } else if (state.freezeUntilAt === null) {
+          clearFreezeTimeout();
+          isFrozen.value = false;
+          freezeUntilAt.value = null;
+          freezeByPlayerId.value = null;
+        }
+
+        if (state.freezeUsedBy && typeof state.freezeUsedBy === "object") {
+          freezeUsedBy.value = state.freezeUsedBy;
+        }
         if (state.playerLastSeen && typeof state.playerLastSeen === "object") {
           playerLastSeen.value = state.playerLastSeen;
         }
@@ -582,6 +802,86 @@ export const usePartyStore = defineStore("party", () => {
         ) {
           hasAnswered.value = false;
         }
+      },
+    );
+
+    bindEvent("client-party-lightsout", (data?: { untilAt?: number }) => {
+      const untilAt =
+        typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 3000;
+      setLightsOutUntil(untilAt);
+    });
+
+    bindEvent(
+      "client-party-lightsout-request",
+      (data?: { playerId?: string; ts?: number }) => {
+        if (!isHost.value) return;
+        const playerId = data?.playerId;
+        if (!playerId) return;
+        if (!channelStore.onlineGameRunning) return;
+        if (isLightsOut.value) return;
+        if (lightsOutUsedBy.value?.[playerId]) return;
+
+        lightsOutUsedBy.value = { ...lightsOutUsedBy.value, [playerId]: true };
+        const untilAt = Date.now() + 3000;
+        setLightsOutUntil(untilAt);
+        channel.value?.trigger("client-party-lightsout", { untilAt });
+        broadcastPartyState("lightsout");
+      },
+    );
+
+    bindEvent("client-party-xlz", (data?: { roundIndex?: number }) => {
+      const roundIndex =
+        typeof data?.roundIndex === "number"
+          ? data.roundIndex
+          : gameStore.currentRoundIndex;
+      xlzActiveForRoundIndex.value = roundIndex;
+    });
+
+    bindEvent(
+      "client-party-freeze",
+      (data?: { untilAt?: number; byPlayerId?: string }) => {
+        const untilAt =
+          typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 3000;
+        const byPlayerId =
+          typeof data?.byPlayerId === "string" ? data.byPlayerId : null;
+        setFreezeUntil(untilAt, byPlayerId);
+      },
+    );
+
+    bindEvent(
+      "client-party-freeze-request",
+      (data?: { playerId?: string; ts?: number }) => {
+        if (!isHost.value) return;
+        const playerId = data?.playerId;
+        if (!playerId) return;
+        if (!channelStore.onlineGameRunning) return;
+        if (freezeUsedBy.value?.[playerId]) return;
+
+        freezeUsedBy.value = { ...freezeUsedBy.value, [playerId]: true };
+        const untilAt = Date.now() + 3000;
+        // Initiator wird nicht gefreezed (byPlayerId = playerId)
+        setFreezeUntil(untilAt, playerId);
+        channel.value?.trigger("client-party-freeze", { untilAt, byPlayerId: playerId });
+        broadcastPartyState("freeze");
+      },
+    );
+
+    bindEvent(
+      "client-party-xlz-request",
+      (data?: { playerId?: string; ts?: number }) => {
+        if (!isHost.value) return;
+        const playerId = data?.playerId;
+        if (!playerId) return;
+        if (!channelStore.onlineGameRunning) return;
+        if (xlzUsedBy.value?.[playerId]) return;
+        if (xlzActiveForRoundIndex.value === gameStore.currentRoundIndex) return;
+
+        xlzUsedBy.value = { ...xlzUsedBy.value, [playerId]: true };
+        xlzActiveForRoundIndex.value = gameStore.currentRoundIndex;
+        channel.value?.trigger("client-party-xlz", {
+          roundIndex: gameStore.currentRoundIndex,
+        });
+        broadcastPartyState("xlz");
       },
     );
 
@@ -608,7 +908,6 @@ export const usePartyStore = defineStore("party", () => {
 
     if (!heartbeatIntervalId) {
       const start = () => {
-        // Only controllers (non-hosts) need to heartbeat; and only while a game is running.
         if (isHost.value || !channelStore.onlineGameRunning) return;
         heartbeatIntervalId = workerSetInterval(() => {
           if (!channelStore.onlineGameRunning) return;
@@ -619,7 +918,6 @@ export const usePartyStore = defineStore("party", () => {
         }, HEARTBEAT_PERIOD_MS);
       };
 
-      // Stagger heartbeats per controller to avoid synchronized bursts.
       heartbeatStartTimeoutId = workerSetTimeout(start, controllerJitterMs());
     }
 
@@ -635,8 +933,6 @@ export const usePartyStore = defineStore("party", () => {
         if (isHost.value) return;
         const age = Date.now() - lastHostActivityAt.value;
 
-        // Don't immediately show "RECONNECTING" just because the host didn't send
-        // updates for a while. First, actively try to resync a few times.
         if (age <= STALE_AFTER_MS) {
           connectionStale.value = false;
           staleSuspectedAt.value = null;
@@ -662,7 +958,6 @@ export const usePartyStore = defineStore("party", () => {
         const age = now - lastHostActivityAt.value;
         if (age <= STALE_AFTER_MS) return;
 
-        // Exponential backoff resync to keep request rate low under poor networks.
         if (
           resyncAttempts.value < MAX_RESYNC_ATTEMPTS &&
           now >= nextResyncAt.value
@@ -678,7 +973,6 @@ export const usePartyStore = defineStore("party", () => {
           nextResyncAt.value = now + next;
         }
 
-        // Only after repeated failed resync attempts (time-based) show reconnect UI.
         if (
           staleSuspectedAt.value &&
           now - staleSuspectedAt.value >= STALE_CONFIRM_AFTER_MS &&
@@ -796,6 +1090,13 @@ export const usePartyStore = defineStore("party", () => {
     buzzerTimer = null;
     workerClearTimeout(answerTimer);
     answerTimer = null;
+    xlzActiveForRoundIndex.value = null;
+    xlzUsedBy.value = {};
+    clearFreezeTimeout();
+    isFrozen.value = false;
+    freezeUntilAt.value = null;
+    freezeByPlayerId.value = null;
+    freezeUsedBy.value = {};
   };
 
   return {
@@ -826,5 +1127,21 @@ export const usePartyStore = defineStore("party", () => {
     pendingAnswer,
     broadcastPartyState,
     reset,
+    isLightsOut,
+    lightsOutUntilAt,
+    lightsOutUsedBy,
+    lightsOutUsedByMe,
+    triggerLightsOut,
+    xlzActiveForRoundIndex,
+    xlzUsedBy,
+    xlzUsedByMe,
+    isXlzActive,
+    triggerXlz,
+    isFrozen,
+    freezeUntilAt,
+    freezeByPlayerId,
+    freezeUsedBy,
+    freezeUsedByMe,
+    triggerFreeze,
   };
 });

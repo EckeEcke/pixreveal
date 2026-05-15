@@ -1,5 +1,6 @@
 <template>
   <main class="player-layout">
+    <div v-if="partyStore.isFrozen" class="freeze-overlay" aria-hidden="true" />
     <PlayerDisplay
       :name="player.username"
       :avatar-index="player.avatarIndex"
@@ -32,16 +33,21 @@
             class="neon-buzzer"
             aria-label="Buzz to answer"
             data-sfx="buzz"
+            :disabled="partyStore.isFrozen"
             @click="handleBuzz"
           >
             <span class="buzzer-text">BUZZ!</span>
           </button>
         </div>
 
-        <div v-else-if="isMyTurn || lingerAnswerUi" key="answers" class="centered">
+        <div
+          v-else-if="isMyTurn || lingerAnswerUi"
+          key="answers"
+          class="centered"
+        >
           <AnswerButtons
             :hasAnswered="hasAnswered"
-            :answers="gameStore.currentRound.options"
+            :answers="answersForUi"
             @answered="handleAnswer"
           />
           <div class="timer-container">
@@ -76,12 +82,55 @@
       </Transition>
     </div>
 
+    <div class="powerup-btns">
+      <button
+        class="lightsout-btn"
+        data-sfx="click"
+        :disabled="
+          partyStore.isLightsOut ||
+          partyStore.lightsOutUsedByMe ||
+          partyStore.isFrozen ||
+          partyStore.connectionStale
+        "
+        @click="partyStore.triggerLightsOut()"
+      >
+        🔦
+      </button>
+      <button
+        class="xlz-btn"
+        data-sfx="click"
+        :disabled="
+          partyStore.isXlzActive ||
+          partyStore.xlzUsedByMe ||
+          partyStore.isFrozen ||
+          partyStore.connectionStale
+        "
+        @click="partyStore.triggerXlz()"
+      >
+        🔀
+      </button>
+      <button
+        class="freeze-btn"
+        data-sfx="click"
+        :disabled="
+          partyStore.freezeUsedByMe ||
+          partyStore.isFrozen ||
+          partyStore.connectionStale
+        "
+        @click="partyStore.triggerFreeze()"
+      >
+        ❄️
+      </button>
+    </div>
+
     <div class="emoji-btns">
       <button
         v-for="emoji in emojis"
         :key="emoji"
         class="emoji-btn"
-        :disabled="emojiCooldown || partyStore.connectionStale"
+        :disabled="
+          emojiCooldown || partyStore.isFrozen || partyStore.connectionStale
+        "
         @click="sendEmoji(emoji)"
       >
         {{ emoji }}
@@ -160,6 +209,62 @@ const partyOver = computed(
   () => !channelStore.onlineGameRunning && partyStore.buzzerState === "locked",
 );
 
+const hashToUint32 = (input) => {
+  let hash = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+};
+
+const mulberry32 = (seed) => {
+  return () => {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const scrambleText = (text, seed) => {
+  const str = String(text || "");
+  if (str.length < 2) return str;
+
+  const letters = [];
+  const positions = [];
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (ch === " ") continue;
+    letters.push(ch);
+    positions.push(i);
+  }
+  if (letters.length < 2) return str;
+
+  const rand = mulberry32(seed);
+  for (let i = letters.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [letters[i], letters[j]] = [letters[j], letters[i]];
+  }
+
+  const out = str.split("");
+  for (let i = 0; i < positions.length; i++) {
+    out[positions[i]] = letters[i];
+  }
+  return out.join("");
+};
+
+const answersForUi = computed(() => {
+  const options = gameStore.currentRound?.options || [];
+  if (!partyStore.isXlzActive) return options;
+
+  return options.map((opt) => {
+    const label = opt?.title || opt?.name || "";
+    const seed = hashToUint32(`${gameStore.currentRoundIndex}|${label}`);
+    return { ...opt, title: scrambleText(label, seed) };
+  });
+});
+
 const goHome = () => {
   partyStore.reset?.();
   channelStore.reset?.();
@@ -176,7 +281,12 @@ watch(isMyTurn, (newValue) => {
 
 const handleBuzz = () => {
   if (partyStore.connectionStale) return;
-  if (channelStore.connectionState && channelStore.connectionState !== "connected") return;
+  if (partyStore.isFrozen) return;
+  if (
+    channelStore.connectionState &&
+    channelStore.connectionState !== "connected"
+  )
+    return;
   if (!channelStore.activeChannel) return;
   vibrateBuzz();
   partyStore.pressBuzzer();
@@ -233,6 +343,7 @@ const cancelTimer = () => {
 
 const handleAnswer = (selectedAnswer) => {
   if (hasAnswered.value) return;
+  if (partyStore.isFrozen) return;
 
   cancelTimer();
 
@@ -244,6 +355,7 @@ const handleAnswer = (selectedAnswer) => {
 
 const handleTimeoutAnswer = () => {
   if (hasAnswered.value) return;
+  if (partyStore.isFrozen) return;
 
   startLinger();
 
@@ -270,6 +382,7 @@ const EMOJI_COOLDOWN_MS = 2000;
 
 const sendEmoji = (emoji) => {
   if (emojiCooldown.value) return;
+  if (partyStore.isFrozen) return;
   partyStore.sendEmoji(emoji);
   emojiCooldown.value = true;
   setTimeout(() => (emojiCooldown.value = false), EMOJI_COOLDOWN_MS);
@@ -321,6 +434,15 @@ onMounted(() => {
   padding: 32px 16px;
   width: 100%;
   max-width: 500px;
+}
+
+.freeze-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(56, 189, 248, 0.22);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  pointer-events: all;
 }
 
 .player-display {
@@ -408,13 +530,124 @@ onMounted(() => {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 8px;
-  margin: 64px auto 32px;
+  margin: 0 auto 64px;
   border: 2px solid var(--neon-pink);
   box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
   border-radius: 8px;
   padding: 16px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+}
+
+.powerup-btns {
+  display: flex;
+  gap: 16px;
+}
+
+.powerup-btns button {
+  font-size: 32px;
+  padding: 8px;
+  margin: 32px auto 16px;
+}
+
+.lightsout-btn {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  border: 2px solid var(--neon-blue);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.lightsout-btn:hover {
+  box-shadow: 0 0 22px rgba(0, 212, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.lightsout-btn:active {
+  transform: translateY(0);
+}
+
+.lightsout-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.xlz-btn {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  border: 2px solid var(--neon-purple);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.65);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.xlz-btn:hover {
+  box-shadow: 0 0 22px rgba(168, 85, 247, 0.6);
+  transform: translateY(-1px);
+}
+
+.xlz-btn:active {
+  transform: translateY(0);
+}
+
+.xlz-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.freeze-btn {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  border: 2px solid rgba(56, 189, 248, 0.9);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-weight: 900;
+  padding: 8px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.75);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.freeze-btn:hover {
+  box-shadow: 0 0 22px rgba(56, 189, 248, 0.6);
+  transform: translateY(-1px);
+}
+
+.freeze-btn:active {
+  transform: translateY(0);
+}
+
+.freeze-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .emoji-btn {

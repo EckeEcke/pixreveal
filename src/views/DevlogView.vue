@@ -4,6 +4,21 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-15-26</span>
+        </div>
+        <h3 class="log-title">Powerups in multiplayer</h3>
+        <p>
+          Next step to give the local party multiplayer more of a jackbox vibe:
+          I just added powerups! Use the freeze powerup to stop your friends
+          from hitting the buzzer. Turn the lights out for a few seconds to make
+          it harder to guess. Or sabotage them even further by scrambling up the
+          answer options. Besides that the first version of my moderator robot
+          (not AI) is introduced. In the future it will be more prominent on
+          PixReveal. Stay tuned!
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-14-26</span>
         </div>
         <h3 class="log-title">Emotes in Party Multiplayer</h3>

@@ -21,6 +21,7 @@
       />
 
       <PixelCanvas
+        :class="{dark: partyStore.isLightsOut}"
         :pixel-array="pixelData"
         :resolution="resolution"
         :is-revealing="isRevealing"
@@ -33,7 +34,13 @@
 
     <div class="rankings">
       <h1 class="logo">PARTY<span>RANKINGS</span></h1>
-      <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId || index">
+      <div
+        v-for="(player, index) in partyPlayersSorted"
+        :key="player.playerId || index"
+        class="ranking-item"
+        :class="{ frozen: isPlayerFrozen(player.playerId) }"
+      >
+        <div v-if="isPlayerFrozen(player.playerId)" class="frozen-overlay" />
         <PlayerDisplay
           :position="index + 1"
           :name="player.username"
@@ -83,6 +90,14 @@ const partyPlayersSorted = computed(() =>
 
 const currentRound = computed(() => gameStore.currentRound);
 const isRevealing = computed(() => gameStore.gameState === 'revealing');
+
+const isFreezeActive = computed(() => typeof partyStore.freezeUntilAt === "number");
+const freezeByPlayerId = computed(() => partyStore.freezeByPlayerId);
+const isPlayerFrozen = (playerId: string) => {
+  if (!isFreezeActive.value) return false;
+  if (!playerId) return false;
+  return freezeByPlayerId.value ? playerId !== freezeByPlayerId.value : true;
+};
 
 const clearAllTimers = () => {
   workerClearInterval(timerId);
@@ -229,6 +244,20 @@ onUnmounted(() => {
   padding-left: 24px;
 }
 
+.ranking-item {
+  position: relative;
+}
+
+.frozen-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.22);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .logo {
   text-align: center;
   margin-bottom: 32px;
@@ -248,5 +277,10 @@ onUnmounted(() => {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 24px;
   }
+}
+
+.dark {
+  animation: flickerBlackout 4s ease-out forwards;
+  transition: filter 0.3s ease-in-out;
 }
 </style>

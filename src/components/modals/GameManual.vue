@@ -89,10 +89,12 @@
         around a single screen, and everyone can join the fun by buzzing in with
         their own devices. No need for multiple screens or complex setups. Just
         one host starts the game, and everyone else can join as a player on
-        their phones. Send emotes from your phone to the host screen to react to
-        the current game (or distract other players). The game is designed to be
-        enjoyed in a social setting, making it perfect for parties, family
-        gatherings, or casual game nights.
+        their phones. Use powerups to sabotage your friends. Freeze them for a
+        moment, turn off the lights or scramble up the answer options. Send
+        emotes from your phone to the host screen to react to the current game
+        (or distract other players). The game is designed to be enjoyed in a
+        social setting, making it perfect for parties, family gatherings, or
+        casual game nights.
       </p>
       <h4>Submit your Art - User Generat content</h4>
       <p>
