@@ -14,6 +14,7 @@ export type PartyStatePayload = {
   activePlayerId: string | null;
   answerDeadlineAt: number | null;
   lightsOutUntilAt?: number | null;
+  lightsOutByPlayerId?: string | null;
   lightsOutUsedBy?: Record<string, boolean>;
   xlzActiveForRoundIndex?: number | null;
   xlzUsedBy?: Record<string, boolean>;

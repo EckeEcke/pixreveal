@@ -90,6 +90,7 @@ export const usePartyStore = defineStore("party", () => {
 
   const isLightsOut = ref(false);
   const lightsOutUntilAt = ref<number | null>(null);
+  const lightsOutByPlayerId = ref<string | null>(null);
   const lightsOutUsedBy = ref<Record<string, boolean>>({});
   let lightsOutTimeoutId: number | null = null;
 
@@ -156,10 +157,11 @@ export const usePartyStore = defineStore("party", () => {
     lightsOutTimeoutId = null;
   };
 
-  const setLightsOutUntil = (untilAt: number) => {
+  const setLightsOutUntil = (untilAt: number, byPlayerId: string | null) => {
     const normalizedUntilAt = Math.max(Date.now(), untilAt);
     isLightsOut.value = true;
     lightsOutUntilAt.value = normalizedUntilAt;
+    lightsOutByPlayerId.value = byPlayerId;
 
     clearLightsOutTimeout();
     const delay = Math.max(0, normalizedUntilAt - Date.now());
@@ -168,6 +170,7 @@ export const usePartyStore = defineStore("party", () => {
       if (lightsOutUntilAt.value !== normalizedUntilAt) return;
       isLightsOut.value = false;
       lightsOutUntilAt.value = null;
+      lightsOutByPlayerId.value = null;
     }, delay);
   };
 
@@ -184,9 +187,10 @@ export const usePartyStore = defineStore("party", () => {
       return;
     }
 
-    const untilAt = Date.now() + 3000;
-    setLightsOutUntil(untilAt);
-    channel.value.trigger("client-party-lightsout", { untilAt });
+    const untilAt = Date.now() + 4000;
+    const hostId = String(channelStore.playerId || "host");
+    setLightsOutUntil(untilAt, hostId);
+    channel.value.trigger("client-party-lightsout", { untilAt, byPlayerId: hostId });
   };
 
   const triggerXlz = () => {
@@ -291,7 +295,9 @@ export const usePartyStore = defineStore("party", () => {
     clearLightsOutTimeout();
     isLightsOut.value = false;
     lightsOutUntilAt.value = null;
+    lightsOutByPlayerId.value = null;
     lightsOutUsedBy.value = {};
+    lightsOutByPlayerId.value = null;
     xlzActiveForRoundIndex.value = null;
     xlzUsedBy.value = {};
     clearFreezeTimeout();
@@ -314,6 +320,7 @@ export const usePartyStore = defineStore("party", () => {
     activePlayerId: activePlayerId.value,
     answerDeadlineAt: answerDeadlineAt.value,
     lightsOutUntilAt: lightsOutUntilAt.value,
+    lightsOutByPlayerId: lightsOutByPlayerId.value,
     lightsOutUsedBy: lightsOutUsedBy.value,
     xlzActiveForRoundIndex: xlzActiveForRoundIndex.value,
     xlzUsedBy: xlzUsedBy.value,
@@ -744,16 +751,22 @@ export const usePartyStore = defineStore("party", () => {
             : null;
 
         if (typeof state.lightsOutUntilAt === "number") {
+          const byPlayerId =
+            typeof state.lightsOutByPlayerId === "string"
+              ? state.lightsOutByPlayerId
+              : null;
           if (state.lightsOutUntilAt > Date.now()) {
-            setLightsOutUntil(state.lightsOutUntilAt);
+            setLightsOutUntil(state.lightsOutUntilAt, byPlayerId);
           } else {
             isLightsOut.value = false;
             lightsOutUntilAt.value = null;
+            lightsOutByPlayerId.value = null;
             clearLightsOutTimeout();
           }
         } else if (state.lightsOutUntilAt === null) {
           isLightsOut.value = false;
           lightsOutUntilAt.value = null;
+          lightsOutByPlayerId.value = null;
           clearLightsOutTimeout();
         }
 
@@ -805,11 +818,16 @@ export const usePartyStore = defineStore("party", () => {
       },
     );
 
-    bindEvent("client-party-lightsout", (data?: { untilAt?: number }) => {
-      const untilAt =
-        typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 3000;
-      setLightsOutUntil(untilAt);
-    });
+    bindEvent(
+      "client-party-lightsout",
+      (data?: { untilAt?: number; byPlayerId?: string }) => {
+        const untilAt =
+          typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 4000;
+        const byPlayerId =
+          typeof data?.byPlayerId === "string" ? data.byPlayerId : null;
+        setLightsOutUntil(untilAt, byPlayerId);
+      },
+    );
 
     bindEvent(
       "client-party-lightsout-request",
@@ -822,9 +840,9 @@ export const usePartyStore = defineStore("party", () => {
         if (lightsOutUsedBy.value?.[playerId]) return;
 
         lightsOutUsedBy.value = { ...lightsOutUsedBy.value, [playerId]: true };
-        const untilAt = Date.now() + 3000;
-        setLightsOutUntil(untilAt);
-        channel.value?.trigger("client-party-lightsout", { untilAt });
+        const untilAt = Date.now() + 4000;
+        setLightsOutUntil(untilAt, playerId);
+        channel.value?.trigger("client-party-lightsout", { untilAt, byPlayerId: playerId });
         broadcastPartyState("lightsout");
       },
     );
@@ -1090,6 +1108,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerTimer = null;
     workerClearTimeout(answerTimer);
     answerTimer = null;
+    lightsOutByPlayerId.value = null;
     xlzActiveForRoundIndex.value = null;
     xlzUsedBy.value = {};
     clearFreezeTimeout();
@@ -1129,6 +1148,7 @@ export const usePartyStore = defineStore("party", () => {
     reset,
     isLightsOut,
     lightsOutUntilAt,
+    lightsOutByPlayerId,
     lightsOutUsedBy,
     lightsOutUsedByMe,
     triggerLightsOut,

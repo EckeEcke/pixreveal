@@ -1,56 +1,101 @@
 <template>
   <div class="buzzer-status">
     <RobotModerator />
-    <Transition name="fade" mode="out-in">
-      <div
-        v-if="partyStore.buzzerState === 'open'"
-        key="open"
-        class="status-pill open"
-      >
-        BUZZ TO ANSWER!
-      </div>
-
-      <div
-        v-else-if="partyStore.buzzerState === 'answering'"
-        key="answering"
-        class="status-pill answering"
-      >
-        <span class="waiting-player">{{ activePlayerName }}</span>
-        hit the buzzer! Is it
-        <span
-          v-for="(opt, index) in optionsForPrompt"
-          :key="`${index}-${opt}`"
-          class="prompt-option"
-          :style="{
-            '--opt-color': getOptionStyle(index)['--opt-color'],
-            '--opt-glow': getOptionStyle(index)['--opt-glow'],
-          }"
+    <div>
+      <Transition name="fade" mode="out-in">
+        <div
+          v-if="partyStore.buzzerState === 'open'"
+          key="open"
+          class="status-pill open"
         >
-          {{ opt }}{{ index < optionsForPrompt.length - 2 ? ", " : ""
-          }}<span v-if="index === optionsForPrompt.length - 2">
-            &nbsp;<span class="white-text">or</span>&nbsp;
-          </span>
-          <span v-else-if="index === optionsForPrompt.length - 1">?</span>
-        </span>
-      </div>
+          THINK YOU KNOW THE ANSWER?
+          <br />
+          HIT THE <span class="pink-text">BUZZ</span>!
+        </div>
 
-      <div
-        v-else-if="
-          partyStore.roundResult && gameStore.gameState !== 'revealing'
-        "
-        key="result"
-        class="status-pill"
-        :class="partyStore.roundResult"
-      >
-        {{ partyStore.roundResult === "correct" ? "✓ CORRECT" : "✗ WRONG" }}!
-        <span class="answer-highlight">{{
-          gameStore.currentRound?.answer
-        }}</span>
-        is the answer.
-      </div>
-    </Transition>
-  </div>
-</template>
+        <div
+          v-else-if="partyStore.buzzerState === 'answering'"
+          key="answering"
+          class="status-pill answering"
+        >
+          <span class="waiting-player">{{ activePlayerName }}</span>
+          hit the buzzer! Is it
+          <span
+            v-for="(opt, index) in optionsForPrompt"
+            :key="`${index}-${opt}`"
+            class="prompt-option"
+            :style="{
+              '--opt-color': getOptionStyle(index)['--opt-color'],
+              '--opt-glow': getOptionStyle(index)['--opt-glow'],
+            }"
+          >
+            {{ opt }}{{ index < optionsForPrompt.length - 2 ? ", " : "" }}
+            <span v-if="index === optionsForPrompt.length - 2">
+              &nbsp;<span class="white-text">or</span>&nbsp;
+            </span>
+	          <span v-else-if="index === optionsForPrompt.length - 1">?</span>
+	        </span>
+          <span v-if="partyStore.isXlzActive">&nbsp;Hmm.. this looks off.</span>
+	      </div>
+
+        <div
+          v-else-if="
+            partyStore.roundResult && gameStore.gameState !== 'revealing'
+          "
+          key="result"
+          class="status-pill result"
+          :class="resultClass"
+        >
+          <template v-if="!partyStore.activePlayerId">
+            Time up! Nobody answered.
+            <span class="answer-highlight">{{
+              gameStore.currentRound?.answer
+            }}</span>
+            was the answer.
+          </template>
+
+          <template v-else-if="partyStore.roundResult === 'correct'">
+            ✓ CORRECT!
+            <span class="answer-highlight">{{
+              gameStore.currentRound?.answer
+            }}</span>
+            was the answer.
+            <br />
+            1 point for
+            <span class="player-highlight">{{ activePlayerNameUpper }}</span
+            >.
+          </template>
+
+          <template v-else>
+            ✗ WRONG! The correct answer was
+            <span class="answer-highlight">{{
+              gameStore.currentRound?.answer
+            }}</span
+            >.
+            <span class="player-highlight">{{ activePlayerName }}</span> loses 2
+            points.
+          </template>
+	        </div>
+	      </Transition>
+
+        <Transition name="fade">
+          <div v-if="partyStore.isLightsOut" class="powerup-text">
+            WHAT?! I CAN'T SEE! Oh..
+            <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
+            turned the lights off
+          </div>
+        </Transition>
+
+        <Transition name="fade">
+          <div v-if="isFreezeActive" class="powerup-text">
+            STONE COLD!
+            <span class="player-highlight">{{ freezeActorNameUpper }}</span>
+            used the freeze powerup.
+          </div>
+        </Transition>
+	    </div>
+	  </div>
+	</template>
 
 <script setup lang="ts">
 import { computed } from "vue";
@@ -64,6 +109,34 @@ const partyStore = usePartyStore();
 const activePlayerName = computed(
   () => partyStore.activePlayer?.username || "Player",
 );
+
+const activePlayerNameUpper = computed(() =>
+  activePlayerName.value.toUpperCase(),
+);
+
+const resultClass = computed(() => {
+  if (!partyStore.activePlayerId) return "timeout";
+  return partyStore.roundResult || "";
+});
+
+const findUsernameById = (playerId: string | null) => {
+  if (!playerId) return null;
+  return (
+    partyStore.players.find((p: any) => p.playerId === playerId)?.username || null
+  );
+};
+
+const isFreezeActive = computed(() => typeof partyStore.freezeUntilAt === "number");
+
+const freezeActorNameUpper = computed(() => {
+  const username = findUsernameById(partyStore.freezeByPlayerId);
+  return (username || "HOST").toUpperCase();
+});
+
+const lightsOutActorNameUpper = computed(() => {
+  const username = findUsernameById((partyStore as any).lightsOutByPlayerId || null);
+  return (username || "HOST").toUpperCase();
+});
 
 const hashToUint32 = (input: string) => {
   let hash = 2166136261;
@@ -102,7 +175,7 @@ const scrambleText = (text: string, seed: number) => {
     return chars.join("");
   };
 
-  // Split on whitespace and only scramble letters within each term (e.g. "ice cream")
+  // Only scramble within each term (e.g. "ice cream" => scramble "ice" and "cream" separately)
   const parts = str.split(/(\s+)/);
   return parts
     .map((part, index) => {
@@ -160,14 +233,21 @@ const optionsForPrompt = computed(() => {
   font-size: 20px;
   letter-spacing: 1px;
   line-height: 1.5;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
 }
 
+.status-pill.result {
+  text-transform: none;
+}
+
 .status-pill.open {
   border: 2px solid var(--neon-pink);
+}
+
+.pink-text {
   color: var(--neon-pink);
   animation: pulse-glow 1.5s infinite ease-in-out;
 }
@@ -187,6 +267,11 @@ const optionsForPrompt = computed(() => {
   color: var(--neon-error);
 }
 
+.status-pill.timeout {
+  border: 2px solid var(--neon-blue);
+  color: var(--neon-blue);
+}
+
 .waiting-player {
   color: #fff;
   opacity: 0.95;
@@ -201,6 +286,25 @@ const optionsForPrompt = computed(() => {
 
 .answer-highlight {
   color: white;
+}
+
+.player-highlight {
+  color: white;
+}
+
+.powerup-text {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  text-align: left;
 }
 
 .white-text {
