@@ -63,7 +63,7 @@ const toggleChat = () => {
 };
 
 const hasMessages = computed(
-  () => channelStore.messages.length > messageCountOnOpen.value,
+  () => channelStore.messages.length > messageCountOnOpen.value && !showChat.value
 );
 
 const handleSend = () => {
