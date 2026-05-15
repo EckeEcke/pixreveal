@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSoundStore } from "@/stores/sound";
 import { ref, watch } from "vue";
 
 const props = defineProps({
@@ -28,6 +29,8 @@ interface FloatingEmoji {
   drift: number;
 }
 
+const soundStore = useSoundStore();
+
 const activeEmojis = ref<FloatingEmoji[]>([]);
 
 const spawnEmoji = (char: string) => {
@@ -42,6 +45,8 @@ const spawnEmoji = (char: string) => {
   };
 
   activeEmojis.value.push(emoji);
+
+  soundStore.playSound("pop");
 
   setTimeout(() => {
     activeEmojis.value = activeEmojis.value.filter((e) => e.id !== id);

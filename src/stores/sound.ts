@@ -10,6 +10,8 @@ import timerSound from "@/assets/audio/timer.mp3";
 import punchSound from "@/assets/audio/punch.mp3";
 import hoverSound from "@/assets/audio/hover.mp3";
 import backSound from "@/assets/audio/back.mp3";
+import popSound from "@/assets/audio/pop.mp3";
+
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -27,6 +29,7 @@ export const useSoundStore = defineStore("sound", () => {
     punch: punchSound,
     hover: hoverSound,
     back: backSound,
+    pop: popSound
   };
 
   type SoundName = keyof typeof sources;
