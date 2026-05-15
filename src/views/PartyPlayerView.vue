@@ -149,6 +149,7 @@ import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { vibrateBuzz } from "@/utils/vibration";
+import { useSoundStore } from "@/stores/sound";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -160,6 +161,7 @@ const partyStore = usePartyStore();
 const gameStore = useGameStore();
 const channelStore = useChannelStore();
 const router = useRouter();
+const soundStore = useSoundStore();
 
 const player = computed(() => {
   return (
@@ -278,6 +280,15 @@ watch(isMyTurn, (newValue) => {
     cancelTimer();
   }
 });
+
+watch(
+  () => partyStore.isFrozen,
+  (isFrozen, wasFrozen) => {
+    if (isFrozen && !wasFrozen) {
+      soundStore.playSound("freeze");
+    }
+  },
+);
 
 const handleBuzz = () => {
   if (partyStore.connectionStale) return;

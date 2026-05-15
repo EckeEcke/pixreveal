@@ -64,6 +64,7 @@ import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
+import { useSoundStore } from "@/stores/sound";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -75,6 +76,7 @@ import EmojiOverlay from "@/components/game-ui/EmojiOverlay.vue";
 const gameStore = useGameStore();
 const configStore = useConfigStore();
 const partyStore = usePartyStore();
+const soundStore = useSoundStore();
 
 const pixelData = ref(Array(256).fill(0));
 const resolution = ref(16);
@@ -98,6 +100,36 @@ const isPlayerFrozen = (playerId: string) => {
   if (!playerId) return false;
   return freezeByPlayerId.value ? playerId !== freezeByPlayerId.value : true;
 };
+
+let lastFreezeUntilAt: number | null = null;
+watch(
+  () => partyStore.freezeUntilAt,
+  (untilAt) => {
+    if (typeof untilAt !== "number") {
+      lastFreezeUntilAt = null;
+      return;
+    }
+    if (untilAt <= Date.now()) return;
+    if (lastFreezeUntilAt === untilAt) return;
+    lastFreezeUntilAt = untilAt;
+    soundStore.playSound("freeze");
+  },
+);
+
+let lastLightsOutUntilAt: number | null = null;
+watch(
+  () => partyStore.lightsOutUntilAt,
+  (untilAt) => {
+    if (typeof untilAt !== "number") {
+      lastLightsOutUntilAt = null;
+      return;
+    }
+    if (untilAt <= Date.now()) return;
+    if (lastLightsOutUntilAt === untilAt) return;
+    lastLightsOutUntilAt = untilAt;
+    soundStore.playSound("electricity");
+  },
+);
 
 const clearAllTimers = () => {
   workerClearInterval(timerId);

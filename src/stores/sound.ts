@@ -11,6 +11,8 @@ import punchSound from "@/assets/audio/punch.mp3";
 import hoverSound from "@/assets/audio/hover.mp3";
 import backSound from "@/assets/audio/back.mp3";
 import popSound from "@/assets/audio/pop.mp3";
+import freezeSound from "@/assets/audio/freeze.mp3";
+import electricitySound from "@/assets/audio/electricity.mp3";
 import winnerSound from "@/assets/audio/winner.mp3";
 
 
@@ -32,6 +34,8 @@ export const useSoundStore = defineStore("sound", () => {
     hover: hoverSound,
     back: backSound,
     pop: popSound,
+    freeze: freezeSound,
+    electricity: electricitySound,
     winner: winnerSound,
   };
 
