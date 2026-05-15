@@ -26,9 +26,8 @@
           type="text"
           placeholder="Type a message..."
           class="chat-input"
-          @input="soundStore.playSound('click')"
         />
-        <button @click="handleSend" data-sfx="click" class="btn-outline">
+        <button @click="handleSend" class="btn-outline">
           <Icon icon="pixel:play-solid" />
           SEND
         </button>
