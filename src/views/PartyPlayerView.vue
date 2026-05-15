@@ -336,6 +336,7 @@ onMounted(() => {
   display: flex;
   place-items: center;
   min-height: 220px;
+  width: 100%;
 }
 
 .timer-container {

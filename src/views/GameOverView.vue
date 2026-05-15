@@ -191,9 +191,9 @@ const getPartyOverMessage = computed(() => {
     if (partyPlayersSorted.value[0].playerId === channelStore.playerId) {
       return "YOU WON THE PARTY!";
     }
-    `${partyPlayersSorted.value[0].username.toUpperCase()} WON THE PARTY!`;
-    return "GAME OVER";
+    return `${partyPlayersSorted.value[0].username.toUpperCase()} WON THE PARTY!`;
   }
+  return "GAME OVER";
 });
 
 const getRankData = (score) => {
