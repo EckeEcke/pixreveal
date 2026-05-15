@@ -51,6 +51,7 @@ const messageCountOnOpen = ref(0);
 const scrollContainer = ref<HTMLElement | null>(null);
 
 const scrollToBottom = async () => {
+  soundStore.playSound("pop");
   await nextTick();
   if (scrollContainer.value) {
     scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
