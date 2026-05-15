@@ -1,49 +1,53 @@
 <template>
-  <div class="lobby-chat">
-    <div class="messages-area" ref="scrollContainer">
-      <div
-        v-for="msg in channelStore.messages"
-        :key="msg.id"
-        :class="['chat-row', { 'system-msg': msg.isSystem }]"
-      >
-        <template v-if="!msg.isSystem">
-          <span class="chat-user">[{{ msg.username }}]:</span>
-          <span class="chat-text">{{ msg.text }}</span>
-        </template>
-        <template v-else>
-          <span class="chat-system-text">>> {{ msg.text }}</span>
-        </template>
+  <div class="chat-wrapper">
+    <Icon icon="pixel:message-dots" class="chat-icon" @click="toggleChat" />
+    <span v-if="hasMessages" class="notification-badge"></span>
+    <div v-if="showChat" class="lobby-chat">
+      <div class="messages-area" ref="scrollContainer">
+        <div
+          v-for="msg in channelStore.messages"
+          :key="msg.id"
+          :class="['chat-row', { 'system-msg': msg.isSystem }]"
+        >
+          <template v-if="!msg.isSystem">
+            <span class="chat-user">[{{ msg.username }}]:</span>
+            <span class="chat-text">{{ msg.text }}</span>
+          </template>
+          <template v-else>
+            <span class="chat-system-text">>> {{ msg.text }}</span>
+          </template>
+        </div>
       </div>
-    </div>
 
-    <div class="chat-footer">
-      <input
-        v-model="chatInput"
-        @keyup.enter="handleSend"
-        type="text"
-        placeholder="Type a message..."
-        class="chat-input"
-        @input="soundStore.playSound('click')"
-      />
-      <button @click="handleSend" data-sfx="click" class="btn-outline">
-        <Icon icon="pixel:play-solid" />
-        SEND
-      </button>
+      <div class="chat-footer">
+        <input
+          v-model="chatInput"
+          @keyup.enter="handleSend"
+          type="text"
+          placeholder="Type a message..."
+          class="chat-input"
+          @input="soundStore.playSound('click')"
+        />
+        <button @click="handleSend" data-sfx="click" class="btn-outline">
+          <Icon icon="pixel:play-solid" />
+          SEND
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from "vue";
-import { useOnlineStore } from "@/stores/online";
+import { computed, ref, onMounted, nextTick, watch } from "vue";
 import { Icon } from "@iconify/vue";
 import { useSoundStore } from "@/stores/sound";
 import { useChannelStore } from "@/stores/channel";
 
-const onlineStore = useOnlineStore();
 const channelStore = useChannelStore();
 const soundStore = useSoundStore();
 const chatInput = ref("");
+const showChat = ref(false);
+const messageCountOnOpen = ref(0);
 const scrollContainer = ref<HTMLElement | null>(null);
 
 const scrollToBottom = async () => {
@@ -52,6 +56,15 @@ const scrollToBottom = async () => {
     scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
   }
 };
+
+const toggleChat = () => {
+  showChat.value = !showChat.value;
+  messageCountOnOpen.value = channelStore.messages.length;
+};
+
+const hasMessages = computed(
+  () => channelStore.messages.length > messageCountOnOpen.value,
+);
 
 const handleSend = () => {
   if (chatInput.value.trim() === "") return;
@@ -63,7 +76,7 @@ watch(
   () => channelStore.messages.length,
   () => {
     scrollToBottom();
-  }
+  },
 );
 
 onMounted(() => {
@@ -114,6 +127,17 @@ onMounted(() => {
   padding: 2px 4px;
 }
 
+.chat-wrapper {
+  position: relative;
+}
+
+.chat-icon {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  font-size: 32px;
+}
+
 .chat-system-text {
   color: #777;
   font-style: italic;
@@ -151,5 +175,27 @@ onMounted(() => {
 
 .messages-area::-webkit-scrollbar-thumb {
   background: #444;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary);
+  border-radius: 50%;
+}
+
+.notification-badge::after {
+  content: "";
+  position: absolute;
+  top: 2;
+  left: 2;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 50%;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 </style>
