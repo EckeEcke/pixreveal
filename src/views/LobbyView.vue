@@ -168,6 +168,7 @@ onMounted(() => {
 }
 
 .room-id {
+  font-size: 20px;
   text-align: center;
   span {
     display: inline-flex;

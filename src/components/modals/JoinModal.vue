@@ -75,14 +75,13 @@
         <input
           v-model="joinRoomId"
           placeholder="Enter room ID"
-          minlength="5"
-          maxlength="6"
+          :maxlength="ROOM_ID_LENGTH"
           autocapitalize="on"
           class="terminal-input"
         />
         <button
           class="terminal-btn"
-          :disabled="!joinRoomId || joinRoomId.length < 6"
+          :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
           data-sfx="click"
           @click="joinGame"
         >
@@ -111,6 +110,7 @@ import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import InfoBox from "../game-ui/InfoBox.vue";
+import { ROOM_ID_LENGTH } from "@/utils/crypto";
 
 const props = defineProps({
   mode: { type: String, default: "online" },
