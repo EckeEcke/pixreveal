@@ -93,7 +93,6 @@ onMounted(() => {
   height: 200px;
   width: 100%;
   overflow: hidden;
-  margin: 32px auto;
 }
 
 .messages-area {
@@ -129,6 +128,7 @@ onMounted(() => {
 
 .chat-wrapper {
   position: relative;
+  margin: 32px auto;
 }
 
 .chat-icon {
