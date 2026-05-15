@@ -17,11 +17,7 @@
         <div class="results-card party-results-card">
           <h1 class="logo">PARTY <span>OVER</span></h1>
           <p class="party-subtitle rank-prophet">
-            {{
-              partyPlayersSorted.length
-                ? `${partyPlayersSorted[0].username.toUpperCase()} WON THE PARTY!`
-                : "GAME OVER"
-            }}
+            {{ getPartyOverMessage }}
           </p>
           <div class="party-actions">
             <button
@@ -137,7 +133,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
 import { useChannelStore } from "@/stores/channel";
@@ -189,6 +185,16 @@ const isPartyMode = computed(
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
 );
+
+const getPartyOverMessage = computed(() => {
+  if (partyPlayersSorted.value.length) {
+    if (partyPlayersSorted.value[0].playerId === channelStore.playerId) {
+      return "YOU WON THE PARTY!";
+    }
+    `${partyPlayersSorted.value[0].username.toUpperCase()} WON THE PARTY!`;
+    return "GAME OVER";
+  }
+});
 
 const getRankData = (score) => {
   const adjustedScore =
@@ -247,6 +253,15 @@ const playAgain = () => {
 };
 
 gameStore.reset();
+
+onMounted(() => {
+  if (
+    partyPlayersSorted.value.length &&
+    partyPlayersSorted.value[0].playerId === channelStore.playerId
+  ) {
+    soundStore.playSound("winner");
+  }
+});
 </script>
 
 <style scoped>
