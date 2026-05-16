@@ -229,7 +229,7 @@ export const usePartyStore = defineStore("party", () => {
 
     const hostId = String(channelStore.playerId || "host");
     freezeUsedBy.value = { ...freezeUsedBy.value, [hostId]: true };
-    const untilAt = Date.now() + 3000;
+    const untilAt = Date.now() + 4000;
     // Host friert sich selbst nicht ein (byPlayerId = hostId)
     setFreezeUntil(untilAt, hostId);
     channel.value.trigger("client-party-freeze", { untilAt, byPlayerId: hostId });
@@ -859,7 +859,7 @@ export const usePartyStore = defineStore("party", () => {
       "client-party-freeze",
       (data?: { untilAt?: number; byPlayerId?: string }) => {
         const untilAt =
-          typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 3000;
+          typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 4000;
         const byPlayerId =
           typeof data?.byPlayerId === "string" ? data.byPlayerId : null;
         setFreezeUntil(untilAt, byPlayerId);
@@ -876,7 +876,7 @@ export const usePartyStore = defineStore("party", () => {
         if (freezeUsedBy.value?.[playerId]) return;
 
         freezeUsedBy.value = { ...freezeUsedBy.value, [playerId]: true };
-        const untilAt = Date.now() + 3000;
+        const untilAt = Date.now() + 4000;
         // Initiator wird nicht gefreezed (byPlayerId = playerId)
         setFreezeUntil(untilAt, playerId);
         channel.value?.trigger("client-party-freeze", { untilAt, byPlayerId: playerId });

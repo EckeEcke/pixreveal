@@ -32,24 +32,12 @@
       <BuzzerStatus />
     </div>
 
-    <div class="rankings">
-      <h1 class="logo">PARTY<span>RANKINGS</span></h1>
-      <div
-        v-for="(player, index) in partyPlayersSorted"
-        :key="player.playerId || index"
-        class="ranking-item"
-        :class="{ frozen: isPlayerFrozen(player.playerId) }"
-      >
-        <div v-if="isPlayerFrozen(player.playerId)" class="frozen-overlay" />
-        <PlayerDisplay
-          :position="index + 1"
-          :name="player.username"
-          :avatar-index="player.avatarIndex"
-          :points="player.points"
-          :is-active="partyStore.activePlayer?.username === player.username"
-        />
-      </div>
-    </div>
+    <PartyRankings
+      :party-players-sorted="partyPlayersSorted"
+      :active-player-id="partyStore.activePlayerId"
+      :freeze-until-at="partyStore.freezeUntilAt"
+      :freeze-by-player-id="partyStore.freezeByPlayerId"
+    />
   </main>
   <EmojiOverlay :new-emoji="lastEmoji" />
 </template>
@@ -58,9 +46,9 @@
 import { nextTick, ref, onMounted, onUnmounted, computed, watch, unref } from "vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
-import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import GameTransition from "@/components/page-layout/GameTransition.vue";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
+import PartyRankings from "@/components/game-ui/PartyRankings.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
@@ -92,14 +80,6 @@ const partyPlayersSorted = computed(() =>
 
 const currentRound = computed(() => gameStore.currentRound);
 const isRevealing = computed(() => gameStore.gameState === 'revealing');
-
-const isFreezeActive = computed(() => typeof partyStore.freezeUntilAt === "number");
-const freezeByPlayerId = computed(() => partyStore.freezeByPlayerId);
-const isPlayerFrozen = (playerId: string) => {
-  if (!isFreezeActive.value) return false;
-  if (!playerId) return false;
-  return freezeByPlayerId.value ? playerId !== freezeByPlayerId.value : true;
-};
 
 let lastFreezeUntilAt: number | null = null;
 watch(
@@ -272,42 +252,10 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
-.rankings {
-  padding-left: 24px;
-}
-
-.ranking-item {
-  position: relative;
-}
-
-.frozen-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background: rgba(56, 189, 248, 0.22);
-  backdrop-filter: blur(1px);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.logo {
-  text-align: center;
-  margin-bottom: 32px;
-  font-size: 1.5rem;
-  letter-spacing: 2px;
-}
-
 @media (max-width: 1023px) {
   .host-layout {
     grid-template-columns: 1fr;
     max-width: 600px;
-  }
-
-  .rankings {
-    padding-left: 0;
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 24px;
   }
 }
 
