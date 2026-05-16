@@ -76,13 +76,21 @@
             points.
           </template>
 	        </div>
-	      </Transition>
+      </Transition>
 
-        <Transition name="fade">
-          <div v-if="partyStore.isLightsOut" class="powerup-text">
-            WHAT?! I CAN'T SEE! Oh..
+      <Transition name="fade">
+        <div v-if="leaderMessageVisible" class="leader-text">
+          {{ leaderMessageBefore }}
+          <span class="player-highlight">{{ leaderNameUpper }}</span>
+          {{ leaderMessageAfter }}
+        </div>
+      </Transition>
+
+      <Transition name="fade">
+        <div v-if="partyStore.isLightsOut" class="powerup-text">
+          WHAT?! I CAN'T SEE! Oh..
             <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
-            turned the lights off
+          turned the lights off
           </div>
         </Transition>
 
@@ -98,7 +106,7 @@
 	</template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import RobotModerator from "./RobotModerator.vue";
@@ -113,6 +121,79 @@ const activePlayerName = computed(
 const activePlayerNameUpper = computed(() =>
   activePlayerName.value.toUpperCase(),
 );
+
+const leaderTemplates = [
+  "Move over! [New Leader] just took the lead!",
+  "We have a new leader! All hail [New Leader]!",
+  "Plot twist! [New Leader] is now on top!",
+  "And just like that, [New Leader] steals the crown!",
+] as const;
+
+const leaderTemplateIndex = ref(0);
+const leaderTemplate = ref<string | null>(null);
+const leaderNameUpper = ref<string>("PLAYER");
+const leaderMessageVisible = ref(false);
+let leaderHideTimeoutId: number | null = null;
+
+const clearLeaderHideTimeout = () => {
+  if (!leaderHideTimeoutId) return;
+  window.clearTimeout(leaderHideTimeoutId);
+  leaderHideTimeoutId = null;
+};
+
+const partyPlayersByPoints = computed(() =>
+  [...partyStore.players].sort((a: any, b: any) => (b.points ?? 0) - (a.points ?? 0)),
+);
+
+const leaderWatchSnapshot = computed(() =>
+  partyPlayersByPoints.value.map((p: any) => ({
+    playerId: p.playerId,
+    username: p.username,
+    points: p.points,
+  })),
+);
+
+const leaderId = computed(() => leaderWatchSnapshot.value[0]?.playerId || null);
+const leaderUsername = computed(
+  () => leaderWatchSnapshot.value[0]?.username || null,
+);
+
+watch(
+  leaderWatchSnapshot,
+  (next, prev) => {
+    const nextLeaderId = next?.[0]?.playerId;
+    const prevLeaderId = prev?.[0]?.playerId;
+    if (!nextLeaderId || nextLeaderId === prevLeaderId) return;
+
+    const nextLeaderName = next?.[0]?.username || "Player";
+    const template =
+      leaderTemplates[leaderTemplateIndex.value % leaderTemplates.length] ??
+      leaderTemplates[0];
+    leaderTemplateIndex.value =
+      (leaderTemplateIndex.value + 1) % leaderTemplates.length;
+
+    leaderTemplate.value = template;
+    leaderNameUpper.value = String(nextLeaderName).toUpperCase();
+    leaderMessageVisible.value = true;
+
+    clearLeaderHideTimeout();
+    leaderHideTimeoutId = window.setTimeout(() => {
+      leaderHideTimeoutId = null;
+      leaderMessageVisible.value = false;
+    }, 4000);
+  },
+  { deep: true },
+);
+
+const leaderMessageBefore = computed(() => {
+  const t = leaderTemplate.value || leaderTemplates[0];
+  return t.split("[New Leader]")[0] || "";
+});
+
+const leaderMessageAfter = computed(() => {
+  const t = leaderTemplate.value || leaderTemplates[0];
+  return t.split("[New Leader]")[1] || "";
+});
 
 const resultClass = computed(() => {
   if (!partyStore.activePlayerId) return "timeout";
@@ -299,6 +380,21 @@ const optionsForPrompt = computed(() => {
   background: rgba(56, 189, 248, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.35);
   color: rgba(255, 255, 255, 0.9);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.leader-text {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--neon-yellow);
+  color: var(--neon-yellow);
   font-weight: 900;
   font-size: 20px;
   letter-spacing: 1px;
