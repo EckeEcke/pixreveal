@@ -1,9 +1,10 @@
 <template>
   <main>
     <Transition name="fade" mode="out-in">
-      <GameOverTransition
+      <GameTransition
         v-if="showIntro"
-        message="GAME OVER"
+        first="GAME"
+        second="OVER"
         @done="
           () => {
             showIntro = false;
@@ -151,7 +152,7 @@ import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
-import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
+import GameTransition from "@/components/game-ui/GameTransition.vue";
 import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 
 const playerStore = usePlayerStore();

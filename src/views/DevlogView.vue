@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-17-26</span>
+        </div>
+        <h3 class="log-title">Bonus round in party multiplayer</h3>
+        <p>
+          Jackbox style party mode becomes more dynamic! In the 5th round of
+          local party multiplayer, the bonus round is played. In this round the
+          pixel art is blurred and gets unblurred slowly. On top of that in
+          bonus round points and malus are doubled. You can win 2 points, but
+          you could also lose 4 points! Classic risk versus reward. In the final
+          round points are also doubled now to guarantee an exciting finish!
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-16-26</span>
         </div>
         <h3 class="log-title">

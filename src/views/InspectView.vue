@@ -1,7 +1,7 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition
+      <CountdownTransition
         v-if="gameStore.gameState === 'starting'"
         @done="gameStore.setGameState('revealing')"
       />
@@ -47,7 +47,7 @@
 import { computed, ref, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
-import GameTransition from "@/components/page-layout/GameTransition.vue";
+import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useGameStore } from "@/stores/game";

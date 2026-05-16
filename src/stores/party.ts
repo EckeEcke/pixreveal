@@ -500,7 +500,11 @@ export const usePartyStore = defineStore("party", () => {
     if (playerId) {
       const player = players.value.find((p) => p.playerId === playerId);
       if (player) {
-        player.points += isCorrect ? 1 : -2;
+        const isFinalRound = gameStore.currentRoundIndex === configStore.maxRounds - 1;
+        const isBonusRound =
+          configStore.maxRounds >= 10 && gameStore.currentRoundIndex === 4;
+        const multiplier = isFinalRound || isBonusRound ? 2 : 1;
+        player.points += isCorrect ? 1 * multiplier : -2 * multiplier;
         if (isCorrect) {
           player.correctAnswers += 1;
           if (xlzActiveForRoundIndex.value === gameStore.currentRoundIndex) {

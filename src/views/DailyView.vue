@@ -1,7 +1,7 @@
 <template>
   <main class="game-layout">
     <transition name="fade" mode="out-in">
-      <GameTransition v-if="showTransition" message="GET READY" @done="start" />
+      <CountdownTransition v-if="showTransition" message="GET READY" @done="start" />
     </transition>
     <section class="canvas-section">
       <GameHeader
@@ -52,7 +52,7 @@ import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
 import { useDailyStore } from "@/stores/daily";
 import { useSoundStore } from "@/stores/sound";
-import GameTransition from "@/components/page-layout/GameTransition.vue";
+import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import router from "@/router";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";

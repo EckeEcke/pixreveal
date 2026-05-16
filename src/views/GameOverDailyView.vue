@@ -1,8 +1,9 @@
 <template>
   <Transition name="fade" mode="out-in">
-    <GameOverTransition
+    <GameTransition
       v-if="showIntro && !dailyStore.hasSubmitted"
-      message="GAME OVER"
+      first="GAME"
+      second="OVER"
       @done="
         () => {
           showIntro = false;
@@ -65,7 +66,7 @@ import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import DailyRankings from "@/components/game-ui/DailyRankings.vue";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
-import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
+import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { toast } from "vue3-toastify";
 

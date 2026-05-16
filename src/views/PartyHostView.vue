@@ -1,12 +1,24 @@
 <template>
   <main class="host-layout setup-card">
     <Transition name="fade" mode="out-in">
-      <GameTransition 
-        v-if="gameStore.gameState === 'starting'" 
-        message="GET READY" 
-        @done="gameStore.setGameState('revealing')" 
+      <CountdownTransition
+        v-if="gameStore.gameState === 'starting'"
+        message="GET READY"
+        @done="gameStore.setGameState('revealing')"
       />
-    </transition>
+      <GameTransition
+        v-else-if="showFinalRoundTransition"
+        first="FINAL"
+        second="ROUND"
+        @done="handleFinalRoundDone"
+      />
+      <GameTransition
+        v-else-if="showBonusRoundTransition"
+        first="BONUS"
+        second="ROUND"
+        @done="handleBonusRoundDone"
+      />
+    </Transition>
 
     <div>
       <GameHeader
@@ -20,16 +32,21 @@
         :is-survival="false"
       />
 
-      <PixelCanvas
-        :class="{dark: partyStore.isLightsOut}"
-        :pixel-array="pixelData"
-        :resolution="resolution"
-        :is-revealing="isRevealing"
-        :is-status-icon="false"
-        :timer-duration="timerDuration"
-        :pause-reveal="partyStore.buzzerState === 'answering'"
-      />
-      <BuzzerStatus />
+      <div class="canvas-effects" :style="canvasEffectsStyle">
+        <PixelCanvas
+          :class="{ dark: partyStore.isLightsOut }"
+          :pixel-array="pixelData"
+          :resolution="resolution"
+          :is-revealing="canvasIsRevealing"
+          :is-status-icon="false"
+          :timer-duration="timerDuration"
+          :pause-reveal="
+            partyStore.buzzerState === 'answering' || showFinalRoundTransition
+          "
+        />
+        <div v-if="isBlurRoundActive" class="blur-overlay" />
+      </div>
+      <BuzzerStatus :is-final-round="isFinalRound" :is-bonus-round="isBonusRound" />
     </div>
 
     <PartyRankings
@@ -46,7 +63,8 @@
 import { nextTick, ref, onMounted, onUnmounted, computed, watch, unref } from "vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
-import GameTransition from "@/components/page-layout/GameTransition.vue";
+import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
+import GameTransition from "@/components/game-ui/GameTransition.vue";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import PartyRankings from "@/components/game-ui/PartyRankings.vue";
 import { useGameStore } from "@/stores/game";
@@ -79,7 +97,61 @@ const partyPlayersSorted = computed(() =>
 );
 
 const currentRound = computed(() => gameStore.currentRound);
-const isRevealing = computed(() => gameStore.gameState === 'revealing');
+const isRevealing = computed(
+  () =>
+    gameStore.gameState === "revealing" &&
+    !showFinalRoundTransition.value &&
+    !showBonusRoundTransition.value,
+);
+
+const isBonusRoundEnabled = computed(() => configStore.maxRounds >= 10);
+const isBonusRound = computed(
+  () => isBonusRoundEnabled.value && gameStore.currentRoundIndex === 4,
+);
+
+const isBlurRoundActive = computed(
+  () => gameStore.gameState === "revealing" && isBonusRound.value,
+);
+
+const blurAmountPx = computed(() => {
+  if (!isBlurRoundActive.value) return 0;
+  const duration = timerDuration.value || 1;
+  const t = typeof timer.value === "number" ? timer.value : duration;
+  const ratio = Math.min(1, Math.max(0, t / duration));
+  const maxBlur = 22;
+  return maxBlur * ratio;
+});
+
+const canvasEffectsStyle = computed(() => {
+  if (!isBlurRoundActive.value) return undefined;
+  return {
+    filter: `blur(${blurAmountPx.value}px)`,
+  };
+});
+
+const canvasIsRevealing = computed(
+  () => Boolean(isRevealing.value && !isBlurRoundActive.value),
+);
+
+const isFinalRound = computed(
+  () => gameStore.currentRoundIndex === configStore.maxRounds - 1,
+);
+const showFinalRoundTransition = ref(false);
+const finalRoundTransitionShown = ref(false);
+const showBonusRoundTransition = ref(false);
+const bonusRoundTransitionShown = ref(false);
+
+const handleFinalRoundDone = () => {
+  finalRoundTransitionShown.value = true;
+  showFinalRoundTransition.value = false;
+  setupDrawing();
+};
+
+const handleBonusRoundDone = () => {
+  bonusRoundTransitionShown.value = true;
+  showBonusRoundTransition.value = false;
+  setupDrawing();
+};
 
 let lastFreezeUntilAt: number | null = null;
 watch(
@@ -204,7 +276,18 @@ watch(
   () => gameStore.gameState,
   (newState) => {
     if (newState === "revealing") {
-      setupDrawing();
+      if (isFinalRound.value && !finalRoundTransitionShown.value) {
+        clearAllTimers();
+        showFinalRoundTransition.value = true;
+        return;
+      }
+      if (isBonusRound.value && !bonusRoundTransitionShown.value) {
+        clearAllTimers();
+        showBonusRoundTransition.value = true;
+        return;
+      }
+      if (!showFinalRoundTransition.value && !showBonusRoundTransition.value)
+        setupDrawing();
     }
   },
   { immediate: true }
@@ -257,6 +340,20 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
     max-width: 600px;
   }
+}
+
+.canvas-effects {
+  position: relative;
+  width: 100%;
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 0px;
+  background: rgba(56, 189, 248, 0.12);
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
 
 .dark {

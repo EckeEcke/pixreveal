@@ -3,12 +3,12 @@
   <div class="game-over">
     <div class="line">
       <Transition name="slide-left">
-        <span v-if="showGame" class="word">GAME</span>
+        <span v-if="showFirst" class="word">{{ first }}</span>
       </Transition>
     </div>
     <div class="line">
       <Transition name="slide-right">
-        <span v-if="showOver" class="word accent">OVER</span>
+        <span v-if="showSecond" class="word accent">{{ second }}</span>
       </Transition>
     </div>
   </div>
@@ -18,18 +18,23 @@
 import { useSoundStore } from "@/stores/sound";
 import { ref, onMounted } from "vue";
 
+defineProps({
+  first: String,
+  second: String,
+})
+
 const emit = defineEmits(["done"]);
 
-const showGame = ref(false);
-const showOver = ref(false);
+const showFirst = ref(false);
+const showSecond = ref(false);
 
 onMounted(() => {
   setTimeout(
-    () => ((showGame.value = true), useSoundStore().playSound("punch")),
+    () => ((showFirst.value = true), useSoundStore().playSound("punch")),
     200,
   );
   setTimeout(
-    () => ((showOver.value = true), useSoundStore().playSound("punch")),
+    () => ((showSecond.value = true), useSoundStore().playSound("punch")),
     700,
   );
   setTimeout(() => emit("done"), 1200);

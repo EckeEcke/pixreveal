@@ -3,15 +3,27 @@
     <RobotModerator />
     <div>
       <Transition name="fade" mode="out-in">
-        <div
-          v-if="partyStore.buzzerState === 'open'"
-          key="open"
-          class="status-pill open"
-        >
-          THINK YOU KNOW THE ANSWER?
-          <br />
-          HIT THE <span class="pink-text">BUZZ</span>!
-        </div>
+	        <div
+	          v-if="partyStore.buzzerState === 'open'"
+	          key="open"
+	          class="status-pill open"
+	        >
+		          <template v-if="isFinalRound">
+		            FINAL ROUND!
+		            <br />
+		            <span class="green-text">Double the points</span>, <span class="red-text">double the loss</span>!
+		          </template>
+		          <template v-else-if="isBonusRound">
+		            BONUS ROUND!
+		            <br />
+		            <span class="green-text">Double the points</span>, <span class="red-text">double the loss</span>!
+		          </template>
+		          <template v-else>
+		            THINK YOU KNOW THE ANSWER?
+		            <br />
+		            HIT THE <span class="pink-text">BUZZ</span>!
+		          </template>
+	        </div>
 
         <div
           v-else-if="partyStore.buzzerState === 'answering'"
@@ -61,9 +73,9 @@
             }}</span>
             was the answer.
             <br />
-            1 point for
-            <span class="player-highlight">{{ activePlayerNameUpper }}</span
-            >.
+	            {{ pointsForCorrect }} point<span v-if="pointsForCorrect !== 1">s</span> for
+	            <span class="player-highlight">{{ activePlayerNameUpper }}</span
+	            >.
           </template>
 
           <template v-else>
@@ -72,9 +84,9 @@
               gameStore.currentRound?.answer
             }}</span
             >.
-            <span class="player-highlight">{{ activePlayerName }}</span> loses 2
-            points.
-          </template>
+	            <span class="player-highlight">{{ activePlayerName }}</span> loses
+	            {{ pointsForWrong }} points.
+	          </template>
 	        </div>
       </Transition>
 
@@ -110,6 +122,11 @@ import { computed, ref, watch } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import RobotModerator from "./RobotModerator.vue";
+
+const props = defineProps<{
+  isFinalRound?: boolean;
+  isBonusRound?: boolean;
+}>();
 
 const gameStore = useGameStore();
 const partyStore = usePartyStore();
@@ -194,6 +211,12 @@ const leaderMessageAfter = computed(() => {
   const t = leaderTemplate.value || leaderTemplates[0];
   return t.split("[New Leader]")[1] || "";
 });
+
+const isFinalRound = computed(() => Boolean(props.isFinalRound));
+const isBonusRound = computed(() => Boolean(props.isBonusRound));
+const isDoublePointsRound = computed(() => isFinalRound.value || isBonusRound.value);
+const pointsForCorrect = computed(() => (isDoublePointsRound.value ? 2 : 1));
+const pointsForWrong = computed(() => (isDoublePointsRound.value ? 4 : 2));
 
 const resultClass = computed(() => {
   if (!partyStore.activePlayerId) return "timeout";
@@ -330,6 +353,16 @@ const optionsForPrompt = computed(() => {
 
 .pink-text {
   color: var(--neon-pink);
+  animation: pulse-glow 1.5s infinite ease-in-out;
+}
+
+.green-text {
+  color: var(--neon-success);
+  animation: pulse-glow 1.5s infinite ease-in-out;
+}
+
+.red-text {
+  color: var(--neon-error);
   animation: pulse-glow 1.5s infinite ease-in-out;
 }
 
