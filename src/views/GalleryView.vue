@@ -39,7 +39,7 @@ import InfoBox from "@/components/game-ui/InfoBox.vue";
 
 const configStore = useConfigStore();
 
-const userDrawings = computed(() => configStore.ugcDrawings);
+const userDrawings = computed(() => configStore.ugcDrawings.reverse());
 
 const selectedDrawingIndex = ref(0);
 
