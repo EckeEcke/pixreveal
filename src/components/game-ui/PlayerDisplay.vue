@@ -13,6 +13,9 @@
       <div class="hud-username" :class="{ first: position === 1 }">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
       </div>
+      <div v-if="subline" class="hud-subline">
+        {{ subline }}
+      </div>
     </div>
 
     <div
@@ -75,6 +78,7 @@ import PositionInfo from "./PositionInfo.vue";
 const props = defineProps<{
   position?: number;
   name?: string;
+  subline?: string;
   avatarIndex?: number;
   points?: number;
   highscore?: number;
@@ -396,6 +400,13 @@ const avatarStyle = computed<CSSProperties>(() => {
   &.first {
     color: var(--neon-yellow);
   }
+}
+
+.hud-subline {
+  margin-top: 2px;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .host-info {

@@ -38,6 +38,7 @@ export const usePartyStore = defineStore("party", () => {
   const players = ref<PartyPlayer[]>([]);
   const buzzerState = ref<BuzzerState>("locked");
   const activePlayerId = ref<string | null>(null);
+  const answerStartedAt = ref<number | null>(null);
   const hasAnswered = ref(false);
   const isRevealing = ref(true);
   const roundTimeLimit = ref(15);
@@ -236,6 +237,18 @@ export const usePartyStore = defineStore("party", () => {
     broadcastPartyState("freeze");
   };
 
+  const incrementPlayerPowerupsUsed = (playerId: string) => {
+    const player = players.value.find((p) => p.playerId === playerId);
+    if (!player) return;
+    player.powerupsUsed += 1;
+  };
+
+  const incrementPlayerEmojisSent = (playerId: string) => {
+    const player = players.value.find((p) => p.playerId === playerId);
+    if (!player) return;
+    player.emojisSent += 1;
+  };
+
   const activePlayer = computed(() =>
     players.value.find((p) => p.playerId === activePlayerId.value),
   );
@@ -297,7 +310,7 @@ export const usePartyStore = defineStore("party", () => {
     lightsOutUntilAt.value = null;
     lightsOutByPlayerId.value = null;
     lightsOutUsedBy.value = {};
-    lightsOutByPlayerId.value = null;
+    answerStartedAt.value = null;
     xlzActiveForRoundIndex.value = null;
     xlzUsedBy.value = {};
     clearFreezeTimeout();
@@ -369,6 +382,12 @@ export const usePartyStore = defineStore("party", () => {
         username: p.username,
         avatarIndex: p.avatarIndex,
         points: p.points,
+        wrongAnswers: p.wrongAnswers,
+        correctAnswers: p.correctAnswers,
+        quickestAnswer: p.quickestAnswer,
+        powerupsUsed: p.powerupsUsed,
+        emojisSent: p.emojisSent,
+        isDecrypter: p.isDecrypter,
       })),
     });
   };
@@ -381,6 +400,12 @@ export const usePartyStore = defineStore("party", () => {
         username: p.username,
         avatarIndex: p.avatarIndex,
         points: 0,
+        wrongAnswers: 0,
+        correctAnswers: 0,
+        quickestAnswer: null,
+        powerupsUsed: 0,
+        emojisSent: 0,
+        isDecrypter: false,
       }));
 
     lightsOutUsedBy.value = {};
@@ -407,6 +432,7 @@ export const usePartyStore = defineStore("party", () => {
     gameStore.setGameState("revealing");
     buzzerState.value = "open";
     activePlayerId.value = null;
+    answerStartedAt.value = null;
     roundResult.value = null;
     hasAnswered.value = false;
     answerDeadlineAt.value = null;
@@ -428,6 +454,7 @@ export const usePartyStore = defineStore("party", () => {
 
     buzzerState.value = "answering";
     activePlayerId.value = playerId;
+    answerStartedAt.value = Date.now();
     if (playerId === channelStore.playerId) hasAnswered.value = false;
     answerDeadlineAt.value = Date.now() + roundTimeLimit.value * 1000;
 
@@ -453,6 +480,11 @@ export const usePartyStore = defineStore("party", () => {
     workerClearTimeout(answerTimer);
     answerTimer = null;
     answerDeadlineAt.value = null;
+    const elapsedMs =
+      playerId && typeof answerStartedAt.value === "number"
+        ? Math.max(0, Date.now() - answerStartedAt.value)
+        : null;
+    answerStartedAt.value = null;
 
     roundResult.value = isCorrect ? "correct" : "incorrect";
 
@@ -465,6 +497,19 @@ export const usePartyStore = defineStore("party", () => {
       const player = players.value.find((p) => p.playerId === playerId);
       if (player) {
         player.points += isCorrect ? 1 : -2;
+        if (isCorrect) {
+          player.correctAnswers += 1;
+          if (xlzActiveForRoundIndex.value === gameStore.currentRoundIndex) {
+            player.isDecrypter = true;
+          }
+        } else {
+          player.wrongAnswers += 1;
+        }
+        if (typeof elapsedMs === "number") {
+          if (player.quickestAnswer === null || elapsedMs < player.quickestAnswer) {
+            player.quickestAnswer = elapsedMs;
+          }
+        }
       }
     }
 
@@ -618,8 +663,11 @@ export const usePartyStore = defineStore("party", () => {
         },
       );
 
-      bindEvent("client-party-emoji", (data: { emoji: string }) => {
+      bindEvent("client-party-emoji", (data: { emoji: string; playerId?: string }) => {
         markHostActivity();
+        if (isHost.value && data?.playerId) {
+          incrementPlayerEmojisSent(data.playerId);
+        }
         window.dispatchEvent(
           new CustomEvent("emoji-received", { detail: data.emoji }),
         );
@@ -840,6 +888,7 @@ export const usePartyStore = defineStore("party", () => {
         if (lightsOutUsedBy.value?.[playerId]) return;
 
         lightsOutUsedBy.value = { ...lightsOutUsedBy.value, [playerId]: true };
+        incrementPlayerPowerupsUsed(playerId);
         const untilAt = Date.now() + 4000;
         setLightsOutUntil(untilAt, playerId);
         channel.value?.trigger("client-party-lightsout", { untilAt, byPlayerId: playerId });
@@ -876,6 +925,7 @@ export const usePartyStore = defineStore("party", () => {
         if (freezeUsedBy.value?.[playerId]) return;
 
         freezeUsedBy.value = { ...freezeUsedBy.value, [playerId]: true };
+        incrementPlayerPowerupsUsed(playerId);
         const untilAt = Date.now() + 4000;
         // Initiator wird nicht gefreezed (byPlayerId = playerId)
         setFreezeUntil(untilAt, playerId);
@@ -895,6 +945,7 @@ export const usePartyStore = defineStore("party", () => {
         if (xlzActiveForRoundIndex.value === gameStore.currentRoundIndex) return;
 
         xlzUsedBy.value = { ...xlzUsedBy.value, [playerId]: true };
+        incrementPlayerPowerupsUsed(playerId);
         xlzActiveForRoundIndex.value = gameStore.currentRoundIndex;
         channel.value?.trigger("client-party-xlz", {
           roundIndex: gameStore.currentRoundIndex,
@@ -1092,7 +1143,10 @@ export const usePartyStore = defineStore("party", () => {
 
   const sendEmoji = (emoji: string) => {
     if (!emoji) return;
-    channel.value?.trigger("client-party-emoji", { emoji });
+    channel.value?.trigger("client-party-emoji", {
+      emoji,
+      playerId: channelStore.playerId,
+    });
   };
 
   const reset = () => {
@@ -1100,6 +1154,7 @@ export const usePartyStore = defineStore("party", () => {
     players.value = [];
     buzzerState.value = "locked";
     activePlayerId.value = null;
+    answerStartedAt.value = null;
     roundResult.value = null;
     hasAnswered.value = false;
     answerDeadlineAt.value = null;

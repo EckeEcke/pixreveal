@@ -13,7 +13,7 @@
       />
     </Transition>
     <div>
-      <div v-if="isPartyMode">
+      <div v-if="isPartyMode" class="party-wrapper">
         <div class="results-card party-results-card">
           <h1 class="logo">PARTY <span>OVER</span></h1>
           <p class="party-subtitle rank-prophet">
@@ -31,6 +31,7 @@
             </button>
           </div>
         </div>
+        <PartyTitles :players="partyPlayersSorted" />
         <div
           v-for="(player, index) in partyPlayersSorted"
           :key="player.playerId"
@@ -38,6 +39,7 @@
           <PlayerDisplay
             :position="index + 1"
             :name="player.username"
+            :subline="getPartyTitleEmojis(player)"
             :avatar-index="player.avatarIndex"
             :points="player.points"
             :show-you-indicator="player.playerId === channelStore.playerId"
@@ -150,6 +152,7 @@ import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
 import GameOverTransition from "@/components/game-ui/GameOverTransition.vue";
+import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -185,6 +188,84 @@ const isPartyMode = computed(
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
 );
+
+const maxPartyPowerupsUsed = computed(() =>
+  Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0)),
+);
+const maxPartyEmojisSent = computed(() =>
+  Math.max(0, ...partyPlayersSorted.value.map((p) => p.emojisSent ?? 0)),
+);
+const minPartyQuickestAnswer = computed(() => {
+  const values = partyPlayersSorted.value
+    .map((p) => p.quickestAnswer)
+    .filter((v) => typeof v === "number");
+  if (!values.length) return null;
+  return Math.min(...values);
+});
+
+const getPartyTitleSubline = (player) => {
+  if (!player) return undefined;
+
+  if (player.isDecrypter) return "🧠";
+
+  const minQuick = minPartyQuickestAnswer.value;
+  if (typeof minQuick === "number" && player.quickestAnswer === minQuick)
+    return "⚡";
+
+  if ((player.correctAnswers ?? 0) > 0 && (player.wrongAnswers ?? 0) === 0)
+    return "🎯";
+
+  const maxPowerups = maxPartyPowerupsUsed.value;
+  if (maxPowerups > 0 && (player.powerupsUsed ?? 0) === maxPowerups)
+    return "💣";
+
+  const maxEmojis = maxPartyEmojisSent.value;
+  if (maxEmojis >= 10 && (player.emojisSent ?? 0) === maxEmojis)
+    return "💬";
+
+  if ((player.powerupsUsed ?? 0) === 0) return "🕊️ Pacifist";
+
+  if ((player.correctAnswers ?? 0) === 0 && (player.wrongAnswers ?? 0) > 0)
+    return "🥚";
+
+  return undefined;
+};
+
+const getPartyTitleEmojis = (player) => {
+  if (!player) return undefined;
+
+  const badges = [];
+
+  if (player.isDecrypter) badges.push("🧠");
+
+  const minQuick = minPartyQuickestAnswer.value;
+  if (typeof minQuick === "number" && player.quickestAnswer === minQuick) {
+    badges.push("⚡");
+  }
+
+  if ((player.correctAnswers ?? 0) > 0 && (player.wrongAnswers ?? 0) === 0) {
+    badges.push("🎯");
+  }
+
+  const maxPowerups = maxPartyPowerupsUsed.value;
+  if (maxPowerups > 0 && (player.powerupsUsed ?? 0) === maxPowerups) {
+    badges.push("⚡");
+  }
+
+  const maxEmojis = maxPartyEmojisSent.value;
+  if (maxEmojis >= 10 && (player.emojisSent ?? 0) === maxEmojis) {
+    badges.push("💬");
+  }
+
+  if ((player.powerupsUsed ?? 0) === 0) badges.push("🕊️");
+
+  if ((player.correctAnswers ?? 0) === 0 && (player.wrongAnswers ?? 0) > 0) {
+    badges.push("🥚");
+  }
+
+  const unique = [...new Set(badges)];
+  return unique.length ? unique.join("") : undefined;
+};
 
 const getPartyOverMessage = computed(() => {
   if (partyPlayersSorted.value.length) {
@@ -398,5 +479,10 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
   animation: shine 4s infinite;
+}
+
+.party-wrapper {
+  width: 100%;
+  max-width: 800px;
 }
 </style>

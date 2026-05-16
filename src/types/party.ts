@@ -5,6 +5,12 @@ export type PartyPlayer = {
   username: string;
   avatarIndex: number;
   points: number;
+  wrongAnswers: number;
+  correctAnswers: number;
+  quickestAnswer: number | null;
+  powerupsUsed: number;
+  emojisSent: number;
+  isDecrypter: boolean;
 };
 
 export type PartyStatePayload = {
