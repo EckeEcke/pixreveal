@@ -203,34 +203,6 @@ const minPartyQuickestAnswer = computed(() => {
   return Math.min(...values);
 });
 
-const getPartyTitleSubline = (player) => {
-  if (!player) return undefined;
-
-  if (player.isDecrypter) return "🧠";
-
-  const minQuick = minPartyQuickestAnswer.value;
-  if (typeof minQuick === "number" && player.quickestAnswer === minQuick)
-    return "⚡";
-
-  if ((player.correctAnswers ?? 0) > 0 && (player.wrongAnswers ?? 0) === 0)
-    return "🎯";
-
-  const maxPowerups = maxPartyPowerupsUsed.value;
-  if (maxPowerups > 0 && (player.powerupsUsed ?? 0) === maxPowerups)
-    return "💣";
-
-  const maxEmojis = maxPartyEmojisSent.value;
-  if (maxEmojis >= 10 && (player.emojisSent ?? 0) === maxEmojis)
-    return "💬";
-
-  if ((player.powerupsUsed ?? 0) === 0) return "🕊️ Pacifist";
-
-  if ((player.correctAnswers ?? 0) === 0 && (player.wrongAnswers ?? 0) > 0)
-    return "🥚";
-
-  return undefined;
-};
-
 const getPartyTitleEmojis = (player) => {
   if (!player) return undefined;
 
@@ -249,7 +221,7 @@ const getPartyTitleEmojis = (player) => {
 
   const maxPowerups = maxPartyPowerupsUsed.value;
   if (maxPowerups > 0 && (player.powerupsUsed ?? 0) === maxPowerups) {
-    badges.push("⚡");
+    badges.push("💣");
   }
 
   const maxEmojis = maxPartyEmojisSent.value;

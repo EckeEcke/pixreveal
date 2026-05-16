@@ -10,7 +10,7 @@
         <div class="message">
           {{ currentSlide.message }}
         </div>
-        <div class="who">
+        <div v-if="currentSlide.playerNameUpper" class="who">
           — <span class="player">{{ currentSlide.playerNameUpper }}</span>
         </div>
       </div>
@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import RobotModerator from "@/components/game-ui/RobotModerator.vue";
+import { usePartyStore } from "@/stores/party";
 import {
   workerClearInterval,
   workerSetInterval,
@@ -41,6 +42,8 @@ const props = defineProps<{
   players: PartyPlayerStats[];
   slideMs?: number;
 }>();
+
+const partyStore = usePartyStore();
 
 const slideMs = computed(() => (props.slideMs && props.slideMs > 0 ? props.slideMs : 3000));
 
@@ -188,20 +191,56 @@ const slides = computed<Slide[]>(() => {
   return list;
 });
 
+const emojiStatsSlide = computed<Slide | null>(() => {
+  const emojis = partyStore.emojiStatistics || [];
+  const total = emojis.length;
+  if (total < 10) return null;
+
+  const counts = new Map<string, number>();
+  for (const e of emojis) {
+    if (!e) continue;
+    counts.set(e, (counts.get(e) || 0) + 1);
+  }
+
+  let mostPopular: string | null = null;
+  let mostPopularCount = 0;
+  for (const [emoji, count] of counts.entries()) {
+    if (count > mostPopularCount) {
+      mostPopular = emoji;
+      mostPopularCount = count;
+    }
+  }
+
+  return {
+    key: "emoji-stats",
+    emoji: "📊",
+    title: "Emoji Stats",
+    message: `Total emojis sent: ${total}\nMost popular emoji: ${mostPopular || "—"}`,
+    playerId: "emoji-stats",
+    playerNameUpper: "",
+  };
+});
+
+const allSlides = computed<Slide[]>(() => {
+  const base = slides.value;
+  const stats = emojiStatsSlide.value;
+  return stats ? [...base, stats] : base;
+});
+
 const activeIndex = ref(0);
 let intervalId: number | null = null;
 
 const currentSlide = computed(() => {
-  const list = slides.value;
+  const list = allSlides.value;
   if (!list.length) return null;
   return list[activeIndex.value] ?? list[0] ?? null;
 });
 
 const start = () => {
   if (intervalId) return;
-  if (!slides.value.length) return;
+  if (!allSlides.value.length) return;
   intervalId = workerSetInterval(() => {
-    const len = slides.value.length;
+    const len = allSlides.value.length;
     if (!len) return;
     activeIndex.value = (activeIndex.value + 1) % len;
   }, slideMs.value);
@@ -223,11 +262,13 @@ onBeforeUnmount(() => stop());
   grid-template-columns: 80px auto;
   align-items: start;
   gap: 16px;
-  width: 100%;
+  width: 800px;
+  max-width: 100%;
   margin: 16px 0 24px;
 }
 
 .title-pill {
+  width: 100%;
   padding: 12px 32px;
   border-radius: 8px;
   font-weight: 900;
@@ -237,6 +278,7 @@ onBeforeUnmount(() => stop());
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border: 2px solid var(--neon-yellow);
+  box-sizing: border-box;
   color: rgba(255, 255, 255, 0.92);
 }
 
@@ -259,6 +301,7 @@ onBeforeUnmount(() => stop());
 
 .message {
   margin-top: 6px;
+  white-space: pre-line;
 }
 
 .who {

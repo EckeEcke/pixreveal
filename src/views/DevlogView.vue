@@ -4,6 +4,26 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-16-26</span>
+        </div>
+        <h3 class="log-title">
+          Party multiplayer titles and moderator improvements
+        </h3>
+        <p>
+          The game over view for the party mode got an upgrade! The moderator
+          now comments on the results of the game. Players earn titles based on
+          the way they played. The saboteur used the most powerups while the
+          pacifist did not use any at all. Manage to answer correctly while
+          scrambled powerup is active to earn a title. Or the spammer title for
+          spamming emojis. We all know a person like that... Additionally the
+          game over screen now provides emoji statistics: how many emojis were
+          clicked and which emoji was the most popular. Upcoming multiplayer
+          feature will be bonus rounds, mixing up the gameplay and offering a
+          chance to gain bonus points.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-15-26</span>
         </div>
         <h3 class="log-title">Powerups in multiplayer</h3>

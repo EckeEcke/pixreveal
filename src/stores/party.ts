@@ -104,6 +104,8 @@ export const usePartyStore = defineStore("party", () => {
   const isFrozen = ref(false);
   let freezeTimeoutId: number | null = null;
 
+  const emojiStatistics = ref<string[]>([]);
+
   const lightsOutUsedByMe = computed(() => {
     const me = channelStore.playerId || "";
     if (!me) return false;
@@ -318,6 +320,7 @@ export const usePartyStore = defineStore("party", () => {
     freezeUntilAt.value = null;
     freezeByPlayerId.value = null;
     freezeUsedBy.value = {};
+    emojiStatistics.value = [];
   };
 
   const clearStateBroadcastInterval = () => {
@@ -415,6 +418,7 @@ export const usePartyStore = defineStore("party", () => {
     freezeUntilAt.value = null;
     freezeByPlayerId.value = null;
     freezeUsedBy.value = {};
+    emojiStatistics.value = [];
     gameStore.prepareGame(configStore.revealTime);
     channelStore.setGameRunning(true);
 
@@ -665,8 +669,9 @@ export const usePartyStore = defineStore("party", () => {
 
       bindEvent("client-party-emoji", (data: { emoji: string; playerId?: string }) => {
         markHostActivity();
-        if (isHost.value && data?.playerId) {
-          incrementPlayerEmojisSent(data.playerId);
+        if (isHost.value) {
+          if (data?.playerId) incrementPlayerEmojisSent(data.playerId);
+          if (data?.emoji) emojiStatistics.value.push(data.emoji);
         }
         window.dispatchEvent(
           new CustomEvent("emoji-received", { detail: data.emoji }),
@@ -1171,6 +1176,7 @@ export const usePartyStore = defineStore("party", () => {
     freezeUntilAt.value = null;
     freezeByPlayerId.value = null;
     freezeUsedBy.value = {};
+    emojiStatistics.value = [];
   };
 
   return {
@@ -1218,5 +1224,6 @@ export const usePartyStore = defineStore("party", () => {
     freezeUsedBy,
     freezeUsedByMe,
     triggerFreeze,
+    emojiStatistics,
   };
 });
