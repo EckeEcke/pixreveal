@@ -16,7 +16,7 @@
     <button
       v-if="!dailyStore.hasPlayedToday"
       class="confirm-btn"
-      @click="playDailyChallenge"
+      @click="startDaily"
     >
       Play Daily Challenge
     </button>
@@ -72,10 +72,6 @@ const startDaily = () => {
   } else {
     router.push("/daily");
   }
-};
-
-const playDailyChallenge = () => {
-  router.push({ path: "/singleplayer", query: { daily: "1" } });
 };
 </script>
 
