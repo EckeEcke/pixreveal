@@ -41,7 +41,7 @@ const dailyStore = useDailyStore();
 
 const audio = ref(null);
 
-const MUSIC_ROUTES = new Set(["game", "inspect", "buzzer", "party-host", "survival"]);
+const MUSIC_ROUTES = new Set(["game", "inspect", "gravity", "buzzer", "party-host", "survival", "daily"]);
 
 const ensureMusicSrc = () => {
   if (!audio.value) return;
