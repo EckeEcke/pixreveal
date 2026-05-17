@@ -15,6 +15,8 @@ import freezeSound from "@/assets/audio/freeze.mp3";
 import electricitySound from "@/assets/audio/electricity.mp3";
 import winnerSound from "@/assets/audio/winner.mp3";
 import partyOverSound from "@/assets/audio/party-over.mp3";
+import partyCorrectSound from "@/assets/audio/correct2.mp3";
+import partyIncorrectSound from "@/assets/audio/incorrect2.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -37,6 +39,8 @@ export const useSoundStore = defineStore("sound", () => {
     electricity: electricitySound,
     winner: winnerSound,
     party: partyOverSound,
+    partyCorrect: partyCorrectSound,
+    partyIncorrect: partyIncorrectSound,
   };
 
   type SoundName = keyof typeof sources;

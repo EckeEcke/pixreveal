@@ -234,7 +234,7 @@ const startTimer = () => {
 
   timerEndTimeoutId = workerSetTimeout(() => {
     timerEndTimeoutId = null;
-    soundStore.playSound("incorrect");
+    soundStore.playSound("partyIncorrect");
     timer.value = 0;
     workerClearInterval(timerId);
     timerId = null;
@@ -288,7 +288,7 @@ watch(
   () => partyStore.roundResult,
   (newResult) => {
     if (newResult) {
-      soundStore.playSound(newResult === "correct" ? "correct" : "incorrect");
+      soundStore.playSound(newResult === "correct" ? "partyCorrect" : "partyIncorrect");
       if (timer.value > 0) {
         clearAllTimers();
       }
