@@ -234,6 +234,7 @@ const startTimer = () => {
 
   timerEndTimeoutId = workerSetTimeout(() => {
     timerEndTimeoutId = null;
+    soundStore.playSound("incorrect");
     timer.value = 0;
     workerClearInterval(timerId);
     timerId = null;
@@ -243,17 +244,19 @@ const startTimer = () => {
   }, timerDuration.value * 1000);
 
   timerId = workerSetInterval(() => {
-    timer.value--;
+    timer.value = Math.max(0, timer.value - 1);
+
+    if (timer.value <= 3 && timer.value > 0) soundStore.playSound("timer");
 
     if (timer.value > 0) return;
+
+    soundStore.playSound("incorrect");
 
     timer.value = 0;
     workerClearInterval(timerId);
     timerId = null;
     workerClearTimeout(timerEndTimeoutId);
     timerEndTimeoutId = null;
-    // Let Vue paint the "0" before triggering the timeout flow
-    // (which can immediately transition the UI to feedback/locked state).
     nextTick().then(() => {
       partyStore.handleRoundTimeout();
     });
@@ -285,6 +288,7 @@ watch(
   () => partyStore.roundResult,
   (newResult) => {
     if (newResult) {
+      soundStore.playSound(newResult === "correct" ? "correct" : "incorrect");
       if (timer.value > 0) {
         clearAllTimers();
       }

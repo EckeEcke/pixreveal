@@ -330,7 +330,10 @@ const startTimer = () => {
     const remaining = Math.max(0, 5 - elapsed);
     timeRemaining.value = remaining;
 
+    if (remaining <= 3 && remaining > 0) soundStore.playSound("timer");
+
     if (remaining <= 0) {
+      soundStore.playSound("incorrect");
       cancelTimer();
       handleTimeoutAnswer();
     }
