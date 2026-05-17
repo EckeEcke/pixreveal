@@ -230,6 +230,8 @@ const getPartyTitleEmojis = (player) => {
     badges.push("💬");
   }
 
+  if ((player.emojisSent ?? 0) === 0) badges.push("🤫");
+
   if ((player.powerupsUsed ?? 0) === 0) badges.push("🕊️");
 
   if ((player.correctAnswers ?? 0) === 0 && (player.wrongAnswers ?? 0) > 0) {
@@ -455,7 +457,6 @@ onMounted(() => {
 }
 
 .party-wrapper {
-  width: 100%;
   max-width: 800px;
 }
 </style>

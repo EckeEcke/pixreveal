@@ -42,11 +42,12 @@
           :timer-duration="timerDuration"
           :pause-reveal="
             partyStore.buzzerState === 'answering' || showFinalRoundTransition
+            || showBonusRoundTransition
           "
         />
         <div v-if="isBlurRoundActive" class="blur-overlay" />
       </div>
-      <BuzzerStatus :is-final-round="isFinalRound" :is-bonus-round="isBonusRound" />
+      <BuzzerStatus :is-final-round="isFinalRound" :bonus-round-type="bonusRoundType" />
     </div>
 
     <PartyRankings
@@ -104,13 +105,19 @@ const isRevealing = computed(
     !showBonusRoundTransition.value,
 );
 
-const isBonusRoundEnabled = computed(() => configStore.maxRounds >= 10);
-const isBonusRound = computed(
-  () => isBonusRoundEnabled.value && gameStore.currentRoundIndex === 4,
-);
+type BonusRoundType = "blur" | "sepia" | "bw";
+
+const bonusRoundType = computed<BonusRoundType | null>(() => {
+  const idx = gameStore.currentRoundIndex;
+  const max = configStore.maxRounds;
+  if (max >= 10 && idx === 4) return "blur";
+  if (max >= 15 && idx === 9) return "sepia";
+  if (max >= 20 && idx === 14) return "bw";
+  return null;
+});
 
 const isBlurRoundActive = computed(
-  () => gameStore.gameState === "revealing" && isBonusRound.value,
+  () => gameStore.gameState === "revealing" && bonusRoundType.value === "blur",
 );
 
 const blurAmountPx = computed(() => {
@@ -123,14 +130,24 @@ const blurAmountPx = computed(() => {
 });
 
 const canvasEffectsStyle = computed(() => {
-  if (!isBlurRoundActive.value) return undefined;
-  return {
-    filter: `blur(${blurAmountPx.value}px)`,
-  };
+  if (!bonusRoundType.value) return undefined;
+  const filters: string[] = [];
+  if (bonusRoundType.value === "blur") {
+    filters.push(`blur(${blurAmountPx.value}px)`);
+  }
+  if (bonusRoundType.value === "sepia") {
+    filters.push("sepia(1)");
+    filters.push("saturate(1.2)");
+  }
+  if (bonusRoundType.value === "bw") {
+    filters.push("grayscale(1)");
+    filters.push("contrast(1.15)");
+  }
+  return { filter: filters.join(" ") };
 });
 
 const canvasIsRevealing = computed(
-  () => Boolean(isRevealing.value && !isBlurRoundActive.value),
+  () => Boolean(isRevealing.value && bonusRoundType.value !== "blur"),
 );
 
 const isFinalRound = computed(
@@ -139,7 +156,7 @@ const isFinalRound = computed(
 const showFinalRoundTransition = ref(false);
 const finalRoundTransitionShown = ref(false);
 const showBonusRoundTransition = ref(false);
-const bonusRoundTransitionShown = ref(false);
+const bonusRoundTransitionShownByIndex = ref<Record<number, boolean>>({});
 
 const handleFinalRoundDone = () => {
   finalRoundTransitionShown.value = true;
@@ -148,7 +165,11 @@ const handleFinalRoundDone = () => {
 };
 
 const handleBonusRoundDone = () => {
-  bonusRoundTransitionShown.value = true;
+  const idx = gameStore.currentRoundIndex;
+  bonusRoundTransitionShownByIndex.value = {
+    ...bonusRoundTransitionShownByIndex.value,
+    [idx]: true,
+  };
   showBonusRoundTransition.value = false;
   setupDrawing();
 };
@@ -281,7 +302,8 @@ watch(
         showFinalRoundTransition.value = true;
         return;
       }
-      if (isBonusRound.value && !bonusRoundTransitionShown.value) {
+      const bonusIdx = gameStore.currentRoundIndex;
+      if (bonusRoundType.value && !bonusRoundTransitionShownByIndex.value[bonusIdx]) {
         clearAllTimers();
         showBonusRoundTransition.value = true;
         return;

@@ -501,8 +501,10 @@ export const usePartyStore = defineStore("party", () => {
       const player = players.value.find((p) => p.playerId === playerId);
       if (player) {
         const isFinalRound = gameStore.currentRoundIndex === configStore.maxRounds - 1;
+        const idx = gameStore.currentRoundIndex;
+        const max = configStore.maxRounds;
         const isBonusRound =
-          configStore.maxRounds >= 10 && gameStore.currentRoundIndex === 4;
+          (max >= 10 && idx === 4) || (max >= 15 && idx === 9) || (max >= 20 && idx === 14);
         const multiplier = isFinalRound || isBonusRound ? 2 : 1;
         player.points += isCorrect ? 1 * multiplier : -2 * multiplier;
         if (isCorrect) {

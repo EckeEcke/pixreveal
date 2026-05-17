@@ -233,27 +233,26 @@ const scrambleText = (text, seed) => {
   const str = String(text || "");
   if (str.length < 2) return str;
 
-  const letters = [];
-  const positions = [];
-  for (let i = 0; i < str.length; i++) {
-    const ch = str[i];
-    if (ch === " ") continue;
-    letters.push(ch);
-    positions.push(i);
-  }
-  if (letters.length < 2) return str;
+  const scrambleWord = (word, wordSeed) => {
+    if (word.length < 2) return word;
+    const chars = word.split("");
+    const rand = mulberry32(wordSeed);
+    for (let i = chars.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+    return chars.join("");
+  };
 
-  const rand = mulberry32(seed);
-  for (let i = letters.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [letters[i], letters[j]] = [letters[j], letters[i]];
-  }
-
-  const out = str.split("");
-  for (let i = 0; i < positions.length; i++) {
-    out[positions[i]] = letters[i];
-  }
-  return out.join("");
+  // Split on whitespace and only scramble within each term (e.g. "ice cream")
+  const parts = str.split(/(\s+)/);
+  return parts
+    .map((part, index) => {
+      if (/^\s+$/.test(part)) return part;
+      const partSeed = hashToUint32(`${seed}|${index}|${part}`);
+      return scrambleWord(part, partSeed);
+    })
+    .join("");
 };
 
 const answersForUi = computed(() => {

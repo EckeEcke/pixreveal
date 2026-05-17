@@ -125,7 +125,7 @@ import RobotModerator from "./RobotModerator.vue";
 
 const props = defineProps<{
   isFinalRound?: boolean;
-  isBonusRound?: boolean;
+  bonusRoundType?: "blur" | "sepia" | "bw" | null;
 }>();
 
 const gameStore = useGameStore();
@@ -213,8 +213,11 @@ const leaderMessageAfter = computed(() => {
 });
 
 const isFinalRound = computed(() => Boolean(props.isFinalRound));
-const isBonusRound = computed(() => Boolean(props.isBonusRound));
-const isDoublePointsRound = computed(() => isFinalRound.value || isBonusRound.value);
+const bonusRoundType = computed(() => props.bonusRoundType ?? null);
+const isBonusRound = computed(() => Boolean(bonusRoundType.value));
+const isDoublePointsRound = computed(
+  () => isFinalRound.value || isBonusRound.value,
+);
 const pointsForCorrect = computed(() => (isDoublePointsRound.value ? 2 : 1));
 const pointsForWrong = computed(() => (isDoublePointsRound.value ? 4 : 2));
 
