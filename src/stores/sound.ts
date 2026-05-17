@@ -14,8 +14,7 @@ import popSound from "@/assets/audio/pop.mp3";
 import freezeSound from "@/assets/audio/freeze.mp3";
 import electricitySound from "@/assets/audio/electricity.mp3";
 import winnerSound from "@/assets/audio/winner.mp3";
-
-
+import partyOverSound from "@/assets/audio/party-over.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -37,6 +36,7 @@ export const useSoundStore = defineStore("sound", () => {
     freeze: freezeSound,
     electricity: electricitySound,
     winner: winnerSound,
+    party: partyOverSound,
   };
 
   type SoundName = keyof typeof sources;
@@ -59,6 +59,13 @@ export const useSoundStore = defineStore("sound", () => {
     audio.play().catch((err) => {
       console.warn("Audio could not be played:", err);
     });
+  };
+
+  const stopSound = (name: SoundName) => {
+    const audio = cache[name];
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = 0;
   };
 
   const handleHoverSound = () => {
@@ -105,5 +112,5 @@ export const useSoundStore = defineStore("sound", () => {
     { capture: true },
   );
 
-  return { isAudioEnabled, playSound, handleHoverSound };
+  return { isAudioEnabled, playSound, stopSound, handleHoverSound };
 });

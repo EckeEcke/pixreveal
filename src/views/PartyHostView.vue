@@ -125,7 +125,7 @@ const blurAmountPx = computed(() => {
   const duration = timerDuration.value || 1;
   const t = typeof timer.value === "number" ? timer.value : duration;
   const ratio = Math.min(1, Math.max(0, t / duration));
-  const maxBlur = 22;
+  const maxBlur = 80;
   return maxBlur * ratio;
 });
 

@@ -5,12 +5,7 @@
         v-if="showIntro"
         first="GAME"
         second="OVER"
-        @done="
-          () => {
-            showIntro = false;
-            soundStore.playSound('complete');
-          }
-        "
+        @done="handleIntroDone"
       />
     </Transition>
     <div>
@@ -90,21 +85,8 @@
         <h1 class="logo">GAME <span>OVER</span></h1>
         <h2>Your results</h2>
         <GameOverStats />
-        <div
-          v-if="
-            playerStore.gameMode === 'classic' ||
-            playerStore.gameMode === 'inspect' ||
-            playerStore.gameMode === 'gravity'
-          "
-          class="rank-text"
-        >
-          <div>YOUR RANK IS</div>
-          <div :class="getRankData(playerStore.points).class">
-            {{ getRankData(playerStore.points).title }}
-          </div>
-          <div class="rank-desc">
-            {{ getRankData(playerStore.points).description }}
-          </div>
+        <div v-if="showSingleplayerRank">
+          <SingleplayerRanks :points="playerStore.points" />
         </div>
 
         <div
@@ -136,7 +118,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
 import { useChannelStore } from "@/stores/channel";
@@ -154,6 +136,9 @@ import { useConfigStore } from "@/stores/config";
 import GameOverStats from "@/components/game-ui/GameOverStats.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import PartyTitles from "@/components/game-ui/PartyTitles.vue";
+import SingleplayerRanks from "@/components/game-ui/SingleplayerRanks.vue";
+import { workerSetTimeout } from "@/services/workerTimers";
+import { getRankData } from "@/utils/ranks";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -165,6 +150,7 @@ const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
 const showIntro = ref(true);
+const partySoundPlayed = ref(false);
 
 const isMe = (id) => id === channelStore.playerId;
 
@@ -185,6 +171,32 @@ const isOnlinePlay = computed(
 const isPartyMode = computed(
   () => partyStore.isGameOver || partyStore.players.length > 0,
 );
+
+const showSingleplayerRank = computed(() => {
+  return (
+    playerStore.gameMode === "classic" ||
+    playerStore.gameMode === "inspect" ||
+    playerStore.gameMode === "gravity"
+  );
+});
+
+const playPartySoundOnce = () => {
+  if (partySoundPlayed.value) return;
+  if (!isPartyMode.value) return;
+  if (!channelStore.isHost) return;
+  partySoundPlayed.value = true;
+  soundStore.playSound("party");
+};
+
+const handleIntroDone = () => {
+  showIntro.value = false;
+  soundStore.playSound("complete");
+  workerSetTimeout(() => playPartySoundOnce(), 2000);
+};
+
+onUnmounted(() => {
+  soundStore.stopSound("party");
+});
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
@@ -252,47 +264,15 @@ const getPartyOverMessage = computed(() => {
   return "GAME OVER";
 });
 
-const getRankData = (score) => {
-  const adjustedScore =
-    (score / configStore.maxRounds) * (15 / configStore.revealTime) * 10;
-  if (adjustedScore > 120) {
-    return {
-      title: "PIXEL PROPHET",
-      class: "rank-prophet",
-      description: "You see the art before it even exists. Pure sorcery!",
-    };
-  }
-  if (score > 90) {
-    return {
-      title: "EAGLE EYE",
-      class: "rank-eagle",
-      description: "Sharp as a 4K monitor in a 720p world. Impressive!",
-    };
-  }
-  if (score > 60) {
-    return {
-      title: "GRID GLITCHER",
-      class: "rank-glitcher",
-      description: "You're getting there. Not a total blur, but not HD yet.",
-    };
-  }
-  if (score > 30) {
-    return {
-      title: "BLURRY VISION",
-      class: "rank-blurry",
-      description: "Were you squinting the whole time? Needs more focus.",
-    };
-  }
-  return {
-    title: "AFK ARCHITECT",
-    class: "rank-afk",
-    description: "Did you even turn your monitor on? Or are you a bot?",
-  };
-};
+const getRankDataForShare = (score) =>
+  getRankData(score, {
+    maxRounds: configStore.maxRounds,
+    revealTime: configStore.revealTime,
+  });
 
 const getShareMessage = (score, mode) => {
   if (mode === "classic") {
-    const rankTitle = getRankData(score).title;
+    const rankTitle = getRankDataForShare(score).title;
     return `I earned the title ${rankTitle} in PIX REVEAL! Think you can beat that?`;
   }
 

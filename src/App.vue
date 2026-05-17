@@ -66,6 +66,7 @@ const syncMusicPlayback = async () => {
 
   if (!shouldPlayMusic()) {
     audio.value.pause();
+    audio.value.currentTime = 0;
     return;
   }
 
