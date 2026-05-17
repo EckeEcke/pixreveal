@@ -184,4 +184,25 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
+router.onError((err: any) => {
+  const message = String(err?.message || "");
+  const name = String(err?.name || "");
+  const isChunkLoadError =
+    name === "ChunkLoadError" ||
+    /Loading chunk \d+ failed/i.test(message) ||
+    /failed to fetch dynamically imported module/i.test(message) ||
+    /importing a module script failed/i.test(message);
+
+  if (!isChunkLoadError) return;
+
+  try {
+    const key = "pixreveal_router_chunk_reload_v1";
+    if (sessionStorage.getItem(key) === "1") return;
+    sessionStorage.setItem(key, "1");
+    window.location.reload();
+  } catch {
+    window.location.reload();
+  }
+});
+
 export default router;
