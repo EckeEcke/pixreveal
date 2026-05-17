@@ -62,10 +62,9 @@ onUnmounted(() => {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.mode-info,
 .countdown-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: baseline;
   gap: 8px;
 }
@@ -95,10 +94,8 @@ onUnmounted(() => {
     align-items: center;
   }
 
-  .mode-info,
   .countdown-wrapper {
     width: 100%;
-    max-width: 250px;
   }
 }
 </style>
