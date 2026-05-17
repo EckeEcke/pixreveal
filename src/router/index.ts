@@ -28,8 +28,14 @@ const router = createRouter({
       meta: { robots: "index, follow" },
     },
     {
-      path: "/game",
-      name: "game",
+      path: "/classic",
+      name: "classic",
+      component: () => import("@/views/GameView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/online",
+      name: "online",
       component: () => import("@/views/GameView.vue"),
       meta: { robots: "noindex" },
     },
@@ -142,7 +148,8 @@ router.beforeEach((to, from, next) => {
   const gameStore = useGameStore();
 
   const validPathsForGameOver = [
-    "/game",
+    "/classic",
+    "/online",
     "/survival",
     "/buzzer",
     "/inspect",
@@ -151,7 +158,8 @@ router.beforeEach((to, from, next) => {
     "/party-player",
   ];
   const needRounds = [
-    "/game",
+    "/classic",
+    "/online",
     "/buzzer",
     "/inspect",
     "/gravity",

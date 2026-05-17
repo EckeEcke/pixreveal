@@ -85,7 +85,7 @@ export const useOnlineStore = defineStore("online", () => {
       revealTime: gameStore.revealTime,
     });
 
-    router.push("/game");
+    router.push("/online");
   };
 
   const broadcastScore = () => {

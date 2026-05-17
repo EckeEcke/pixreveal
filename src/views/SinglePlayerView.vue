@@ -12,7 +12,7 @@
             <div class="mode-buttons">
               <SelectionTile
                 icon-name="pixel:sparkles"
-                :btn-function="startGame"
+                :btn-function="startClassic"
                 btn-text="CLASSIC REVEAL"
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
@@ -100,10 +100,10 @@ const setUser = () =>
 
 setUser();
 
-const startGame = () => {
+const startClassic = () => {
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
-  router.push("/game");
+  router.push("/classic");
 };
 
 const startGravity = () => {
