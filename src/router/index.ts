@@ -164,6 +164,7 @@ router.beforeEach((to, from, next) => {
     "/inspect",
     "/gravity",
     "/party-host",
+    "/daily"
   ];
 
   if (
@@ -173,7 +174,7 @@ router.beforeEach((to, from, next) => {
     return next("/");
   }
 
-  if (to.path === "/daily" && (useDailyStore().hasPlayedToday || from.path !== "/singleplayer")) {
+  if (to.path === "/daily" && (useDailyStore().hasPlayedToday)) {
     return next("/");
   }
 
