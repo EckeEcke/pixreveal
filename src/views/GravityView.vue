@@ -9,6 +9,7 @@
     </transition>
 
     <section class="canvas-section">
+      <MinimalSettings />
       <GameHeader
         :max="timerDuration"
         :count="timer"
@@ -43,6 +44,7 @@ import { useRouter } from "vue-router";
 import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue";
 import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";

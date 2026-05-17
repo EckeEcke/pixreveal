@@ -9,6 +9,7 @@
     </transition>
 
     <section class="canvas-section">
+    <MinimalSettings />
       <GameHeader
         :max="timerDuration"
         :count="timer"
@@ -60,6 +61,7 @@ import { useConfigStore } from "@/stores/config";
 import { useOnlineStore } from "@/stores/online";
 import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { statusIcons } from "@/data/statusIcons";
 import {
@@ -242,7 +244,7 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   margin: 16px 0 32px;
-  min-height: 200px; /* Verhindert Layout-Jumping beim Umschalten */
+  min-height: 160px;
 }
 
 .buzzer-container {

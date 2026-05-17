@@ -21,6 +21,7 @@
     </Transition>
 
     <div>
+      <MinimalSettings />
       <GameHeader
         :max="timerDuration"
         :count="timer"
@@ -41,13 +42,17 @@
           :is-status-icon="false"
           :timer-duration="timerDuration"
           :pause-reveal="
-            partyStore.buzzerState === 'answering' || showFinalRoundTransition
-            || showBonusRoundTransition
+            partyStore.buzzerState === 'answering' ||
+            showFinalRoundTransition ||
+            showBonusRoundTransition
           "
         />
         <div v-if="isBlurRoundActive" class="blur-overlay" />
       </div>
-      <BuzzerStatus :is-final-round="isFinalRound" :bonus-round-type="bonusRoundType" />
+      <BuzzerStatus
+        :is-final-round="isFinalRound"
+        :bonus-round-type="bonusRoundType"
+      />
     </div>
 
     <PartyRankings
@@ -61,8 +66,17 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, onMounted, onUnmounted, computed, watch, unref } from "vue";
+import {
+  nextTick,
+  ref,
+  onMounted,
+  onUnmounted,
+  computed,
+  watch,
+  unref,
+} from "vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
@@ -146,8 +160,8 @@ const canvasEffectsStyle = computed(() => {
   return { filter: filters.join(" ") };
 });
 
-const canvasIsRevealing = computed(
-  () => Boolean(isRevealing.value && bonusRoundType.value !== "blur"),
+const canvasIsRevealing = computed(() =>
+  Boolean(isRevealing.value && bonusRoundType.value !== "blur"),
 );
 
 const isFinalRound = computed(
@@ -217,7 +231,7 @@ const startTimer = () => {
   workerClearInterval(timerId);
   workerClearTimeout(timerEndTimeoutId);
   timer.value = timerDuration.value;
-  
+
   timerEndTimeoutId = workerSetTimeout(() => {
     timerEndTimeoutId = null;
     timer.value = 0;
@@ -248,24 +262,24 @@ const startTimer = () => {
 
 const setupDrawing = () => {
   if (!currentRound.value) return;
-  
+
   clearAllTimers();
   pixelData.value = currentRound.value.data;
   resolution.value = Math.sqrt(pixelData.value.length);
-  
+
   partyStore.openBuzzer();
   startTimer();
 };
 
-const lastEmoji = ref("")
+const lastEmoji = ref("");
 
 const handleIncomingEmoji = (emojiChar: string) => {
-  lastEmoji.value = emojiChar
-  
+  lastEmoji.value = emojiChar;
+
   nextTick(() => {
-    lastEmoji.value = ""
-  })
-}
+    lastEmoji.value = "";
+  });
+};
 
 watch(
   () => partyStore.roundResult,
@@ -278,11 +292,12 @@ watch(
       if (!partyStore.activePlayerId) {
         timer.value = 0;
       }
-      
+
       gameStore.setGameState("feedback");
 
       navigationTimeout = workerSetTimeout(() => {
-        const isLastRound = gameStore.currentRoundIndex >= configStore.maxRounds - 1;
+        const isLastRound =
+          gameStore.currentRoundIndex >= configStore.maxRounds - 1;
         if (isLastRound) {
           partyStore.endGame();
         } else {
@@ -290,7 +305,7 @@ watch(
         }
       }, 4000);
     }
-  }
+  },
 );
 
 watch(
@@ -303,7 +318,10 @@ watch(
         return;
       }
       const bonusIdx = gameStore.currentRoundIndex;
-      if (bonusRoundType.value && !bonusRoundTransitionShownByIndex.value[bonusIdx]) {
+      if (
+        bonusRoundType.value &&
+        !bonusRoundTransitionShownByIndex.value[bonusIdx]
+      ) {
         clearAllTimers();
         showBonusRoundTransition.value = true;
         return;
@@ -312,7 +330,7 @@ watch(
         setupDrawing();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -324,7 +342,7 @@ watch(
       workerClearTimeout(timerEndTimeoutId);
       timerEndTimeoutId = null;
     }
-  }
+  },
 );
 
 const emojiListener = (event: any) => {
@@ -344,7 +362,7 @@ onUnmounted(() => {
 <style scoped>
 .host-layout {
   display: grid;
-  grid-template-columns: max(600px) minmax(400px,100%);
+  grid-template-columns: max(600px) minmax(400px, 100%);
   align-items: start;
   gap: 32px;
   max-width: 1200px;

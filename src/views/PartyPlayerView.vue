@@ -8,6 +8,7 @@
       class="player-display"
     />
     <div class="container">
+      <MinimalSettings />
       <Transition name="fade" mode="out-in">
         <div v-if="partyOver" key="party-over" class="centered placeholder">
           <p class="waiting-label">PARTY IS OVER</p>
@@ -147,6 +148,7 @@ import { useChannelStore } from "@/stores/channel";
 import { useRouter } from "vue-router";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { vibrateBuzz } from "@/utils/vibration";
 import { useSoundStore } from "@/stores/sound";
@@ -244,7 +246,6 @@ const scrambleText = (text, seed) => {
     return chars.join("");
   };
 
-  // Split on whitespace and only scramble within each term (e.g. "ice cream")
   const parts = str.split(/(\s+)/);
   return parts
     .map((part, index) => {

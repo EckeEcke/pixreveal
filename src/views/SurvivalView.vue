@@ -9,6 +9,7 @@
     </transition>
 
     <section class="canvas-section">
+      <MinimalSettings />
       <GameHeader
         :max="survivalStore.maxTime"
         :count="survivalStore.timeLeft"
@@ -36,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, watch, computed } from "vue";
+import { ref, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useSurvivalStore } from "@/stores/survival";
 import { useGameStore } from "@/stores/game";
@@ -48,6 +49,7 @@ import GameHeader from "@/components/game-ui/GameHeader.vue";
 import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 
 const router = useRouter();
 const survivalStore = useSurvivalStore();

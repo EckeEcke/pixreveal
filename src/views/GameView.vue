@@ -8,6 +8,7 @@
     </transition>
 
     <section class="canvas-section">
+      <MinimalSettings />
       <GameHeader
         :max="timerDuration"
         :count="timer"
@@ -51,6 +52,7 @@ import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useConfigStore } from "@/stores/config";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import {
   workerClearInterval,
   workerClearTimeout,
