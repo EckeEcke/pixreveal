@@ -8,7 +8,7 @@
       class="player-display"
     />
     <div class="container">
-      <MinimalSettings />
+      <MinimalSettings :bottom="true" />
       <Transition name="fade" mode="out-in">
         <div v-if="partyOver" key="party-over" class="centered placeholder">
           <p class="waiting-label">PARTY IS OVER</p>

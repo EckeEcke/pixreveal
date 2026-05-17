@@ -1,5 +1,5 @@
 <template>
-  <div class="minimal-settings">
+  <div class="minimal-settings" :class="{ bottom: bottom }">
     <button @click="soundStore.isAudioEnabled = !soundStore.isAudioEnabled">
       <Icon
         class="status-icon"
@@ -24,6 +24,10 @@ import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 
+defineProps({
+  bottom: Boolean,
+});
+
 const soundStore = useSoundStore();
 
 const isFullscreen = ref(!!document.fullscreenElement);
@@ -46,11 +50,17 @@ const toggleFullscreen = () => {
 
 <style scoped>
 .minimal-settings {
-    position: fixed;
-    top: 8px; right: 8px;
+  position: fixed;
+  top: 8px;
+  right: 8px;
 }
 
 button {
-    color: white;
+  color: white;
+}
+
+.bottom {
+  top: unset;
+  bottom: 8px;
 }
 </style>

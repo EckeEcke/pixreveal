@@ -187,9 +187,9 @@ const slides = computed<Slide[]>(() => {
       quickest === minQuick
     ) {
       list.push({
-        key: `${p.playerId}-speedster`,
+        key: `${p.playerId}-speedy`,
         emoji: "⚡",
-        title: "Speedster",
+        title: "Speedy",
         message:
           "Fastest fingers in the lobby! Your reflexes are terrifying—or you're just button-mashing.",
         playerId: p.playerId,
