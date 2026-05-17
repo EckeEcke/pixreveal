@@ -26,7 +26,7 @@ export const useSurvivalStore = defineStore("survival", () => {
   const newHighscore = ref(false);
   const timerInterval = ref<number | null>(null);
 
-  const gameStore = useGameStore(); // Zugriff auf den globalen GameState
+  const gameStore = useGameStore();
 
   const timerPercentage = computed(
     () => (timeLeft.value / maxTime.value) * 100,
@@ -36,7 +36,6 @@ export const useSurvivalStore = defineStore("survival", () => {
     const configStore = useConfigStore();
     newHighscore.value = false;
 
-    // Filterung & Shuffle
     const preferred = (allDrawings as Drawing[]).filter((d) =>
       configStore.selectedCategories.includes(d.category),
     );
@@ -64,7 +63,6 @@ export const useSurvivalStore = defineStore("survival", () => {
       if (next) {
         next.options = generateOptions(next);
         currentDrawing.value = next;
-        // WICHTIG: Setze den globalen State auf revealing, damit die View reagiert
         gameStore.setGameState("revealing");
       }
     } else {
@@ -88,7 +86,6 @@ export const useSurvivalStore = defineStore("survival", () => {
   const runTimer = () => {
     workerClearInterval(timerInterval.value);
     timerInterval.value = workerSetInterval(() => {
-      // NUR abziehen, wenn wir wirklich im Spielprozess sind
       if (gameStore.gameState !== "revealing") return;
 
       if (timeLeft.value > 0) {

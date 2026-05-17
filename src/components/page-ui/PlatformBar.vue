@@ -19,11 +19,6 @@ import { Icon } from "@iconify/vue";
 
 const socialLinks = [
   {
-    href: "https://discord.gg/XMTAw7FXd",
-    icon: "pixel:discord",
-    title: "Join Discord server",
-  },
-  {
     href: "https://www.facebook.com/profile.php?id=61580781216710",
     icon: "streamline-pixel:logo-social-media-facebook-circle",
     title: "Follow on Facebook",

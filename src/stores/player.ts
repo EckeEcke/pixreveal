@@ -9,10 +9,6 @@ const CONTROLLER_ID_KEY = "pixreveal:controllerId";
 export const usePlayerStore = defineStore("player", () => {
   const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
 
-  // Controller identity must be unique per controller instance/tab. If we persist
-  // it in localStorage, multiple tabs on the same device end up with the same
-  // user_id and presence will deduplicate them (host/player won't see each other).
-  // sessionStorage survives reloads in the same tab, which is enough for reconnects.
   const savedControllerId = sessionStorage.getItem(CONTROLLER_ID_KEY) || "";
 
   const controllerId: Ref<string> = ref(savedControllerId);
