@@ -31,7 +31,7 @@ export const useOnlineStore = defineStore("online", () => {
       channelStore.setGameRunning(true);
       onlineGameRunning.value = true;
       gameStore.prepareGame(data.revealTime, data.rounds);
-      router.push("/game");
+      router.push("/online");
     });
 
     channel.bind(
