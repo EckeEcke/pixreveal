@@ -13,6 +13,10 @@
       />
     </div>
 
+    <p class="thanks" v-if="dailyStore.hasPlayedToday">
+      Thanks for playing today's challenge!
+    </p>
+
     <button
       v-if="!dailyStore.hasPlayedToday"
       class="confirm-btn"
@@ -140,5 +144,13 @@ p {
 
 .info-text {
   text-align: center;
+}
+
+.thanks {
+  font-weight: 900;
+  font-size: 18px;
+  color: #ffcc00;
+  text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+  animation: floating 2s ease-in-out infinite;
 }
 </style>
