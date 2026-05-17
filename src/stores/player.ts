@@ -21,6 +21,9 @@ export const usePlayerStore = defineStore("player", () => {
   const avatarIndex: Ref<number> = ref(savedProfile.avatar ?? 0);
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
+  const gameMode = ref<
+    "classic" | "inspect" | "gravity" | "survival" | "buzzer" | string
+  >("classic");
   const isCreatorMode = ref(false);
 
   watch([playerName, avatarIndex], ([newName, newAvatar]) => {
@@ -63,6 +66,7 @@ export const usePlayerStore = defineStore("player", () => {
     avatarIndex,
     points,
     correctAnswers,
+    gameMode,
     isCreatorMode,
     setUser,
     setAvatar,

@@ -21,16 +21,17 @@
               <SelectionTile
                 icon-name="pixel:users"
                 :btn-function="() => openMultiplayerModal('party')"
-                btn-text="LOCAL PARTY"
-                sub-title="Local Party Multiplayer in Jackbox style"
-                btn-color="var(--neon-cyan)"
+                btn-text="LOCAL PARTY MULTIPLAYER"
+                sub-title="Jackbox style: control via phone"
+                btn-color="var(--neon-yellow)"
+                :is-shiny="true"
               />
               <SelectionTile
                 class="order-1"
                 icon-name="pixel:globe"
                 :btn-function="() => openMultiplayerModal('online')"
                 btn-text="ONLINE MULTIPLAYER"
-                sub-title="Host/join a game with your friends"
+                sub-title="Play online together from anywhere"
                 btn-color="var(--neon-cyan)"
               />
               <SelectionTile
@@ -42,6 +43,7 @@
               />
             </div>
             <DemoCard />
+            <TopPlayer />
           </div>
         </div>
       </section>
@@ -72,6 +74,8 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import DemoCard from "@/components/page-layout/DemoCard.vue";
+import TopPlayer from "@/components/game-ui/TopPlayer.vue";
+import { useDailyStore } from "@/stores/daily";
 
 const router = useRouter();
 const route = useRoute();
@@ -79,6 +83,7 @@ const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
+const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 const showJoinModal = ref(false);

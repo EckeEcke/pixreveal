@@ -13,8 +13,8 @@
     <div class="info-text">
       <h2 class="logo">WHAT IS PIX<span>REVEAL</span>?</h2>
       <p>
-        Unveil the art, beat the clock. Guess the pixel art as it reveals —
-        before the final pixel drops.
+        Guess the image before the reveal finishes. The faster you guess, the
+        more points you earn.
       </p>
     </div>
     <Icon icon="pixel:question-circle" class="background-icon" />

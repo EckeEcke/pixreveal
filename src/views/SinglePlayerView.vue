@@ -33,7 +33,7 @@
                 "
                 btn-color="var(--neon-yellow)"
                 :disabled="dailyStore.isLoading"
-                :isShiny="
+                :is-shiny="
                   true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
                 "
               />
@@ -75,7 +75,9 @@
 </template>
 
 <script setup>
+import { onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
@@ -87,6 +89,7 @@ import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 
 const router = useRouter();
+const route = useRoute();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const dailyStore = useDailyStore();
@@ -138,6 +141,31 @@ const startDaily = () => {
     router.push("/daily");
   }
 };
+
+onMounted(() => {
+  const wantsDaily = String(route.query.daily ?? "") === "1";
+  if (!wantsDaily) return;
+
+  const tryStart = () => {
+    if (dailyStore.isLoading) return false;
+    if (!Array.isArray(dailyStore.dailyRounds) || dailyStore.dailyRounds.length === 0) {
+      dailyStore.fetchDailyData();
+      return false;
+    }
+    startDaily();
+    return true;
+  };
+
+  if (tryStart()) return;
+
+  const stop = watch(
+    [() => dailyStore.isLoading, () => dailyStore.dailyRounds],
+    () => {
+      if (tryStart()) stop();
+    },
+    { immediate: false },
+  );
+});
 </script>
 
 <style scoped>

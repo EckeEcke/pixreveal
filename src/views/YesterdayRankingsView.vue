@@ -21,6 +21,8 @@ import DailyRankings from "@/components/game-ui/DailyRankings.vue";
 }
 
 .rankings {
+  width: 400px;
+  max-width: 100%;
   min-height: calc(100vh - 64px);
 }
 </style>

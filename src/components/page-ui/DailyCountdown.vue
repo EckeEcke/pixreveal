@@ -55,6 +55,7 @@ onUnmounted(() => {
 .daily-status-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 12px;
   margin-top: 16px;
   padding-top: 8px;
@@ -65,12 +66,13 @@ onUnmounted(() => {
 .countdown-wrapper {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: 8px;
 }
 
 .label {
   color: var(--white);
-  font-size: 0.85rem;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -78,13 +80,13 @@ onUnmounted(() => {
 .value {
   color: #fff;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .timer-value {
   color: #ff3e6d;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 24px;
   letter-spacing: 1px;
 }
 
