@@ -423,7 +423,7 @@ const downloadDrawing = () => {
 }
 
 .drawings-list {
-  margin-top: 1rem;
+  margin: 16px 0;
 }
 
 .preset-select {
