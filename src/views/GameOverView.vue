@@ -301,6 +301,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+main {
+  width: 100%;
+}
 .btn-primary {
   display: flex;
   align-items: center;
@@ -437,6 +440,7 @@ onMounted(() => {
 }
 
 .party-wrapper {
-  max-width: 800px;
+  width: 800px;
+  max-width: 100%;
 }
 </style>

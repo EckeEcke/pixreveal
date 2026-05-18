@@ -308,13 +308,16 @@ onBeforeUnmount(() => stop());
   padding: 12px 32px;
   border-radius: 8px;
   font-weight: 900;
-  font-size: 20px;
+  font-size: 18px;
   letter-spacing: 1px;
   line-height: 1.5;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border: 2px solid var(--neon-yellow);
   color: rgba(255, 255, 255, 0.92);
+  @media(min-width: 576px) {
+    font-size: 20px;
+  }
 }
 
 .title-line {
@@ -326,12 +329,19 @@ onBeforeUnmount(() => stop());
 }
 
 .emoji {
-  font-size: 26px;
+  font-size: 22px;
+  @media(min-width: 576px) {
+    font-size: 26px;
+  }
 }
 
 .title {
-  font-size: 22px;
-  letter-spacing: 2px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  @media(min-width: 576px) {
+    font-size: 22px;
+    letterspacing: 2px;
+  }
 }
 
 .message {
