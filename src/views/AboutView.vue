@@ -82,15 +82,16 @@
     </section>
 
     <footer class="about-footer">
-      <button class="confirm-btn" data-sfx="click" @click="$router.back()">
+      <ButtonPrimary data-sfx="click" @clicked="$router.back()">
         <Icon icon="pixel:arrow-circle-left-solid" /> BACK
-      </button>
+      </ButtonPrimary>
     </footer>
   </ContentPage>
 </template>
 
 <script setup>
 import { Icon } from "@iconify/vue";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ContentPage from "@/components/page-layout/ContentPage.vue";
 </script>
 
@@ -98,22 +99,6 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 a {
   font-size: 24px;
   margin-right: 8px;
-}
-
-.confirm-btn {
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--primary);
-  padding: 12px 16px;
-  border: none;
-  color: black;
-  font-size: 16px;
-  font-family: inherit;
-  font-weight: 700;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 .about-section {

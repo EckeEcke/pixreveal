@@ -17,20 +17,22 @@
       Thanks for playing today's challenge!
     </p>
 
-    <button
+    <ButtonPrimary
       v-if="!dailyStore.hasPlayedToday"
-      class="confirm-btn"
-      @click="startDaily"
+      data-sfx="click"
+      class="btn-primary"
+      @clicked="startDaily"
     >
       Play Daily Challenge
-    </button>
-    <button
+    </ButtonPrimary>
+    <ButtonPrimary
       v-else
-      class="confirm-btn"
-      @click="router.push('/rankings-daily')"
+      data-sfx="click"
+      class="btn-primary"
+      @clicked="router.push('/rankings-daily')"
     >
       Check Rankings
-    </button>
+    </ButtonPrimary>
 
     <DailyCountdown />
 
@@ -47,6 +49,7 @@ import { useDailyStore } from "@/stores/daily";
 import { useGameStore } from "@/stores/game";
 import DailyCountdown from "../page-ui/DailyCountdown.vue";
 import { usePlayerStore } from "@/stores/player";
+import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
 
 const router = useRouter();
 const dailyStore = useDailyStore();
@@ -124,22 +127,8 @@ p {
   max-width: 100%;
 }
 
-.confirm-btn {
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--primary);
-  padding: 12px 16px;
+.btn-primary {
   margin: 16px auto 0;
-  border: none;
-  color: black;
-  text-transform: uppercase;
-  font-family: inherit;
-  font-weight: 900;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 .info-text {

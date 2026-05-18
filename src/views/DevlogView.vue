@@ -8,10 +8,11 @@
         </div>
         <h3 class="log-title">Bonus rounds in party multiplayer</h3>
         <p>
-          Jackbox style party mode becomes more dynamic! New bonus rounds added: blur, sepia and black&white. On top of that in
-          a bonus round points and malus are doubled. You can win 2 points, but
-          you could also lose 4 points! Classic risk versus reward. In the final
-          round points are also doubled now to guarantee an exciting finish!
+          Jackbox style party mode becomes more dynamic! New bonus rounds added:
+          blur, sepia and black&white. On top of that in a bonus round points
+          and malus are doubled. You can win 2 points, but you could also lose 4
+          points! Classic risk versus reward. In the final round points are also
+          doubled now to guarantee an exciting finish!
         </p>
       </div>
       <div class="log-card">
@@ -170,9 +171,13 @@
       </div>
     </div>
     <div class="devlog-footer">
-      <button class="confirm-btn" data-sfx="click" @click="$router.back()">
+      <ButtonPrimary
+        data-sfx="click"
+        class="btn-primary"
+        @clicked="$router.back()"
+      >
         <Icon icon="pixel:arrow-circle-left-solid" /> BACK
-      </button>
+      </ButtonPrimary>
     </div>
   </ContentPage>
 </template>
@@ -180,6 +185,7 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import ContentPage from "@/components/page-layout/ContentPage.vue";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 </script>
 
 <style scoped>
@@ -217,20 +223,7 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
   font-size: 1.4rem;
 }
 
-.confirm-btn {
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--primary);
-  color: black;
-  border: none;
-  padding: 12px 24px;
-  color: black;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 4px;
-  cursor: pointer;
+.btn-primary {
   margin-top: 32px;
 }
 

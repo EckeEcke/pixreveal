@@ -34,9 +34,13 @@
         </div>
       </div>
     </div>
-    <button class="confirm-btn" data-sfx="click" @click="$emit('btn-click')">
+    <ButtonPrimary
+      data-sfx="click"
+      class="btn-primary"
+      @clicked="$emit('btn-click')"
+    >
       {{ btnText ? btnText : "CONFIRM" }}
-    </button>
+    </ButtonPrimary>
   </ModalWrapper>
 </template>
 
@@ -46,6 +50,7 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
+import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
 
 defineProps({
   title: String,
@@ -123,21 +128,7 @@ h3 {
   filter: contrast(2);
 }
 
-.confirm-btn {
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--primary);
-  width: 100%;
-  padding: 12px 16px;
-  border: none;
-  color: black;
-  font-size: 16px;
-  font-family: inherit;
-  font-weight: 700;
-  border-radius: 4px;
-  cursor: pointer;
+.btn-primary {
   margin-top: 32px;
 }
 

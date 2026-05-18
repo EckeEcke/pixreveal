@@ -24,20 +24,24 @@
         Submit your score to the daily leaderboard and compete for the top
         position!
       </p>
-      <button
+      <ButtonPrimary
         v-if="!isPosting"
-        class="confirm-btn"
         data-sfx="click"
+        class="btn-primary"
         @click="showAvatarModal = true"
       >
         <Icon icon="pixel:arrow-circle-up-solid" /> SUBMIT YOUR SCORE
-      </button>
+      </ButtonPrimary>
       <LoadingAnimation v-else :text="'SUBMITTING...'" />
     </div>
     <div v-else>
-      <button class="confirm-btn" @click="$router.push('/')" data-sfx="click">
+      <ButtonPrimary
+        data-sfx="click"
+        class="btn-primary"
+        @clicked="$router.push('/')"
+      >
         <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
-      </button>
+      </ButtonPrimary>
     </div>
     <div>
       <h2>Challenge your friends!</h2>
@@ -69,6 +73,7 @@ import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { toast } from "vue3-toastify";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
@@ -102,7 +107,9 @@ const post = async () => {
     playerStore.avatarIndex,
     dailyStore.date,
   );
-  toast.success("Score submitted. Check your position on the daily leaderboard!");
+  toast.success(
+    "Score submitted. Check your position on the daily leaderboard!",
+  );
 
   isPosting.value = false;
   soundStore.playSound("confirm");
@@ -176,21 +183,7 @@ p {
   max-width: 400px;
 }
 
-.confirm-btn {
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--primary);
-  padding: 12px 16px;
-  width: 100%;
-  border: none;
-  color: black;
-  font-size: 16px;
-  font-family: inherit;
-  font-weight: 700;
-  border-radius: 4px;
-  cursor: pointer;
+.btn-primary {
   animation: pulse 2s infinite;
 }
 </style>

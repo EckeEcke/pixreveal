@@ -112,12 +112,9 @@
             </select>
           </div>
 
-          <button
-            @click="viewMode = 'submit'"
-            class="btn-primary submit-trigger"
-          >
+          <ButtonPrimary data-sfx="click" @clicked="viewMode = 'submit'">
             SUBMIT TO PIXREVEAL
-          </button>
+          </ButtonPrimary>
         </div>
 
         <div v-else class="submit-form">
@@ -153,9 +150,9 @@
           </div>
 
           <div class="form-actions">
-            <button @click="uploadDrawing" class="btn-primary">
+            <ButtonPrimary data-sfx="click" @clicked="uploadDrawing">
               UPLOAD NOW
-            </button>
+            </ButtonPrimary>
             <button @click="viewMode = 'editor'" class="btn-outline">
               CANCEL / BACK
             </button>
@@ -178,6 +175,7 @@ import drawings from "@/data/drawings.json";
 import { allCategoryNames } from "@/stores/config";
 import { Icon } from "@iconify/vue";
 import { toast } from "vue3-toastify";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 
 const resolution = ref(16);
 const rawInput = ref("");
@@ -300,18 +298,6 @@ const downloadDrawing = () => {
   margin: 0 auto 16px 0;
 }
 
-.submit-trigger {
-  width: 100%;
-  margin-top: 2rem;
-  padding: 12px;
-  background-color: #5d3fd3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 .submit-form {
   display: flex;
   flex-direction: column;
@@ -363,21 +349,6 @@ const downloadDrawing = () => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.btn-primary {
-  font-family: inherit;
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  filter: brightness(1.1);
 }
 
 .btn-outline.inactive {

@@ -16,15 +16,14 @@
             {{ getPartyOverMessage }}
           </p>
           <div class="party-actions">
-            <button
+            <ButtonPrimary
               class="btn-primary pulse-btn"
               data-sfx="click"
-              @click="playAgain"
               @mouseenter="soundStore.handleHoverSound"
+              @clicked="playAgain"
             >
-              <Icon icon="pixel:refresh-solid" />
-              Play again
-            </button>
+              <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
+            >
           </div>
         </div>
         <PartyTitles :players="partyPlayersSorted" />
@@ -52,15 +51,15 @@
                 : `${playersSortedByPoints[0].username.toUpperCase()} WINS!`
             }}
           </h2>
-          <button
-            class="btn-primary"
+          <ButtonPrimary
+            class="btn-primary pulse-btn"
             data-sfx="click"
-            @click="playAgain"
             @mouseenter="soundStore.handleHoverSound"
+            @clicked="playAgain"
           >
             <Icon icon="pixel:refresh-solid" />
             Play Again
-          </button>
+          </ButtonPrimary>
         </div>
         <div
           v-for="(player, index) in playersSortedByPoints"
@@ -102,15 +101,14 @@
           <h2>Challenge your friends!</h2>
           <ShareIcons :msg="getShareMessage(playerStore.points)" />
         </div>
-        <button
+        <ButtonPrimary
           class="btn-primary pulse-btn"
           data-sfx="click"
-          @click="playAgain"
           @mouseenter="soundStore.handleHoverSound"
+          @clicked="playAgain"
         >
-          <Icon icon="pixel:refresh-solid" />
-          Play Again
-        </button>
+          <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
+        >
       </div>
     </div>
     <LobbyChat v-if="isOnlinePlay" />
@@ -139,6 +137,7 @@ import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 import SingleplayerRanks from "@/components/game-ui/SingleplayerRanks.vue";
 import { workerSetTimeout } from "@/services/workerTimers";
 import { getRankData } from "@/utils/ranks";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -306,34 +305,8 @@ main {
   max-width: 100%;
 }
 .btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  background: var(--primary);
-  color: #000;
-  border: none;
-  padding: 16px;
-  border-radius: 4px;
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  cursor: pointer;
   animation: arcadeBlink 1.4s infinite;
-  transition: all 0.3s;
   margin-top: 32px;
-}
-
-.btn-primary:hover {
-  filter: brightness(1.1);
-  transform: scale(1.05);
-}
-
-.btn-primary:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #b45309;
 }
 
 .results-card {

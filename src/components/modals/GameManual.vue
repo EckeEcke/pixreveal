@@ -131,9 +131,9 @@
       <RankOverview />
     </article>
     <br />
-    <button class="confirm-btn" data-sfx="back" @click="$emit('close')">
+    <ButtonPrimary data-sfx="back" @click="$emit('close')">
       <Icon icon="pixel:arrow-circle-left-solid" /> BACK
-    </button>
+    </ButtonPrimary>
   </div>
 </template>
 
@@ -141,6 +141,7 @@
 import { Icon } from "@iconify/vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import RankOverview from "@/components/game-ui/RankOverview.vue";
+import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
 </script>
 
 <style scoped>
@@ -161,22 +162,6 @@ import RankOverview from "@/components/game-ui/RankOverview.vue";
   top: 0;
   right: 0;
   z-index: 1;
-}
-
-.confirm-btn {
-  display: flex;
-  place-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: var(--primary);
-  padding: 12px 16px;
-  border: none;
-  color: black;
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 h1 {
