@@ -112,6 +112,7 @@ const startDaily = () => {
 }
 
 .crown {
+  font-size: 24px;
   color: var(--neon-yellow);
 }
 
@@ -173,27 +174,20 @@ p {
   width: 100%;
 }
 
-.top-player::before,
-.top-player::after {
-  content: "";
-  height: 2px;
-  width: 120px;
+@media (min-width: 576px) {
+  .top-player::before,
+  .top-player::after {
+    content: "";
+    height: 2px;
+    width: 120px;
 
-  background: linear-gradient(to right, transparent, rgba(255, 80, 180, 0.7));
+    background: linear-gradient(to right, transparent, rgba(255, 80, 180, 0.7));
 
-  border-radius: 999px;
-}
+    border-radius: 999px;
+  }
 
-.top-player::after {
-  transform: scaleX(-1);
-}
-
-.thanks {
-  font-weight: 900;
-  font-size: 18px;
-  color: #ffcc00;
-  text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-  animation: floating 2s ease-in-out infinite;
-  text-align: center;
+  .top-player::after {
+    transform: scaleX(-1);
+  }
 }
 </style>
