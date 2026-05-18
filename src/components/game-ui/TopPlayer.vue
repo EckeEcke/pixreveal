@@ -1,7 +1,11 @@
 <template>
   <div v-if="topRanking" class="top-player-card setup-card">
-    <div class="info-text">
-      <h2 class="logo">TOP<span> PLAYER</span></h2>
+    <div class="card-header">
+      <Icon icon="pixel:crown-solid" class="crown" />
+      <div class="top-player">
+        <h2 class="logo">TOP<span> PLAYER</span></h2>
+      </div>
+
       <p>Top ranking in today's daily challenge</p>
     </div>
 
@@ -10,12 +14,16 @@
         :name="topRanking.name"
         :avatar-index="topRanking.avatarIndex"
         :points="topRanking.score"
+        :rounded="true"
       />
     </div>
 
-    <p class="thanks" v-if="dailyStore.hasPlayedToday">
-      Thanks for playing today's challenge!
-    </p>
+    <InfoBox icon="✅" class="info-box">
+      <div class="info">
+        <p>You already played today!</p>
+        <p>Come back tomorrow to play again.</p>
+      </div>
+    </InfoBox>
 
     <ButtonPrimary
       v-if="!dailyStore.hasPlayedToday"
@@ -50,6 +58,7 @@ import { useGameStore } from "@/stores/game";
 import DailyCountdown from "../page-ui/DailyCountdown.vue";
 import { usePlayerStore } from "@/stores/player";
 import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
+import InfoBox from "./InfoBox.vue";
 
 const router = useRouter();
 const dailyStore = useDailyStore();
@@ -92,11 +101,34 @@ const startDaily = () => {
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  margin-top: 24px;
   padding: 24px;
   max-width: 850px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+}
+
+.card-header {
+  text-align: center;
+}
+
+.crown {
+  color: var(--neon-yellow);
+}
+
+.info-box {
+  box-sizing: border-box;
+  width: 400px;
+  max-width: 100%;
+}
+
+.info {
+  color: var(--neon-success);
+  font-weight: 700;
+}
+
+.info p:nth-of-type(2) {
+  color: var(--color-secondary);
+  font-weight: 400;
 }
 
 .background-icon {
@@ -113,12 +145,13 @@ h2 {
   margin-top: 0;
   margin-bottom: 8px;
   text-align: center;
+  font-weight: 900;
+  letter-spacing: 2px;
 }
 
 p {
   line-height: 1.6;
   font-size: 16px;
-  color: #ffffff88;
   margin: 0;
 }
 
@@ -131,8 +164,28 @@ p {
   margin: 16px auto 0;
 }
 
-.info-text {
-  text-align: center;
+.top-player {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  width: 100%;
+}
+
+.top-player::before,
+.top-player::after {
+  content: "";
+  height: 2px;
+  width: 120px;
+
+  background: linear-gradient(to right, transparent, rgba(255, 80, 180, 0.7));
+
+  border-radius: 999px;
+}
+
+.top-player::after {
+  transform: scaleX(-1);
 }
 
 .thanks {

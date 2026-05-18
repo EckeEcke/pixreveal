@@ -1,7 +1,12 @@
 <template>
   <div
     class="player-hud"
-    :class="{ pending: isPending, active: isActive, first: position === 1 }"
+    :class="{
+      pending: isPending,
+      active: isActive,
+      first: position === 1,
+      rounded: rounded,
+    }"
   >
     <PositionInfo v-if="position" :position="position" />
     <div
@@ -49,7 +54,8 @@
       <div v-if="points || points === 0" class="hud-points">
         <transition name="score-pop" mode="out-in">
           <div :key="points" class="score-wrapper">
-            <Icon icon="pixel:star-solid" class="star-icon" /> <span :class="{negative: points < 0}">{{ points }}</span>
+            <Icon icon="pixel:star-solid" class="star-icon" />
+            <span :class="{ negative: points < 0 }">{{ points }}</span>
           </div>
         </transition>
         <transition name="float-bonus">
@@ -89,6 +95,7 @@ const props = defineProps<{
   roundIndex?: number;
   maxRounds?: number;
   showYouIndicator?: boolean;
+  rounded?: boolean;
 }>();
 
 const showBonus = ref(false);
@@ -326,18 +333,17 @@ const avatarStyle = computed<CSSProperties>(() => {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: var(--card-bg);
   backdrop-filter: blur(5px);
   min-width: 240px;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  background-image: radial-gradient(
-    circle at 2px 2px,
-    rgba(255, 255, 255, 0.15) 1px,
-    transparent 0
-  );
+
   background-size: 100% 4px;
-  background: rgba(15, 15, 25, 0.7);
+  background: rgba(10, 4, 20, 0.92);
   box-sizing: border-box;
+}
+
+.rounded {
+  border-radius: 8px;
 }
 
 .player-hud.first::after {
@@ -382,8 +388,6 @@ const avatarStyle = computed<CSSProperties>(() => {
     display: none;
   }
 }
-
-
 
 .hud-stats {
   display: flex;

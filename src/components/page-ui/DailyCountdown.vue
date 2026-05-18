@@ -64,8 +64,9 @@ onUnmounted(() => {
 
 .countdown-wrapper {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
 }
 
@@ -87,6 +88,7 @@ onUnmounted(() => {
   font-weight: 800;
   font-size: 24px;
   letter-spacing: 1px;
+  width: 115px;
 }
 
 @media (max-width: 768px) {

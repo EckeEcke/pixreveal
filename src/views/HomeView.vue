@@ -42,7 +42,7 @@
                 btn-color="var(--neon-success)"
               />
             </div>
-            <DemoCard />
+            <YoutubeEmbed video-id="YQl5jOqm2n0" />
             <TopPlayer />
           </div>
         </div>
@@ -73,8 +73,8 @@ import { useConfigStore } from "@/stores/config";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
-import DemoCard from "@/components/page-layout/DemoCard.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
+import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import { useDailyStore } from "@/stores/daily";
 
 const router = useRouter();
@@ -236,7 +236,7 @@ h2 {
 .mode-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 32px;
   padding: 16px 0;
   @media (min-width: 575px) {
     padding: 32px;
