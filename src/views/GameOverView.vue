@@ -306,7 +306,7 @@ main {
 }
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
-  margin-top: 32px;
+  margin: 32px auto 0;
 }
 
 .results-card {
