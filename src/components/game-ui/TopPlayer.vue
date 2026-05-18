@@ -18,7 +18,7 @@
       />
     </div>
 
-    <InfoBox icon="✅" class="info-box">
+    <InfoBox v-if="dailyStore.hasPlayedToday" icon="✅" class="info-box">
       <div class="info">
         <p>You already played today!</p>
         <p>Come back tomorrow to play again.</p>
@@ -130,6 +130,8 @@ const startDaily = () => {
 .info p:nth-of-type(2) {
   color: var(--color-secondary);
   font-weight: 400;
+  line-height: 1;
+  font-size: 12px;
 }
 
 .background-icon {
