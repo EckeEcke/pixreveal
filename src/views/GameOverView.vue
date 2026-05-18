@@ -302,7 +302,8 @@ onMounted(() => {
 
 <style scoped>
 main {
-  width: 100%;
+  width: 800px;
+  max-width: 100%;
 }
 .btn-primary {
   display: flex;
