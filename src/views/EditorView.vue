@@ -141,13 +141,10 @@
             </select>
           </div>
 
-          <div class="legal-text-container">
-            <Icon icon="pixel:info-circle" />
-            <p class="legal-text">
-              By submitting, you confirm that this is your original work and
-              agree that it may be used in PIXREVEAL for all players.
-            </p>
-          </div>
+          <InfoBox
+            icon="ℹ️"
+            message="By submitting, you confirm that this is your original work and agree that it may be used in PIXREVEAL for all players."
+          />
 
           <div class="form-actions">
             <ButtonPrimary data-sfx="click" @clicked="uploadDrawing">
@@ -324,25 +321,6 @@ const downloadDrawing = () => {
   color: white;
   padding: 10px;
   border-radius: 4px;
-}
-
-.legal-text-container {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: var(--blue-bg);
-  padding: 12px;
-  border-radius: 4px;
-  svg {
-    font-size: 32px;
-    color: var(--neon-blue);
-  }
-}
-
-.legal-text {
-  font-size: 0.75rem;
-  margin: 0;
-  line-height: 1.4;
 }
 
 .form-actions {
