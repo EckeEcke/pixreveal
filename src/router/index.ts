@@ -157,6 +157,7 @@ router.beforeEach((to, from, next) => {
     "/party-host",
     "/party-player",
   ];
+
   const needRounds = [
     "/classic",
     "/online",
@@ -164,7 +165,7 @@ router.beforeEach((to, from, next) => {
     "/inspect",
     "/gravity",
     "/party-host",
-    "/daily"
+    "/daily",
   ];
 
   if (
@@ -174,11 +175,18 @@ router.beforeEach((to, from, next) => {
     return next("/");
   }
 
-  if (to.path === "/daily" && (useDailyStore().hasPlayedToday)) {
+  if (to.path === "/daily" && useDailyStore().hasPlayedToday) {
     return next("/");
   }
 
   if (to.path === "/gameover" && !validPathsForGameOver.includes(from.path)) {
+    return next("/");
+  }
+
+  if (
+    (from.path === "/gameover" || from.path === "/gameover-daily") &&
+    (validPathsForGameOver.includes(to.path) || to.path === "/daily")
+  ) {
     return next("/");
   }
 
