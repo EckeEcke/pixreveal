@@ -2,6 +2,14 @@
     "cleanUrls": true,
     "rewrites": [
         {
+            "source": "/_va/:match*",
+            "destination": "https://pixreveal.com/_vercel/insights/:match*"
+        },
+        {
+            "source": "/_vs/:match*",
+            "destination": "https://pixreveal.com/_vercel/speed-insights/:match*"
+        },
+        {
             "source": "/((?!api|@|.*\\..*).*)",
             "destination": "/"
         }

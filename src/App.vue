@@ -1,5 +1,9 @@
 <template>
-  <Analytics />
+  <Analytics
+    :script-src="isProd ? '/_va/script.js' : undefined"
+    :endpoint="isProd ? '/_va' : undefined"
+    :mode="isProd ? 'production' : 'development'"
+  />
   <div>
     <div class="pixelCon">
       <div
@@ -34,6 +38,8 @@ import { useDailyStore } from "./stores/daily";
 
 const route = useRoute();
 
+const isProd = import.meta.env.PROD;
+
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
@@ -41,7 +47,16 @@ const dailyStore = useDailyStore();
 
 const audio = ref(null);
 
-const MUSIC_ROUTES = new Set(["classic", "inspect", "gravity", "buzzer", "party-host", "online", "survival", "daily"]);
+const MUSIC_ROUTES = new Set([
+  "classic",
+  "inspect",
+  "gravity",
+  "buzzer",
+  "party-host",
+  "online",
+  "survival",
+  "daily",
+]);
 
 const ensureMusicSrc = () => {
   if (!audio.value) return;
@@ -73,12 +88,15 @@ const syncMusicPlayback = async () => {
   ensureMusicSrc();
   try {
     await audio.value.play();
-  } catch {
-  }
+  } catch {}
 };
 
 watch(
-  [() => route.name, () => soundStore.isAudioEnabled, () => playerStore.isCreatorMode],
+  [
+    () => route.name,
+    () => soundStore.isAudioEnabled,
+    () => playerStore.isCreatorMode,
+  ],
   () => syncMusicPlayback(),
   { immediate: true },
 );
