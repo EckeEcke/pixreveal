@@ -1,7 +1,9 @@
 <template>
   <div class="daily-status-container">
     <div class="countdown-wrapper">
-      <span class="label">Next Challenge in:</span>
+      <span class="label">
+        <Icon icon="pixel:clock" class="clock" /> Next Challenge in:
+      </span>
       <span class="timer-value">{{ timeLeft }}</span>
     </div>
   </div>
@@ -9,6 +11,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { Icon } from "@iconify/vue";
 
 const timeLeft = ref("00:00:00");
 let timerInterval = null;
@@ -71,6 +74,10 @@ onUnmounted(() => {
 }
 
 .label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap:nowrap;
   color: var(--white);
   font-size: 14px;
   text-transform: uppercase;
@@ -89,6 +96,12 @@ onUnmounted(() => {
   font-size: 24px;
   letter-spacing: 1px;
   width: 115px;
+}
+
+.clock {
+  font-size: 20px;
+  color: var(--primary);
+  animation: pulse 2s infinite;
 }
 
 @media (max-width: 768px) {

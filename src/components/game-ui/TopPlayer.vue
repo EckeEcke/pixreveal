@@ -18,12 +18,13 @@
       />
     </div>
 
-    <InfoBox v-if="dailyStore.hasPlayedToday" icon="✅" class="info-box">
-      <div class="info">
+    <div class="info">
+      <Icon icon="pixel:check-circle-solid" />
+      <div>
         <p>You already played today!</p>
         <p>Come back tomorrow to play again.</p>
       </div>
-    </InfoBox>
+    </div>
 
     <ButtonPrimary
       v-if="!dailyStore.hasPlayedToday"
@@ -31,6 +32,7 @@
       class="btn-primary"
       @clicked="startDaily"
     >
+      <Icon icon="pixel:crown-solid" />
       Play Daily Challenge
     </ButtonPrimary>
     <ButtonPrimary
@@ -118,13 +120,21 @@ const startDaily = () => {
 
 .info-box {
   box-sizing: border-box;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  color: var(--neon-success);
+  font-weight: 700;
   width: 400px;
   max-width: 100%;
 }
 
-.info {
-  color: var(--neon-success);
-  font-weight: 700;
+.info p {
+  line-height: 1;
+  margin-bottom: 4px;
 }
 
 .info p:nth-of-type(2) {
