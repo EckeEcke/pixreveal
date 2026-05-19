@@ -185,5 +185,6 @@ p {
 
 .btn-primary {
   animation: pulse 2s infinite;
+  margin: 0 auto;
 }
 </style>
