@@ -5,7 +5,6 @@
     </button>
     <h2>SETTINGS</h2>
     <div class="modal-content">
-      <InfoBox message="FOR THE BEST EXPERIENCE ENABLE AUDIO AND FULLSCREEN" />
       <div class="general-settings">
         <label class="selection-label">DISPLAY & AUDIO</label>
         <div class="config-buttons">
@@ -128,7 +127,6 @@ import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import { useConfigStore } from "@/stores/config";
-import InfoBox from "@/components/game-ui/InfoBox.vue";
 
 const soundStore = useSoundStore();
 const configStore = useConfigStore();

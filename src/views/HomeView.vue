@@ -214,7 +214,7 @@ h2 {
 .setup-card {
   position: relative;
   width: 100%;
-  max-width: 650px;
+  max-width: 700px;
   h2 {
     color: var(--white);
   }

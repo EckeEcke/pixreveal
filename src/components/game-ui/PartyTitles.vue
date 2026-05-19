@@ -109,7 +109,7 @@ const slides = computed<Slide[]>(() => {
       list.push({
         key: `${p.playerId}-perfectionist`,
         emoji: "🎯",
-        title: "Perfectionist",
+        title: "Perfect",
         message:
           "Flawless victory! Not a single mistake. Are you a genius or just cheating?",
         playerId: p.playerId,
@@ -297,11 +297,14 @@ onBeforeUnmount(() => stop());
 <style scoped>
 .party-titles {
   display: grid;
-  grid-template-columns: 80px auto;
+  grid-template-columns: 60px auto;
   align-items: start;
   gap: 16px;
   width: 100%;
   margin: 16px 0 24px;
+  @media (min-width: 576px) {
+      grid-template-columns: 80px auto;
+  }
 }
 
 .title-pill {

@@ -326,11 +326,14 @@ const optionsForPrompt = computed(() => {
 <style scoped>
 .buzzer-status {
   display: grid;
-  grid-template-columns: 80px auto;
+  grid-template-columns: 6% auto;
   align-items: start;
   gap: 16px;
   width: 100%;
   margin-top: 16px;
+  @media(min-width: 576px) {
+    grid-template-columns: 80px auto;
+  }
 }
 
 .status-pill {

@@ -73,7 +73,7 @@ watch(
 .emoji {
   position: absolute;
   bottom: -60px;
-  font-size: 3rem;
+  font-size: 4rem;
   user-select: none;
   animation: float-up 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

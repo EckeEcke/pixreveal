@@ -19,7 +19,7 @@
       />
     </div>
 
-    <div class="info">
+    <div v-if="dailyStore.hasPlayedToday" class="info">
       <Icon icon="pixel:check-circle-solid" />
       <div>
         <p>You already played today!</p>
