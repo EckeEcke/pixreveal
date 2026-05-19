@@ -42,6 +42,7 @@
       class="btn-primary"
       @clicked="router.push('/rankings-daily')"
     >
+      <Icon icon="pixel:numbered-list-solid" />
       Check Rankings
     </ButtonPrimary>
 
