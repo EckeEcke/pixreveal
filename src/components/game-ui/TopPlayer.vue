@@ -15,6 +15,7 @@
         :avatar-index="topRanking.avatarIndex"
         :points="topRanking.score"
         :rounded="true"
+        :shiny="true"
       />
     </div>
 
@@ -60,7 +61,6 @@ import { useGameStore } from "@/stores/game";
 import DailyCountdown from "../page-ui/DailyCountdown.vue";
 import { usePlayerStore } from "@/stores/player";
 import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
-import InfoBox from "./InfoBox.vue";
 
 const router = useRouter();
 const dailyStore = useDailyStore();

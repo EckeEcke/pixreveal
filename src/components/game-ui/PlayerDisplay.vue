@@ -4,7 +4,7 @@
     :class="{
       pending: isPending,
       active: isActive,
-      first: position === 1,
+      first: position === 1 || shiny,
       rounded: rounded,
     }"
   >
@@ -15,7 +15,7 @@
       :style="avatarStyle"
     ></div>
     <div>
-      <div class="hud-username" :class="{ first: position === 1 }">
+      <div class="hud-username" :class="{ first: position === 1 || shiny }">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
       </div>
       <div v-if="subline" class="hud-subline">
@@ -96,6 +96,7 @@ const props = defineProps<{
   maxRounds?: number;
   showYouIndicator?: boolean;
   rounded?: boolean;
+  shiny?: boolean;
 }>();
 
 const showBonus = ref(false);
