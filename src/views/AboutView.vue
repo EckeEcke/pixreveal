@@ -4,20 +4,24 @@
 
     <section class="about-section">
       <p>
-        PixReveal is an interactive guessing party game where the goal is as
-        simple as it is challenging: Identify the pixel art masterpiece as it
-        reveals itself piece by piece. Whether you are playing in the classic
-        Solo Mode, the dynamic Gravity Mode, or competing in Online Multiplayer
-        against friends — it's all about your eye for detail.
+        PixReveal is a web-based guessing game built for local party nights. It
+        works as a free Jackbox alternative: you host the game on a big screen
+        and everyone uses their smartphones as controllers to smash the buzzer.
+        The goal is simple: be the fastest to identify the pixel art masterpiece
+        as it reveals itself piece by piece. Use powerups to sabotage your
+        friends and gain the upper hand.
       </p>
     </section>
 
     <section class="about-section">
       <p>
-        This project was built from the ground up by me as a solo developer. As
-        a frontend specialist with a passion for <strong>Vue.js</strong>, my
-        focus was to create a web-based gaming experience that feels snappy,
-        modern, and visually cohesive.
+        When you are not playing with friends in multiplayer, you can dive into
+        Solo Mode, try one of five game modes, or compete in the daily
+        challenges. Use the editor to create and sumbit your own art for the world to play. I built this entire project from scratch as a solo
+        developer. As a frontend specialist with a passion for Vue.js, my focus
+        was to create a multiplayer experience that feels snappy, modern, and
+        visually clean—bringing party game vibes straight to your
+        browser.
       </p>
 
       <div class="tech-stack">
