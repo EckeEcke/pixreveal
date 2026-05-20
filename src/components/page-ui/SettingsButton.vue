@@ -38,6 +38,10 @@ const openSettings = () => {
   }
 }
 
+button {
+  display: flex;
+}
+
 .settings-btn {
   flex: 0 0 auto;
   font-size: 32px;
