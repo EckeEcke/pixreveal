@@ -5,7 +5,7 @@
     </button>
     <h2>{{ title ? title : "EDIT PLAYER" }}</h2>
     <div class="input-group" @keyup.enter="handleEnter">
-      <h3>Player Name</h3>
+      <h3>Set Player Name</h3>
       <input
         id="username"
         v-model="playerStore.playerName"

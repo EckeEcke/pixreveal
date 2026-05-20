@@ -54,13 +54,15 @@
         :bonus-round-type="bonusRoundType"
       />
     </div>
-
-    <PartyRankings
-      :party-players-sorted="partyPlayersSorted"
-      :active-player-id="partyStore.activePlayerId"
-      :freeze-until-at="partyStore.freezeUntilAt"
-      :freeze-by-player-id="partyStore.freezeByPlayerId"
-    />
+    <div class="rankings-column">
+      <PartyRankings
+        :party-players-sorted="partyPlayersSorted"
+        :active-player-id="partyStore.activePlayerId"
+        :freeze-until-at="partyStore.freezeUntilAt"
+        :freeze-by-player-id="partyStore.freezeByPlayerId"
+      />
+      <PowerUpInfo class="powerup-info" />
+    </div>
   </main>
   <EmojiOverlay :new-emoji="lastEmoji" />
 </template>
@@ -82,6 +84,7 @@ import CountdownTransition from "@/components/page-layout/CountdownTransition.vu
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import PartyRankings from "@/components/game-ui/PartyRankings.vue";
+import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
@@ -288,7 +291,9 @@ watch(
   () => partyStore.roundResult,
   (newResult) => {
     if (newResult) {
-      soundStore.playSound(newResult === "correct" ? "partyCorrect" : "partyIncorrect");
+      soundStore.playSound(
+        newResult === "correct" ? "partyCorrect" : "partyIncorrect",
+      );
       if (timer.value > 0) {
         clearAllTimers();
       }
@@ -403,5 +408,14 @@ onUnmounted(() => {
 .dark {
   animation: flickerBlackout 4s ease-out forwards;
   transition: filter 0.3s ease-in-out;
+}
+
+.rankings-column {
+  display: grid;
+  height: 100%;
+}
+
+.powerup-info {
+  margin-top: auto;
 }
 </style>
