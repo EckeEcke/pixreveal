@@ -23,6 +23,7 @@ export type PartyStatePayload = {
   lightsOutByPlayerId?: string | null;
   lightsOutUsedBy?: Record<string, boolean>;
   xlzActiveForRoundIndex?: number | null;
+  xlzByPlayerId?: string | null;
   xlzUsedBy?: Record<string, boolean>;
   freezeUntilAt?: number | null;
   freezeByPlayerId?: string | null;

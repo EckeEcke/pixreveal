@@ -96,6 +96,7 @@ export const usePartyStore = defineStore("party", () => {
   let lightsOutTimeoutId: number | null = null;
 
   const xlzActiveForRoundIndex = ref<number | null>(null);
+  const xlzByPlayerId = ref<string | null>(null);
   const xlzUsedBy = ref<Record<string, boolean>>({});
 
   const freezeUntilAt = ref<number | null>(null);
@@ -212,8 +213,10 @@ export const usePartyStore = defineStore("party", () => {
     const hostId = String(channelStore.playerId || "host");
     xlzUsedBy.value = { ...xlzUsedBy.value, [hostId]: true };
     xlzActiveForRoundIndex.value = gameStore.currentRoundIndex;
+    xlzByPlayerId.value = hostId;
     channel.value.trigger("client-party-xlz", {
       roundIndex: gameStore.currentRoundIndex,
+      byPlayerId: hostId,
     });
     broadcastPartyState("xlz");
   };
@@ -314,6 +317,7 @@ export const usePartyStore = defineStore("party", () => {
     lightsOutUsedBy.value = {};
     answerStartedAt.value = null;
     xlzActiveForRoundIndex.value = null;
+    xlzByPlayerId.value = null;
     xlzUsedBy.value = {};
     clearFreezeTimeout();
     isFrozen.value = false;
@@ -339,6 +343,7 @@ export const usePartyStore = defineStore("party", () => {
     lightsOutByPlayerId: lightsOutByPlayerId.value,
     lightsOutUsedBy: lightsOutUsedBy.value,
     xlzActiveForRoundIndex: xlzActiveForRoundIndex.value,
+    xlzByPlayerId: xlzByPlayerId.value,
     xlzUsedBy: xlzUsedBy.value,
     freezeUntilAt: freezeUntilAt.value,
     freezeByPlayerId: freezeByPlayerId.value,
@@ -413,6 +418,7 @@ export const usePartyStore = defineStore("party", () => {
 
     lightsOutUsedBy.value = {};
     xlzActiveForRoundIndex.value = null;
+    xlzByPlayerId.value = null;
     xlzUsedBy.value = {};
     isFrozen.value = false;
     freezeUntilAt.value = null;
@@ -582,7 +588,7 @@ export const usePartyStore = defineStore("party", () => {
       players: players.value,
     });
     broadcastPartyState("game-over");
-    router.push("/gameover");
+    router.push("/gameover-party");
   };
 
   const setupEvents = () => {
@@ -839,6 +845,12 @@ export const usePartyStore = defineStore("party", () => {
           xlzActiveForRoundIndex.value = null;
         }
 
+        if (typeof state.xlzByPlayerId === "string") {
+          xlzByPlayerId.value = state.xlzByPlayerId;
+        } else if (state.xlzByPlayerId === null) {
+          xlzByPlayerId.value = null;
+        }
+
         if (state.xlzUsedBy && typeof state.xlzUsedBy === "object") {
           xlzUsedBy.value = state.xlzUsedBy;
         }
@@ -907,13 +919,18 @@ export const usePartyStore = defineStore("party", () => {
       },
     );
 
-    bindEvent("client-party-xlz", (data?: { roundIndex?: number }) => {
-      const roundIndex =
-        typeof data?.roundIndex === "number"
-          ? data.roundIndex
-          : gameStore.currentRoundIndex;
-      xlzActiveForRoundIndex.value = roundIndex;
-    });
+    bindEvent(
+      "client-party-xlz",
+      (data?: { roundIndex?: number; byPlayerId?: string | null }) => {
+        const roundIndex =
+          typeof data?.roundIndex === "number"
+            ? data.roundIndex
+            : gameStore.currentRoundIndex;
+        xlzActiveForRoundIndex.value = roundIndex;
+        xlzByPlayerId.value =
+          typeof data?.byPlayerId === "string" ? data.byPlayerId : null;
+      },
+    );
 
     bindEvent(
       "client-party-freeze",
@@ -958,8 +975,10 @@ export const usePartyStore = defineStore("party", () => {
         xlzUsedBy.value = { ...xlzUsedBy.value, [playerId]: true };
         incrementPlayerPowerupsUsed(playerId);
         xlzActiveForRoundIndex.value = gameStore.currentRoundIndex;
+        xlzByPlayerId.value = playerId;
         channel.value?.trigger("client-party-xlz", {
           roundIndex: gameStore.currentRoundIndex,
+          byPlayerId: playerId,
         });
         broadcastPartyState("xlz");
       },
@@ -983,7 +1002,7 @@ export const usePartyStore = defineStore("party", () => {
       players.value = data.players;
       gameStore.isGameOver = true;
       channelStore.setGameRunning(false);
-      router.push("/gameover");
+      router.push("/gameover-party");
     });
 
     if (!heartbeatIntervalId) {
@@ -1176,6 +1195,7 @@ export const usePartyStore = defineStore("party", () => {
     answerTimer = null;
     lightsOutByPlayerId.value = null;
     xlzActiveForRoundIndex.value = null;
+    xlzByPlayerId.value = null;
     xlzUsedBy.value = {};
     clearFreezeTimeout();
     isFrozen.value = false;
@@ -1220,6 +1240,7 @@ export const usePartyStore = defineStore("party", () => {
     lightsOutUsedByMe,
     triggerLightsOut,
     xlzActiveForRoundIndex,
+    xlzByPlayerId,
     xlzUsedBy,
     xlzUsedByMe,
     isXlzActive,

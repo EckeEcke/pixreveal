@@ -290,6 +290,23 @@ watch(
   },
 );
 
+let lastShuffleKey = "";
+watch(
+  [() => partyStore.xlzActiveForRoundIndex, () => partyStore.xlzByPlayerId],
+  ([roundIndex, byPlayerId]) => {
+    if (typeof roundIndex !== "number") {
+      lastShuffleKey = "";
+      return;
+    }
+    if (roundIndex !== gameStore.currentRoundIndex) return;
+    if (!byPlayerId || byPlayerId !== channelStore.playerId) return;
+    const key = `${roundIndex}|${byPlayerId}`;
+    if (key === lastShuffleKey) return;
+    lastShuffleKey = key;
+    soundStore.playSound("shuffle");
+  },
+);
+
 const handleBuzz = () => {
   if (partyStore.connectionStale) return;
   if (partyStore.isFrozen) return;

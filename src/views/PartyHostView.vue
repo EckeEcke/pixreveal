@@ -65,6 +65,7 @@
     </div>
   </main>
   <EmojiOverlay :new-emoji="lastEmoji" />
+  <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
 </template>
 
 <script setup lang="ts">
@@ -96,6 +97,7 @@ import {
   workerSetTimeout,
 } from "@/services/workerTimers";
 import EmojiOverlay from "@/components/game-ui/EmojiOverlay.vue";
+import FreezeBurstOverlay from "@/components/game-ui/FreezeBurstOverlay.vue";
 
 const gameStore = useGameStore();
 const configStore = useConfigStore();
@@ -203,6 +205,7 @@ watch(
     if (lastFreezeUntilAt === untilAt) return;
     lastFreezeUntilAt = untilAt;
     soundStore.playSound("freeze");
+    freezeBurstTrigger.value += 1;
   },
 );
 
@@ -218,6 +221,25 @@ watch(
     if (lastLightsOutUntilAt === untilAt) return;
     lastLightsOutUntilAt = untilAt;
     soundStore.playSound("electricity");
+  },
+);
+
+let lastXlzActiveForRoundIndex: number | null = null;
+let lastXlzByPlayerId: string | null = null;
+watch(
+  [() => partyStore.xlzActiveForRoundIndex, () => partyStore.xlzByPlayerId],
+  ([roundIndex, byPlayerId]) => {
+    if (typeof roundIndex !== "number") {
+      lastXlzActiveForRoundIndex = null;
+      lastXlzByPlayerId = null;
+      return;
+    }
+    if (roundIndex !== gameStore.currentRoundIndex) return;
+    if (lastXlzActiveForRoundIndex === roundIndex && lastXlzByPlayerId === byPlayerId)
+      return;
+    lastXlzActiveForRoundIndex = roundIndex;
+    lastXlzByPlayerId = typeof byPlayerId === "string" ? byPlayerId : null;
+    soundStore.playSound("shuffle");
   },
 );
 
@@ -278,6 +300,7 @@ const setupDrawing = () => {
 };
 
 const lastEmoji = ref("");
+const freezeBurstTrigger = ref(0);
 
 const handleIncomingEmoji = (emojiChar: string) => {
   lastEmoji.value = emojiChar;

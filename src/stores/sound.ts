@@ -17,6 +17,7 @@ import winnerSound from "@/assets/audio/winner.mp3";
 import partyOverSound from "@/assets/audio/party-over.mp3";
 import partyCorrectSound from "@/assets/audio/correct2.mp3";
 import partyIncorrectSound from "@/assets/audio/incorrect2.mp3";
+import shuffleSound from "@/assets/audio/shuffle.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -36,6 +37,7 @@ export const useSoundStore = defineStore("sound", () => {
     back: backSound,
     pop: popSound,
     freeze: freezeSound,
+    shuffle: shuffleSound,
     electricity: electricitySound,
     winner: winnerSound,
     party: partyOverSound,

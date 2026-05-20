@@ -94,6 +94,12 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/gameover-party",
+      name: "gameover-party",
+      component: () => import("@/views/GameOverPartyView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/lobby",
       name: "lobby",
       component: () => import("@/views/LobbyView.vue"),
@@ -144,7 +150,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const gameStore = useGameStore();
 
   const validPathsForGameOver = [
@@ -172,25 +178,30 @@ router.beforeEach((to, from, next) => {
     needRounds.includes(to.path) &&
     (!gameStore.rounds || gameStore.rounds.length <= 0)
   ) {
-    return next("/");
+    return "/";
   }
 
   if (to.path === "/daily" && useDailyStore().hasPlayedToday) {
-    return next("/");
-  }
-
-  if (to.path === "/gameover" && !validPathsForGameOver.includes(from.path)) {
-    return next("/");
+    return "/";
   }
 
   if (
-    (from.path === "/gameover" || from.path === "/gameover-daily") &&
-    (validPathsForGameOver.includes(to.path) || to.path === "/daily")
+    (to.path === "/gameover" || to.path === "/gameover-party") &&
+    !validPathsForGameOver.includes(from.path)
   ) {
-    return next("/");
+    return "/";
   }
 
-  next();
+  if (
+    (from.path === "/gameover" ||
+      from.path === "/gameover-daily" ||
+      from.path === "/gameover-party") &&
+    (validPathsForGameOver.includes(to.path) || to.path === "/daily")
+  ) {
+    return "/";
+  }
+
+  return true;
 });
 
 router.onError((err: any) => {

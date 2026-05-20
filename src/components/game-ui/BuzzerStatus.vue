@@ -19,9 +19,17 @@
 		            <span class="green-text">Double the points</span>, <span class="red-text">double the loss</span>!
 		          </template>
 		          <template v-else>
-		            THINK YOU KNOW THE ANSWER?
-		            <br />
-		            HIT THE <span class="pink-text">BUZZ</span>!
+                <template v-if="leaderGapActive">
+                  {{ leaderGapMessageBefore }}
+                  <span class="player-highlight">{{ leaderUsername?.toUpperCase?.() || "PLAYER" }}</span>
+                  {{ leaderGapMessageAfter }}
+                </template>
+                <template v-else>
+                  {{ openPrompt.line1 }}
+                  <br />
+                  {{ openPrompt.line2Before
+                  }}<span class="pink-text">BUZZ</span>{{ openPrompt.line2After }}
+                </template>
 		          </template>
 	        </div>
 
@@ -100,17 +108,17 @@
 
       <Transition name="fade">
         <div v-if="partyStore.isLightsOut" class="powerup-text">
-          WHAT?! I CAN'T SEE! Oh..
-            <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
-          turned the lights off
+          {{ lightsOutMessageBefore }}
+          <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
+          {{ lightsOutMessageAfter }}
           </div>
         </Transition>
 
         <Transition name="fade">
           <div v-if="isFreezeActive" class="powerup-text">
-            STONE COLD!
+            {{ freezeMessageBefore }}
             <span class="player-highlight">{{ freezeActorNameUpper }}</span>
-            used the freeze powerup.
+            {{ freezeMessageAfter }}
           </div>
         </Transition>
 	    </div>
@@ -138,6 +146,46 @@ const activePlayerName = computed(
 const activePlayerNameUpper = computed(() =>
   activePlayerName.value.toUpperCase(),
 );
+
+const openPromptTemplates = [
+  {
+    line1: "THINK YOU KNOW THE ANSWER?",
+    line2Before: "HIT THE ",
+    line2After: "!",
+  },
+  {
+    line1: "READY TO MAKE A GUESS?",
+    line2Before: "SMASH THE ",
+    line2After: "!",
+  },
+  {
+    line1: "GOT IT FIGURED OUT?",
+    line2Before: "PRESS ",
+    line2After: "!",
+  },
+  {
+    line1: "FEELING CONFIDENT?",
+    line2Before: "GO FOR THE ",
+    line2After: "!",
+  },
+] as const;
+
+const openPromptIndex = ref(0);
+watch(
+  () => partyStore.buzzerState,
+  (next, prev) => {
+    if (next !== "open") return;
+    if (prev === "open") return;
+    openPromptIndex.value = (openPromptIndex.value + 1) % openPromptTemplates.length;
+  },
+);
+
+const openPrompt = computed(() => {
+  return (
+    openPromptTemplates[openPromptIndex.value % openPromptTemplates.length] ??
+    openPromptTemplates[0]
+  );
+});
 
 const leaderTemplates = [
   "Move over! [New Leader] just took the lead!",
@@ -174,6 +222,53 @@ const leaderId = computed(() => leaderWatchSnapshot.value[0]?.playerId || null);
 const leaderUsername = computed(
   () => leaderWatchSnapshot.value[0]?.username || null,
 );
+
+const leaderGapTemplates = [
+  "Look at them go! [Player] is leaving everyone else in the dust!",
+  "[Player] is on absolute fire! The gap is getting massive!",
+  "Is anyone even trying to catch up? [Player] is playing in a league of their own right now!",
+  "Unbelievable pace! [Player] is sprinting ahead and looking unstoppable!",
+] as const;
+
+const leaderGapTemplateIndex = ref(0);
+const leaderGapTemplate = ref<string | null>(null);
+let lastLeaderGapKey = "";
+
+const leaderGapActive = computed(() => {
+  const first = partyPlayersByPoints.value[0];
+  const second = partyPlayersByPoints.value[1];
+  const firstPoints = Number(first?.points ?? 0);
+  const secondPoints = Number(second?.points ?? 0);
+  return firstPoints - secondPoints >= 3;
+});
+
+watch(
+  [() => partyStore.buzzerState, leaderId, leaderGapActive],
+  ([buzzerState, currentLeaderId, gapActive]) => {
+    if (buzzerState !== "open") return;
+    if (!gapActive) return;
+    if (!currentLeaderId) return;
+    const key = `${currentLeaderId}|${gameStore.currentRoundIndex}`;
+    if (key === lastLeaderGapKey) return;
+    lastLeaderGapKey = key;
+    const template =
+      leaderGapTemplates[leaderGapTemplateIndex.value % leaderGapTemplates.length] ??
+      leaderGapTemplates[0];
+    leaderGapTemplateIndex.value =
+      (leaderGapTemplateIndex.value + 1) % leaderGapTemplates.length;
+    leaderGapTemplate.value = template;
+  },
+);
+
+const leaderGapMessageBefore = computed(() => {
+  const t = leaderGapTemplate.value || leaderGapTemplates[0];
+  return t.split("[Player]")[0] || "";
+});
+
+const leaderGapMessageAfter = computed(() => {
+  const t = leaderGapTemplate.value || leaderGapTemplates[0];
+  return t.split("[Player]")[1] || "";
+});
 
 watch(
   leaderWatchSnapshot,
@@ -235,9 +330,86 @@ const findUsernameById = (playerId: string | null) => {
 
 const isFreezeActive = computed(() => typeof partyStore.freezeUntilAt === "number");
 
+const freezeTemplates = [
+  "STONE COLD! [Player] used the freeze powerup.",
+  "ICE ICE BABY! [Player] hit the freeze powerup.",
+  "BRRR... [Player] just froze everyone.",
+  "CHILL OUT! [Player] triggered freeze.",
+] as const;
+
+const freezeTemplateIndex = ref(0);
+const freezeTemplate = ref<string | null>(null);
+let lastFreezeUntilAt: number | null = null;
+watch(
+  () => partyStore.freezeUntilAt,
+  (untilAt) => {
+    if (typeof untilAt !== "number") {
+      lastFreezeUntilAt = null;
+      return;
+    }
+    if (untilAt <= Date.now()) return;
+    if (lastFreezeUntilAt === untilAt) return;
+    lastFreezeUntilAt = untilAt;
+    const template =
+      freezeTemplates[freezeTemplateIndex.value % freezeTemplates.length] ??
+      freezeTemplates[0];
+    freezeTemplateIndex.value = (freezeTemplateIndex.value + 1) % freezeTemplates.length;
+    freezeTemplate.value = template;
+  },
+);
+
+const freezeMessageBefore = computed(() => {
+  const t = freezeTemplate.value || freezeTemplates[0];
+  return t.split("[Player]")[0] || "";
+});
+
+const freezeMessageAfter = computed(() => {
+  const t = freezeTemplate.value || freezeTemplates[0];
+  return t.split("[Player]")[1] || "";
+});
+
 const freezeActorNameUpper = computed(() => {
   const username = findUsernameById(partyStore.freezeByPlayerId);
   return (username || "HOST").toUpperCase();
+});
+
+const lightsOutTemplates = [
+  "WHAT?! I CAN'T SEE! Oh.. [Player] turned the lights off",
+  "BLACKOUT! [Player] just killed the lights",
+  "DID THE LIGHTS JUST GO OUT? [Player] did that",
+  "NO LIGHTS, NO MERCY. [Player] flipped the switch",
+] as const;
+
+const lightsOutTemplateIndex = ref(0);
+const lightsOutTemplate = ref<string | null>(null);
+let lastLightsOutUntilAt: number | null = null;
+watch(
+  () => (partyStore as any).lightsOutUntilAt as number | null | undefined,
+  (untilAt) => {
+    if (typeof untilAt !== "number") {
+      lastLightsOutUntilAt = null;
+      return;
+    }
+    if (untilAt <= Date.now()) return;
+    if (lastLightsOutUntilAt === untilAt) return;
+    lastLightsOutUntilAt = untilAt;
+    const template =
+      lightsOutTemplates[lightsOutTemplateIndex.value % lightsOutTemplates.length] ??
+      lightsOutTemplates[0];
+    lightsOutTemplateIndex.value =
+      (lightsOutTemplateIndex.value + 1) % lightsOutTemplates.length;
+    lightsOutTemplate.value = template;
+  },
+);
+
+const lightsOutMessageBefore = computed(() => {
+  const t = lightsOutTemplate.value || lightsOutTemplates[0];
+  return t.split("[Player]")[0] || "";
+});
+
+const lightsOutMessageAfter = computed(() => {
+  const t = lightsOutTemplate.value || lightsOutTemplates[0];
+  return t.split("[Player]")[1] || "";
 });
 
 const lightsOutActorNameUpper = computed(() => {
@@ -330,6 +502,7 @@ const optionsForPrompt = computed(() => {
   align-items: start;
   gap: 16px;
   width: 100%;
+  max-width: 100%;
   margin-top: 16px;
   @media(min-width: 576px) {
     grid-template-columns: 80px auto;
@@ -375,6 +548,8 @@ const optionsForPrompt = computed(() => {
 .status-pill.answering {
   border: 2px solid var(--neon-blue);
   color: rgba(255, 255, 255, 0.85);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .status-pill.correct {
@@ -401,7 +576,7 @@ const optionsForPrompt = computed(() => {
 .prompt-option {
   color: var(--opt-color);
   text-shadow: 0 0 10px var(--opt-glow);
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .answer-highlight {

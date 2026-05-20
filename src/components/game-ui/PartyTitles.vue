@@ -10,13 +10,16 @@
         <div class="message">
           {{ currentSlide.message }}
         </div>
-        <div v-if="currentSlide.playerNameUpper" class="who">
-          <div
-            v-if="typeof currentSlide.avatarIndex === 'number'"
-            class="mini-avatar"
-            :style="avatarStyleFor(currentSlide.avatarIndex)"
-          />
-          <span class="player">{{ currentSlide.playerNameUpper }}</span>
+        <div v-if="currentSlide.players?.length" class="who">
+          <div class="mini-avatars">
+            <div
+              v-for="p in currentSlide.players"
+              :key="p.playerId"
+              class="mini-avatar"
+              :style="avatarStyleFor(p.avatarIndex)"
+            />
+          </div>
+          <span class="player">{{ currentSlide.playerNamesUpper }}</span>
         </div>
       </div>
     </Transition>
@@ -84,13 +87,24 @@ type Slide = {
   emoji: string;
   title: string;
   message: string;
-  playerId: string;
-  playerNameUpper: string;
-  avatarIndex?: number;
+  players: Array<{
+    playerId: string;
+    playerNameUpper: string;
+    avatarIndex: number;
+  }>;
+  playerNamesUpper: string;
 };
 
 const slides = computed<Slide[]>(() => {
-  const list: Slide[] = [];
+  const raw: Array<{
+    emoji: string;
+    title: string;
+    message: string;
+    playerId: string;
+    playerNameUpper: string;
+    avatarIndex: number;
+  }> = [];
+
   const players = props.players || [];
   const maxPowerups = maxPowerupsUsed.value;
   const maxEmojis = maxEmojisSent.value;
@@ -106,8 +120,7 @@ const slides = computed<Slide[]>(() => {
     const isDecrypter = Boolean(p.isDecrypter);
 
     if (correct > 0 && wrong === 0) {
-      list.push({
-        key: `${p.playerId}-perfectionist`,
+      raw.push({
         emoji: "🎯",
         title: "Perfect",
         message:
@@ -119,11 +132,11 @@ const slides = computed<Slide[]>(() => {
     }
 
     if (maxPowerups > 0 && powerups === maxPowerups) {
-      list.push({
-        key: `${p.playerId}-saboteur`,
+      raw.push({
         emoji: "⚡",
         title: "Saboteur",
-        message: "Some people just want to watch the world burn. Thanks for the chaos!",
+        message:
+          "Some people just want to watch the world burn. Thanks for the chaos!",
         playerId: p.playerId,
         playerNameUpper: nameUpper,
         avatarIndex: p.avatarIndex,
@@ -131,8 +144,7 @@ const slides = computed<Slide[]>(() => {
     }
 
     if (powerups === 0) {
-      list.push({
-        key: `${p.playerId}-pacifist`,
+      raw.push({
         emoji: "🕊️",
         title: "Pacifist",
         message:
@@ -143,12 +155,12 @@ const slides = computed<Slide[]>(() => {
       });
     }
 
-    if (correct === 0 && (wrong > 0 || powerups >= 0)) {
-      list.push({
-        key: `${p.playerId}-beginner`,
+    if (correct === 0 && wrong > 0) {
+      raw.push({
         emoji: "🥚",
         title: "Beginner",
-        message: "Your confidence was inspiring. Your guessing skills? Not so much.",
+        message:
+          "Your confidence was inspiring. Your guessing skills? Not so much.",
         playerId: p.playerId,
         playerNameUpper: nameUpper,
         avatarIndex: p.avatarIndex,
@@ -156,8 +168,7 @@ const slides = computed<Slide[]>(() => {
     }
 
     if (emojis === 0) {
-      list.push({
-        key: `${p.playerId}-mime`,
+      raw.push({
         emoji: "🤫",
         title: "The Mime",
         message:
@@ -169,8 +180,7 @@ const slides = computed<Slide[]>(() => {
     }
 
     if (maxEmojis >= 10 && emojis === maxEmojis) {
-      list.push({
-        key: `${p.playerId}-spammer`,
+      raw.push({
         emoji: "💬",
         title: "Spammer",
         message:
@@ -186,8 +196,7 @@ const slides = computed<Slide[]>(() => {
       typeof quickest === "number" &&
       quickest === minQuick
     ) {
-      list.push({
-        key: `${p.playerId}-speedy`,
+      raw.push({
         emoji: "⚡",
         title: "Speedy",
         message:
@@ -199,8 +208,7 @@ const slides = computed<Slide[]>(() => {
     }
 
     if (isDecrypter) {
-      list.push({
-        key: `${p.playerId}-decrypter`,
+      raw.push({
         emoji: "🧠",
         title: "Decrypter",
         message:
@@ -212,9 +220,44 @@ const slides = computed<Slide[]>(() => {
     }
   }
 
-  return list;
-});
+  const groups = new Map<string, typeof raw>();
+  for (const s of raw) {
+    const groupKey = `${s.emoji}||${s.title}||${s.message}`;
+    const list = groups.get(groupKey) || [];
+    list.push(s);
+    groups.set(groupKey, list);
+  }
 
+  const result: Slide[] = [];
+  for (const [groupKey, items] of groups.entries()) {
+    const first = items[0];
+    if (!first) continue;
+
+    const slidePlayers = [...items]
+      .sort((a, b) => a.playerNameUpper.localeCompare(b.playerNameUpper))
+      .map((p) => ({
+        playerId: p.playerId,
+        playerNameUpper: p.playerNameUpper,
+        avatarIndex: p.avatarIndex,
+      }));
+
+    const playerNamesUpper = slidePlayers
+      .map((p) => p.playerNameUpper)
+      .join(" & ");
+    const playersKey = slidePlayers.map((p) => p.playerId).sort().join("-");
+
+    result.push({
+      key: `${groupKey}||${playersKey}`,
+      emoji: first.emoji,
+      title: first.title,
+      message: first.message,
+      players: slidePlayers,
+      playerNamesUpper,
+    });
+  }
+
+  return result;
+});
 const emojiStatsSlide = computed<Slide | null>(() => {
   const emojis = partyStore.emojiStatistics || [];
   const total = emojis.length;
@@ -240,8 +283,8 @@ const emojiStatsSlide = computed<Slide | null>(() => {
     emoji: "📊",
     title: "Emoji Stats",
     message: `Total emojis sent: ${total}\nMost popular emoji: ${mostPopular || "—"}`,
-    playerId: "emoji-stats",
-    playerNameUpper: "",
+    players: [],
+    playerNamesUpper: "",
   };
 });
 
@@ -360,6 +403,12 @@ onBeforeUnmount(() => stop());
   gap: 10px;
 }
 
+.mini-avatars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .mini-avatar {
   width: 26px;
   height: 26px;
@@ -372,4 +421,3 @@ onBeforeUnmount(() => stop());
   color: #fff;
 }
 </style>
-
