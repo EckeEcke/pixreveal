@@ -396,17 +396,17 @@ const handleTimeoutAnswer = () => {
 
 const emojis = [
   "🤔",
-  "💩",
+  "😠",
   "😆",
   "😭",
   "👏🏻",
   "👍🏻",
   "👎🏻",
-  "😠",
+  "💩",
   "♥️",
   "⏱️",
-  "❌",
   "✅",
+  "❌",
 ];
 const emojiCooldown = ref(false);
 const EMOJI_COOLDOWN_MS = 2000;

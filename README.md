@@ -2,7 +2,7 @@
 
 PixReveal is a fast-paced pixel art guessing game and the perfect Jackbox alternative for your next party. 
 Watch the image reveal pixel by pixel on the big screen, use your phones as controllers, and compete with your friends!
-Play live at: https://pixreveal.com
+Play live at: https://www.pixreveal.com
 
 <a href="https://www.youtube.com/watch?v=YQl5jOqm2n0">
   <img src="https://img.youtube.com/vi/YQl5jOqm2n0/maxresdefault.jpg" alt="PixReveal Trailer" width="450">

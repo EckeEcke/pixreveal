@@ -53,7 +53,7 @@ const props = defineProps<{
 const partyStore = usePartyStore();
 
 const slideMs = computed(() =>
-  props.slideMs && props.slideMs > 0 ? props.slideMs : 3000,
+  props.slideMs && props.slideMs > 0 ? props.slideMs : 4000,
 );
 
 const maxPowerupsUsed = computed(() => {
