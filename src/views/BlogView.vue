@@ -1,6 +1,6 @@
 <template>
   <ContentPage>
-    <h2 class="logo">PIXREVEAL <span>UPDATES</span> & <span>BLOG</span></h2>
+    <h1 class="logo">PIXREVEAL <span>UPDATES</span> & <span>BLOG</span></h1>
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
@@ -192,35 +192,59 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 .log-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 16px;
   margin-top: 32px;
   overflow-y: auto;
 }
 
 .log-card {
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgb(from var(--primary) r g b / 0.4);
+  padding: 0 0 16px;
+  border-bottom: 1px solid rgb(from var(--primary) r g b / 0.25);
+  box-sizing: border-box;
+
   p {
-    line-height: 1.4;
+    margin: 0;
+    line-height: 1.5;
+    opacity: 0.9;
   }
+}
+
+.logo {
+  font-family: inherit;
+  text-align: start;
 }
 
 .log-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   font-family: monospace;
 }
 
 .date {
-  opacity: 0.5;
+  opacity: 0.65;
   font-size: 0.9rem;
 }
 
 .log-title {
-  margin: 0 0 16px 0;
+  margin: 0 0 10px 0;
   letter-spacing: 1px;
   font-size: 1.4rem;
+  text-transform: uppercase;
+}
+
+@media (min-width: 576px) {
+  .log-grid {
+    gap: 24px;
+  }
+
+  .log-card {
+    padding: 32px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+  }
 }
 
 .btn-primary {

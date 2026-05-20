@@ -1,6 +1,6 @@
 <template>
   <ContentPage>
-    <h2 class="logo">ABOUT PIX<span>REVEAL</span></h2>
+    <h1 class="logo">ABOUT PIX<span>REVEAL</span></h1>
 
     <section class="about-section">
       <p>
@@ -96,6 +96,11 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 </script>
 
 <style scoped>
+.logo {
+  font-family: inherit;
+  text-align: start;
+}
+
 a {
   font-size: 24px;
   margin-right: 8px;
