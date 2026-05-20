@@ -15,9 +15,9 @@
       <button
         class="internal-link"
         data-sfx="click"
-        @click="router.push('/updates')"
+        @click="router.push('/blog')"
       >
-        <Icon icon="pixel:bullhorn" /> UPDATES
+        <Icon icon="pixel:bullhorn" /> BLOG
       </button>
       <button
         class="internal-link"

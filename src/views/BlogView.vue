@@ -1,6 +1,6 @@
 <template>
   <ContentPage>
-    <h2 class="logo">UPDATES</h2>
+    <h2 class="logo">PIXREVEAL <span>UPDATES</span> & <span>BLOG</span></h2>
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">

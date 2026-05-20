@@ -124,9 +124,9 @@ const router = createRouter({
       meta: { robots: "index, follow" },
     },
     {
-      path: "/updates",
-      name: "updates",
-      component: () => import("@/views/DevlogView.vue"),
+      path: "/blog",
+      name: "blog",
+      component: () => import("@/views/BlogView.vue"),
       meta: { robots: "index, follow" },
     },
     {
