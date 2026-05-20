@@ -75,7 +75,6 @@ import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
-import { useDailyStore } from "@/stores/daily";
 
 const router = useRouter();
 const route = useRoute();
@@ -83,7 +82,6 @@ const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
-const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 const showJoinModal = ref(false);
@@ -238,9 +236,6 @@ h2 {
   grid-template-columns: 1fr;
   gap: 32px;
   padding: 16px 0;
-  @media (min-width: 575px) {
-    padding: 32px;
-  }
 }
 
 .order-1 {

@@ -216,9 +216,6 @@ h1 {
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 16px 0;
-  @media (min-width: 575px) {
-    padding: 32px;
-  }
   h2 {
     color: var(--white);
     text-align: center;
