@@ -16,7 +16,8 @@ const router = createRouter({
       meta: {
         robots: "index, follow",
         title: "PixReveal - Guess the Pixel Art",
-        description: "The ultimate web-based pixel art guessing game.",
+        description:
+          "Guess pixel art drawings in real-time with your friends. Host a local party game, join online lobbies, or solve the daily puzzle directly in your browser.",
       },
     },
     {
