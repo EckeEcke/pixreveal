@@ -24,10 +24,39 @@
             </button>
           </div>
 
-          <div v-if="selectedRole === 'host'" class="host-info">
-            <InfoBox
-              :message="'The party mode is displayed on the host device. PC/Laptop recommended for hosting. Players can join via smartphone to buzz and answer.'"
-            />
+          <div v-if="selectedRole === 'host'" class="host-settings">
+            <div class="rounds-selection">
+              <label class="selection-label">HOW MANY ROUNDS</label>
+              <div class="radio-group">
+                <label v-for="amount in [5, 10, 15, 20]" :key="amount" class="radio-item">
+                  <input
+                    type="radio"
+                    name="rounds"
+                    :value="amount"
+                    v-model="configStore.maxRounds"
+                    :disabled="configStore.filteredDrawings.length < amount * 4"
+                    @change="soundStore.playSound('click')"
+                  />
+                  <span class="radio-button">{{ amount }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="rounds-selection">
+              <label class="selection-label">SET ROUND LENGTH</label>
+              <div class="radio-group">
+                <label v-for="duration in [5, 10, 15, 20]" :key="duration" class="radio-item">
+                  <input
+                    type="radio"
+                    name="duration"
+                    :value="duration"
+                    v-model="configStore.revealTime"
+                    @change="soundStore.playSound('click')"
+                  />
+                  <span class="radio-button">{{ duration }}</span>
+                </label>
+              </div>
+            </div>
           </div>
 
           <div v-if="selectedRole !== 'host'" class="setup-section">
@@ -102,7 +131,6 @@ import { useChannelStore } from "@/stores/channel";
 import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
-import InfoBox from "@/components/game-ui/InfoBox.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
@@ -170,6 +198,8 @@ const hostGame = () => {
     username: playerStore.playerName,
     avatarIndex: playerStore.avatarIndex,
     isHost: true,
+    rounds: configStore.maxRounds,
+    revealTime: configStore.revealTime,
   });
 };
 
@@ -235,10 +265,85 @@ h2 {
   margin-bottom: 32px;
 }
 
+.start-btn {
+  margin-top: 32px;
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+}
+
+.host-settings {
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.rounds-selection {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.selection-label {
+  font-size: 0.8rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.radio-group {
+  display: flex;
+  gap: 10px;
+}
+
+.radio-item {
+  flex: 1;
+  cursor: pointer;
+}
+
+.radio-item input {
+  display: none;
+}
+
+.radio-button {
+  display: block;
+  text-align: center;
+  padding: 10px 0;
+  border: 2px solid var(--border-color);
+  color: #fff;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.radio-item:hover .radio-button {
+  border-color: #666;
+}
+
+.radio-item input:checked + .radio-button {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  transform: translateY(-2px);
+}
+
+.radio-item input:disabled + .radio-button {
+  cursor: not-allowed;
+  opacity: 0.2;
+  filter: grayscale(1);
+  border-style: dotted;
+  transform: none;
+  box-shadow: none;
+}
+
+.radio-item:has(input:disabled) {
+  cursor: not-allowed;
 }
 
 @media (min-width: 1024px) {
