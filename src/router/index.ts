@@ -13,19 +13,33 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "PixReveal - Guess the Pixel Art",
+        description: "The ultimate web-based pixel art guessing game.",
+      },
     },
     {
       path: "/editor",
       name: "editor",
       component: () => import("@/views/EditorView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "Editor - PixReveal",
+        description:
+          "Create your own pixel art drawings and contribute to the official PixReveal game gallery.",
+      },
     },
     {
       path: "/singleplayer",
       name: "singleplayer",
       component: () => import("@/views/SinglePlayerView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "Singleplayer Modes - PixReveal",
+        description:
+          "Test your skills in 5 singleplayer modes. Race against time or beat the daily puzzle challenge.",
+      },
     },
     {
       path: "/classic",
@@ -127,31 +141,56 @@ const router = createRouter({
       path: "/play-party",
       name: "play-party",
       component: () => import("@/views/PlayPartyView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "Play Local Party Game - PixReveal",
+        description:
+          "Connect your smartphones, set up your room, and get ready for a local multiplayer pixel art showdown.",
+      },
     },
     {
       path: "/play-online",
       name: "play-online",
       component: () => import("@/views/PlayOnlineView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "Play Online Multiplayer - PixReveal",
+        description:
+          "Join or host online custom lobbies to compete against your friends worldwide.",
+      },
     },
     {
       path: "/free-jackbox-alternative",
       name: "free-jackbox-alternative",
       component: () => import("@/views/FreeJackboxAlternativeView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "Free Jackbox Alternative - Local Party Multiplayer | PixReveal",
+        description:
+          "Turn your smartphones into controllers! Host PixReveal on your TV or laptop and play the ultimate party game with your friends.",
+      },
     },
     {
       path: "/about",
       name: "about",
       component: () => import("@/views/AboutView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "About PixReveal",
+        description:
+          "Learn more about the development, the roadmap, and the features behind PixReveal.",
+      },
     },
     {
       path: "/blog",
       name: "blog",
       component: () => import("@/views/BlogView.vue"),
-      meta: { robots: "index, follow" },
+      meta: {
+        robots: "index, follow",
+        title: "PixReveal Blog - Updates & News",
+        description:
+          "Stay up to date with the latest features, patch notes, and multiplayer announcements from PixReveal.",
+      },
     },
     {
       path: "/user-gallery",
@@ -176,10 +215,16 @@ router.beforeEach((to, from) => {
     const inviteMode = String(to.query?.mode || "");
     const inviteRole = String(to.query?.role || "join");
     if (inviteMode === "party") {
-      return { path: "/play-party", query: { id: to.query.id, role: inviteRole } };
+      return {
+        path: "/play-party",
+        query: { id: to.query.id, role: inviteRole },
+      };
     }
     if (inviteMode === "online") {
-      return { path: "/play-online", query: { id: to.query.id, role: inviteRole } };
+      return {
+        path: "/play-online",
+        query: { id: to.query.id, role: inviteRole },
+      };
     }
   }
 
