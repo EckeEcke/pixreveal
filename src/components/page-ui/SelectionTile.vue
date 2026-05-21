@@ -3,7 +3,7 @@
     class="neon-btn"
     :class="{ shiny: isShiny }"
     :style="{ '--btn-color': btnColor }"
-    @click="btnFunction"
+    @click="handleClick"
     @mouseenter="soundStore.handleHoverSound"
     :disabled="disabled"
   >
@@ -29,21 +29,22 @@
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 
-const props = defineProps({
-  iconName: String,
-  btnFunction: Function,
-  btnText: String,
-  subTitle: String,
-  btnColor: {
-    type: String,
-    default: "var(--primary)",
-  },
-  disabled: Boolean,
-  isShiny: Boolean,
-  maxPlayers: Number,
-});
+const props = defineProps<{
+  iconName?: string;
+  btnFunction?: (event: MouseEvent) => void;
+  btnText?: string;
+  subTitle?: string;
+  btnColor?: string;
+  disabled?: boolean;
+  isShiny?: boolean;
+  maxPlayers?: number;
+}>();
 
 const soundStore = useSoundStore();
+
+const handleClick = (event: MouseEvent) => {
+  props.btnFunction?.(event);
+};
 </script>
 
 <style scoped>
