@@ -236,19 +236,6 @@ const joinGame = () => {
   padding: 32px;
 }
 
-.card::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 30%;
-  height: 300%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(30deg);
-  animation: shine 4s infinite;
-  pointer-events: none;
-}
-
 .pre-headline {
   color: var(--primary);
 }
