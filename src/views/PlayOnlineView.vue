@@ -1,0 +1,375 @@
+<template>
+  <main class="page">
+    <LoadingOverlay :show="channelStore.isLoading" />
+    <div class="setup-card card">
+      <span class="pre-headline">MODE</span>
+      <h2>ONLINE GAME</h2>
+
+      <div class="role-toggle">
+        <button
+          :class="{ active: selectedRole === 'join' }"
+          @click="setRole('join')"
+          data-sfx="click"
+        >
+          JOIN
+        </button>
+        <button
+          :class="{ active: selectedRole === 'host' }"
+          @click="setRole('host')"
+          data-sfx="click"
+        >
+          HOST
+        </button>
+      </div>
+
+      <div v-if="selectedRole === 'host'" class="host-info">
+        <InfoBox
+          :message="
+            'Host an online game and invite friends via link or room id to play.'
+          "
+        />
+      </div>
+
+      <div class="setup-section">
+        <h3>SET YOUR NAME AND AVATAR</h3>
+        <div class="player-info-wrapper">
+          <div
+            class="player-avatar"
+            :style="avatarStyle"
+            @click="showAvatarModal = true"
+          >
+            <Icon icon="pixel:pencil" class="edit-badge" />
+          </div>
+          <div class="player-name" @click="showAvatarModal = true">
+            <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
+            <span class="info-text">Tap to change</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        v-if="selectedRole === 'host'"
+        class="start-btn"
+        data-sfx="click"
+        @click="hostGame"
+      >
+        HOST GAME
+      </button>
+
+      <div v-else class="join-container">
+        <h3>ENTER ROOM ID TO JOIN A GAME</h3>
+        <div class="join-terminal">
+          <input
+            v-model="joinRoomId"
+            placeholder="Enter room ID"
+            :maxlength="ROOM_ID_LENGTH"
+            autocapitalize="on"
+            class="terminal-input"
+          />
+          <button
+            class="terminal-btn"
+            :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
+            data-sfx="click"
+            @click="joinGame"
+          >
+            JOIN
+          </button>
+        </div>
+      </div>
+
+      <PlayerEditModal
+        v-if="showAvatarModal"
+        @btn-click="showAvatarModal = false"
+        @close="showAvatarModal = false"
+      />
+    </div>
+  </main>
+</template>
+
+<script setup>
+import { computed, onMounted, ref, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import { usePlayerStore } from "@/stores/player";
+import { useSoundStore } from "@/stores/sound";
+import { useGameStore } from "@/stores/game";
+import { useConfigStore } from "@/stores/config";
+import { useChannelStore } from "@/stores/channel";
+import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
+import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
+import InfoBox from "@/components/game-ui/InfoBox.vue";
+import { ROOM_ID_LENGTH } from "@/utils/crypto";
+import { useRoute } from "vue-router";
+
+const showAvatarModal = ref(false);
+
+const playerStore = usePlayerStore();
+const configStore = useConfigStore();
+const soundStore = useSoundStore();
+const channelStore = useChannelStore();
+const { prepareGame } = useGameStore();
+const route = useRoute();
+
+const joinRoomId = ref("");
+const selectedRole = ref("join");
+
+const setRole = (role) => {
+  selectedRole.value = role;
+  channelStore.isHost = role === "host";
+};
+
+onMounted(() => {
+  channelStore.setMode("regular");
+});
+
+watch(
+  () => route.query.id,
+  (value) => {
+    if (typeof value === "string") joinRoomId.value = value;
+  },
+  { immediate: true },
+);
+
+watch(
+  () => route.query.role,
+  (value) => {
+    if (value === "host" || value === "join") setRole(value);
+  },
+  { immediate: true },
+);
+
+const avatarStyle = computed(() => {
+  const index = playerStore.avatarIndex || 0;
+  const col = index % 6;
+  const row = Math.floor(index / 6);
+  return {
+    backgroundImage: `url(${avatarSpriteSheet})`,
+    backgroundPosition: `${col * 20}% ${row * 20}%`,
+    backgroundSize: "600%",
+    imageRendering: "pixelated",
+  };
+});
+
+const hostGame = () => {
+  channelStore.setMode("regular");
+  soundStore.playSound("click");
+  const playerId = playerStore.controllerId;
+  channelStore.playerId = playerId;
+  channelStore.isLoading = true;
+
+  channelStore.loadingText = "CREATING ONLINE GAME...";
+  prepareGame(configStore.revealTime);
+  channelStore.hostSession({
+    playerId,
+    username: playerStore.playerName,
+    avatarIndex: playerStore.avatarIndex,
+    isHost: true,
+    rounds: configStore.maxRounds,
+    revealTime: configStore.revealTime,
+  });
+};
+
+const joinGame = () => {
+  if (!joinRoomId.value) return;
+  channelStore.setMode("regular");
+  soundStore.playSound("click");
+  const playerId = playerStore.controllerId;
+  channelStore.playerId = playerId;
+  channelStore.isLoading = true;
+  channelStore.loadingText = "JOINING...";
+  channelStore.joinSession(
+    {
+      playerId,
+      username: playerStore.playerName,
+      avatarIndex: playerStore.avatarIndex,
+      isHost: false,
+    },
+    joinRoomId.value.toUpperCase().trim(),
+  );
+};
+</script>
+
+<style scoped>
+.page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  
+}
+
+.card {
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  backdrop-filter: blur(20px);
+  background: var(--card-bg);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  padding: 32px;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  animation: shine 4s infinite;
+  pointer-events: none;
+}
+
+.pre-headline {
+  color: var(--primary);
+}
+h2 {
+  margin-top: 0;
+  margin-bottom: 32px;
+}
+
+.join-terminal {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 8px;
+}
+
+.terminal-input {
+  background: transparent;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  color: #fff;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 20px;
+  outline: none;
+}
+
+.terminal-btn {
+  background: var(--primary);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 900;
+  animation: pulse 3s infinite;
+}
+
+.terminal-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.terminal-btn:not(:disabled):hover {
+  background: #fff;
+  box-shadow: -5px 0 15px var(--primary);
+}
+
+.setup-section {
+  margin: 48px 0;
+}
+
+.host-info {
+  margin: 32px 0;
+}
+
+.player-info-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.player-avatar {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  background-color: #2d3748;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.player-info-wrapper:hover .player-avatar {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.edit-badge {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  background: var(--primary);
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 18px;
+  color: white;
+  animation: pulse 3s infinite;
+}
+
+.player-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  align-items: flex-start;
+  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  .info-text {
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.7;
+  }
+}
+
+.role-toggle {
+  display: flex;
+  background: #111;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  padding: 3px;
+  gap: 3px;
+}
+
+.role-toggle button {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-toggle button:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.role-toggle button.active {
+  background: var(--primary);
+  color: #000;
+  font-size: 16px;
+  box-shadow: none;
+  transform: none;
+}
+</style>

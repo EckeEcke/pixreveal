@@ -5,27 +5,22 @@
       <button class="internal-link" data-sfx="click" @click="openManual">
         <Icon icon="pixel:book" /> HOW TO PLAY
       </button>
-      <button
-        class="internal-link"
-        data-sfx="click"
-        @click="router.push('/about')"
-      >
+      <router-link class="internal-link" data-sfx="click" to="/about">
         <Icon icon="pixel:info-circle" /> ABOUT
-      </button>
-      <button
+      </router-link>
+      <router-link
         class="internal-link"
         data-sfx="click"
-        @click="router.push('/blog')"
+        to="/free-jackbox-alternative"
       >
+        <Icon icon="pixel:startups" /> FREE JACKBOX ALTERNATIVE
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/blog">
         <Icon icon="pixel:bullhorn" /> BLOG
-      </button>
-      <button
-        class="internal-link"
-        data-sfx="click"
-        @click="router.push('/user-gallery')"
-      >
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/user-gallery">
         <Icon icon="pixel:image-solid" /> USER ART GALLERY
-      </button>
+      </router-link>
     </div>
 
     <div>
@@ -103,7 +98,7 @@ footer {
   justify-content: center;
   align-items: center;
   margin: 32px 0;
-  @media(min-width: 768px) {
+  @media (min-width: 968px) {
     flex-direction: row;
     gap: 16px;
     margin: 0;

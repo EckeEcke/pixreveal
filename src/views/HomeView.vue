@@ -21,7 +21,7 @@
               />
               <SelectionTile
                 icon-name="pixel:users-solid"
-                :btn-function="() => openMultiplayerModal('party')"
+                :btn-function="() => goToMultiplayer('party')"
                 btn-text="LOCAL PARTY MULTIPLAYER"
                 sub-title="Jackbox style: control via phone"
                 btn-color="var(--neon-yellow)"
@@ -30,7 +30,7 @@
               />
               <SelectionTile
                 icon-name="pixel:globe-solid"
-                :btn-function="() => openMultiplayerModal('online')"
+                :btn-function="() => goToMultiplayer('online')"
                 btn-text="ONLINE MULTIPLAYER"
                 sub-title="Play online together from anywhere"
                 btn-color="var(--neon-cyan)"
@@ -51,24 +51,16 @@
       </section>
     </main>
     <FooterApp />
-    <JoinModal
-      v-if="showJoinModal"
-      @close="closeMultiplayerModal"
-      :mode="multiplayerMode"
-      :initial-role="multiplayerRole"
-      :room-id="joinRoomId"
-    />
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
-import JoinModal from "@/components/modals/JoinModal.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import { useChannelStore } from "@/stores/channel";
 import { useConfigStore } from "@/stores/config";
@@ -79,17 +71,13 @@ import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 
 const router = useRouter();
-const route = useRoute();
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
-const showJoinModal = ref(false);
-const joinRoomId = ref(route.query.id ?? "");
-const multiplayerMode = ref("online");
-const multiplayerRole = ref("join");
+
 
 const setUser = () =>
   playerStore.setUser({
@@ -109,57 +97,11 @@ const openEditor = () => {
   router.push("/editor");
 };
 
-const openMultiplayerModal = (mode) => {
+const goToMultiplayer = (mode) => {
   soundStore.playSound("click");
-  multiplayerMode.value = mode;
-  channelStore.setMode(mode === "party" ? "party" : "regular");
-  multiplayerRole.value = "join";
-  showJoinModal.value = true;
-  updateQuery({
-    mode,
-    role: "join",
-    id: joinRoomId.value || undefined,
-  });
+  router.push(mode === "party" ? "/play-party" : "/play-online");
 };
 
-const closeMultiplayerModal = () => {
-  showJoinModal.value = false;
-  updateQuery({
-    mode: undefined,
-    role: undefined,
-    id: undefined,
-  });
-};
-
-const updateQuery = (patch) => {
-  const nextQuery = { ...route.query, ...patch };
-  Object.keys(nextQuery).forEach((key) => {
-    if (nextQuery[key] === undefined || nextQuery[key] === null) {
-      delete nextQuery[key];
-    }
-  });
-  router.replace({ query: nextQuery });
-};
-
-watch(
-  () => route.query.mode,
-  (value) => {
-    if (value === "online" || value === "party") {
-      multiplayerMode.value = value;
-      multiplayerRole.value = route.query.role === "host" ? "host" : "join";
-      showJoinModal.value = true;
-      channelStore.setMode(value === "party" ? "party" : "regular");
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => route.query.id,
-  (value) => {
-    joinRoomId.value = value ?? "";
-  },
-);
 
 if (document.fullscreenElement) isFullscreen.value = true;
 

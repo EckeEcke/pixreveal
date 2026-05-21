@@ -124,6 +124,24 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/play-party",
+      name: "play-party",
+      component: () => import("@/views/PlayPartyView.vue"),
+      meta: { robots: "index, follow" },
+    },
+    {
+      path: "/play-online",
+      name: "play-online",
+      component: () => import("@/views/PlayOnlineView.vue"),
+      meta: { robots: "index, follow" },
+    },
+    {
+      path: "/free-jackbox-alternative",
+      name: "free-jackbox-alternative",
+      component: () => import("@/views/FreeJackboxAlternativeView.vue"),
+      meta: { robots: "index, follow" },
+    },
+    {
       path: "/about",
       name: "about",
       component: () => import("@/views/AboutView.vue"),
@@ -152,6 +170,18 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   const gameStore = useGameStore();
+
+  // Invite links / QR codes: `/?id=ROOMID&mode=party|online[&role=host|join]`
+  if (to.path === "/" && typeof to.query?.id === "string") {
+    const inviteMode = String(to.query?.mode || "");
+    const inviteRole = String(to.query?.role || "join");
+    if (inviteMode === "party") {
+      return { path: "/play-party", query: { id: to.query.id, role: inviteRole } };
+    }
+    if (inviteMode === "online") {
+      return { path: "/play-online", query: { id: to.query.id, role: inviteRole } };
+    }
+  }
 
   const validPathsForGameOver = [
     "/classic",

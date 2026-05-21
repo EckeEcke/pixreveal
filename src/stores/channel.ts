@@ -446,14 +446,19 @@ export const useChannelStore = defineStore("channel", () => {
         // mark as running (but keep player list from presence)
         setGameRunning(true);
 
-        if (router.currentRoute.value.path === "/") {
-          if (persisted.lastRole === "host") router.push("/party-host");
-          else router.push("/party-player");
-        }
+        if (mode.value === "party") {
+          if (
+            router.currentRoute.value.path === "/" ||
+            router.currentRoute.value.path === "/play-party"
+          ) {
+            if (persisted.lastRole === "host") router.push("/party-host");
+            else router.push("/party-player");
+          }
 
-        activeChannel.value?.trigger("client-party-state-request", {
-          requestedBy: playerId.value,
-        });
+          activeChannel.value?.trigger("client-party-state-request", {
+            requestedBy: playerId.value,
+          });
+        }
       }
 
       // Always request a fresh party state after (re)subscription while a party game is running.
@@ -469,7 +474,11 @@ export const useChannelStore = defineStore("channel", () => {
         });
       }
 
-      if (router.currentRoute.value.path === "/") {
+      if (
+        router.currentRoute.value.path === "/" ||
+        router.currentRoute.value.path === "/play-party" ||
+        router.currentRoute.value.path === "/play-online"
+      ) {
         isLoading.value = false;
         router.push(mode.value === "party" ? "/party-lobby" : "/lobby");
       }
