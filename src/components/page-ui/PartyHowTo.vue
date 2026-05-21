@@ -70,6 +70,7 @@ import PowerUpInfo from '../game-ui/PowerUpInfo.vue';
   font-weight: 400;
   font-size: 44px;
   color: var(--primary);
+  min-width: 44px;
 }
 
 .powerups {

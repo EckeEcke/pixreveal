@@ -80,10 +80,13 @@ h2 {
 
 .cta-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
   margin: 20px 0;
   flex-wrap: wrap;
+  @media (min-width: 576px) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .btn-cta {
