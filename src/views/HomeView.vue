@@ -17,22 +17,24 @@
                 btn-text="SINGLEPLAYER"
                 sub-title="Choose your mode and start playing"
                 btn-color="var(--primary)"
+                :max-players="1"
               />
               <SelectionTile
-                icon-name="pixel:users"
+                icon-name="pixel:users-solid"
                 :btn-function="() => openMultiplayerModal('party')"
                 btn-text="LOCAL PARTY MULTIPLAYER"
                 sub-title="Jackbox style: control via phone"
                 btn-color="var(--neon-yellow)"
                 :is-shiny="true"
+                :max-players="8"
               />
               <SelectionTile
-                class="order-1"
-                icon-name="pixel:globe"
+                icon-name="pixel:globe-solid"
                 :btn-function="() => openMultiplayerModal('online')"
                 btn-text="ONLINE MULTIPLAYER"
                 sub-title="Play online together from anywhere"
                 btn-color="var(--neon-cyan)"
+                :max-players="8"
               />
               <SelectionTile
                 icon-name="pixel:image-solid"
@@ -236,12 +238,6 @@ h2 {
   grid-template-columns: 1fr;
   gap: 32px;
   padding: 16px 0;
-}
-
-.order-1 {
-  @media (min-width: 576px) {
-    order: 1;
-  }
 }
 
 .classic-mode-buttons {

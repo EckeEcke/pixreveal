@@ -22,6 +22,10 @@ export const useChannelStore = defineStore("channel", () => {
     const configStore = useConfigStore();
     const playerStore = usePlayerStore();
 
+  const MAX_PLAYERS_REGULAR = 8;
+  // In local party mode, the host is NOT counted towards the player limit.
+  const MAX_PLAYERS_PARTY_NON_HOST = 8;
+
   const debug = (...args: any[]) => {
     if (import.meta.env?.DEV) {
       console.log("[channel]", new Date().toISOString(), ...args);
@@ -327,6 +331,24 @@ export const useChannelStore = defineStore("channel", () => {
       const hash = members.presence?.hash || {};
       const totalMembers = Object.keys(hash).length;
       const hasHost = Object.keys(hash).some((id) => isHostFlag(hash[id]?.host));
+      const nonHostMembers = Object.keys(hash).filter((id) => !isHostFlag(hash[id]?.host))
+        .length;
+
+      // Client-side lobby limit enforcement.
+      // This prevents "over-joining" if the host tab is backgrounded and doesn't react quickly.
+      if (!isHost.value && !onlineGameRunning.value) {
+        const isFull =
+          mode.value === "party"
+            ? nonHostMembers > MAX_PLAYERS_PARTY_NON_HOST
+            : totalMembers > MAX_PLAYERS_REGULAR;
+
+        if (isFull) {
+          toast.error("Room is already full");
+          reset();
+          router.push("/");
+          return;
+        }
+      }
 
       if (!isHost.value && !hasHost) {
         debug("no_host_presence", { totalMembers });
@@ -516,10 +538,33 @@ export const useChannelStore = defineStore("channel", () => {
           channel.trigger("client-join-blocked", { targetId: member.user_id });
         }
       }
+
+      // Lobby player limit enforcement (host only).
+      if (isHost.value && !onlineGameRunning.value) {
+        if (mode.value === "party") {
+          const nonHostCount = playersOnline.value.filter((p) => !p.isHost).length;
+          if (nonHostCount > MAX_PLAYERS_PARTY_NON_HOST) {
+            channel.trigger("client-join-blocked", { targetId: member.user_id });
+          }
+        } else {
+          const totalCount = playersOnline.value.length;
+          if (totalCount > MAX_PLAYERS_REGULAR) {
+            channel.trigger("client-join-blocked", { targetId: member.user_id });
+          }
+        }
+      }
     });
 
     channel.bind("realtime:member_removed", (member: any) => {
       removePlayer(member.user_id || member.id);
+    });
+
+    channel.bind("client-join-blocked", (data: { targetId?: string }) => {
+      const targetId = String(data?.targetId || "");
+      if (!targetId || targetId !== playerId.value) return;
+      toast.error("Room is already full");
+      reset();
+      router.push("/");
     });
 
     channel.bind("client-chat-message", (data: any) => {

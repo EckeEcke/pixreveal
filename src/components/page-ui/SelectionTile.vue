@@ -7,19 +7,25 @@
     @mouseenter="soundStore.handleHoverSound"
     :disabled="disabled"
   >
-    <Icon :icon="iconName" class="background-icon" />
+    <Icon :icon="iconName || ''" class="background-icon" />
     <div class="glow-layer"></div>
     <div class="btn-content">
-      <Icon :icon="iconName" class="btn-icon" />
+      <Icon :icon="iconName || ''" class="btn-icon" />
       <div class="text-wrapper">
         <span class="btn-text">{{ btnText }}</span>
         <span class="sub-title">{{ subTitle }}</span>
       </div>
     </div>
+    <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
+      ><Icon icon="pixel:users-solid" /> 2-8</span
+    >
+    <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
+      ><Icon icon="pixel:user-solid" /> 1</span
+    >
   </button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 
@@ -34,6 +40,7 @@ const props = defineProps({
   },
   disabled: Boolean,
   isShiny: Boolean,
+  maxPlayers: Number,
 });
 
 const soundStore = useSoundStore();
@@ -48,9 +55,9 @@ const soundStore = useSoundStore();
   backdrop-filter: blur(4px);
   border-radius: 8px;
   border: none;
-  padding: 16px;
+  padding: 24px 16px;
   padding-left: calc(16px + var(--left-block-width));
-  min-height: 120px;
+  min-height: 130px;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -183,5 +190,21 @@ const soundStore = useSoundStore();
   font-size: 120px;
   opacity: 0.05;
   transition: 0.3s all;
+}
+
+.player-info {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: var(--color-secondary);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  min-width: 36px;
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
 }
 </style>

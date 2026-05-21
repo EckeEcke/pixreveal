@@ -50,11 +50,7 @@ export const useOnlineStore = defineStore("online", () => {
       router.push("/");
     });
 
-    channel.bind("client-join-blocked", (data: { targetId: string }) => {
-      if (data.targetId !== channelStore.playerId) return;
-      channelStore.reset();
-      router.push("/");
-    });
+    // Join-blocking is handled centrally in `channelStore` to avoid race conditions.
 
     channel.bind(
       "client-player-finished",
