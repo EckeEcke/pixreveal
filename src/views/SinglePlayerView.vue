@@ -11,13 +11,6 @@
           <div class="mode-section">
             <div class="mode-buttons">
               <SelectionTile
-                icon-name="pixel:sparkles"
-                :btn-function="startClassic"
-                btn-text="CLASSIC REVEAL"
-                sub-title="Drawing gets revealed pixel by pixel"
-                btn-color="var(--primary)"
-              />
-              <SelectionTile
                 data-sfx="click"
                 :icon-name="
                   dailyStore.hasPlayedToday
@@ -36,6 +29,13 @@
                 :is-shiny="
                   true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
                 "
+              />
+              <SelectionTile
+                icon-name="pixel:sparkles"
+                :btn-function="startClassic"
+                btn-text="CLASSIC REVEAL"
+                sub-title="Drawing gets revealed pixel by pixel"
+                btn-color="var(--primary)"
               />
               <SelectionTile
                 icon-name="pixelarticons:blocks"
@@ -148,7 +148,10 @@ onMounted(() => {
 
   const tryStart = () => {
     if (dailyStore.isLoading) return false;
-    if (!Array.isArray(dailyStore.dailyRounds) || dailyStore.dailyRounds.length === 0) {
+    if (
+      !Array.isArray(dailyStore.dailyRounds) ||
+      dailyStore.dailyRounds.length === 0
+    ) {
       dailyStore.fetchDailyData();
       return false;
     }

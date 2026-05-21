@@ -58,7 +58,7 @@ const handleClick = (event: MouseEvent) => {
   border: none;
   padding: 24px 16px;
   padding-left: calc(16px + var(--left-block-width));
-  min-height: 130px;
+  min-height: 136px;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
