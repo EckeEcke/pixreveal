@@ -39,11 +39,31 @@ const allowedIdsStorageKey = (roomId: string) => `${ALLOWED_IDS_PREFIX}${roomId}
 
 export const readAllowedIds = (roomId: string): Set<string> | null => {
   try {
-    const raw = localStorage.getItem(allowedIdsStorageKey(roomId));
+    const key = allowedIdsStorageKey(roomId);
+
+    // Prefer sessionStorage to avoid localStorage spam.
+    const raw = sessionStorage.getItem(key) ?? localStorage.getItem(key);
     if (!raw) return null;
+
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return null;
-    return new Set(parsed.filter((v) => typeof v === "string" && v));
+    const ids = Array.isArray(parsed)
+      ? parsed
+      : Array.isArray(parsed?.ids)
+        ? parsed.ids
+        : null;
+
+    if (!ids) return null;
+
+    // If it came from localStorage (old behavior), migrate to sessionStorage once.
+    if (!sessionStorage.getItem(key) && localStorage.getItem(key)) {
+      try {
+        sessionStorage.setItem(key, JSON.stringify(ids));
+        localStorage.removeItem(key);
+      } catch {
+      }
+    }
+
+    return new Set(ids.filter((v: unknown) => typeof v === "string" && v));
   } catch {
     return null;
   }
@@ -51,12 +71,15 @@ export const readAllowedIds = (roomId: string): Set<string> | null => {
 
 export const writeAllowedIds = (roomId: string, ids: Set<string> | null) => {
   try {
+    const key = allowedIdsStorageKey(roomId);
     if (!ids) {
-      localStorage.removeItem(allowedIdsStorageKey(roomId));
+      sessionStorage.removeItem(key);
+      localStorage.removeItem(key); // cleanup legacy location
       return;
     }
-    localStorage.setItem(allowedIdsStorageKey(roomId), JSON.stringify([...ids]));
+
+    sessionStorage.setItem(key, JSON.stringify([...ids]));
+    localStorage.removeItem(key); // cleanup legacy location
   } catch {
   }
 };
-

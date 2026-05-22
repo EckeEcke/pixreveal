@@ -147,8 +147,8 @@ watch(
 onUnmounted(() => {
   workerClearTimeout(feedbackTimeoutId);
   workerClearTimeout(nextRoundTimeoutId);
-  survivalStore.reset();
-  gameStore.setGameState("starting");
+  // Beim Unmount nur Timer/Timeouts aufräumen.
+  // Den Score resetten wir beim (neu) Starten des Survival-Spiels.
 });
 </script>
 

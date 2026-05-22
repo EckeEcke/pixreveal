@@ -29,10 +29,7 @@
             Play Again
           </ButtonPrimary>
         </div>
-        <div
-          v-for="(player, index) in playersSortedByPoints"
-          :key="player.playerId"
-        >
+        <div v-for="(player, index) in playersSortedByPoints" :key="player.playerId">
           <PlayerDisplay
             :position="player.hasFinished ? index + 1 : undefined"
             :name="player.username"
@@ -50,25 +47,32 @@
       </div>
       <div v-else class="results-card">
         <h1 class="logo">GAME <span>OVER</span></h1>
-        <h2>Your results</h2>
-        <GameOverStats />
+        <GameOverStar
+          class="game-over-star"
+          :points="
+            playerStore.gameMode === 'survival'
+              ? survivalStore.solvedCount
+              : playerStore.points
+          "
+        />
+        <GameOverCrown
+          v-if="playerStore.gameMode === 'survival'"
+          class="game-over-crown"
+          :highscore="survivalStore.highscore"
+        />
         <div v-if="showSingleplayerRank">
           <SingleplayerRanks :points="playerStore.points" />
         </div>
 
         <div
-          v-if="
-            playerStore.gameMode === 'survival' && survivalStore.newHighscore
-          "
+          v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
           class="rank-prophet highscore-message"
         >
+          <Icon icon="pixel:sparkles" />
           NEW HIGHSCORE!
+          <Icon icon="pixel:sparkles" />
         </div>
 
-        <div class="share-section">
-          <h2>Challenge your friends!</h2>
-          <ShareIcons :msg="getShareMessage(playerStore.points)" />
-        </div>
         <ButtonPrimary
           class="btn-primary pulse-btn"
           data-sfx="click"
@@ -77,6 +81,11 @@
         >
           <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
         >
+
+        <div class="share-section">
+          <h2>Challenge your friends!</h2>
+          <ShareIcons :msg="getShareMessage(playerStore.points)" />
+        </div>
       </div>
     </div>
     <LobbyChat v-if="isOnlinePlay" />
@@ -98,11 +107,12 @@ import { Icon } from "@iconify/vue";
 import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
-import GameOverStats from "@/components/game-ui/GameOverStats.vue";
+import GameOverCrown from "@/components/game-ui/GameOverCrown.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import SingleplayerRanks from "@/components/game-ui/SingleplayerRanks.vue";
 import { getRankData } from "@/utils/ranks";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -123,11 +133,11 @@ const playersSortedByPoints = computed(() => {
 });
 
 const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
+  playersOnline.value.some((player) => player.isOnline && !player.hasFinished)
 );
 
 const isOnlinePlay = computed(
-  () => channelStore.playersOnline && channelStore.playersOnline.length > 1,
+  () => channelStore.playersOnline && channelStore.playersOnline.length > 1
 );
 
 const showSingleplayerRank = computed(() => {
@@ -185,7 +195,12 @@ main {
 }
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
-  margin: 32px auto 0;
+  margin: 32px auto;
+  font-size: 18px;
+  padding: 18px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
 }
 
 .results-card {
@@ -204,7 +219,8 @@ main {
 }
 
 .rank-prophet.highscore-message {
-  margin: 32px 0;
+  margin: 16px 0 32px;
+  animation: pulse 2s infinite ease-in-out;
 }
 
 .rank-text {
@@ -254,6 +270,7 @@ main {
 
 .share-section {
   h2 {
+    font-size: 18px;
     text-align: center;
   }
   margin: 32px auto 0;
@@ -270,5 +287,4 @@ main {
   transform: rotate(30deg);
   animation: shine 4s infinite;
 }
-
 </style>

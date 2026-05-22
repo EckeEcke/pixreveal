@@ -25,6 +25,7 @@ defineProps<{
 .star-icon {
   font-size: 180px;
   position: absolute;
+  left: 0;
   color: yellow;
   color: var(--neon-yellow);
   filter: drop-shadow(0 0 5px var(--neon-yellow));
