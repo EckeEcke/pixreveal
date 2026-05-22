@@ -56,7 +56,7 @@
           "
         />
         <GameOverCrown
-          v-if="playerStore.gameMode === 'survival'"
+          v-if="playerStore.gameMode === 'survival' && !survivalStore.newHighscore"
           class="game-over-crown"
           :highscore="survivalStore.highscore"
         />

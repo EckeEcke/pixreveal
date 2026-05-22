@@ -44,7 +44,7 @@ const rankData = computed(() => {
 .rank-prophet {
   color: #ffcc00;
   text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-  animation: floating 2s ease-in-out infinite;
+  animation: pulse 2s ease-in-out infinite;
   font-weight: bold;
   font-size: 24px;
 }
