@@ -13,15 +13,12 @@
     />
   </Transition>
   <div class="ranking-card">
-    <div>
-      <h1 class="logo">GAME <span>OVER</span></h1>
-      <p class="thx">Thx for playing today!</p>
-      <p class="score-title">YOUR SCORE</p>
-      <GameOverStats />
-    </div>
+    <h1 class="logo">GAME <span>OVER</span></h1>
+    <GameOverStar :points="playerStore.points" />
+
     <div v-if="!dailyStore.hasSubmitted">
       <p>
-        Submit your score to the daily leaderboard and compete for the top
+        Submit your score to unlock today's daily rankings and see your global
         position!
       </p>
       <ButtonPrimary
@@ -47,9 +44,7 @@
       <h2>Challenge your friends!</h2>
       <ShareIcons :msg="shareMessage" />
     </div>
-  </div>
-  <div class="content">
-    <DailyRankings />
+    <DailyCountdown />
   </div>
   <PlayerEditModal
     v-if="showAvatarModal"
@@ -67,13 +62,16 @@ import { useDailyStore } from "@/stores/daily";
 import { computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
-import DailyRankings from "@/components/game-ui/DailyRankings.vue";
-import GameOverStats from "@/components/game-ui/GameOverStats.vue";
+import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { toast } from "vue3-toastify";
+import { useRouter } from "vue-router";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import DailyCountdown from "@/components/page-ui/DailyCountdown.vue";
+
+const router = useRouter();
 
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
@@ -110,6 +108,7 @@ const post = async () => {
   toast.success(
     "Score submitted. Check your position on the daily leaderboard!",
   );
+  router.push("/rankings-daily");
 
   isPosting.value = false;
   soundStore.playSound("confirm");
@@ -117,15 +116,17 @@ const post = async () => {
 </script>
 
 <style scoped>
-h2,
-h3 {
+h2 {
+  font-size: 18px;
   text-align: center;
 }
-h3 {
-  margin-top: 0;
+
+h1 {
+  margin: 0;
 }
 
 p {
+  text-align: center;
   line-height: 1.5;
 }
 
@@ -157,34 +158,11 @@ p {
   animation: shine 4s infinite;
 }
 
-p {
-  text-align: center;
-}
-
-.confirmation {
-  margin-bottom: 32px;
-}
-
-.score-title {
-  margin-bottom: 4px;
-}
-
-.thx {
-  color: #ffcc00;
-  text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-  animation: floating 2s ease-in-out infinite;
-  font-weight: bold;
-  font-size: 24px;
-}
-
-.content {
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 400px;
-}
-
 .btn-primary {
   animation: pulse 2s infinite;
   margin: 0 auto;
+  width: 100%;
+  padding: 18px;
+  font-size: 18px;
 }
 </style>

@@ -35,11 +35,15 @@
 
       <section class="editor-section">
         <div v-if="viewMode === 'editor'">
-          <InfoBox
-            class="recommendation"
-            message="Create and submit your own pixel art. Once your art is approved,
-              it is available in PixReveal for all players to guess."
-          />
+          <InfoBox class="recommendation">
+            <div>
+              <h1>Create and submit your own pixel art.</h1>
+              <p>
+                Once your art is approved, it is available in PixReveal for all
+                players to guess.
+              </p>
+            </div>
+          </InfoBox>
 
           <div class="palette-container">
             <h3>Color Palette</h3>
@@ -451,6 +455,17 @@ const downloadDrawing = () => {
   @media (max-width: 576px) {
     display: none;
   }
+  p {
+    margin: 0;
+  }
+}
+
+h1 {
+  text-align: left;
+  font-family: inherit;
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 4px;
 }
 
 h3 {
