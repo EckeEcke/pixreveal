@@ -91,7 +91,7 @@
             </button>
           </div>
 
-          <div class="drawings-list">
+          <div v-if="isAdmin" class="drawings-list">
             <h3>Presets ({{ drawings.length }})</h3>
             <select
               @change="
