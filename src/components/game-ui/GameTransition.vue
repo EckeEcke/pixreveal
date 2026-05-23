@@ -57,9 +57,12 @@ onMounted(() => {
 
 .line {
   overflow: hidden;
-  height: 130px;
+  height: 90px;
   display: flex;
   align-items: center;
+  @media (min-width: 576px) {
+    height: 130px;
+  }
 }
 
 .word {
