@@ -19,17 +19,31 @@
                 : `${playersSortedByPoints[0].username.toUpperCase()} WINS!`
             }}
           </h2>
-          <ButtonPrimary
-            class="btn-primary pulse-btn"
-            data-sfx="click"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="playAgain"
-          >
-            <Icon icon="pixel:refresh-solid" />
-            Play Again
-          </ButtonPrimary>
+          <div class="gameover-actions">
+            <ButtonPrimary
+              class="btn-primary pulse-btn"
+              data-sfx="click"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="playAgainOnline"
+            >
+              <Icon icon="pixel:refresh-solid" />
+              Play Again
+            </ButtonPrimary>
+            <ButtonSecondary
+              class="btn-secondary"
+              data-sfx="back"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="goBackOnline"
+            >
+              <Icon icon="pixel:arrow-left" />
+              Go back
+            </ButtonSecondary>
+          </div>
         </div>
-        <div v-for="(player, index) in playersSortedByPoints" :key="player.playerId">
+        <div
+          v-for="(player, index) in playersSortedByPoints"
+          :key="player.playerId"
+        >
           <PlayerDisplay
             :position="player.hasFinished ? index + 1 : undefined"
             :name="player.username"
@@ -55,7 +69,9 @@
           "
         />
         <GameOverCrown
-          v-if="playerStore.gameMode === 'survival' && !survivalStore.newHighscore"
+          v-if="
+            playerStore.gameMode === 'survival' && !survivalStore.newHighscore
+          "
           class="game-over-crown"
           :highscore="survivalStore.highscore"
         />
@@ -64,7 +80,9 @@
         </div>
 
         <div
-          v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
+          v-if="
+            playerStore.gameMode === 'survival' && survivalStore.newHighscore
+          "
           class="rank-prophet highscore-message"
         >
           <Icon icon="pixel:sparkles" />
@@ -72,14 +90,23 @@
           <Icon icon="pixel:sparkles" />
         </div>
 
-        <ButtonPrimary
-          class="btn-primary pulse-btn"
-          data-sfx="click"
-          @mouseenter="soundStore.handleHoverSound"
-          @clicked="playAgain"
-        >
-          <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
-        >
+        <div class="gameover-actions">
+          <ButtonPrimary
+            class="btn-primary pulse-btn"
+            data-sfx="click"
+            @mouseenter="soundStore.handleHoverSound"
+            @clicked="playAgainSingleplayer"
+          >
+            <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
+          >
+          <ButtonSecondary
+            data-sfx="back"
+            @mouseenter="soundStore.handleHoverSound"
+            @clicked="goBackSingleplayer"
+          >
+            <Icon icon="pixel:arrow-left" /> Go back
+          </ButtonSecondary>
+        </div>
 
         <div class="share-section">
           <h2>Challenge your friends!</h2>
@@ -120,6 +147,7 @@ import { getRankData } from "@/utils/ranks";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -144,11 +172,11 @@ const playersSortedByPoints = computed(() => {
 const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
 
 const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => player.isOnline && !player.hasFinished)
+  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
 );
 
 const isOnlinePlay = computed(
-  () => channelStore.playersOnline && channelStore.playersOnline.length > 1
+  () => channelStore.playersOnline && channelStore.playersOnline.length > 1,
 );
 
 const showSingleplayerRank = computed(() => {
@@ -180,7 +208,7 @@ watch(
     winnerAnimationShown.value = true;
     showWinnerAnimation.value = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const getRankDataForShare = (score) =>
@@ -201,10 +229,54 @@ const getShareMessage = (score, mode) => {
   return "Play PIX REVEAL!";
 };
 
-const playAgain = () => {
-  if (onlineStore && onlineStore.reset) onlineStore?.reset();
+const playAgainOnline = () => {
+  // Keep the same roomId and stay subscribed; go back to the lobby.
+  onlineStore.stopGame?.();
+  gameStore.reset?.();
+  router.push("/lobby");
+};
+
+const goBackOnline = () => {
+  // Leave the room and go back home. If host leaves, notify all players so they disconnect too.
+  if (
+    channelStore.isHost &&
+    channelStore.activeChannel &&
+    channelStore.playerId
+  ) {
+    channelStore.activeChannel.trigger("client-host-inactive", {
+      playerId: channelStore.playerId,
+    });
+  }
+  onlineStore.stopGame?.();
+  channelStore.reset?.();
   router.push("/");
 };
+
+const playAgainSingleplayer = () => {
+  gameStore.reset?.();
+  router.push("/singleplayer");
+};
+
+const goBackSingleplayer = () => {
+  gameStore.reset?.();
+  router.push("/");
+};
+
+const activeMembersCount = computed(
+  () => channelStore.playersOnline.filter((p) => p.isOnline).length,
+);
+
+watch(
+  () => activeMembersCount.value,
+  (count) => {
+    if (!channelStore.isHost) return;
+    if (!channelStore.activeChannel) return;
+    // If the host is the last one left in the room, leave and kill the channel.
+    // `isOnlinePlay` can flip to false as soon as other players disconnect.
+    if (count > 1) return;
+    goBackOnline();
+  },
+);
 
 gameStore.reset();
 
@@ -214,7 +286,8 @@ onMounted(() => {
     return;
   }
   const winnerId = playersSortedByPoints.value[0]?.playerId;
-  if (winnerId && winnerId === channelStore.playerId) soundStore.playSound("winner");
+  if (winnerId && winnerId === channelStore.playerId)
+    soundStore.playSound("winner");
 });
 </script>
 
@@ -223,14 +296,30 @@ main {
   width: 800px;
   max-width: 100%;
 }
+.gameover-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
-  margin: 32px auto;
   font-size: 18px;
   padding: 18px;
-  width: 100%;
-  max-width: 300px;
   box-sizing: border-box;
+}
+
+.btn-secondary,
+.btn-primary {
+  width: 200%;
+}
+
+@media (min-width: 500px) {
+  .btn-secondary,
+  .btn-primary {
+    width: calc(50% - 8px);
+  }
 }
 
 .results-card {

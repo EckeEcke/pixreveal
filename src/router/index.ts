@@ -4,6 +4,7 @@ import { useGameStore } from "@/stores/game";
 import { useDailyStore } from "@/stores/daily";
 import { useChannelStore } from "@/stores/channel";
 import { usePartyStore } from "@/stores/party";
+import { useOnlineStore } from "@/stores/online";
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
@@ -214,6 +215,7 @@ router.beforeEach((to, from) => {
   const gameStore = useGameStore();
   const channelStore = useChannelStore();
   const partyStore = usePartyStore();
+  const onlineStore = useOnlineStore();
 
   // Invite links / QR codes: `/?id=ROOMID&mode=party|online[&role=host|join]`
   if (to.path === "/" && typeof to.query?.id === "string") {
@@ -286,6 +288,15 @@ router.beforeEach((to, from) => {
       partyStore.consumeReplayNavigationWindow?.();
 
     if (isPartyReplayNavigation) return true;
+
+    const isOnlineReplayNavigation =
+      from.path === "/gameover" &&
+      to.path === "/online" &&
+      channelStore.mode === "regular" &&
+      channelStore.onlineGameRunning &&
+      onlineStore.consumeReplayNavigationWindow?.();
+
+    if (isOnlineReplayNavigation) return true;
     return "/";
   }
 

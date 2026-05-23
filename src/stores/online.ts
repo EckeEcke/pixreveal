@@ -13,6 +13,28 @@ export const useOnlineStore = defineStore("online", () => {
   const configStore = useConfigStore();
   const router = useRouter();
   const onlineGameRunning = ref(false);
+  const replayNavAllowedUntilAt = ref(0);
+
+  const allowReplayNavigationWindow = (ms = 4000) => {
+    replayNavAllowedUntilAt.value = Date.now() + ms;
+  };
+
+  const consumeReplayNavigationWindow = () => {
+    const ok = replayNavAllowedUntilAt.value > Date.now();
+    replayNavAllowedUntilAt.value = 0;
+    return ok;
+  };
+
+  const resetScoresForNextMatch = () => {
+    playerStore.points = 0;
+    playerStore.correctAnswers = 0;
+
+    channelStore.playersOnline.forEach((p) => {
+      p.points = 0;
+      p.correctAnswers = 0;
+      p.hasFinished = false;
+    });
+  };
 
   const eventsBound = ref(false);
   const boundChannel = ref<any>(null);
@@ -29,7 +51,9 @@ export const useOnlineStore = defineStore("online", () => {
     channel.bind("client-game-started", (data: any) => {
       channelStore.setGameRunning(true);
       onlineGameRunning.value = true;
+      resetScoresForNextMatch();
       gameStore.prepareGame(data.revealTime, data.rounds);
+      allowReplayNavigationWindow();
       router.push("/online");
     });
 
@@ -72,6 +96,12 @@ export const useOnlineStore = defineStore("online", () => {
     if (!channel) return;
     channelStore.setGameRunning(true);
     onlineGameRunning.value = true;
+    allowReplayNavigationWindow();
+
+    // Always (re)build rounds at the moment we broadcast so everyone plays the exact same game.
+    // This also ensures lobby setting changes are reflected in the next match.
+    resetScoresForNextMatch();
+    gameStore.prepareGame(configStore.revealTime);
 
     channel.trigger("client-game-started", {
       startedAt: new Date().toISOString(),
@@ -130,5 +160,7 @@ export const useOnlineStore = defineStore("online", () => {
     broadcastScore,
     onlineGameRunning,
     stopGame,
+    allowReplayNavigationWindow,
+    consumeReplayNavigationWindow,
   };
 });

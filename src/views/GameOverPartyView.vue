@@ -21,6 +21,7 @@
             <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
           >
           <ButtonSecondary
+            class="btn-secondary"
             data-sfx="back"
             @mouseenter="soundStore.handleHoverSound"
             @clicked="goBack"
@@ -78,16 +79,16 @@ const partySoundPlayed = ref(false);
 const showWinnerAnimation = ref(false);
 
 const partyPlayersSorted = computed(() =>
-  [...partyStore.players].sort((a, b) => b.points - a.points)
+  [...partyStore.players].sort((a, b) => b.points - a.points),
 );
 
 const winnerPlayer = computed(() => partyPlayersSorted.value[0] ?? null);
 
 const maxPartyPowerupsUsed = computed(() =>
-  Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0))
+  Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0)),
 );
 const maxPartyEmojisSent = computed(() =>
-  Math.max(0, ...partyPlayersSorted.value.map((p) => p.emojisSent ?? 0))
+  Math.max(0, ...partyPlayersSorted.value.map((p) => p.emojisSent ?? 0)),
 );
 const minPartyQuickestAnswer = computed(() => {
   const values = partyPlayersSorted.value
@@ -163,7 +164,11 @@ const playAgain = () => {
 
 const goBack = () => {
   // Leave the room and go back home. If host leaves, notify all players so they disconnect too.
-  if (channelStore.isHost && channelStore.activeChannel && channelStore.playerId) {
+  if (
+    channelStore.isHost &&
+    channelStore.activeChannel &&
+    channelStore.playerId
+  ) {
     channelStore.activeChannel.trigger("client-host-inactive", {
       playerId: channelStore.playerId,
     });
@@ -196,6 +201,14 @@ main {
 }
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
+}
+
+.btn-primary,
+.btn-secondary {
+  width: 100%;
+  @media (min-width: 500px) {
+    width: calc(50% - 8px);
+  }
 }
 
 .results-card {
