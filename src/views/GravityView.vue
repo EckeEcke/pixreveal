@@ -215,12 +215,16 @@ watch(
     if (newState === "revealing") {
       const transition = shouldShowTransitionOnRevealing();
       if (transition === "final") {
+        hasAnswered.value = false;
+        hasAnsweredCorrectly.value = false;
         clearAllLocalTimers();
         showFinalRoundTransition.value = true;
         return;
       }
 
       if (transition === "bonus") {
+        hasAnswered.value = false;
+        hasAnsweredCorrectly.value = false;
         clearAllLocalTimers();
         showBonusRoundTransition.value = true;
         return;

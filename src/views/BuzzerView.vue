@@ -278,11 +278,21 @@ watch(
     if (newState === "revealing") {
       const transition = shouldShowTransitionOnRevealing();
       if (transition === "final") {
+        hasAnswered.value = false;
+        hasAnsweredCorrectly.value = false;
+        showAnswers.value = false;
+        pauseReveal.value = false;
+        roundTimeLeftAtBuzz.value = null;
         clearAllLocalTimers();
         showFinalRoundTransition.value = true;
         return;
       }
       if (transition === "bonus") {
+        hasAnswered.value = false;
+        hasAnsweredCorrectly.value = false;
+        showAnswers.value = false;
+        pauseReveal.value = false;
+        roundTimeLeftAtBuzz.value = null;
         clearAllLocalTimers();
         showBonusRoundTransition.value = true;
         return;
