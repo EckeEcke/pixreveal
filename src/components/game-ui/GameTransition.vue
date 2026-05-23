@@ -29,8 +29,14 @@ const showFirst = ref(false);
 const showSecond = ref(false);
 
 onMounted(() => {
-  setTimeout(() => ((showFirst.value = true), useSoundStore().playSound("punch")), 200);
-  setTimeout(() => ((showSecond.value = true), useSoundStore().playSound("punch")), 700);
+  setTimeout(
+    () => ((showFirst.value = true), useSoundStore().playSound("punch")),
+    200,
+  );
+  setTimeout(
+    () => ((showSecond.value = true), useSoundStore().playSound("punch")),
+    700,
+  );
   setTimeout(() => emit("done"), 1200);
 });
 </script>
@@ -59,16 +65,23 @@ onMounted(() => {
 .word {
   display: block;
   font-family: inherit;
-  font-size: 100px;
+  font-size: 70px;
   font-weight: 900;
   letter-spacing: 12px;
   color: #fff;
-  text-shadow: 0 0 20px #b44fff, 0 0 60px #b44fff;
+  text-shadow:
+    0 0 20px #b44fff,
+    0 0 60px #b44fff;
+  @media (min-width: 576px) {
+    font-size: 100px;
+  }
 }
 
 .word.accent {
   color: #ff2d78;
-  text-shadow: 0 0 20px #ff2d78, 0 0 60px #ff2d78;
+  text-shadow:
+    0 0 20px #ff2d78,
+    0 0 60px #ff2d78;
 }
 
 .slide-left-enter-active,
