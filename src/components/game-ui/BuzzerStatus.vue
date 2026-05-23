@@ -130,10 +130,11 @@ import { computed, ref, watch } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import RobotModerator from "./RobotModerator.vue";
+import type { BonusRoundType } from "@/types/bonusRound";
 
 const props = defineProps<{
   isFinalRound?: boolean;
-  bonusRoundType?: "blur" | "sepia" | "bw" | null;
+  bonusRoundType?: BonusRoundType | null;
 }>();
 
 const gameStore = useGameStore();

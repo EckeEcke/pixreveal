@@ -5,6 +5,18 @@
         v-if="gameStore.gameState === 'starting'"
         @done="gameStore.setGameState('revealing')"
       />
+      <GameTransition
+        v-else-if="showFinalRoundTransition"
+        first="FINAL"
+        second="ROUND"
+        @done="handleFinalRoundDone"
+      />
+      <GameTransition
+        v-else-if="showBonusRoundTransition"
+        first="BONUS"
+        second="ROUND"
+        @done="handleBonusRoundDone"
+      />
     </transition>
 
     <section class="canvas-section">
@@ -20,13 +32,17 @@
         :is-survival="false"
       />
 
-      <PixelCanvas
-        :pixel-array="pixelData"
-        :resolution="resolution"
-        :is-revealing="isRevealing"
-        :is-status-icon="hasAnswered"
-        :timer-duration="timerDuration"
-      />
+      <div class="canvas-effects" :style="canvasEffectsStyle">
+        <PixelCanvas
+          :pixel-array="pixelData"
+          :resolution="resolution"
+          :is-revealing="canvasIsRevealing"
+          :is-status-icon="hasAnswered"
+          :timer-duration="timerDuration"
+          :pauseReveal="showFinalRoundTransition || showBonusRoundTransition"
+        />
+        <div v-if="isBlurRoundActive" class="blur-overlay" />
+      </div>
     </section>
 
     <section class="answer-section">
@@ -39,8 +55,8 @@
   </main>
 </template>
 
-<script setup>
-import { computed, ref, onUnmounted, watch } from "vue";
+<script setup lang="ts">
+import { computed, ref, onUnmounted, watch, unref } from "vue";
 import { useRouter } from "vue-router";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import { useGameStore } from "@/stores/game";
@@ -53,6 +69,8 @@ import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useConfigStore } from "@/stores/config";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
+import GameTransition from "@/components/game-ui/GameTransition.vue";
+import { useBonusRounds } from "@/composables/useBonusRounds";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -72,15 +90,45 @@ const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const isRevealing = ref(true);
 const hasAnsweredCorrectly = ref(false);
-const timer = ref(configStore.revealTime);
-const timerDuration = configStore.revealTime;
+const timer = ref<number>(unref(configStore.revealTime));
+const timerDuration = computed(() => unref(configStore.revealTime));
 
-let timerId = null;
-let feedbackTimeoutId = null;
-let solutionTimeoutId = null;
+let timerId: number | null = null;
+let feedbackTimeoutId: number | null = null;
+let solutionTimeoutId: number | null = null;
 
 const currentRound = computed(() => gameStore.currentRound);
 const maxRounds = computed(() => configStore.maxRounds);
+
+const {
+  bonusRoundType,
+  isFinalRound,
+  isBlurRoundActive,
+  canvasEffectsStyle,
+  canvasIsRevealing,
+  showFinalRoundTransition,
+  showBonusRoundTransition,
+  handleFinalRoundDone: markFinalRoundTransitionDone,
+  handleBonusRoundDone: markBonusRoundTransitionDone,
+  shouldShowTransitionOnRevealing,
+} = useBonusRounds({
+  currentRoundIndex: computed(() => gameStore.currentRoundIndex),
+  maxRounds,
+  gameState: computed(() => gameStore.gameState),
+  timer,
+  timerDuration,
+  baseRevealing: isRevealing,
+});
+
+const handleFinalRoundDone = () => {
+  markFinalRoundTransitionDone();
+  setupDrawing();
+};
+
+const handleBonusRoundDone = () => {
+  markBonusRoundTransitionDone();
+  setupDrawing();
+};
 
 const clearAllLocalTimers = () => {
   workerClearInterval(timerId);
@@ -93,7 +141,7 @@ const clearAllLocalTimers = () => {
 
 const startTimer = () => {
   workerClearInterval(timerId);
-  timer.value = timerDuration;
+  timer.value = timerDuration.value;
 
   timerId = workerSetInterval(() => {
     timer.value--;
@@ -120,7 +168,7 @@ const setupDrawing = () => {
   startTimer();
 };
 
-const handleAnswer = (selectedOption) => {
+const handleAnswer = (selectedOption: any) => {
   if (gameStore.gameState !== "revealing" || hasAnswered.value) return;
 
   hasAnswered.value = true;
@@ -132,7 +180,8 @@ const handleAnswer = (selectedOption) => {
   } else if (selectedOption?.isCorrect) {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
-    playerStore.addPoints(timer.value);
+    const multiplier = isFinalRound.value || !!bonusRoundType.value ? 2 : 1;
+    playerStore.addPoints(timer.value * multiplier);
     soundStore.playSound("correct");
   } else {
     pixelData.value = statusIcons.failure;
@@ -163,6 +212,17 @@ watch(
   () => gameStore.gameState,
   (newState) => {
     if (newState === "revealing") {
+      const transition = shouldShowTransitionOnRevealing();
+      if (transition === "final") {
+        clearAllLocalTimers();
+        showFinalRoundTransition.value = true;
+        return;
+      }
+      if (transition === "bonus") {
+        clearAllLocalTimers();
+        showBonusRoundTransition.value = true;
+        return;
+      }
       setupDrawing();
     }
   },
@@ -206,5 +266,21 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.canvas-effects {
+  position: relative;
+  width: 100%;
+  transition: filter 600ms ease;
+  will-change: filter;
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 0px;
+  background: rgba(56, 189, 248, 0.12);
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
 </style>

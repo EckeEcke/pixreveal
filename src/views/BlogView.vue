@@ -4,6 +4,22 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-23-26</span>
+        </div>
+        <h3 class="log-title">
+          New Bonus rounds in singleplayer and online multiplayer!
+        </h3>
+        <p>
+          Local party multiplayer already had them. Now singleplayer and online
+          mutlplayer have them, too! Bonus rounds mix up the gameplay by making
+          it harder to guess. But at the same time you get the chance to score
+          twice as much! Inspect mode and Survival won't have these bonus
+          rounds, since it does not fit the gameplay style. These will get their
+          own additional mechanics. Stay tuned!
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-17-26</span>
         </div>
         <h3 class="log-title">Bonus rounds in party multiplayer</h3>

@@ -6,6 +6,18 @@
         message="GET READY"
         @done="gameStore.setGameState('revealing')"
       />
+      <GameTransition
+        v-else-if="showFinalRoundTransition"
+        first="FINAL"
+        second="ROUND"
+        @done="handleFinalRoundDone"
+      />
+      <GameTransition
+        v-else-if="showBonusRoundTransition"
+        first="BONUS"
+        second="ROUND"
+        @done="handleBonusRoundDone"
+      />
     </transition>
 
     <section class="canvas-section">
@@ -21,11 +33,15 @@
         :is-survival="false"
       />
 
-      <PixelCanvasGravity
-        :pixel-array="pixelData"
-        :is-status-icon="isStatusIcon"
-        :is-revealing="gameStore.gameState === 'revealing' || isStatusIcon"
-      />
+      <div class="canvas-effects" :style="canvasEffectsStyle">
+        <PixelCanvasGravity
+          :pixel-array="pixelData"
+          :is-status-icon="isStatusIcon"
+          :is-revealing="canvasIsRevealing || isStatusIcon"
+          :pauseReveal="showFinalRoundTransition || showBonusRoundTransition"
+        />
+        <div v-if="isBlurRoundActive" class="blur-overlay" />
+      </div>
     </section>
 
     <section class="answer-section">
@@ -38,8 +54,8 @@
   </main>
 </template>
 
-<script setup>
-import { computed, ref, onUnmounted, watch } from "vue";
+<script setup lang="ts">
+import { computed, ref, onUnmounted, watch, unref } from "vue";
 import { useRouter } from "vue-router";
 import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue";
 import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
@@ -52,6 +68,8 @@ import { useConfigStore } from "@/stores/config";
 import { useSoundStore } from "@/stores/sound";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
+import GameTransition from "@/components/game-ui/GameTransition.vue";
+import { useBonusRounds } from "@/composables/useBonusRounds";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -66,19 +84,51 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
-const pixelData = ref([]);
+const pixelData = ref<number[][]>([]);
 const hasAnswered = ref(false);
 const isStatusIcon = ref(false);
 const hasAnsweredCorrectly = ref(false);
-const timerDuration = configStore.revealTime || 15;
-const timer = ref(timerDuration);
+const timerDuration = computed(() => unref(configStore.revealTime) || 15);
+const timer = ref(timerDuration.value);
 
-let timerIntervalId = null;
-let feedbackTimeoutId = null;
-let solutionTimeoutId = null;
+let timerIntervalId: number | null = null;
+let feedbackTimeoutId: number | null = null;
+let solutionTimeoutId: number | null = null;
 
 const currentRound = computed(() => gameStore.currentRound);
 const maxRounds = computed(() => configStore.maxRounds);
+
+const baseRevealing = computed(() => gameStore.gameState === "revealing");
+
+const {
+  bonusRoundType,
+  isFinalRound,
+  isBlurRoundActive,
+  canvasEffectsStyle,
+  canvasIsRevealing,
+  showFinalRoundTransition,
+  showBonusRoundTransition,
+  handleFinalRoundDone: markFinalRoundTransitionDone,
+  handleBonusRoundDone: markBonusRoundTransitionDone,
+  shouldShowTransitionOnRevealing,
+} = useBonusRounds({
+  currentRoundIndex: computed(() => gameStore.currentRoundIndex),
+  maxRounds,
+  gameState: computed(() => gameStore.gameState),
+  timer,
+  timerDuration,
+  baseRevealing,
+});
+
+const handleFinalRoundDone = () => {
+  markFinalRoundTransitionDone();
+  setupDrawing();
+};
+
+const handleBonusRoundDone = () => {
+  markBonusRoundTransitionDone();
+  setupDrawing();
+};
 
 const clearAllLocalTimers = () => {
   workerClearInterval(timerIntervalId);
@@ -91,7 +141,7 @@ const clearAllLocalTimers = () => {
 
 const startTimer = () => {
   workerClearInterval(timerIntervalId);
-  timer.value = timerDuration;
+  timer.value = timerDuration.value;
 
   timerIntervalId = workerSetInterval(() => {
     timer.value--;
@@ -117,7 +167,7 @@ const setupDrawing = () => {
   startTimer();
 };
 
-const handleAnswer = (selectedAnswer) => {
+const handleAnswer = (selectedAnswer: any) => {
   if (gameStore.gameState !== "revealing" || hasAnswered.value) return;
 
   hasAnswered.value = true;
@@ -132,7 +182,8 @@ const handleAnswer = (selectedAnswer) => {
   } else {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
-    playerStore.addPoints(timer.value);
+    const multiplier = isFinalRound.value || !!bonusRoundType.value ? 2 : 1;
+    playerStore.addPoints(timer.value * multiplier);
     soundStore.playSound("correct");
   }
   isStatusIcon.value = true;
@@ -162,6 +213,18 @@ watch(
   () => gameStore.gameState,
   (newState) => {
     if (newState === "revealing") {
+      const transition = shouldShowTransitionOnRevealing();
+      if (transition === "final") {
+        clearAllLocalTimers();
+        showFinalRoundTransition.value = true;
+        return;
+      }
+
+      if (transition === "bonus") {
+        clearAllLocalTimers();
+        showBonusRoundTransition.value = true;
+        return;
+      }
       setupDrawing();
     }
   },
@@ -206,5 +269,21 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.canvas-effects {
+  position: relative;
+  width: 100%;
+  transition: filter 600ms ease;
+  will-change: filter;
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 0px;
+  background: rgba(56, 189, 248, 0.12);
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
 </style>

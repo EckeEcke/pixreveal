@@ -1,6 +1,6 @@
 <!-- GameOver.vue -->
 <template>
-  <div class="game-over">
+  <div class="game-transition">
     <div class="line">
       <Transition name="slide-left">
         <span v-if="showFirst" class="word">{{ first }}</span>
@@ -21,7 +21,7 @@ import { ref, onMounted } from "vue";
 defineProps({
   first: String,
   second: String,
-})
+});
 
 const emit = defineEmits(["done"]);
 
@@ -29,20 +29,14 @@ const showFirst = ref(false);
 const showSecond = ref(false);
 
 onMounted(() => {
-  setTimeout(
-    () => ((showFirst.value = true), useSoundStore().playSound("punch")),
-    200,
-  );
-  setTimeout(
-    () => ((showSecond.value = true), useSoundStore().playSound("punch")),
-    700,
-  );
+  setTimeout(() => ((showFirst.value = true), useSoundStore().playSound("punch")), 200);
+  setTimeout(() => ((showSecond.value = true), useSoundStore().playSound("punch")), 700);
   setTimeout(() => emit("done"), 1200);
 });
 </script>
 
 <style scoped>
-.game-over {
+.game-transition {
   position: fixed;
   inset: 0;
   display: flex;
@@ -69,16 +63,12 @@ onMounted(() => {
   font-weight: 900;
   letter-spacing: 12px;
   color: #fff;
-  text-shadow:
-    0 0 20px #b44fff,
-    0 0 60px #b44fff;
+  text-shadow: 0 0 20px #b44fff, 0 0 60px #b44fff;
 }
 
 .word.accent {
   color: #ff2d78;
-  text-shadow:
-    0 0 20px #ff2d78,
-    0 0 60px #ff2d78;
+  text-shadow: 0 0 20px #ff2d78, 0 0 60px #ff2d78;
 }
 
 .slide-left-enter-active,
