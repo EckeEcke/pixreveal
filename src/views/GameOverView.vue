@@ -39,7 +39,6 @@
             :correct-answers="player.correctAnswers"
             :show-you-indicator="isMe(player.playerId)"
           />
-          <LoadingAnimation v-if="!player.hasFinished" size="small" />
         </div>
         <div v-if="waitingForFinalResults">
           <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
@@ -89,11 +88,18 @@
       </div>
     </div>
     <LobbyChat v-if="isOnlinePlay" />
+    <WinnerAnimation
+      v-if="isOnlinePlay && !waitingForFinalResults && winnerPlayer"
+      :show="showWinnerAnimation"
+      :winner-name="winnerPlayer.username"
+      :avatar-index="winnerPlayer.avatarIndex"
+      @done="showWinnerAnimation = false"
+    />
   </main>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { useRouter } from "vue-router";
 import { useChannelStore } from "@/stores/channel";
@@ -113,6 +119,7 @@ import SingleplayerRanks from "@/components/game-ui/SingleplayerRanks.vue";
 import { getRankData } from "@/utils/ranks";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
+import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -123,6 +130,8 @@ const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
 const showIntro = ref(true);
+const showWinnerAnimation = ref(false);
+const winnerAnimationShown = ref(false);
 
 const isMe = (id) => id === channelStore.playerId;
 
@@ -131,6 +140,8 @@ const playersOnline = computed(() => channelStore.playersOnline);
 const playersSortedByPoints = computed(() => {
   return [...playersOnline.value].sort((a, b) => b.points - a.points);
 });
+
+const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
 
 const waitingForFinalResults = computed(() =>
   playersOnline.value.some((player) => player.isOnline && !player.hasFinished)
@@ -152,6 +163,25 @@ const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
 };
+
+watch(
+  [
+    () => showIntro.value,
+    () => isOnlinePlay.value,
+    () => waitingForFinalResults.value,
+    () => winnerPlayer.value,
+  ],
+  ([intro, online, waiting, winner]) => {
+    if (intro) return;
+    if (!online) return;
+    if (waiting) return;
+    if (!winner) return;
+    if (winnerAnimationShown.value) return;
+    winnerAnimationShown.value = true;
+    showWinnerAnimation.value = true;
+  },
+  { immediate: true }
+);
 
 const getRankDataForShare = (score) =>
   getRankData(score, {

@@ -131,6 +131,7 @@ export const useGameStore = defineStore("game", () => {
 
   const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
     stopAllTimers();
+    revealTime.value = customRevealTime;
 
     if (customRounds) {
       rounds.value = customRounds;

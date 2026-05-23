@@ -11,9 +11,6 @@
     <div class="party-wrapper">
       <div class="results-card party-results-card">
         <h1 class="logo">PARTY <span>OVER</span></h1>
-        <p class="party-subtitle rank-prophet">
-          {{ getPartyOverMessage }}
-        </p>
         <div class="party-actions">
           <ButtonPrimary
             class="btn-primary pulse-btn"
@@ -37,6 +34,13 @@
         />
       </div>
     </div>
+    <WinnerAnimation
+      v-if="winnerPlayer"
+      :show="showWinnerAnimation"
+      :winner-name="winnerPlayer.username"
+      :avatar-index="winnerPlayer.avatarIndex"
+      @done="showWinnerAnimation = false"
+    />
   </main>
 </template>
 
@@ -54,6 +58,7 @@ import { useGameStore } from "@/stores/game";
 import { useOnlineStore } from "@/stores/online";
 import { usePartyStore } from "@/stores/party";
 import { useSoundStore } from "@/stores/sound";
+import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 
 const channelStore = useChannelStore();
 const partyStore = usePartyStore();
@@ -64,16 +69,19 @@ const router = useRouter();
 
 const showIntro = ref(true);
 const partySoundPlayed = ref(false);
+const showWinnerAnimation = ref(false);
 
 const partyPlayersSorted = computed(() =>
-  [...partyStore.players].sort((a, b) => b.points - a.points),
+  [...partyStore.players].sort((a, b) => b.points - a.points)
 );
 
+const winnerPlayer = computed(() => partyPlayersSorted.value[0] ?? null);
+
 const maxPartyPowerupsUsed = computed(() =>
-  Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0)),
+  Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0))
 );
 const maxPartyEmojisSent = computed(() =>
-  Math.max(0, ...partyPlayersSorted.value.map((p) => p.emojisSent ?? 0)),
+  Math.max(0, ...partyPlayersSorted.value.map((p) => p.emojisSent ?? 0))
 );
 const minPartyQuickestAnswer = computed(() => {
   const values = partyPlayersSorted.value
@@ -121,16 +129,6 @@ const getPartyTitleEmojis = (player) => {
   return unique.length ? unique.join("") : undefined;
 };
 
-const getPartyOverMessage = computed(() => {
-  if (partyPlayersSorted.value.length) {
-    if (partyPlayersSorted.value[0].playerId === channelStore.playerId) {
-      return "YOU WON THE PARTY!";
-    }
-    return `${partyPlayersSorted.value[0].username.toUpperCase()} WON THE PARTY!`;
-  }
-  return "GAME OVER";
-});
-
 const playPartySoundOnce = () => {
   if (partySoundPlayed.value) return;
   if (!channelStore.isHost) return;
@@ -142,6 +140,7 @@ const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
   workerSetTimeout(() => playPartySoundOnce(), 2000);
+  if (winnerPlayer.value) showWinnerAnimation.value = true;
 };
 
 onUnmounted(() => {

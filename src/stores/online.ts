@@ -77,7 +77,7 @@ export const useOnlineStore = defineStore("online", () => {
       startedAt: new Date().toISOString(),
       rounds: gameStore.rounds,
       maxRounds: configStore.maxRounds,
-      revealTime: gameStore.revealTime,
+      revealTime: configStore.revealTime,
     });
 
     router.push("/online");
