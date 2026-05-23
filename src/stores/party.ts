@@ -106,6 +106,17 @@ export const usePartyStore = defineStore("party", () => {
   let freezeTimeoutId: number | null = null;
 
   const emojiStatistics = ref<string[]>([]);
+  const replayNavAllowedUntilAt = ref<number>(0);
+
+  const allowReplayNavigationWindow = (ms = 4000) => {
+    replayNavAllowedUntilAt.value = Date.now() + ms;
+  };
+
+  const consumeReplayNavigationWindow = () => {
+    const ok = replayNavAllowedUntilAt.value > Date.now();
+    replayNavAllowedUntilAt.value = 0;
+    return ok;
+  };
 
   const lightsOutUsedByMe = computed(() => {
     const me = channelStore.playerId || "";
@@ -613,13 +624,6 @@ export const usePartyStore = defineStore("party", () => {
 
     markHostActivity();
 
-    bindEvent("client-join-blocked", (data: { targetId?: string }) => {
-      markHostActivity();
-      if (data?.targetId && data.targetId !== channelStore.playerId) return;
-      channelStore.reset();
-      router.push("/");
-    });
-
     bindEvent("client-player-inactive", (data: { playerId: string }) => {
       markHostActivity();
       if (!isHost.value) return;
@@ -632,14 +636,17 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent("client-host-inactive", (data: { playerId: string }) => {
       markHostActivity();
       if (data.playerId === channelStore.playerId) return;
-      channelStore.resetConnection?.();
-      router.push("/party-player");
+      // Host left the room: disconnect and go back home.
+      reset({ keepEvents: true });
+      channelStore.reset?.();
+      router.push("/");
     });
 
     bindEvent("client-party-game-started", (data: any) => {
       markHostActivity();
       channelStore.setGameRunning(true);
       gameStore.prepareGame(data.revealTime, data.rounds);
+      allowReplayNavigationWindow();
       router.push("/party-player");
     });
 
@@ -1179,8 +1186,8 @@ export const usePartyStore = defineStore("party", () => {
     });
   };
 
-  const reset = () => {
-    unbindEvents();
+  const reset = ({ keepEvents = false }: { keepEvents?: boolean } = {}) => {
+    if (!keepEvents) unbindEvents();
     players.value = [];
     buzzerState.value = "locked";
     activePlayerId.value = null;
@@ -1252,5 +1259,7 @@ export const usePartyStore = defineStore("party", () => {
     freezeUsedByMe,
     triggerFreeze,
     emojiStatistics,
+    allowReplayNavigationWindow,
+    consumeReplayNavigationWindow,
   };
 });

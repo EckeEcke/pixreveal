@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import { useOnlineStore } from "@/stores/online";
 import { useConfigStore } from "@/stores/config";
@@ -92,14 +92,6 @@ const soundStore = useSoundStore();
 const partyStore = usePartyStore();
 
 const isParty = computed(() => channelStore.mode === "party");
-watch(
-  () => channelStore.activeChannel,
-  (channel) => {
-    if (!channel || channelStore.mode !== "regular") return;
-    onlineStore.setupEvents();
-  },
-  { immediate: true },
-);
 
 const canNativeShare = ref(false);
 const shareModeParam = computed(() => (isParty.value ? "party" : "online"));

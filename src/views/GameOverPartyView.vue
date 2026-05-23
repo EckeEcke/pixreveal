@@ -20,6 +20,13 @@
           >
             <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
           >
+          <ButtonSecondary
+            data-sfx="back"
+            @mouseenter="soundStore.handleHoverSound"
+            @clicked="goBack"
+          >
+            <Icon icon="pixel:arrow-left" /> Go back
+          </ButtonSecondary>
         </div>
       </div>
       <PartyTitles :players="partyPlayersSorted" />
@@ -45,24 +52,23 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref } from "vue";
+import { computed, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { workerSetTimeout } from "@/services/workerTimers";
 import { useChannelStore } from "@/stores/channel";
 import { useGameStore } from "@/stores/game";
-import { useOnlineStore } from "@/stores/online";
 import { usePartyStore } from "@/stores/party";
 import { useSoundStore } from "@/stores/sound";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 
 const channelStore = useChannelStore();
 const partyStore = usePartyStore();
-const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
@@ -148,11 +154,39 @@ onUnmounted(() => {
 });
 
 const playAgain = () => {
-  if (partyStore && partyStore.reset) partyStore?.reset();
-  if (onlineStore && onlineStore.reset) onlineStore?.reset();
+  // Keep the same roomId and stay subscribed; go back to the party lobby.
+  // Host stays host, players stay joined (or can rejoin with the same room id).
+  partyStore?.reset?.({ keepEvents: true });
   gameStore.reset?.();
+  router.push("/party-lobby");
+};
+
+const goBack = () => {
+  // Leave the room and go back home. If host leaves, notify all players so they disconnect too.
+  if (channelStore.isHost && channelStore.activeChannel && channelStore.playerId) {
+    channelStore.activeChannel.trigger("client-host-inactive", {
+      playerId: channelStore.playerId,
+    });
+  }
+  partyStore?.reset?.();
+  channelStore.reset?.();
   router.push("/");
 };
+
+const activeMembersCount = computed(
+  () => channelStore.playersOnline.filter((p) => p.isOnline).length,
+);
+
+watch(
+  () => activeMembersCount.value,
+  (count) => {
+    // If host is alone in the room, auto-leave and close the room.
+    if (!channelStore.isHost) return;
+    if (!channelStore.activeChannel) return;
+    if (count > 1) return;
+    goBack();
+  },
+);
 </script>
 
 <style scoped>
@@ -162,7 +196,6 @@ main {
 }
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
-  margin: 32px auto 0;
 }
 
 .results-card {
@@ -199,6 +232,8 @@ main {
 .party-actions {
   display: flex;
   justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .rank-prophet {

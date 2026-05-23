@@ -49,7 +49,7 @@ import { Icon } from "@iconify/vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 
 defineProps<{
-  showBackBtn: Boolean;
+  showBackBtn?: Boolean;
 }>();
 
 const configStore = useConfigStore();

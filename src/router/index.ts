@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { useGameStore } from "@/stores/game";
 import { useDailyStore } from "@/stores/daily";
+import { useChannelStore } from "@/stores/channel";
+import { usePartyStore } from "@/stores/party";
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
@@ -210,6 +212,8 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   const gameStore = useGameStore();
+  const channelStore = useChannelStore();
+  const partyStore = usePartyStore();
 
   // Invite links / QR codes: `/?id=ROOMID&mode=party|online[&role=host|join]`
   if (to.path === "/" && typeof to.query?.id === "string") {
@@ -274,6 +278,14 @@ router.beforeEach((to, from) => {
       from.path === "/gameover-party") &&
     (validPathsForGameOver.includes(to.path) || to.path === "/daily")
   ) {
+    const isPartyReplayNavigation =
+      from.path === "/gameover-party" &&
+      (to.path === "/party-player" || to.path === "/party-host") &&
+      channelStore.mode === "party" &&
+      channelStore.onlineGameRunning &&
+      partyStore.consumeReplayNavigationWindow?.();
+
+    if (isPartyReplayNavigation) return true;
     return "/";
   }
 
