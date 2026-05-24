@@ -1,10 +1,12 @@
 <template>
-  <div class="back-btn-wrapper">
-    <button class="back-btn" @click="$router.back()" data-sfx="back">
-      <Icon icon="pixel:angle-left-solid" />
-    </button>
+  <div>
+    <div class="back-btn-wrapper">
+      <button class="back-btn" @click="$router.back()" data-sfx="back">
+        <Icon icon="pixel:angle-left-solid" />
+      </button>
+    </div>
+    <DailyRankings class="rankings" />
   </div>
-  <DailyRankings class="rankings" />
 </template>
 
 <script setup>

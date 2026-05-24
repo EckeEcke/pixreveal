@@ -5,13 +5,12 @@
       <h1>LOCAL PARTY MULTIPLAYER</h1>
 
       <p class="party-desc">
-        PixReveal is a free Jackbox alternative and the perfect browser party
-        game for your next game night, team building event, or office break with
-        your colleagues. Play right in your browser. No login or app needed.
-        Host on the big screen, play via phones. Watch the pixel art unveil.
-        Think you know it? Hit the buzzer on your phone and guess. Correct
-        answer gets you 1 point. Wrong answer costs you -2 points. Use powerups
-        to sabotage your friends or coworkers and win the game!
+        PixReveal is a free Jackbox alternative and the perfect browser party game for
+        your next game night, team building event, or office break with your colleagues.
+        Play right in your browser. No login or app needed. Host on the big screen, play
+        via phones. Watch the pixel art unveil. Think you know it? Hit the buzzer on your
+        phone and guess. Correct answer gets you 1 point. Wrong answer costs you -2
+        points. Use powerups to sabotage your friends or coworkers and win the game!
       </p>
 
       <div class="cta-container">
