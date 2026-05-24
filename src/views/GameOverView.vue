@@ -8,133 +8,67 @@
         @done="handleIntroDone"
       />
     </Transition>
-    <div>
-      <div v-if="isOnlinePlay">
-        <div v-if="!waitingForFinalResults" class="results-card">
-          <h1 class="logo">GAME <span>OVER</span></h1>
-          <h2 class="rank-prophet">
-            {{
-              isMe(playersSortedByPoints[0].playerId)
-                ? "YOU WIN!"
-                : `${playersSortedByPoints[0].username.toUpperCase()} WINS!`
-            }}
-          </h2>
-          <div class="gameover-actions">
-            <ButtonPrimary
-              class="btn-primary pulse-btn"
-              data-sfx="click"
-              @mouseenter="soundStore.handleHoverSound"
-              @clicked="playAgainOnline"
-            >
-              <Icon icon="pixel:refresh-solid" />
-              Play Again
-            </ButtonPrimary>
-            <ButtonSecondary
-              class="btn-secondary"
-              data-sfx="back"
-              @mouseenter="soundStore.handleHoverSound"
-              @clicked="goBackOnline"
-            >
-              <Icon icon="pixel:arrow-left" />
-              Go back
-            </ButtonSecondary>
-          </div>
-        </div>
-        <div
-          v-for="(player, index) in playersSortedByPoints"
-          :key="player.playerId"
-        >
-          <PlayerDisplay
-            :position="player.hasFinished ? index + 1 : undefined"
-            :name="player.username"
-            :avatar-index="player.avatarIndex"
-            :points="player.points"
-            :is-pending="!player.hasFinished"
-            :correct-answers="player.correctAnswers"
-            :show-you-indicator="isMe(player.playerId)"
-          />
-        </div>
-        <div v-if="waitingForFinalResults">
-          <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
-        </div>
+
+    <div class="results-card">
+      <h1 class="logo">GAME <span>OVER</span></h1>
+      <GameOverStar
+        class="game-over-star"
+        :points="
+          playerStore.gameMode === 'survival'
+            ? survivalStore.solvedCount
+            : playerStore.points
+        "
+      />
+      <GameOverCrown
+        v-if="playerStore.gameMode === 'survival' && !survivalStore.newHighscore"
+        class="game-over-crown"
+        :highscore="survivalStore.highscore"
+      />
+      <div v-if="showSingleplayerRank">
+        <SingleplayerRanks :points="playerStore.points" />
       </div>
-      <div v-else class="results-card">
-        <h1 class="logo">GAME <span>OVER</span></h1>
-        <GameOverStar
-          class="game-over-star"
-          :points="
-            playerStore.gameMode === 'survival'
-              ? survivalStore.solvedCount
-              : playerStore.points
-          "
-        />
-        <GameOverCrown
-          v-if="
-            playerStore.gameMode === 'survival' && !survivalStore.newHighscore
-          "
-          class="game-over-crown"
-          :highscore="survivalStore.highscore"
-        />
-        <div v-if="showSingleplayerRank">
-          <SingleplayerRanks :points="playerStore.points" />
-        </div>
 
-        <div
-          v-if="
-            playerStore.gameMode === 'survival' && survivalStore.newHighscore
-          "
-          class="rank-prophet highscore-message"
+      <div
+        v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
+        class="rank-prophet highscore-message"
+      >
+        <Icon icon="pixel:sparkles" />
+        NEW HIGHSCORE!
+        <Icon icon="pixel:sparkles" />
+      </div>
+
+      <div class="gameover-actions">
+        <ButtonPrimary
+          class="btn-primary pulse-btn"
+          data-sfx="click"
+          @mouseenter="soundStore.handleHoverSound"
+          @clicked="playAgainSingleplayer"
         >
-          <Icon icon="pixel:sparkles" />
-          NEW HIGHSCORE!
-          <Icon icon="pixel:sparkles" />
-        </div>
+          <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
+        >
+        <ButtonSecondary
+          data-sfx="back"
+          @mouseenter="soundStore.handleHoverSound"
+          @clicked="goBackSingleplayer"
+        >
+          <Icon icon="pixel:arrow-left" /> Go back
+        </ButtonSecondary>
+      </div>
 
-        <div class="gameover-actions">
-          <ButtonPrimary
-            class="btn-primary pulse-btn"
-            data-sfx="click"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="playAgainSingleplayer"
-          >
-            <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
-          >
-          <ButtonSecondary
-            data-sfx="back"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="goBackSingleplayer"
-          >
-            <Icon icon="pixel:arrow-left" /> Go back
-          </ButtonSecondary>
-        </div>
-
-        <div class="share-section">
-          <h2>Challenge your friends!</h2>
-          <ShareIcons :msg="getShareMessage(playerStore.points)" />
-        </div>
+      <div class="share-section">
+        <h2>Challenge your friends!</h2>
+        <ShareIcons :msg="getShareMessage(playerStore.points, playerStore.gameMode)" />
       </div>
     </div>
-    <LobbyChat v-if="isOnlinePlay" />
-    <WinnerAnimation
-      v-if="isOnlinePlay && !waitingForFinalResults && winnerPlayer"
-      :show="showWinnerAnimation"
-      :winner-name="winnerPlayer.username"
-      :avatar-index="winnerPlayer.avatarIndex"
-      @done="showWinnerAnimation = false"
-    />
   </main>
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from "vue";
-import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useChannelStore } from "@/stores/channel";
-import { useOnlineStore } from "@/stores/online";
 import { usePlayerStore } from "@/stores/player";
-import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import { useSoundStore } from "@/stores/sound";
-import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import { useGameStore } from "@/stores/game";
 import { Icon } from "@iconify/vue";
 import ShareIcons from "@/components/page-ui/ShareIcons.vue";
@@ -146,38 +80,16 @@ import SingleplayerRanks from "@/components/game-ui/SingleplayerRanks.vue";
 import { getRankData } from "@/utils/ranks";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
-import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
 const configStore = useConfigStore();
 const channelStore = useChannelStore();
-const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
 const showIntro = ref(true);
-const showWinnerAnimation = ref(false);
-const winnerAnimationShown = ref(false);
-
-const isMe = (id) => id === channelStore.playerId;
-
-const playersOnline = computed(() => channelStore.playersOnline);
-
-const playersSortedByPoints = computed(() => {
-  return [...playersOnline.value].sort((a, b) => b.points - a.points);
-});
-
-const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
-
-const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
-);
-
-const isOnlinePlay = computed(
-  () => channelStore.playersOnline && channelStore.playersOnline.length > 1,
-);
 
 const showSingleplayerRank = computed(() => {
   return (
@@ -191,25 +103,6 @@ const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
 };
-
-watch(
-  [
-    () => showIntro.value,
-    () => isOnlinePlay.value,
-    () => waitingForFinalResults.value,
-    () => winnerPlayer.value,
-  ],
-  ([intro, online, waiting, winner]) => {
-    if (intro) return;
-    if (!online) return;
-    if (waiting) return;
-    if (!winner) return;
-    if (winnerAnimationShown.value) return;
-    winnerAnimationShown.value = true;
-    showWinnerAnimation.value = true;
-  },
-  { immediate: true },
-);
 
 const getRankDataForShare = (score) =>
   getRankData(score, {
@@ -229,29 +122,6 @@ const getShareMessage = (score, mode) => {
   return "Play PIX REVEAL!";
 };
 
-const playAgainOnline = () => {
-  // Keep the same roomId and stay subscribed; go back to the lobby.
-  onlineStore.stopGame?.();
-  gameStore.reset?.();
-  router.push("/lobby");
-};
-
-const goBackOnline = () => {
-  // Leave the room and go back home. If host leaves, notify all players so they disconnect too.
-  if (
-    channelStore.isHost &&
-    channelStore.activeChannel &&
-    channelStore.playerId
-  ) {
-    channelStore.activeChannel.trigger("client-host-inactive", {
-      playerId: channelStore.playerId,
-    });
-  }
-  onlineStore.stopGame?.();
-  channelStore.reset?.();
-  router.push("/");
-};
-
 const playAgainSingleplayer = () => {
   gameStore.reset?.();
   router.push("/singleplayer");
@@ -262,22 +132,6 @@ const goBackSingleplayer = () => {
   router.push("/");
 };
 
-const activeMembersCount = computed(
-  () => channelStore.playersOnline.filter((p) => p.isOnline).length,
-);
-
-watch(
-  () => activeMembersCount.value,
-  (count) => {
-    if (!channelStore.isHost) return;
-    if (!channelStore.activeChannel) return;
-    // If the host is the last one left in the room, leave and kill the channel.
-    // `isOnlinePlay` can flip to false as soon as other players disconnect.
-    if (count > 1) return;
-    goBackOnline();
-  },
-);
-
 gameStore.reset();
 
 onMounted(() => {
@@ -285,9 +139,10 @@ onMounted(() => {
     router.replace("/gameover-party");
     return;
   }
-  const winnerId = playersSortedByPoints.value[0]?.playerId;
-  if (winnerId && winnerId === channelStore.playerId)
-    soundStore.playSound("winner");
+  if (channelStore.mode === "regular" && channelStore.onlineGameRunning) {
+    router.replace("/gameover-online");
+    return;
+  }
 });
 </script>
 

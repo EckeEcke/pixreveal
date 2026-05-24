@@ -112,6 +112,12 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/gameover-online",
+      name: "gameover-online",
+      component: () => import("@/views/GameOverOnlineView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/gameover-party",
       name: "gameover-party",
       component: () => import("@/views/GameOverPartyView.vue"),
@@ -271,8 +277,14 @@ router.beforeEach((to, from) => {
     return "/";
   }
 
+  if (to.path === "/gameover-online" && from.path !== "/online") {
+    return "/";
+  }
+
   if (
-    (to.path === "/gameover" || to.path === "/gameover-party") &&
+    (to.path === "/gameover" ||
+      to.path === "/gameover-online" ||
+      to.path === "/gameover-party") &&
     !validPathsForGameOver.includes(from.path)
   ) {
     return "/";
@@ -280,6 +292,7 @@ router.beforeEach((to, from) => {
 
   if (
     (from.path === "/gameover" ||
+      from.path === "/gameover-online" ||
       from.path === "/gameover-daily" ||
       from.path === "/gameover-party") &&
     (validPathsForGameOver.includes(to.path) || to.path === "/daily")
@@ -294,7 +307,7 @@ router.beforeEach((to, from) => {
     if (isPartyReplayNavigation) return true;
 
     const isOnlineReplayNavigation =
-      from.path === "/gameover" &&
+      from.path === "/gameover-online" &&
       to.path === "/online" &&
       channelStore.mode === "regular" &&
       channelStore.onlineGameRunning &&

@@ -271,7 +271,7 @@ export const useChannelStore = defineStore("channel", () => {
       toast.error("Connection timeout. Please try again.", { icon: "⏱️" });
       reset();
       router.push("/");
-    }, 12000);
+    }, 22000);
   };
 
   const startHeartbeat = () => {

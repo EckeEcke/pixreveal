@@ -201,7 +201,8 @@ const handleAnswer = (selectedOption: any) => {
       if (gameStore.currentRoundIndex >= maxRounds.value - 1) {
         onlineStore.broadcastScore();
         gameStore.setGameState("gameover");
-        router.push("/gameover");
+        const isOnlineRoute = router.currentRoute.value.path === "/online";
+        router.push(isOnlineRoute ? "/gameover-online" : "/gameover");
       } else {
         gameStore.nextRound();
       }
