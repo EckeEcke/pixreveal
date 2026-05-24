@@ -1,15 +1,17 @@
 <template>
-  <div class="content-view">
-    <div class="content-wrapper">
-      <div class="close-btn-wrapper">
-        <button @click="$router.push('/')" data-sfx="back" class="close-btn">
-          <Icon icon="pixel:window-close-solid" />
-        </button>
+  <div class="content-page">
+    <div class="content-view">
+      <div class="content-wrapper">
+        <div class="close-btn-wrapper">
+          <button @click="$router.push('/')" data-sfx="back" class="close-btn">
+            <Icon icon="pixel:window-close-solid" />
+          </button>
+        </div>
+        <slot></slot>
       </div>
-      <slot></slot>
     </div>
+    <FooterApp />
   </div>
-  <FooterApp />
 </template>
 
 <script setup>
@@ -18,6 +20,10 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
 </script>
 
 <style scoped>
+.content-page {
+  width: 100%;
+}
+
 .content-view {
   display: flex;
   flex-direction: column;

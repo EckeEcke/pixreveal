@@ -15,7 +15,9 @@
     </div>
     <div class="app-container">
       <router-view v-slot="{ Component }">
-        <component :is="Component" />
+        <transition name="fade" mode="out-in">
+          <component :is="Component" :key="route.fullPath" />
+        </transition>
       </router-view>
       <audio ref="audio" loop></audio>
     </div>
@@ -232,5 +234,15 @@ onBeforeUnmount(() => {
   100% {
     opacity: 0;
   }
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-out;
 }
 </style>
