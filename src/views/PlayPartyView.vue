@@ -2,6 +2,9 @@
   <main class="page">
     <LoadingOverlay :show="channelStore.isLoading" />
     <div class="setup-card card">
+      <button @click="$router.push('/')" data-sfx="back" class="close-btn">
+        <Icon icon="pixel:window-close-solid" />
+      </button>
       <div class="card-grid">
         <section class="panel panel-left" aria-label="Party setup">
           <span class="pre-headline">MODE</span>
