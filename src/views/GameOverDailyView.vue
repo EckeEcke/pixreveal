@@ -1,58 +1,60 @@
 <template>
-  <Transition name="fade" mode="out-in">
-    <GameTransition
-      v-if="showIntro && !dailyStore.hasSubmitted"
-      first="GAME"
-      second="OVER"
-      @done="
-        () => {
-          showIntro = false;
-          soundStore.playSound('complete');
-        }
-      "
-    />
-  </Transition>
-  <div class="ranking-card">
-    <h1 class="logo">GAME <span>OVER</span></h1>
-    <GameOverStar :points="playerStore.points" />
+  <main>
+    <Transition name="fade" mode="out-in">
+      <GameTransition
+        v-if="showIntro && !dailyStore.hasSubmitted"
+        first="GAME"
+        second="OVER"
+        @done="
+          () => {
+            showIntro = false;
+            soundStore.playSound('complete');
+          }
+        "
+      />
+    </Transition>
+    <div class="ranking-card">
+      <h1 class="logo">GAME <span>OVER</span></h1>
+      <GameOverStar :points="playerStore.points" />
 
-    <div v-if="!dailyStore.hasSubmitted">
-      <p>
-        Submit your score to unlock today's daily rankings and see your global
-        position!
-      </p>
-      <ButtonPrimary
-        v-if="!isPosting"
-        data-sfx="click"
-        class="btn-primary"
-        @click="showAvatarModal = true"
-      >
-        <Icon icon="pixel:arrow-circle-up-solid" /> SUBMIT YOUR SCORE
-      </ButtonPrimary>
-      <LoadingAnimation v-else :text="'SUBMITTING...'" />
+      <div v-if="!dailyStore.hasSubmitted">
+        <p>
+          Submit your score to unlock today's daily rankings and see your global
+          position!
+        </p>
+        <ButtonPrimary
+          v-if="!isPosting"
+          data-sfx="click"
+          class="btn-primary"
+          @click="showAvatarModal = true"
+        >
+          <Icon icon="pixel:arrow-circle-up-solid" /> SUBMIT YOUR SCORE
+        </ButtonPrimary>
+        <LoadingAnimation v-else :text="'SUBMITTING...'" />
+      </div>
+      <div v-else>
+        <ButtonPrimary
+          data-sfx="click"
+          class="btn-primary"
+          @clicked="$router.push('/')"
+        >
+          <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
+        </ButtonPrimary>
+      </div>
+      <div>
+        <h2>Challenge your friends!</h2>
+        <ShareIcons :msg="shareMessage" />
+      </div>
+      <DailyCountdown />
     </div>
-    <div v-else>
-      <ButtonPrimary
-        data-sfx="click"
-        class="btn-primary"
-        @clicked="$router.push('/')"
-      >
-        <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
-      </ButtonPrimary>
-    </div>
-    <div>
-      <h2>Challenge your friends!</h2>
-      <ShareIcons :msg="shareMessage" />
-    </div>
-    <DailyCountdown />
-  </div>
-  <PlayerEditModal
-    v-if="showAvatarModal"
-    title="SUBMIT SCORE TO LEADERBOARD"
-    btn-text="SUBMIT"
-    @btn-click="post"
-    @close="showAvatarModal = false"
-  />
+    <PlayerEditModal
+      v-if="showAvatarModal"
+      title="SUBMIT SCORE TO LEADERBOARD"
+      btn-text="SUBMIT"
+      @btn-click="post"
+      @close="showAvatarModal = false"
+    />
+  </main>
 </template>
 
 <script setup>

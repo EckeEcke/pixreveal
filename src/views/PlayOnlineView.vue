@@ -29,7 +29,11 @@
         <div class="rounds-selection">
           <label class="selection-label">HOW MANY ROUNDS</label>
           <div class="radio-group">
-            <label v-for="amount in [5, 10, 15, 20]" :key="amount" class="radio-item">
+            <label
+              v-for="amount in [5, 10, 15, 20]"
+              :key="amount"
+              class="radio-item"
+            >
               <input
                 type="radio"
                 name="rounds"
@@ -46,7 +50,11 @@
         <div class="rounds-selection">
           <label class="selection-label">SET ROUND LENGTH</label>
           <div class="radio-group">
-            <label v-for="duration in [5, 10, 15, 20]" :key="duration" class="radio-item">
+            <label
+              v-for="duration in [5, 10, 15, 20]"
+              :key="duration"
+              class="radio-item"
+            >
               <input
                 type="radio"
                 name="duration"
@@ -106,13 +114,12 @@
           </button>
         </div>
       </div>
-
-      <PlayerEditModal
-        v-if="showAvatarModal"
-        @btn-click="showAvatarModal = false"
-        @close="showAvatarModal = false"
-      />
     </div>
+    <PlayerEditModal
+      v-if="showAvatarModal"
+      @btn-click="showAvatarModal = false"
+      @close="showAvatarModal = false"
+    />
   </main>
 </template>
 
@@ -224,7 +231,6 @@ const joinGame = () => {
   display: flex;
   justify-content: center;
   padding: 16px;
-  
 }
 
 .card {

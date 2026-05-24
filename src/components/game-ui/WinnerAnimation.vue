@@ -102,7 +102,8 @@ const avatarStyle = computed<CSSProperties>(() => {
 .winner-card {
   position: relative;
   z-index: 1;
-  width: min(520px, calc(100vw - 32px));
+  width: min(520px, calc(100vw - 64px));
+  box-sizing: border-box;
   border-radius: 12px;
   padding: 28px 22px 22px;
   background: rgba(12, 8, 20, 0.85);

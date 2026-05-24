@@ -64,9 +64,9 @@
       />
       <PowerUpInfo class="powerup-info" />
     </div>
+    <EmojiOverlay :new-emoji="lastEmoji" />
+    <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
   </main>
-  <EmojiOverlay :new-emoji="lastEmoji" />
-  <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
 </template>
 
 <script setup lang="ts">
@@ -198,7 +198,10 @@ watch(
       return;
     }
     if (roundIndex !== gameStore.currentRoundIndex) return;
-    if (lastXlzActiveForRoundIndex === roundIndex && lastXlzByPlayerId === byPlayerId)
+    if (
+      lastXlzActiveForRoundIndex === roundIndex &&
+      lastXlzByPlayerId === byPlayerId
+    )
       return;
     lastXlzActiveForRoundIndex = roundIndex;
     lastXlzByPlayerId = typeof byPlayerId === "string" ? byPlayerId : null;
