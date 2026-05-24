@@ -267,6 +267,10 @@ router.beforeEach((to, from) => {
     return "/";
   }
 
+  if (to.path === "/gameover-daily" && from.path !== "/daily") {
+    return "/";
+  }
+
   if (
     (to.path === "/gameover" || to.path === "/gameover-party") &&
     !validPathsForGameOver.includes(from.path)
