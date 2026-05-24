@@ -66,7 +66,6 @@
 <script setup>
 import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useChannelStore } from "@/stores/channel";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { useGameStore } from "@/stores/game";
@@ -85,7 +84,6 @@ import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
 const configStore = useConfigStore();
-const channelStore = useChannelStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
@@ -133,17 +131,6 @@ const goBackSingleplayer = () => {
 };
 
 gameStore.reset();
-
-onMounted(() => {
-  if (channelStore.mode === "party" && channelStore.onlineGameRunning) {
-    router.replace("/gameover-party");
-    return;
-  }
-  if (channelStore.mode === "regular" && channelStore.onlineGameRunning) {
-    router.replace("/gameover-online");
-    return;
-  }
-});
 </script>
 
 <style scoped>
