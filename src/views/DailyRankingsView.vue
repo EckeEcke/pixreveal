@@ -23,6 +23,9 @@ if (!dailyStore.dailyRounds.length) {
 
 <style scoped>
 main {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
   width: 100%;
 }
 

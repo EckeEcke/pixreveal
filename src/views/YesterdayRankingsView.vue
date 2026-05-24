@@ -16,6 +16,9 @@ import DailyRankings from "@/components/game-ui/DailyRankings.vue";
 
 <style scoped>
 main {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
   width: 100%;
 }
 
