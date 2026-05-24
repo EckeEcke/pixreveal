@@ -30,7 +30,7 @@
           </ButtonSecondary>
         </div>
       </div>
-      <PartyTitles :players="partyPlayersSorted" />
+      <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
       <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
         <PlayerDisplay
           :position="index + 1"

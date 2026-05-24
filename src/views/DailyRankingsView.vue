@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <main>
     <div class="back-btn-wrapper">
       <button class="back-btn" @click="$router.back()" data-sfx="back">
         <Icon icon="pixel:angle-left-solid" />
       </button>
     </div>
     <DailyRankings class="rankings" />
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -22,6 +22,10 @@ if (!dailyStore.dailyRounds.length) {
 </script>
 
 <style scoped>
+main {
+  width: 100%;
+}
+
 .back-btn-wrapper {
   min-width: 32px;
   width: 100%;

@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <main>
     <div class="back-btn-wrapper">
       <button class="back-btn" @click="$router.back()" data-sfx="click">
         <Icon icon="pixel:angle-left-solid" />
       </button>
     </div>
     <DailyRankings :is-yesterday="true" class="rankings" />
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -15,6 +15,10 @@ import DailyRankings from "@/components/game-ui/DailyRankings.vue";
 </script>
 
 <style scoped>
+main {
+  width: 100%;
+}
+
 .back-btn-wrapper {
   min-width: 32px;
   width: 100%;
