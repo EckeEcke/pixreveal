@@ -90,6 +90,13 @@
         </div>
       </div>
     </div>
+    <span
+      v-if="!playerStore.isCreatorMode && props.isBonus"
+      class="bonus-info"
+      aria-label="Bonus round active"
+    >
+      2x
+    </span>
   </header>
 </template>
 
@@ -108,6 +115,7 @@ const props = defineProps<{
   currentRound?: number;
   maxRounds?: number;
   isSurvival: boolean;
+  isBonus?: boolean;
 }>();
 
 const playerStore = usePlayerStore();
@@ -132,6 +140,8 @@ const statusClass = computed(() => ({
 
 <style scoped>
 .game-header {
+  position: relative;
+  z-index: 1;
   width: 100%;
   padding: 8px 14px;
   gap: 12px;
@@ -203,6 +213,7 @@ const statusClass = computed(() => ({
 .gold-text {
   color: #fbbf24;
   margin-bottom: -4px;
+  filter: drop-shadow(1px 1px 1px black);
 }
 
 .pill-icon {
@@ -366,5 +377,17 @@ const statusClass = computed(() => ({
   100% {
     left: 100%;
   }
+}
+
+.bonus-info {
+  position: absolute;
+  bottom: -48px;
+  right: 16px;
+  font-size: 32px;
+  color: white;
+  font-weight: 900;
+  text-shadow: 1px 1px 1px var(--primary);
+  animation: pulse 1s infinite;
+  z-index: 99;
 }
 </style>

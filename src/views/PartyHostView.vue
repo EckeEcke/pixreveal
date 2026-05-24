@@ -27,6 +27,7 @@
         :count="timer"
         :is-correct="false"
         :is-incorrect="false"
+        :is-bonus="!!bonusRoundType || isFinalRound"
         :total-score="undefined"
         :current-round="gameStore.currentRoundIndex + 1"
         :max-rounds="configStore.maxRounds"

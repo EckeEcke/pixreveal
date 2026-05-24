@@ -27,6 +27,7 @@
         :count="timer"
         :is-correct="hasAnsweredCorrectly"
         :is-incorrect="hasAnswered && !hasAnsweredCorrectly"
+        :is-bonus="(!!bonusRoundType || isFinalRound) && !isStatusIcon"
         :total-score="playerStore.points"
         :currentRound="gameStore.currentRoundIndex + 1"
         :max-rounds="maxRounds"
