@@ -89,6 +89,7 @@ footer {
   border: none;
   text-decoration: underline;
   font-family: inherit;
+  font-size: 16px;
 }
 
 .link-wrapper {
