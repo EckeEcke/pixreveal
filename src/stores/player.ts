@@ -2,6 +2,7 @@ import { ref, type Ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
+import { generateRoomId } from "@/utils/crypto";
 
 const STORAGE_KEY = "pixreveal:playerProfile";
 const CONTROLLER_ID_KEY = "pixreveal:controllerId";
@@ -17,6 +18,11 @@ export const usePlayerStore = defineStore("player", () => {
     sessionStorage.setItem(CONTROLLER_ID_KEY, controllerId.value);
   }
 
+  const playerId: Ref<string> = ref(savedProfile.id || "");
+  if (!playerId.value) {
+    playerId.value = generateRoomId();
+  }
+
   const playerName: Ref<string> = ref(savedProfile.name || "");
   const avatarIndex: Ref<number> = ref(savedProfile.avatar ?? 0);
   const points: Ref<number> = ref(0);
@@ -26,15 +32,16 @@ export const usePlayerStore = defineStore("player", () => {
   >("classic");
   const isCreatorMode = ref(false);
 
-  watch([playerName, avatarIndex], ([newName, newAvatar]) => {
+  watch([playerName, avatarIndex, playerId], ([newName, newAvatar, newId]) => {
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
         name: newName,
         avatar: newAvatar,
+        id: newId,
       }),
     );
-  });
+  }, { immediate: true });
 
   const setUser = (user: { username: string; avatar: number }) => {
     setPlayerName(user.username);
@@ -62,6 +69,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   return {
     controllerId,
+    playerId,
     playerName,
     avatarIndex,
     points,

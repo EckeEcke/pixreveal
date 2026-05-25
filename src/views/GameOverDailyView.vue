@@ -96,8 +96,10 @@ const post = async () => {
     showAvatarModal.value = true;
     return;
   }
+  const userId = `${playerStore.playerName}-${playerStore.playerId}`;
   dailyStore.dailyRankings.push({
     name: playerStore.playerName,
+    userId,
     score: playerStore.points,
     avatarIndex: playerStore.avatarIndex,
   });
@@ -106,6 +108,7 @@ const post = async () => {
     playerStore.points,
     playerStore.avatarIndex,
     dailyStore.date,
+    userId,
   );
   toast.success(
     "Score submitted. Check your position on the daily leaderboard!",

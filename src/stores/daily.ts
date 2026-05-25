@@ -57,13 +57,14 @@ export const useDailyStore = defineStore("daily", () => {
     score: number,
     avatarIndex: number,
     date: string,
+    userId?: string,
   ) => {
     hasSubmitted.value = true;
     try {
       const response = await fetch("/api/post-daily", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, score, avatarIndex, date }),
+        body: JSON.stringify({ name, userId, score, avatarIndex, date }),
       });
       if (!response.ok) throw new Error("Failed to post ranking");
     } catch (err: any) {
