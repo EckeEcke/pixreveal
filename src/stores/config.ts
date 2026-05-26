@@ -6,19 +6,6 @@ import type { Drawing } from "./game";
 import drawings from "@/data/drawings.json";
 import { toast } from "vue3-toastify";
 import { useSoundStore } from "./sound";
-import router from "@/router";
-import type { LocationQueryRaw, LocationQueryValue } from "vue-router";
-
-type QueryValue = LocationQueryValue | LocationQueryValue[] | undefined;
-
-const isQueryEnabled = (value: QueryValue) => {
-  if (Array.isArray(value)) {
-    return value.some((v) => v !== null && v !== undefined && v !== "");
-  }
-  if (value === null || value === undefined) return false;
-  if (value === "" || value === "1" || value === "true") return true;
-  return true;
-};
 
 export const CATEGORIES = [
   {
@@ -47,12 +34,12 @@ export const allCategoryNames = CATEGORIES.map((c) => c.name);
 export const minimumCategories = 4;
 
 export const useConfigStore = defineStore("config", () => {
-  const currentRoute = router.currentRoute;
   const revealTime = ref(15);
   const selectedCategories = ref([...allCategoryNames]);
   const minimumDrawings = computed(() => maxRounds.value * 4);
   const includeUgc = ref(false);
   const ugcDrawings: Ref<Drawing[]> = ref([]);
+  const isManualOpen = ref(false);
   const isSettingsOpen = ref(false);
 
   fetch(
@@ -136,25 +123,15 @@ export const useConfigStore = defineStore("config", () => {
     });
   });
 
-  const showManual = computed(() =>
-    isQueryEnabled(currentRoute.value.query.manual),
-  );
+  const showManual = computed(() => isManualOpen.value);
   const showSettings = computed(() => isSettingsOpen.value);
 
-  const patchQuery = (patch: Record<string, any>) => {
-    const nextQuery: Record<string, any> = { ...currentRoute.value.query, ...patch };
-
-    Object.keys(nextQuery).forEach((key) => {
-      if (nextQuery[key] === undefined || nextQuery[key] === null) {
-        delete nextQuery[key];
-      }
-    });
-
-    router.replace({ query: nextQuery as unknown as LocationQueryRaw });
+  const openManual = () => {
+    isManualOpen.value = true;
   };
-
-  const openManual = () => patchQuery({ manual: "1" });
-  const closeManual = () => patchQuery({ manual: undefined });
+  const closeManual = () => {
+    isManualOpen.value = false;
+  };
 
   const openSettings = () => {
     isSettingsOpen.value = true;
