@@ -32,15 +32,13 @@
         </ButtonPrimary>
         <LoadingAnimation v-else :text="'SUBMITTING...'" />
       </div>
-      <div v-else>
-        <ButtonPrimary
-          data-sfx="click"
-          class="btn-primary"
-          @clicked="$router.push('/')"
-        >
-          <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
-        </ButtonPrimary>
-      </div>
+      <ButtonSecondary
+        data-sfx="click"
+        class="btn-secondary"
+        @clicked="$router.push('/')"
+      >
+        <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
+      </ButtonSecondary>
       <div>
         <h2>Challenge your friends!</h2>
         <ShareIcons :msg="shareMessage" />
@@ -71,6 +69,7 @@ import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import DailyCountdown from "@/components/page-ui/DailyCountdown.vue";
 
 const router = useRouter();
@@ -169,5 +168,9 @@ p {
   width: 100%;
   padding: 18px;
   font-size: 18px;
+}
+
+.btn-secondary {
+  width: 100%;
 }
 </style>

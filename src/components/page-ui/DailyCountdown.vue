@@ -61,7 +61,7 @@ onUnmounted(() => {
   justify-content: center;
   gap: 12px;
   margin-top: 16px;
-  padding-top: 8px;
+  padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
