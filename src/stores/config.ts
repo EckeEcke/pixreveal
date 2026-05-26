@@ -53,6 +53,7 @@ export const useConfigStore = defineStore("config", () => {
   const minimumDrawings = computed(() => maxRounds.value * 4);
   const includeUgc = ref(false);
   const ugcDrawings: Ref<Drawing[]> = ref([]);
+  const isSettingsOpen = ref(false);
 
   fetch(
     "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
@@ -138,9 +139,7 @@ export const useConfigStore = defineStore("config", () => {
   const showManual = computed(() =>
     isQueryEnabled(currentRoute.value.query.manual),
   );
-  const showSettings = computed(() =>
-    isQueryEnabled(currentRoute.value.query.settings),
-  );
+  const showSettings = computed(() => isSettingsOpen.value);
 
   const patchQuery = (patch: Record<string, any>) => {
     const nextQuery: Record<string, any> = { ...currentRoute.value.query, ...patch };
@@ -157,8 +156,12 @@ export const useConfigStore = defineStore("config", () => {
   const openManual = () => patchQuery({ manual: "1" });
   const closeManual = () => patchQuery({ manual: undefined });
 
-  const openSettings = () => patchQuery({ settings: "1" });
-  const closeSettings = () => patchQuery({ settings: undefined });
+  const openSettings = () => {
+    isSettingsOpen.value = true;
+  };
+  const closeSettings = () => {
+    isSettingsOpen.value = false;
+  };
 
   return {
     categoriesWithCounts,
