@@ -19,7 +19,7 @@
       <div class="headline-wrapper">
         <h3>Choose your Avatar</h3>
       </div>
-      <div>
+      <div class="avatar-grid-scroll-container">
         <div class="avatar-grid">
           <div
             v-for="avatar in avatars"
@@ -84,12 +84,17 @@ h3 {
   text-transform: uppercase;
 }
 
+/* Der neue, sichere Scroll-Container für Mobile */
+.avatar-grid-scroll-container {
+  width: 100%;
+}
+
 .avatar-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 8px;
   margin-top: 16px;
-  padding-right: 5px;
+  padding: 4px 5px 4px 4px;
 }
 
 .avatar-slot {
@@ -123,21 +128,36 @@ h3 {
   border-color: var(--primary);
   background-color: rgba(255, 77, 0, 0.1);
   box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
-  transform: scale(1.5);
+  transform: scale(1.3);
   opacity: 1;
   filter: contrast(2);
+  z-index: 2;
 }
 
 .btn-primary {
-  margin-top: 32px;
+  width: 100%;
+  margin-top: 36px;
 }
 
 @media (max-width: 575px) {
-  .avatar-grid {
-    margin: 0;
+  .avatar-grid-scroll-container {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
   }
+
   .avatar-grid {
     grid-template-columns: repeat(5, 1fr);
+    margin-top: 8px;
+  }
+
+  .avatar-grid-scroll-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .avatar-grid-scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 3px;
   }
 }
 </style>
