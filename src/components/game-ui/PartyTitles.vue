@@ -31,7 +31,10 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import RobotModerator from "@/components/game-ui/RobotModerator.vue";
 import { usePartyStore } from "@/stores/party";
 import avatarSheet from "@/assets/avatars/avatars.webp";
-import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
+import {
+  workerClearInterval,
+  workerSetInterval,
+} from "@/services/workerTimers";
 
 type PartyPlayerStats = {
   playerId: string;
@@ -107,7 +110,7 @@ const slides = computed<Slide[]>(() => {
   const maxEmojis = maxEmojisSent.value;
   const minQuick = minQuickestAnswer.value;
 
-  for (const p of players) {
+  for (const [index, p] of players.entries()) {
     const nameUpper = String(p.username || "Player").toUpperCase();
     const wrong = p.wrongAnswers ?? 0;
     const correct = p.correctAnswers ?? 0;
@@ -188,6 +191,18 @@ const slides = computed<Slide[]>(() => {
       });
     }
 
+    if (partyStore.isSuddenDeath && index === 0) {
+      raw.push({
+        emoji: "☠️",
+        title: "Survivor",
+        message:
+          "You weathered the storm with the facial expression of a deep-sea crab looking at a shipwreck.",
+        playerId: p.playerId,
+        playerNameUpper: nameUpper,
+        avatarIndex: p.avatarIndex,
+      });
+    }
+
     if (
       typeof minQuick === "number" &&
       typeof quickest === "number" &&
@@ -241,7 +256,10 @@ const slides = computed<Slide[]>(() => {
     const playerNamesUpper = slidePlayers
       .map((p) => p.playerNameUpper)
       .join(" & ");
-    const playersKey = slidePlayers.map((p) => p.playerId).sort().join("-");
+    const playersKey = slidePlayers
+      .map((p) => p.playerId)
+      .sort()
+      .join("-");
 
     result.push({
       key: `${groupKey}||${playersKey}`,
@@ -343,7 +361,7 @@ onBeforeUnmount(() => stop());
   width: 100%;
   margin: 16px 0 24px;
   @media (min-width: 576px) {
-      grid-template-columns: 80px auto;
+    grid-template-columns: 80px auto;
   }
 }
 
@@ -358,7 +376,7 @@ onBeforeUnmount(() => stop());
   backdrop-filter: blur(4px);
   border: 2px solid var(--neon-yellow);
   color: rgba(255, 255, 255, 0.92);
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     font-size: 20px;
   }
 }
@@ -373,7 +391,7 @@ onBeforeUnmount(() => stop());
 
 .emoji {
   font-size: 22px;
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     font-size: 26px;
   }
 }
@@ -381,7 +399,7 @@ onBeforeUnmount(() => stop());
 .title {
   font-size: 20px;
   letter-spacing: 1px;
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     font-size: 22px;
     letterspacing: 2px;
   }
