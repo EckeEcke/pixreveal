@@ -1,37 +1,41 @@
 <template>
   <div class="buzzer-status">
-    <RobotModerator />
+    <RobotModerator :is-talking="robotIsTalking" />
     <div>
       <Transition name="fade" mode="out-in">
-	        <div
-	          v-if="partyStore.buzzerState === 'open'"
-	          key="open"
-	          class="status-pill open"
-	        >
-		          <template v-if="isFinalRound">
-		            FINAL ROUND!
-		            <br />
-		            <span class="green-text">Double the points</span>, <span class="red-text">double the loss</span>!
-		          </template>
-		          <template v-else-if="isBonusRound">
-		            BONUS ROUND!
-		            <br />
-		            <span class="green-text">Double the points</span>, <span class="red-text">double the loss</span>!
-		          </template>
-		          <template v-else>
-                <template v-if="leaderGapActive">
-                  {{ leaderGapMessageBefore }}
-                  <span class="player-highlight">{{ leaderUsername?.toUpperCase?.() || "PLAYER" }}</span>
-                  {{ leaderGapMessageAfter }}
-                </template>
-                <template v-else>
-                  {{ openPrompt.line1 }}
-                  <br />
-                  {{ openPrompt.line2Before
-                  }}<span class="pink-text">BUZZ</span>{{ openPrompt.line2After }}
-                </template>
-		          </template>
-	        </div>
+        <div
+          v-if="partyStore.buzzerState === 'open'"
+          key="open"
+          class="status-pill open"
+        >
+          <template v-if="isFinalRound">
+            FINAL ROUND!
+            <br />
+            <span class="green-text">Double the points</span>,
+            <span class="red-text">double the loss</span>!
+          </template>
+          <template v-else-if="isBonusRound">
+            BONUS ROUND!
+            <br />
+            <span class="green-text">Double the points</span>,
+            <span class="red-text">double the loss</span>!
+          </template>
+          <template v-else>
+            <template v-if="leaderGapActive">
+              {{ leaderGapMessageBefore }}
+              <span class="player-highlight">{{
+                leaderUsername?.toUpperCase?.() || "PLAYER"
+              }}</span>
+              {{ leaderGapMessageAfter }}
+            </template>
+            <template v-else>
+              {{ openPrompt.line1 }}
+              <br />
+              {{ openPrompt.line2Before }}<span class="pink-text">BUZZ</span
+              >{{ openPrompt.line2After }}
+            </template>
+          </template>
+        </div>
 
         <div
           v-else-if="partyStore.buzzerState === 'answering'"
@@ -53,10 +57,10 @@
             <span v-if="index === optionsForPrompt.length - 2">
               &nbsp;<span class="white-text">or</span>&nbsp;
             </span>
-	          <span v-else-if="index === optionsForPrompt.length - 1">?</span>
-	        </span>
+            <span v-else-if="index === optionsForPrompt.length - 1">?</span>
+          </span>
           <span v-if="partyStore.isXlzActive">&nbsp;Hmm.. this looks off.</span>
-	      </div>
+        </div>
 
         <div
           v-else-if="
@@ -81,9 +85,11 @@
             }}</span>
             was the answer.
             <br />
-	            {{ pointsForCorrect }} point<span v-if="pointsForCorrect !== 1">s</span> for
-	            <span class="player-highlight">{{ activePlayerNameUpper }}</span
-	            >.
+            {{ pointsForCorrect }} point<span v-if="pointsForCorrect !== 1"
+              >s</span
+            >
+            for <span class="player-highlight">{{ activePlayerNameUpper }}</span
+            >.
           </template>
 
           <template v-else>
@@ -92,10 +98,10 @@
               gameStore.currentRound?.answer
             }}</span
             >.
-	            <span class="player-highlight">{{ activePlayerName }}</span> loses
-	            {{ pointsForWrong }} points.
-	          </template>
-	        </div>
+            <span class="player-highlight">{{ activePlayerName }}</span> loses
+            {{ pointsForWrong }} points.
+          </template>
+        </div>
       </Transition>
 
       <Transition name="fade">
@@ -111,19 +117,19 @@
           {{ lightsOutMessageBefore }}
           <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
           {{ lightsOutMessageAfter }}
-          </div>
-        </Transition>
+        </div>
+      </Transition>
 
-        <Transition name="fade">
-          <div v-if="isFreezeActive" class="powerup-text">
-            {{ freezeMessageBefore }}
-            <span class="player-highlight">{{ freezeActorNameUpper }}</span>
-            {{ freezeMessageAfter }}
-          </div>
-        </Transition>
-	    </div>
-	  </div>
-	</template>
+      <Transition name="fade">
+        <div v-if="isFreezeActive" class="powerup-text">
+          {{ freezeMessageBefore }}
+          <span class="player-highlight">{{ freezeActorNameUpper }}</span>
+          {{ freezeMessageAfter }}
+        </div>
+      </Transition>
+    </div>
+  </div>
+</template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
@@ -131,6 +137,7 @@ import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import RobotModerator from "./RobotModerator.vue";
 import type { BonusRoundType } from "@/types/bonusRound";
+import { useSoundStore } from "@/stores/sound.ts";
 
 const props = defineProps<{
   isFinalRound?: boolean;
@@ -139,6 +146,7 @@ const props = defineProps<{
 
 const gameStore = useGameStore();
 const partyStore = usePartyStore();
+const soundStore = useSoundStore();
 
 const activePlayerName = computed(
   () => partyStore.activePlayer?.username || "Player",
@@ -175,9 +183,17 @@ const openPromptIndex = ref(0);
 watch(
   () => partyStore.buzzerState,
   (next, prev) => {
-    if (next !== "open") return;
-    if (prev === "open") return;
-    openPromptIndex.value = (openPromptIndex.value + 1) % openPromptTemplates.length;
+    if (next === "open") {
+      if (prev !== "open") {
+        openPromptIndex.value =
+          (openPromptIndex.value + 1) % openPromptTemplates.length;
+        playPop();
+      }
+      return;
+    }
+    if (next === "answering" && prev !== "answering") {
+      playPop();
+    }
   },
 );
 
@@ -207,8 +223,32 @@ const clearLeaderHideTimeout = () => {
   leaderHideTimeoutId = null;
 };
 
+// Robot moderator talk state
+const robotIsTalking = ref(false);
+let robotTalkTimeoutId: number | null = null;
+const clearRobotTalkTimeout = () => {
+  if (!robotTalkTimeoutId) return;
+  window.clearTimeout(robotTalkTimeoutId);
+  robotTalkTimeoutId = null;
+};
+const triggerRobotTalk = (duration = 1000) => {
+  clearRobotTalkTimeout();
+  robotIsTalking.value = true;
+  soundStore.playSound("robot2");
+  robotTalkTimeoutId = window.setTimeout(() => {
+    robotTalkTimeoutId = null;
+    robotIsTalking.value = false;
+  }, duration);
+};
+
+const playPop = () => {
+  soundStore.playSound("pop");
+};
+
 const partyPlayersByPoints = computed(() =>
-  [...partyStore.players].sort((a: any, b: any) => (b.points ?? 0) - (a.points ?? 0)),
+  [...partyStore.players].sort(
+    (a: any, b: any) => (b.points ?? 0) - (a.points ?? 0),
+  ),
 );
 
 const leaderWatchSnapshot = computed(() =>
@@ -253,11 +293,13 @@ watch(
     if (key === lastLeaderGapKey) return;
     lastLeaderGapKey = key;
     const template =
-      leaderGapTemplates[leaderGapTemplateIndex.value % leaderGapTemplates.length] ??
-      leaderGapTemplates[0];
+      leaderGapTemplates[
+        leaderGapTemplateIndex.value % leaderGapTemplates.length
+      ] ?? leaderGapTemplates[0];
     leaderGapTemplateIndex.value =
       (leaderGapTemplateIndex.value + 1) % leaderGapTemplates.length;
     leaderGapTemplate.value = template;
+    playPop();
   },
 );
 
@@ -289,6 +331,7 @@ watch(
     leaderNameUpper.value = String(nextLeaderName).toUpperCase();
     leaderMessageVisible.value = true;
 
+    playPop();
     clearLeaderHideTimeout();
     leaderHideTimeoutId = window.setTimeout(() => {
       leaderHideTimeoutId = null;
@@ -325,11 +368,14 @@ const resultClass = computed(() => {
 const findUsernameById = (playerId: string | null) => {
   if (!playerId) return null;
   return (
-    partyStore.players.find((p: any) => p.playerId === playerId)?.username || null
+    partyStore.players.find((p: any) => p.playerId === playerId)?.username ||
+    null
   );
 };
 
-const isFreezeActive = computed(() => typeof partyStore.freezeUntilAt === "number");
+const isFreezeActive = computed(
+  () => typeof partyStore.freezeUntilAt === "number",
+);
 
 const freezeTemplates = [
   "STONE COLD! [Player] used the freeze powerup.",
@@ -354,8 +400,11 @@ watch(
     const template =
       freezeTemplates[freezeTemplateIndex.value % freezeTemplates.length] ??
       freezeTemplates[0];
-    freezeTemplateIndex.value = (freezeTemplateIndex.value + 1) % freezeTemplates.length;
+    freezeTemplateIndex.value =
+      (freezeTemplateIndex.value + 1) % freezeTemplates.length;
     freezeTemplate.value = template;
+    triggerRobotTalk();
+    playPop();
   },
 );
 
@@ -395,11 +444,24 @@ watch(
     if (lastLightsOutUntilAt === untilAt) return;
     lastLightsOutUntilAt = untilAt;
     const template =
-      lightsOutTemplates[lightsOutTemplateIndex.value % lightsOutTemplates.length] ??
-      lightsOutTemplates[0];
+      lightsOutTemplates[
+        lightsOutTemplateIndex.value % lightsOutTemplates.length
+      ] ?? lightsOutTemplates[0];
     lightsOutTemplateIndex.value =
       (lightsOutTemplateIndex.value + 1) % lightsOutTemplates.length;
     lightsOutTemplate.value = template;
+    triggerRobotTalk();
+    playPop();
+  },
+);
+
+// Trigger robot talking when a round result appears
+watch(
+  () => partyStore.roundResult,
+  (next, prev) => {
+    if (!next || next === prev) return;
+    playPop();
+    triggerRobotTalk();
   },
 );
 
@@ -414,7 +476,9 @@ const lightsOutMessageAfter = computed(() => {
 });
 
 const lightsOutActorNameUpper = computed(() => {
-  const username = findUsernameById((partyStore as any).lightsOutByPlayerId || null);
+  const username = findUsernameById(
+    (partyStore as any).lightsOutByPlayerId || null,
+  );
   return (username || "HOST").toUpperCase();
 });
 
@@ -505,7 +569,7 @@ const optionsForPrompt = computed(() => {
   width: 100%;
   max-width: 100%;
   margin-top: 16px;
-  @media(min-width: 576px) {
+  @media (min-width: 576px) {
     grid-template-columns: 80px auto;
   }
 }
