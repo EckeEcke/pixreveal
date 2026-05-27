@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-27-26</span>
+        </div>
+        <h3 class="log-title">More music and adjusted difficulty!</h3>
+        <p>
+          Listening to the same music over and over again gets tedious, right?
+          To keep things fresh I added a random song selection, choosing one of
+          four songs to play during gameplay. Additionally as a consequence of
+          player feedback I adjusted the difficulty of Inspect mode. By making
+          the lens larger, it is now easier to spot the hidden pixel art and
+          more enjoyable for all players.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-23-26</span>
         </div>
         <h3 class="log-title">

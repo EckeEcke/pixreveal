@@ -179,7 +179,7 @@ const render = () => {
     const activePos = playerStore.isCreatorMode
       ? getAutoMousePos()
       : props.mousePos;
-    const radius = 70;
+    const radius = 90;
     const offset = 90;
     const viewX = activePos.x - offset;
     const viewY = activePos.y - offset;

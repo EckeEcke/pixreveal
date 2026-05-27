@@ -24,7 +24,7 @@
     </div>
 
     <div>
-      Music: Lo-Bit 13 by
+      Music: Lo-Bit 10-13 by
       <a
         href="https://freemusicarchive.org/music/holiznapatreon/lo-bit-lofi-gamer-tracks"
         target="_blank"
@@ -46,12 +46,10 @@
 
 <script setup>
 import { useConfigStore } from "@/stores/config";
-import { useRouter } from "vue-router";
 import PlatformBar from "@/components/page-ui/PlatformBar.vue";
 import { Icon } from "@iconify/vue";
 
 const configStore = useConfigStore();
-const router = useRouter();
 
 const openManual = () => {
   configStore.openManual();
