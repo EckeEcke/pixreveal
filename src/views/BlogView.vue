@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-28-26</span>
+        </div>
+        <h3 class="log-title">New sudden death added to party mode!</h3>
+        <p>
+          For the case of multiple players having the most points at the end of
+          party mode, I added sudden death. Keep playing until there is only one
+          winner! If you were not among the top players, you can still react to
+          the game using emotes or influence the outcome by using your remaining
+          powerups. Along with new sudden death there also is a new party title
+          awarded for the survivor.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-27-26</span>
         </div>
         <h3 class="log-title">More music and adjusted difficulty!</h3>
