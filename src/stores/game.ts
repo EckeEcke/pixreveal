@@ -159,6 +159,39 @@ export const useGameStore = defineStore("game", () => {
     }
   };
 
+  const addSuddenDeathRound = () => {
+    const usedAnswers = rounds.value.map((r) => r.answer);
+    const unusedDrawings = filteredDrawings.value.filter((d) => !usedAnswers.includes(d.name));
+    let nextDrawing: Drawing;
+    if (unusedDrawings.length === 0) {
+      const shuffled = shuffle([...filteredDrawings.value]);
+      nextDrawing = shuffled[0] as Drawing;
+    } else {
+      const shuffled = shuffle([...unusedDrawings]);
+      nextDrawing = shuffled[0] as Drawing;
+    }
+
+    const pool = shuffle(
+      filteredDrawings.value.filter((d) => d.name !== nextDrawing.name),
+    );
+    const distractors = pool.slice(0, 3);
+    const options: RoundOption[] = shuffle([
+      { title: nextDrawing.name, isCorrect: true },
+      ...distractors.map((d) => ({
+        title: d.name,
+        isCorrect: false,
+      })),
+    ]);
+
+    const newRound: Round = {
+      answer: nextDrawing.name,
+      data: nextDrawing.data,
+      options,
+    };
+    rounds.value.push(newRound);
+    currentRoundIndex.value = rounds.value.length - 1;
+  };
+
   const setRoundIndex = (index: number) => {
     stopAllTimers();
     const next = Math.max(0, Math.min(index, rounds.value.length - 1));
@@ -189,6 +222,7 @@ export const useGameStore = defineStore("game", () => {
     revealTime,
     prepareGame,
     nextRound,
+    addSuddenDeathRound,
     setRoundIndex,
     setGameState,
     reset,

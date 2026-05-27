@@ -18,6 +18,12 @@
         second="ROUND"
         @done="handleBonusRoundDone"
       />
+      <GameTransition
+        v-else-if="partyStore.showSuddenDeathTransition"
+        first="SUDDEN"
+        second="DEATH"
+        @done="handleSuddenDeathDone"
+      />
     </Transition>
 
     <div>
@@ -32,6 +38,7 @@
         :current-round="gameStore.currentRoundIndex + 1"
         :max-rounds="configStore.maxRounds"
         :is-survival="false"
+        :is-sudden-death="partyStore.isSuddenDeath"
       />
 
       <div class="canvas-effects" :style="canvasEffectsStyle">
@@ -123,7 +130,8 @@ const isRevealing = computed(
   () =>
     gameStore.gameState === "revealing" &&
     !showFinalRoundTransition.value &&
-    !showBonusRoundTransition.value,
+    !showBonusRoundTransition.value &&
+    !partyStore.showSuddenDeathTransition,
 );
 
 const {
@@ -153,6 +161,11 @@ const handleFinalRoundDone = () => {
 
 const handleBonusRoundDone = () => {
   markBonusRoundTransitionDone();
+  setupDrawing();
+};
+
+const handleSuddenDeathDone = () => {
+  partyStore.showSuddenDeathTransition = false;
   setupDrawing();
 };
 
@@ -222,6 +235,10 @@ const startTimer = () => {
   workerClearInterval(timerId);
   workerClearTimeout(timerEndTimeoutId);
   timer.value = timerDuration.value;
+
+  if (partyStore.isSuddenDeath) {
+    return;
+  }
 
   timerEndTimeoutId = workerSetTimeout(() => {
     timerEndTimeoutId = null;
@@ -294,12 +311,27 @@ watch(
       gameStore.setGameState("feedback");
 
       navigationTimeout = workerSetTimeout(() => {
-        const isLastRound =
-          gameStore.currentRoundIndex >= configStore.maxRounds - 1;
-        if (isLastRound) {
-          partyStore.endGame();
+        if (partyStore.isSuddenDeath) {
+          if (partyStore.roundResult === "correct") {
+            partyStore.endGame();
+          } else if (partyStore.suddenDeathPlayerIds.length <= 1) {
+            partyStore.endGame();
+          } else {
+            partyStore.nextSuddenDeathRound();
+          }
         } else {
-          partyStore.nextRound();
+          const isLastRound =
+            gameStore.currentRoundIndex >= configStore.maxRounds - 1;
+          if (isLastRound) {
+            const candidates = partyStore.getSuddenDeathCandidates();
+            if (candidates.length >= 2) {
+              partyStore.startSuddenDeath(candidates);
+            } else {
+              partyStore.endGame();
+            }
+          } else {
+            partyStore.nextRound();
+          }
         }
       }, 4000);
     }
@@ -310,6 +342,10 @@ watch(
   () => gameStore.gameState,
   (newState) => {
     if (newState === "revealing") {
+      if (partyStore.showSuddenDeathTransition) {
+        clearAllTimers();
+        return;
+      }
       const transition = shouldShowTransitionOnRevealing();
       if (transition === "final") {
         clearAllTimers();

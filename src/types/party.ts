@@ -32,4 +32,6 @@ export type PartyStatePayload = {
   players: PartyPlayer[];
   roundTimeLimit: number;
   buzzerTimeLimit: number;
+  isSuddenDeath?: boolean;
+  suddenDeathPlayerIds?: string[];
 };

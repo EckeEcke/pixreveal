@@ -55,6 +55,9 @@
               <span v-else-if="isIncorrect" class="msg-bold error" key="i"
                 >NOPE!</span
               >
+              <span v-else-if="isSuddenDeath" class="msg-bold pulse-text" key="sd"
+                >SUDDEN DEATH</span
+              >
               <span v-else-if="count <= 0" class="msg-bold danger" key="t"
                 >TIME UP</span
               >
@@ -116,21 +119,27 @@ const props = defineProps<{
   maxRounds?: number;
   isSurvival: boolean;
   isBonus?: boolean;
+  isSuddenDeath?: boolean;
 }>();
 
 const playerStore = usePlayerStore();
 
-const displayWidth = computed(() =>
-  props.isCorrect || props.isIncorrect
+const displayWidth = computed(() => {
+  if (props.isSuddenDeath) return 100;
+  return props.isCorrect || props.isIncorrect
     ? 100
-    : Math.max(0, (props.count / (props.max || 15)) * 100),
-);
+    : Math.max(0, (props.count / (props.max || 15)) * 100);
+});
 
 const statusClass = computed(() => ({
   "is-correct": props.isCorrect,
   "is-incorrect": props.isIncorrect,
-  "is-danger": props.count <= 3 && !props.isCorrect && !props.isIncorrect,
+  "is-danger":
+    (props.isSuddenDeath || props.count <= 3) &&
+    !props.isCorrect &&
+    !props.isIncorrect,
   "is-warning":
+    !props.isSuddenDeath &&
     props.count < 7 &&
     props.count > 3 &&
     !props.isCorrect &&
@@ -389,5 +398,21 @@ const statusClass = computed(() => ({
   text-shadow: 1px 1px 1px var(--primary);
   animation: pulse 1s infinite;
   z-index: 99;
+}
+
+.pulse-text {
+  animation: text-pulse 1.2s infinite ease-in-out;
+  color: var(--white);
+}
+
+@keyframes text-pulse {
+  0%, 100% {
+    opacity: 0.85;
+    text-shadow: 0 0 4px #ff4757, 0 0 10px #ff4757;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 8px #ff1e1e, 0 0 20px #ff1e1e;
+  }
 }
 </style>

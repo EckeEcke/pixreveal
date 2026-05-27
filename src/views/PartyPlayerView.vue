@@ -26,6 +26,14 @@
         </div>
 
         <div
+          v-else-if="isPlayerOut"
+          key="sudden-death-out"
+          class="centered placeholder"
+        >
+          <p class="waiting-label">YOU ARE OUT</p>
+        </div>
+
+        <div
           v-else-if="partyStore.buzzerState === 'open'"
           key="buzzer"
           class="centered"
@@ -202,6 +210,13 @@ const isMyTurn = computed(
     partyStore.buzzerState === "answering" &&
     partyStore.activePlayerId === channelStore.playerId,
 );
+
+const isPlayerOut = computed(() => {
+  return (
+    partyStore.isSuddenDeath &&
+    !partyStore.suddenDeathPlayerIds?.includes(channelStore.playerId)
+  );
+});
 
 const hasAnswered = computed(() => partyStore.hasAnswered);
 

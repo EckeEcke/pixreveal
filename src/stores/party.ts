@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import { useChannelStore } from "./channel";
-import { useGameStore } from "./game";
+import { useGameStore, type Round } from "./game";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
 import {
@@ -41,6 +41,9 @@ export const usePartyStore = defineStore("party", () => {
   const answerStartedAt = ref<number | null>(null);
   const hasAnswered = ref(false);
   const isRevealing = ref(true);
+  const isSuddenDeath = ref(false);
+  const suddenDeathPlayerIds = ref<string[]>([]);
+  const showSuddenDeathTransition = ref(false);
   const roundTimeLimit = ref(15);
   const buzzerTimeLimit = ref(15);
   const roundResult = ref<"correct" | "incorrect" | null>(null);
@@ -363,6 +366,8 @@ export const usePartyStore = defineStore("party", () => {
     players: players.value,
     roundTimeLimit: roundTimeLimit.value,
     buzzerTimeLimit: buzzerTimeLimit.value,
+    isSuddenDeath: isSuddenDeath.value,
+    suddenDeathPlayerIds: suddenDeathPlayerIds.value,
   });
 
   const ensureAnswerTimer = () => {
@@ -498,6 +503,7 @@ export const usePartyStore = defineStore("party", () => {
   };
 
   const resolveAnswer = (playerId: string | null, isCorrect: boolean) => {
+    if (roundResult.value !== null) return;
     workerClearTimeout(answerTimer);
     answerTimer = null;
     answerDeadlineAt.value = null;
@@ -531,6 +537,11 @@ export const usePartyStore = defineStore("party", () => {
           }
         } else {
           player.wrongAnswers += 1;
+          if (isSuddenDeath.value) {
+            suddenDeathPlayerIds.value = suddenDeathPlayerIds.value.filter(
+              (id) => id !== playerId,
+            );
+          }
         }
         if (typeof elapsedMs === "number") {
           if (player.quickestAnswer === null || elapsedMs < player.quickestAnswer) {
@@ -791,8 +802,11 @@ export const usePartyStore = defineStore("party", () => {
       },
     );
 
-    bindEvent("client-party-next-round", () => {
+    bindEvent("client-party-next-round", (data?: { roundIndex?: number; newRound?: Round }) => {
       markHostActivity();
+      if (data?.newRound) {
+        gameStore.rounds.push(data.newRound);
+      }
       gameStore.nextRound();
       hasAnswered.value = false;
     });
@@ -810,6 +824,17 @@ export const usePartyStore = defineStore("party", () => {
           roundTimeLimit.value = state.roundTimeLimit;
         if (typeof state.buzzerTimeLimit === "number")
           buzzerTimeLimit.value = state.buzzerTimeLimit;
+
+        if (typeof state.isSuddenDeath === "boolean") {
+          isSuddenDeath.value = state.isSuddenDeath;
+        } else {
+          isSuddenDeath.value = false;
+        }
+        if (Array.isArray(state.suddenDeathPlayerIds)) {
+          suddenDeathPlayerIds.value = state.suddenDeathPlayerIds;
+        } else {
+          suddenDeathPlayerIds.value = [];
+        }
 
         if (typeof state.roundIndex === "number") {
           gameStore.setRoundIndex(state.roundIndex);
@@ -1186,6 +1211,44 @@ export const usePartyStore = defineStore("party", () => {
     });
   };
 
+  const getSuddenDeathCandidates = (): PartyPlayer[] => {
+    if (players.value.length < 2) return [];
+    let maxPts = -Infinity;
+    for (const p of players.value) {
+      if (p.points > maxPts) {
+        maxPts = p.points;
+      }
+    }
+    const candidates = players.value.filter((p) => p.points === maxPts);
+    return candidates.length >= 2 ? candidates : [];
+  };
+
+  const startSuddenDeath = (candidates: PartyPlayer[]) => {
+    isSuddenDeath.value = true;
+    suddenDeathPlayerIds.value = candidates.map((c) => c.playerId);
+    showSuddenDeathTransition.value = true;
+
+    gameStore.addSuddenDeathRound();
+    channel.value?.trigger("client-party-next-round", {
+      roundIndex: gameStore.currentRoundIndex,
+      newRound: gameStore.currentRound,
+    });
+    broadcastPartyState("sudden-death-start");
+    openBuzzer();
+  };
+
+  const nextSuddenDeathRound = () => {
+    isRevealing.value = true;
+    gameStore.addSuddenDeathRound();
+    answerDeadlineAt.value = null;
+    channel.value?.trigger("client-party-next-round", {
+      roundIndex: gameStore.currentRoundIndex,
+      newRound: gameStore.currentRound,
+    });
+    broadcastPartyState("next-sudden-death-round");
+    openBuzzer();
+  };
+
   const reset = ({ keepEvents = false }: { keepEvents?: boolean } = {}) => {
     if (!keepEvents) unbindEvents();
     players.value = [];
@@ -1210,6 +1273,9 @@ export const usePartyStore = defineStore("party", () => {
     freezeByPlayerId.value = null;
     freezeUsedBy.value = {};
     emojiStatistics.value = [];
+    isSuddenDeath.value = false;
+    suddenDeathPlayerIds.value = [];
+    showSuddenDeathTransition.value = false;
   };
 
   return {
@@ -1261,5 +1327,11 @@ export const usePartyStore = defineStore("party", () => {
     emojiStatistics,
     allowReplayNavigationWindow,
     consumeReplayNavigationWindow,
+    isSuddenDeath,
+    suddenDeathPlayerIds,
+    showSuddenDeathTransition,
+    getSuddenDeathCandidates,
+    startSuddenDeath,
+    nextSuddenDeathRound,
   };
 });
