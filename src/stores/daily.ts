@@ -15,11 +15,9 @@ export const useDailyStore = defineStore("daily", () => {
     return `pix_daily_${date.value}`;
   };
 
-  const hasPlayedToday = computed(() => {
-    if (typeof window === "undefined") return false;
-    const key = getDailyKey();
-    return key ? !!localStorage.getItem(key) : false;
-  });
+  const storedDailyKey = ref(false);
+
+  const hasPlayedToday = computed(() => storedDailyKey.value);
 
   const markAsPlayed = () => {
     if (typeof window !== "undefined") {
@@ -27,6 +25,7 @@ export const useDailyStore = defineStore("daily", () => {
       if (key) {
         localStorage.setItem(key, "true");
         cleanupOldKeys(key);
+        storedDailyKey.value = true;
       }
     }
   };
@@ -44,6 +43,11 @@ export const useDailyStore = defineStore("daily", () => {
       yesterdayRankings.value = data.yesterdayRankings || [];
       date.value = data.date || "";
       mode.value = data.mode || "classic";
+
+      if (typeof window !== "undefined") {
+        const key = `pix_daily_${date.value}`;
+        storedDailyKey.value = !!localStorage.getItem(key);
+      }
     } catch (err: any) {
       error.value = err.message;
       console.error("Fetch error:", err);
@@ -94,5 +98,6 @@ export const useDailyStore = defineStore("daily", () => {
     postRanking,
     mode,
     hasSubmitted,
+    getDailyKey,
   };
 });

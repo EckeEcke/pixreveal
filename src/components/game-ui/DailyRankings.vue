@@ -22,7 +22,7 @@
       </div>
     </template>
 
-    <DailyCountdown />
+    <DailyCountdown class="countdown"/>
     <ButtonPrimary
       v-if="!isYesterday"
       data-sfx="click"
@@ -31,6 +31,13 @@
     >
       VIEW YESTERDAY RANKINGS
     </ButtonPrimary>
+    <ButtonSecondary
+      data-sfx="click"
+      class="btn-primary"
+      @clicked="$router.push('/')"
+    >
+      BACK TO HOME
+    </ButtonSecondary>
   </div>
 </template>
 
@@ -41,6 +48,7 @@ import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import DailyCountdown from "../page-ui/DailyCountdown.vue";
 import LoadingAnimation from "../page-layout/LoadingAnimation.vue";
 import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
+import ButtonSecondary from "../page-ui/ButtonSecondary.vue";
 
 const props = defineProps({
   isYesterday: Boolean,
@@ -71,7 +79,12 @@ p {
   margin-top: 0;
 }
 
+.countdown {
+  margin-bottom: 64px;
+}
+
 .btn-primary {
-  margin: 64px auto;
+  width: 260px;
+  margin: 16px auto;
 }
 </style>
