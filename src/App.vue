@@ -61,10 +61,10 @@ const MUSIC_ROUTES = new Set([
 ]);
 
 const tracklist = [
-  './assets/audio/music10.mp3',
-  './assets/audio/music11.mp3',
-  './assets/audio/music12.mp3',
-  './assets/audio/music13.mp3',
+  '/assets/audio/music10.mp3',
+  '/assets/audio/music11.mp3',
+  '/assets/audio/music12.mp3',
+  '/assets/audio/music13.mp3',
 ]
 
 const randomIndex = Math.floor(Math.random() * tracklist.length);
@@ -72,8 +72,7 @@ const randomIndex = Math.floor(Math.random() * tracklist.length);
 const ensureMusicSrc = () => {
   if (!audio.value) return;
   if (audio.value.src) return;
-  const musicPath = new URL(tracklist[randomIndex], import.meta.url).href;
-  audio.value.src = musicPath;
+  audio.value.src = tracklist[randomIndex];
   audio.value.load?.();
 };
 
