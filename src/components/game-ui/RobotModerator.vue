@@ -1,12 +1,15 @@
 <template>
-  <div class="moderator-wrapper">
+  <div
+    class="moderator-wrapper"
+    :class="isTalking ? 'cyan-bg' : 'primary-bg'"
+  >
     <img
-      v-if="isTalking"
+      v-show="isTalking"
       src="@/assets/avatars/robot-run.gif"
       alt="robot moderator"
       class="talking"
     />
-    <img v-else src="@/assets/avatars/robot-idle.gif" alt="robot moderator" />
+    <img v-show="!isTalking" src="@/assets/avatars/robot-idle.gif" alt="robot moderator" />
   </div>
 </template>
 
@@ -19,10 +22,10 @@ defineProps<{
 <style scoped>
 .moderator-wrapper {
   position: relative;
+  transition: all 0.3s ease-in-out;
   height: 60px;
   width: 60px;
   overflow: hidden;
-  background: var(--primary);
   border-radius: 8px;
   @media (min-width: 576px) {
     height: 80px;
@@ -46,6 +49,13 @@ img {
 
 .talking {
   top: -10px;
+}
+
+.cyan-bg {
   background: var(--neon-cyan);
+}
+
+.primary-bg {
+  background: var(--primary);
 }
 </style>
