@@ -47,14 +47,11 @@ type PartyPlayerStats = {
 
 const props = defineProps<{
   players: PartyPlayerStats[];
-  slideMs?: number;
 }>();
 
 const partyStore = usePartyStore();
 
-const slideMs = computed(() =>
-  props.slideMs && props.slideMs > 0 ? props.slideMs : 4000,
-);
+const SLIDE_INTERVAL = 5000;
 
 const maxPowerupsUsed = computed(() => {
   let max = 0;
@@ -133,7 +130,7 @@ const slides = computed<Slide[]>(() => {
 
     if (maxPowerups > 0 && powerups === maxPowerups) {
       raw.push({
-        emoji: "⚡",
+        emoji: "💣",
         title: "Saboteur",
         message:
           "Some people just want to watch the world burn. Thanks for the chaos!",
@@ -310,7 +307,7 @@ const start = () => {
     const len = allSlides.value.length;
     if (!len) return;
     activeIndex.value = (activeIndex.value + 1) % len;
-  }, slideMs.value);
+  }, SLIDE_INTERVAL);
 };
 
 const stop = () => {
