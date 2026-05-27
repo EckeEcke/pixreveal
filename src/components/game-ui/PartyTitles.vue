@@ -119,15 +119,19 @@ const slides = computed<Slide[]>(() => {
     const emojis = p.emojisSent ?? 0;
     const isDecrypter = Boolean(p.isDecrypter);
 
+    const playerData = {
+      playerId: p.playerId,
+      playerNameUpper: nameUpper,
+      avatarIndex: p.avatarIndex,
+    };
+
     if (correct > 0 && wrong === 0) {
       raw.push({
         emoji: "🎯",
         title: "Perfect",
         message:
           "Flawless victory! Not a single mistake. Are you a genius or just cheating?",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -137,9 +141,7 @@ const slides = computed<Slide[]>(() => {
         title: "Saboteur",
         message:
           "Some people just want to watch the world burn. Thanks for the chaos!",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -149,9 +151,7 @@ const slides = computed<Slide[]>(() => {
         title: "Pacifist",
         message:
           "Too pure for this chaotic world. You played with honor (and probably paid the price).",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -161,9 +161,7 @@ const slides = computed<Slide[]>(() => {
         title: "Beginner",
         message:
           "Your confidence was inspiring. Your guessing skills? Not so much.",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -173,9 +171,7 @@ const slides = computed<Slide[]>(() => {
         title: "The Mime",
         message:
           "Zero communication. You played this match with the emotional expression of a brick wall.",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -185,9 +181,7 @@ const slides = computed<Slide[]>(() => {
         title: "Spammer",
         message:
           "You treated this game like a group chat. Please step away from the keyboard.",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -197,9 +191,7 @@ const slides = computed<Slide[]>(() => {
         title: "Survivor",
         message:
           "You weathered the storm with the facial expression of a deep-sea crab looking at a shipwreck.",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -213,9 +205,7 @@ const slides = computed<Slide[]>(() => {
         title: "Speedy",
         message:
           "Fastest fingers in the lobby! Your reflexes are terrifying—or you're just button-mashing.",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
 
@@ -225,9 +215,7 @@ const slides = computed<Slide[]>(() => {
         title: "Decrypter",
         message:
           "You successfully translated absolute nonsense into actual points. Are you even human?",
-        playerId: p.playerId,
-        playerNameUpper: nameUpper,
-        avatarIndex: p.avatarIndex,
+        ...playerData
       });
     }
   }

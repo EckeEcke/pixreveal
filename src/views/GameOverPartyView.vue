@@ -35,7 +35,7 @@
         <PlayerDisplay
           :position="index + 1"
           :name="player.username"
-          :subline="getPartyTitleEmojis(player)"
+          :subline="getPartyTitleEmojis(player, index)"
           :avatar-index="player.avatarIndex"
           :points="player.points"
           :show-you-indicator="player.playerId === channelStore.playerId"
@@ -98,7 +98,7 @@ const minPartyQuickestAnswer = computed(() => {
   return Math.min(...values);
 });
 
-const getPartyTitleEmojis = (player) => {
+const getPartyTitleEmojis = (player, index) => {
   if (!player) return undefined;
 
   const badges = [];
@@ -130,6 +130,10 @@ const getPartyTitleEmojis = (player) => {
 
   if ((player.correctAnswers ?? 0) === 0 && (player.wrongAnswers ?? 0) > 0) {
     badges.push("🥚");
+  }
+
+  if (partyStore.isSuddenDeath && index === 0) {
+    badges.push("☠️");
   }
 
   const unique = [...new Set(badges)];
