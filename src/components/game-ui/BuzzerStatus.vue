@@ -4,127 +4,113 @@
     <div>
       <Transition name="fade" mode="out-in">
         <div
-          v-if="partyStore.buzzerState === 'open'"
-          key="open"
-          class="status-pill open"
+          :key="currentActiveMessage.key"
+          :class="currentActiveMessage.class"
         >
-          <template v-if="isFinalRound">
+          <template v-if="currentActiveMessage.type === 'answering'">
+            <span class="waiting-player">{{ activePlayerName }}</span>
+            hit the buzzer! Is it
+            <span
+              v-for="(opt, index) in optionsForPrompt"
+              :key="`${index}-${opt}`"
+              class="prompt-option"
+              :style="{
+                '--opt-color': getOptionStyle(index)['--opt-color'],
+                '--opt-glow': getOptionStyle(index)['--opt-glow'],
+              }"
+            >
+              {{ opt }}{{ index < optionsForPrompt.length - 2 ? ", " : "" }}
+              <span v-if="index === optionsForPrompt.length - 2">
+                &nbsp;<span class="white-text">or</span>&nbsp;
+              </span>
+              <span v-else-if="index === optionsForPrompt.length - 1">?</span>
+            </span>
+            <span v-if="partyStore.isXlzActive"
+              >&nbsp;Hmm.. this looks off.</span
+            >
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'result'">
+            <template v-if="!partyStore.activePlayerId">
+              Time up! Nobody answered.
+              <span class="answer-highlight">{{
+                gameStore.currentRound?.answer
+              }}</span>
+              was the answer.
+            </template>
+
+            <template v-else-if="partyStore.roundResult === 'correct'">
+              ✓ CORRECT!
+              <span class="answer-highlight">{{
+                gameStore.currentRound?.answer
+              }}</span>
+              was the answer.
+              <br />
+              {{ pointsForCorrect }} point<span v-if="pointsForCorrect !== 1"
+                >s</span
+              >
+              for
+              <span class="player-highlight">{{ activePlayerNameUpper }}</span
+              >.
+            </template>
+
+            <template v-else-if="partyStore.roundResult === 'incorrect'">
+              ✗ WRONG! The correct answer was
+              <span class="answer-highlight">{{
+                gameStore.currentRound?.answer
+              }}</span
+              >.
+              <span class="player-highlight">{{ activePlayerName }}</span> loses
+              {{ pointsForWrong }} points.
+            </template>
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'lightsOut'">
+            {{ lightsOutMessageBefore }}
+            <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
+            {{ lightsOutMessageAfter }}
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'freeze'">
+            {{ freezeMessageBefore }}
+            <span class="player-highlight">{{ freezeActorNameUpper }}</span>
+            {{ freezeMessageAfter }}
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'leaderEvent'">
+            {{ leaderMessageBefore }}
+            <span class="player-highlight">{{ leaderNameUpper }}</span>
+            {{ leaderMessageAfter }}
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'openFinal'">
             FINAL ROUND!
             <br />
             <span class="green-text">Double the points</span>,
             <span class="red-text">double the loss</span>!
           </template>
-          <template v-else-if="isBonusRound">
+
+          <template v-else-if="currentActiveMessage.type === 'openBonus'">
             BONUS ROUND!
             <br />
             <span class="green-text">Double the points</span>,
             <span class="red-text">double the loss</span>!
           </template>
-          <template v-else>
-            <template v-if="leaderGapActive">
-              {{ leaderGapMessageBefore }}
-              <span class="player-highlight">{{
-                leaderUsername?.toUpperCase?.() || "PLAYER"
-              }}</span>
-              {{ leaderGapMessageAfter }}
-            </template>
-            <template v-else>
-              {{ openPrompt.line1 }}
-              <br />
-              {{ openPrompt.line2Before }}<span class="pink-text">BUZZ</span
-              >{{ openPrompt.line2After }}
-            </template>
-          </template>
-        </div>
 
-        <div
-          v-else-if="partyStore.buzzerState === 'answering'"
-          key="answering"
-          class="status-pill answering"
-        >
-          <span class="waiting-player">{{ activePlayerName }}</span>
-          hit the buzzer! Is it
-          <span
-            v-for="(opt, index) in optionsForPrompt"
-            :key="`${index}-${opt}`"
-            class="prompt-option"
-            :style="{
-              '--opt-color': getOptionStyle(index)['--opt-color'],
-              '--opt-glow': getOptionStyle(index)['--opt-glow'],
-            }"
-          >
-            {{ opt }}{{ index < optionsForPrompt.length - 2 ? ", " : "" }}
-            <span v-if="index === optionsForPrompt.length - 2">
-              &nbsp;<span class="white-text">or</span>&nbsp;
-            </span>
-            <span v-else-if="index === optionsForPrompt.length - 1">?</span>
-          </span>
-          <span v-if="partyStore.isXlzActive">&nbsp;Hmm.. this looks off.</span>
-        </div>
-
-        <div
-          v-else-if="
-            partyStore.roundResult && gameStore.gameState !== 'revealing'
-          "
-          key="result"
-          class="status-pill result"
-          :class="resultClass"
-        >
-          <template v-if="!partyStore.activePlayerId">
-            Time up! Nobody answered.
-            <span class="answer-highlight">{{
-              gameStore.currentRound?.answer
+          <template v-else-if="currentActiveMessage.type === 'openGap'">
+            {{ leaderGapMessageBefore }}
+            <span class="player-highlight">{{
+              leaderUsername?.toUpperCase?.() || "PLAYER"
             }}</span>
-            was the answer.
+            {{ leaderGapMessageAfter }}
           </template>
 
-          <template v-else-if="partyStore.roundResult === 'correct'">
-            ✓ CORRECT!
-            <span class="answer-highlight">{{
-              gameStore.currentRound?.answer
-            }}</span>
-            was the answer.
+          <template v-else-if="currentActiveMessage.type === 'openRegular'">
+            {{ openPrompt.line1 }}
             <br />
-            {{ pointsForCorrect }} point<span v-if="pointsForCorrect !== 1"
-              >s</span
-            >
-            for <span class="player-highlight">{{ activePlayerNameUpper }}</span
-            >.
+            {{ openPrompt.line2Before }}<span class="pink-text">BUZZ</span
+            >{{ openPrompt.line2After }}
           </template>
-
-          <template v-else>
-            ✗ WRONG! The correct answer was
-            <span class="answer-highlight">{{
-              gameStore.currentRound?.answer
-            }}</span
-            >.
-            <span class="player-highlight">{{ activePlayerName }}</span> loses
-            {{ pointsForWrong }} points.
-          </template>
-        </div>
-      </Transition>
-
-      <Transition name="fade">
-        <div v-if="leaderMessageVisible" class="leader-text">
-          {{ leaderMessageBefore }}
-          <span class="player-highlight">{{ leaderNameUpper }}</span>
-          {{ leaderMessageAfter }}
-        </div>
-      </Transition>
-
-      <Transition name="fade">
-        <div v-if="partyStore.isLightsOut" class="powerup-text">
-          {{ lightsOutMessageBefore }}
-          <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
-          {{ lightsOutMessageAfter }}
-        </div>
-      </Transition>
-
-      <Transition name="fade">
-        <div v-if="isFreezeActive" class="powerup-text">
-          {{ freezeMessageBefore }}
-          <span class="player-highlight">{{ freezeActorNameUpper }}</span>
-          {{ freezeMessageAfter }}
         </div>
       </Transition>
     </div>
@@ -187,12 +173,8 @@ watch(
       if (prev !== "open") {
         openPromptIndex.value =
           (openPromptIndex.value + 1) % openPromptTemplates.length;
-        playPop();
       }
       return;
-    }
-    if (next === "answering" && prev !== "answering") {
-      playPop();
     }
   },
 );
@@ -223,7 +205,6 @@ const clearLeaderHideTimeout = () => {
   leaderHideTimeoutId = null;
 };
 
-// Robot moderator talk state
 const robotIsTalking = ref(false);
 let robotTalkTimeoutId: number | null = null;
 const clearRobotTalkTimeout = () => {
@@ -231,10 +212,16 @@ const clearRobotTalkTimeout = () => {
   window.clearTimeout(robotTalkTimeoutId);
   robotTalkTimeoutId = null;
 };
+
+const robotSounds = ["robot1", "robot2", "robot3", "robot4"];
+
+const robotSoundIndex = ref(0);
+
 const triggerRobotTalk = (duration = 1000) => {
+  robotSoundIndex.value = (robotSoundIndex.value + 1) % robotSounds.length;
   clearRobotTalkTimeout();
   robotIsTalking.value = true;
-  soundStore.playSound("robot2");
+  soundStore.playSound(robotSounds[robotSoundIndex.value] as any);
   robotTalkTimeoutId = window.setTimeout(() => {
     robotTalkTimeoutId = null;
     robotIsTalking.value = false;
@@ -299,7 +286,6 @@ watch(
     leaderGapTemplateIndex.value =
       (leaderGapTemplateIndex.value + 1) % leaderGapTemplates.length;
     leaderGapTemplate.value = template;
-    playPop();
   },
 );
 
@@ -331,7 +317,6 @@ watch(
     leaderNameUpper.value = String(nextLeaderName).toUpperCase();
     leaderMessageVisible.value = true;
 
-    playPop();
     clearLeaderHideTimeout();
     leaderHideTimeoutId = window.setTimeout(() => {
       leaderHideTimeoutId = null;
@@ -403,8 +388,6 @@ watch(
     freezeTemplateIndex.value =
       (freezeTemplateIndex.value + 1) % freezeTemplates.length;
     freezeTemplate.value = template;
-    triggerRobotTalk();
-    playPop();
   },
 );
 
@@ -450,18 +433,6 @@ watch(
     lightsOutTemplateIndex.value =
       (lightsOutTemplateIndex.value + 1) % lightsOutTemplates.length;
     lightsOutTemplate.value = template;
-    triggerRobotTalk();
-    playPop();
-  },
-);
-
-// Trigger robot talking when a round result appears
-watch(
-  () => partyStore.roundResult,
-  (next, prev) => {
-    if (!next || next === prev) return;
-    playPop();
-    triggerRobotTalk();
   },
 );
 
@@ -519,7 +490,6 @@ const scrambleText = (text: string, seed: number) => {
     return chars.join("");
   };
 
-  // Only scramble within each term (e.g. "ice cream" => scramble "ice" and "cream" separately)
   const parts = str.split(/(\s+)/);
   return parts
     .map((part, index) => {
@@ -558,6 +528,60 @@ const optionsForPrompt = computed(() => {
     return scrambleText(label, seed);
   });
 });
+
+const currentActiveMessage = computed(() => {
+  // PRIORITY 1: Someone buzzed or round finished (Always tops everything)
+  if (partyStore.buzzerState === "answering") {
+    return {
+      type: "answering",
+      key: "answering",
+      class: "status-pill answering",
+    };
+  }
+  if (partyStore.roundResult && gameStore.gameState !== "revealing") {
+    return {
+      type: "result",
+      key: "result",
+      class: `status-pill result ${resultClass.value}`,
+    };
+  }
+
+  // PRIORITY 2: Powerups (Only show if nobody is answering right now)
+  if (partyStore.isLightsOut) {
+    return { type: "lightsOut", key: "lightsOut", class: "powerup-text" };
+  }
+  if (isFreezeActive.value) {
+    return { type: "freeze", key: "freeze", class: "powerup-text" };
+  }
+
+  // PRIORITY 3: Standard messages & Leader events
+  if (leaderMessageVisible.value) {
+    return { type: "leaderEvent", key: "leader", class: "leader-text" };
+  }
+  if (partyStore.buzzerState === "open") {
+    if (isFinalRound.value) {
+      return { type: "openFinal", key: "final", class: "status-pill open" };
+    }
+    if (isBonusRound.value) {
+      return { type: "openBonus", key: "bonus", class: "status-pill open" };
+    }
+    if (leaderGapActive.value) {
+      return { type: "openGap", key: "gap", class: "status-pill open" };
+    }
+    return { type: "openRegular", key: "regular", class: "status-pill open" };
+  }
+
+  return { type: "none", key: "none", class: "" };
+});
+
+watch(
+  () => currentActiveMessage.value.key,
+  (nextKey, prevKey) => {
+    if (nextKey === "none" || nextKey === prevKey) return;
+    triggerRobotTalk();
+    playPop();
+  },
+);
 </script>
 
 <style scoped>
@@ -569,7 +593,10 @@ const optionsForPrompt = computed(() => {
   width: 100%;
   max-width: 100%;
   margin-top: 16px;
-  @media (min-width: 576px) {
+}
+
+@media (min-width: 576px) {
+  .buzzer-status {
     grid-template-columns: 80px auto;
   }
 }
@@ -653,11 +680,10 @@ const optionsForPrompt = computed(() => {
 }
 
 .powerup-text {
-  margin-top: 10px;
-  padding: 10px 14px;
+  padding: 12px 32px;
   border-radius: 8px;
   background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  border: 2px solid rgba(56, 189, 248, 0.5);
   color: rgba(255, 255, 255, 0.9);
   font-weight: 900;
   font-size: 20px;
@@ -668,11 +694,10 @@ const optionsForPrompt = computed(() => {
 }
 
 .leader-text {
-  margin-top: 10px;
-  padding: 10px 14px;
+  padding: 12px 32px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--neon-yellow);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--neon-yellow);
   color: var(--neon-yellow);
   font-weight: 900;
   font-size: 20px;
@@ -684,6 +709,53 @@ const optionsForPrompt = computed(() => {
 
 .white-text {
   color: var(--white);
+}
+
+.buzzer-status > div:last-child {
+  position: relative;
+}
+
+.status-pill::before,
+.powerup-text::before,
+.leader-text::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: -12px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 12px 8px 0;
+  border-color: transparent currentColor transparent transparent;
+  z-index: 10;
+}
+
+.status-pill.open::before {
+  border-right-color: var(--neon-pink);
+}
+
+.status-pill.answering::before {
+  border-right-color: var(--neon-blue);
+}
+
+.status-pill.correct::before {
+  border-right-color: var(--neon-success);
+}
+
+.status-pill.incorrect::before {
+  border-right-color: var(--neon-error);
+}
+
+.status-pill.timeout::before {
+  border-right-color: var(--neon-blue);
+}
+
+.powerup-text::before {
+  border-right-color: rgba(56, 189, 248, 0.5);
+}
+
+.leader-text::before {
+  border-right-color: var(--neon-yellow);
 }
 
 @keyframes pulse-glow {

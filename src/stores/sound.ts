@@ -18,7 +18,10 @@ import partyOverSound from "@/assets/audio/party-over.mp3";
 import partyCorrectSound from "@/assets/audio/correct2.mp3";
 import partyIncorrectSound from "@/assets/audio/incorrect2.mp3";
 import shuffleSound from "@/assets/audio/shuffle.mp3";
+import robot1Sound from "@/assets/audio/robot-talk1.mp3";
 import robot2Sound from "@/assets/audio/robot-talk2.mp3";
+import robot3Sound from "@/assets/audio/robot-talk3.mp3";
+import robot4Sound from "@/assets/audio/robot-talk4.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
@@ -44,7 +47,10 @@ export const useSoundStore = defineStore("sound", () => {
     party: partyOverSound,
     partyCorrect: partyCorrectSound,
     partyIncorrect: partyIncorrectSound,
+    robot1: robot1Sound,
     robot2: robot2Sound,
+    robot3: robot3Sound,
+    robot4: robot4Sound,
   };
 
   type SoundName = keyof typeof sources;
