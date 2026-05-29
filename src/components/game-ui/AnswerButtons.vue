@@ -5,9 +5,13 @@
       v-for="(answer, index) in answers"
       :key="answer.title || answer.name"
       :disabled="hasAnswered"
-      :style="{ '--btn-color': buttonColors[index % buttonColors.length].color, '--btn-glow': buttonColors[index % buttonColors.length].glow }"
+      :style="{
+        '--btn-color': buttonColors[index % buttonColors.length].color,
+        '--btn-glow': buttonColors[index % buttonColors.length].glow,
+      }"
       :class="{
-        'is-wrong': hasAnswered && selectedAnswer === answer && !answer.isCorrect,
+        'is-wrong':
+          hasAnswered && selectedAnswer === answer && !answer.isCorrect,
         'is-correct': hasAnswered && answer.isCorrect,
       }"
       @mouseenter="!hasAnswered && soundStore.handleHoverSound()"
@@ -31,8 +35,8 @@ const props = defineProps({
 const emit = defineEmits(["answered"]);
 
 const buttonColors = [
-  { color: "var(--neon-pink)",   glow: "var(--pink-glow)"   },
-  { color: "var(--neon-blue)",   glow: "var(--blue-glow)"   },
+  { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
+  { color: "var(--neon-blue)", glow: "var(--blue-glow)" },
   { color: "var(--neon-purple)", glow: "var(--purple-glow)" },
   { color: "var(--neon-yellow)", glow: "var(--yellow-glow)" },
 ];
@@ -144,8 +148,9 @@ const checkAnswer = (answer, event) => {
 
 .answer-btn.is-wrong {
   background-color: var(--neon-error);
-  color: white;
-  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  color: var(--white);
+  animation: success-shake 1.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  box-shadow: 0 0 30px var(--neon-success);
   border-color: var(--neon-error);
 }
 
@@ -170,6 +175,28 @@ const checkAnswer = (answer, event) => {
   .answer-btn {
     padding: 18px;
     font-size: 20px;
+  }
+}
+
+@keyframes success-shake {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  15% {
+    transform: translateY(-6px);
+  }
+  30% {
+    transform: translateY(4px);
+  }
+  45% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(2px);
+  }
+  75% {
+    transform: translateY(-1px);
   }
 }
 </style>

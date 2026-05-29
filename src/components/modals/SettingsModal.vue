@@ -30,7 +30,11 @@
           </div>
           <div class="config-element">
             <label class="config-label">
-              <input type="checkbox" v-model="isFullscreen" @change="toggleFullscreen" />
+              <input
+                type="checkbox"
+                v-model="isFullscreen"
+                @change="toggleFullscreen"
+              />
               <div class="pixel-box">
                 <Icon
                   class="status-icon"
@@ -45,7 +49,11 @@
       <div class="rounds-selection">
         <label class="selection-label">HOW MANY ROUNDS</label>
         <div class="radio-group">
-          <label v-for="amount in [5, 10, 15, 20]" :key="amount" class="radio-item">
+          <label
+            v-for="amount in [5, 10, 15, 20]"
+            :key="amount"
+            class="radio-item"
+          >
             <input
               type="radio"
               name="rounds"
@@ -61,7 +69,11 @@
       <div class="rounds-selection">
         <label class="selection-label">SET ROUND LENGTH</label>
         <div class="radio-group">
-          <label v-for="duration in [5, 10, 15, 20]" :key="duration" class="radio-item">
+          <label
+            v-for="duration in [5, 10, 15, 20]"
+            :key="duration"
+            class="radio-item"
+          >
             <input
               type="radio"
               name="duration"
@@ -74,7 +86,9 @@
         </div>
       </div>
       <div class="ugc-settings">
-        <label class="selection-label">INCLUDE USER DRAWINGS / ADD CRT FILTER</label>
+        <label class="selection-label"
+          >INCLUDE USER DRAWINGS / ADD CRT FILTER</label
+        >
         <div class="config-buttons">
           <div class="config-element">
             <label class="config-label">
@@ -87,7 +101,9 @@
                 <Icon
                   class="status-icon"
                   :icon="
-                    configStore.includeUgc ? 'pixel:check-solid' : 'pixel:minus-solid'
+                    configStore.includeUgc
+                      ? 'pixel:check-solid'
+                      : 'pixel:minus-solid'
                   "
                 />
                 <span class="status-text">INCLUDE UGC</span>
@@ -105,7 +121,9 @@
                 <Icon
                   class="status-icon"
                   :icon="
-                    configStore.addCRTFilter ? 'pixel:check-solid' : 'pixel:minus-solid'
+                    configStore.addCRTFilter
+                      ? 'pixel:check-solid'
+                      : 'pixel:minus-solid'
                   "
                 />
                 <span class="status-text">CRT FILTER</span>

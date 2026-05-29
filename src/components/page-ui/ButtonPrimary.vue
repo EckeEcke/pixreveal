@@ -25,6 +25,10 @@ defineEmits(["clicked"]);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  box-shadow:
+    rgba(45, 35, 66, 0.4) 0 2px 4px,
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+    rgba(0,0,0,0.3) 0 -3px 0 inset;
 }
 
 .btn-primary:hover {
