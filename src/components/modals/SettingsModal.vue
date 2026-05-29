@@ -74,7 +74,7 @@
         </div>
       </div>
       <div class="ugc-settings">
-        <label class="selection-label">INCLUDE USER DRAWINGS</label>
+        <label class="selection-label">INCLUDE USER DRAWINGS / ADD CRT FILTER</label>
         <div class="config-buttons">
           <div class="config-element">
             <label class="config-label">
@@ -91,6 +91,24 @@
                   "
                 />
                 <span class="status-text">INCLUDE UGC</span>
+              </div>
+            </label>
+          </div>
+          <div class="config-element">
+            <label class="config-label">
+              <input
+                type="checkbox"
+                v-model="configStore.addCRTFilter"
+                @change="soundStore.playSound('click')"
+              />
+              <div class="pixel-box">
+                <Icon
+                  class="status-icon"
+                  :icon="
+                    configStore.addCRTFilter ? 'pixel:check-solid' : 'pixel:minus-solid'
+                  "
+                />
+                <span class="status-text">CRT FILTER</span>
               </div>
             </label>
           </div>

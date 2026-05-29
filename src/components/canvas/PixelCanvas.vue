@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-wrapper" ref="wrapper">
+  <div class="canvas-wrapper" :class="addCRT ? 'crt' : ''" ref="wrapper">
     <canvas
       ref="canvasRef"
       :width="internalSize"
@@ -12,10 +12,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from "vue";
+import { computed, ref, onMounted, watch, onUnmounted } from "vue";
 import colorPalette from "../../data/colorPalette";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
+import { useConfigStore } from "@/stores/config";
 
 const props = defineProps({
   pixelArray: Array,
@@ -52,13 +53,15 @@ const getAutoMousePos = () => {
   };
 };
 
+const addCRT = computed(() => useConfigStore().addCRTFilter);
+
 const displayedPixels = ref([]);
 const particles = ref([]);
 let intervalId = null;
 let animationFrame = null;
 
 const createParticles = (x, y, color, cellSize) => {
-  const count = 6;
+  const count = 4;
   for (let i = 0; i < count; i++) {
     particles.value.push({
       x: x * cellSize + cellSize / 2,
@@ -210,7 +213,6 @@ const render = () => {
     drawPixels();
   }
 
-  // Partikel;
   for (let i = particles.value.length - 1; i >= 0; i--) {
     const p = particles.value[i];
     p.x += p.vx;

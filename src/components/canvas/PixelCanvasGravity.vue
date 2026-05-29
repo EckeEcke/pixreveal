@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-wrapper">
+  <div class="canvas-wrapper" :class="addCRT ? 'crt' : ''">
     <canvas
       ref="canvasRef"
       :width="internalSize"
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from "vue";
+import { computed, ref, onMounted, watch, onUnmounted } from "vue";
 import colorPalette from "../../data/colorPalette";
 import { useSoundStore } from "@/stores/sound";
 import { useConfigStore } from "@/stores/config";
@@ -26,6 +26,8 @@ const soundStore = useSoundStore();
 const canvasRef = ref(null);
 const internalSize = 600;
 const res = 16;
+
+const addCRT = computed(() => useConfigStore().addCRTFilter);
 
 const gravity = 0.5;
 const bounce = -0.3;

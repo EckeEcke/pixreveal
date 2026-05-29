@@ -9,19 +9,19 @@
       <h2>ONLINE GAME</h2>
 
       <div class="role-toggle">
+      <button
+          :class="{ active: selectedRole === 'host' }"
+          @click="setRole('host')"
+          data-sfx="click"
+        >
+          HOST
+        </button>
         <button
           :class="{ active: selectedRole === 'join' }"
           @click="setRole('join')"
           data-sfx="click"
         >
           JOIN
-        </button>
-        <button
-          :class="{ active: selectedRole === 'host' }"
-          @click="setRole('host')"
-          data-sfx="click"
-        >
-          HOST
         </button>
       </div>
 
@@ -147,7 +147,7 @@ const { prepareGame } = useGameStore();
 const route = useRoute();
 
 const joinRoomId = ref("");
-const selectedRole = ref("join");
+const selectedRole = ref("host");
 
 const setRole = (role) => {
   selectedRole.value = role;

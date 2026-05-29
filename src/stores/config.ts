@@ -38,6 +38,7 @@ export const useConfigStore = defineStore("config", () => {
   const selectedCategories = ref([...allCategoryNames]);
   const minimumDrawings = computed(() => maxRounds.value * 4);
   const includeUgc = ref(false);
+  const addCRTFilter = ref(false);
   const ugcDrawings: Ref<Drawing[]> = ref([]);
   const isManualOpen = ref(false);
   const isSettingsOpen = ref(false);
@@ -144,6 +145,7 @@ export const useConfigStore = defineStore("config", () => {
     categoriesWithCounts,
     revealTime,
     includeUgc,
+    addCRTFilter,
     ugcDrawings,
     selectedCategories,
     isCategorySelected,
