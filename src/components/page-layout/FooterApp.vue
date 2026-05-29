@@ -9,8 +9,12 @@
       >
         <Icon icon="pixel:startups" /> JACKBOX ALTERNATIVE
       </router-link>
-      <router-link class="internal-link" data-sfx="click" to="/blog">
-        <Icon icon="pixel:bullhorn" /> BLOG
+      <router-link
+        class="internal-link"
+        data-sfx="click"
+        to="/free-pixel-guessr-alternative"
+      >
+        <Icon icon="pixel:search" /> PIXEL GUESSR ALTERNATIVE
       </router-link>
       <router-link
         class="internal-link"
@@ -24,6 +28,9 @@
       <button class="internal-link" data-sfx="click" @click="openManual">
         <Icon icon="pixel:book" /> HOW TO PLAY
       </button>
+      <router-link class="internal-link" data-sfx="click" to="/blog">
+        <Icon icon="pixel:bullhorn" /> BLOG
+      </router-link>
       <router-link class="internal-link" data-sfx="click" to="/about">
         <Icon icon="pixel:info-circle" /> ABOUT
       </router-link>
