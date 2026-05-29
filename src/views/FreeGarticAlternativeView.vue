@@ -2,27 +2,26 @@
   <main class="page">
     <div class="setup-card card">
       <h1>
-        <span class="pre-headline">FREE JACKBOX ALTERNATIVE</span>
+        <span class="pre-headline">GAMES LIKE SKRIBBL.IO & GARTIC PHONE</span>
         <br />
-        LOCAL PARTY MULTIPLAYER QUIZ
+        FREE MULTIPLAYER PIXEL GUESSING QUIZ
       </h1>
 
       <p class="party-desc">
-        PixReveal is the ultimate free Jackbox alternative and the perfect
-        browser party game for your next game night, team building event, or
-        office break with your colleagues. If you love
-        <strong>games like Jackbox</strong> or a fast-paced
-        <strong>multiplayer pixel quiz</strong>, you can play right in your
-        browser with no login or app needed.
+        Love multiplayer drawing games but tired of terrible mouse doodles? 
+        PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone, 
+        designed for players who want to focus purely on the hype of guessing. 
+        If you are looking for a fast-paced <strong>multiplayer pixel quiz</strong> 
+        where zero drawing skills are required, you can play right in your browser 
+        with no login or app needed.
       </p>
 
       <p class="party-desc">
-        Host the <strong>pixel guessing game</strong> on the big
-        screen and use your phones as controllers. Watch the pixel art unveil
-        piece by piece. Think you know it? Hit the buzzer on your phone and
-        guess! A correct answer gets you 1 point, while a wrong answer costs you
-        -2 points. Use chaotic power-ups to sabotage your friends or coworkers
-        and win the game!
+        Instead of forcing your friends to sketch with a clunky touchscreen or mouse, 
+        PixReveal features beautiful, pre-made pixel art that reveals itself piece by piece. 
+        It brings back the nostalgic thrill of a classic <strong>pixel guessing game</strong>. 
+        Host the game on a big screen, use your phones as controllers, hit the buzzer, 
+        and guess! Sabotage your friends with chaotic power-ups to take the win.
       </p>
 
       <div class="cta-container">
@@ -33,13 +32,11 @@
           JOIN WITH ROOM ID
         </router-link>
       </div>
-      <PartyHowTo />
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 </script>
 
 <style scoped>
@@ -97,7 +94,10 @@ h2 {
   gap: 12px;
   margin: 20px 0;
   flex-wrap: wrap;
-  @media (min-width: 576px) {
+}
+
+@media (min-width: 576px) {
+  .cta-container {
     grid-template-columns: 1fr 1fr;
   }
 }

@@ -2,21 +2,30 @@
   <footer>
     <PlatformBar />
     <div class="link-wrapper">
-      <button class="internal-link" data-sfx="click" @click="openManual">
-        <Icon icon="pixel:book" /> HOW TO PLAY
-      </button>
-      <router-link class="internal-link" data-sfx="click" to="/about">
-        <Icon icon="pixel:info-circle" /> ABOUT
-      </router-link>
       <router-link
         class="internal-link"
         data-sfx="click"
         to="/free-jackbox-alternative"
       >
-        <Icon icon="pixel:startups" /> FREE JACKBOX ALTERNATIVE
+        <Icon icon="pixel:startups" /> JACKBOX ALTERNATIVE
       </router-link>
       <router-link class="internal-link" data-sfx="click" to="/blog">
         <Icon icon="pixel:bullhorn" /> BLOG
+      </router-link>
+      <router-link
+        class="internal-link"
+        data-sfx="click"
+        to="/free-skribbl-and-gartic-alternative"
+      >
+        <Icon icon="pixel:pen" /> SKRIBBL/GARTIC ALTERNATIVE
+      </router-link>
+    </div>
+    <div class="link-wrapper">
+      <button class="internal-link" data-sfx="click" @click="openManual">
+        <Icon icon="pixel:book" /> HOW TO PLAY
+      </button>
+      <router-link class="internal-link" data-sfx="click" to="/about">
+        <Icon icon="pixel:info-circle" /> ABOUT
       </router-link>
       <router-link class="internal-link" data-sfx="click" to="/user-gallery">
         <Icon icon="pixel:image-solid" /> USER ART GALLERY

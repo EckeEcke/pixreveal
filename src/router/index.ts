@@ -181,6 +181,17 @@ const router = createRouter({
       },
     },
     {
+      path: "/free-skribbl-and-gartic-alternative",
+      name: "free-skribbl-and-gartic-alternative",
+      component: () => import("@/views/FreeGarticAlternativeView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "Free Games like Skribbl.io & Gartic Phone | PixReveal",
+        description:
+          "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
+      },
+    },
+    {
       path: "/about",
       name: "about",
       component: () => import("@/views/AboutView.vue"),
