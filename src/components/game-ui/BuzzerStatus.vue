@@ -8,26 +8,11 @@
           :class="currentActiveMessage.class"
         >
           <template v-if="currentActiveMessage.type === 'answering'">
-            <span class="waiting-player">{{ activePlayerName }}</span>
-            hit the buzzer! Is it
-            <span
-              v-for="(opt, index) in optionsForPrompt"
-              :key="`${index}-${opt}`"
-              class="prompt-option"
-              :style="{
-                '--opt-color': getOptionStyle(index)['--opt-color'],
-                '--opt-glow': getOptionStyle(index)['--opt-glow'],
-              }"
-            >
-              {{ opt }}{{ index < optionsForPrompt.length - 2 ? ", " : "" }}
-              <span v-if="index === optionsForPrompt.length - 2">
-                &nbsp;<span class="white-text">or</span>&nbsp;
-              </span>
-              <span v-else-if="index === optionsForPrompt.length - 1">?</span>
-            </span>
-            <span v-if="partyStore.isXlzActive"
-              >&nbsp;Hmm.. this looks off.</span
-            >
+            <BuzzerAnsweringPrompt
+              :active-player-name="activePlayerName"
+              :options="optionsForPrompt"
+              :is-xlz-active="partyStore.isXlzActive"
+            />
           </template>
 
           <template v-else-if="currentActiveMessage.type === 'result'">
@@ -121,9 +106,13 @@
 import { computed, ref, watch } from "vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
+import { useRobotModerator } from "@/composables/useRobotModerator";
+import { useLeaderboardEvents } from "@/composables/useLeaderboardEvents";
+import { usePowerupEvents } from "@/composables/usePowerupEvents";
+import { hashToUint32, scrambleText } from "@/utils/textScrambler";
 import RobotModerator from "./RobotModerator.vue";
+import BuzzerAnsweringPrompt from "./BuzzerAnsweringPrompt.vue";
 import type { BonusRoundType } from "@/types/bonusRound";
-import { useSoundStore } from "@/stores/sound.ts";
 
 const props = defineProps<{
   isFinalRound?: boolean;
@@ -132,392 +121,58 @@ const props = defineProps<{
 
 const gameStore = useGameStore();
 const partyStore = usePartyStore();
-const soundStore = useSoundStore();
 
-const activePlayerName = computed(
-  () => partyStore.activePlayer?.username || "Player",
-);
+const { robotIsTalking, triggerRobotTalk, playPop } = useRobotModerator();
+const {
+  leaderNameUpper,
+  leaderUsername,
+  leaderMessageVisible,
+  leaderMessageBefore,
+  leaderMessageAfter,
+  leaderGapActive,
+  leaderGapMessageBefore,
+  leaderGapMessageAfter,
+} = useLeaderboardEvents(partyStore, gameStore);
 
-const activePlayerNameUpper = computed(() =>
-  activePlayerName.value.toUpperCase(),
-);
+const {
+  isFreezeActive,
+  freezeMessageBefore,
+  freezeMessageAfter,
+  freezeActorNameUpper,
+  lightsOutMessageBefore,
+  lightsOutMessageAfter,
+  lightsOutActorNameUpper,
+} = usePowerupEvents(partyStore);
+
+const activePlayerName = computed(() => partyStore.activePlayer?.username || "Player");
+const activePlayerNameUpper = computed(() => activePlayerName.value.toUpperCase());
 
 const openPromptTemplates = [
-  {
-    line1: "THINK YOU KNOW THE ANSWER?",
-    line2Before: "HIT THE ",
-    line2After: "!",
-  },
-  {
-    line1: "READY TO MAKE A GUESS?",
-    line2Before: "SMASH THE ",
-    line2After: "!",
-  },
-  {
-    line1: "GOT IT FIGURED OUT?",
-    line2Before: "PRESS ",
-    line2After: "!",
-  },
-  {
-    line1: "FEELING CONFIDENT?",
-    line2Before: "GO FOR THE ",
-    line2After: "!",
-  },
+  { line1: "THINK YOU KNOW THE ANSWER?", line2Before: "HIT THE ", line2After: "!" },
+  { line1: "READY TO MAKE A GUESS?", line2Before: "SMASH THE ", line2After: "!" },
+  { line1: "GOT IT FIGURED OUT?", line2Before: "PRESS ", line2After: "!" },
+  { line1: "FEELING CONFIDENT?", line2Before: "GO FOR THE ", line2After: "!" },
 ] as const;
 
 const openPromptIndex = ref(0);
+const openPrompt = computed(() => openPromptTemplates[openPromptIndex.value % openPromptTemplates.length] ?? openPromptTemplates[0]);
+
 watch(
   () => partyStore.buzzerState,
   (next, prev) => {
-    if (next === "open") {
-      if (prev !== "open") {
-        openPromptIndex.value =
-          (openPromptIndex.value + 1) % openPromptTemplates.length;
-      }
-      return;
+    if (next === "open" && prev !== "open") {
+      openPromptIndex.value = (openPromptIndex.value + 1) % openPromptTemplates.length;
     }
   },
 );
 
-const openPrompt = computed(() => {
-  return (
-    openPromptTemplates[openPromptIndex.value % openPromptTemplates.length] ??
-    openPromptTemplates[0]
-  );
-});
-
-const leaderTemplates = [
-  "Move over! [New Leader] just took the lead!",
-  "We have a new leader! All hail [New Leader]!",
-  "Plot twist! [New Leader] is now on top!",
-  "And just like that, [New Leader] steals the crown!",
-] as const;
-
-const leaderTemplateIndex = ref(0);
-const leaderTemplate = ref<string | null>(null);
-const leaderNameUpper = ref<string>("PLAYER");
-const leaderMessageVisible = ref(false);
-let leaderHideTimeoutId: number | null = null;
-
-const clearLeaderHideTimeout = () => {
-  if (!leaderHideTimeoutId) return;
-  window.clearTimeout(leaderHideTimeoutId);
-  leaderHideTimeoutId = null;
-};
-
-const robotIsTalking = ref(false);
-let robotTalkTimeoutId: number | null = null;
-const clearRobotTalkTimeout = () => {
-  if (!robotTalkTimeoutId) return;
-  window.clearTimeout(robotTalkTimeoutId);
-  robotTalkTimeoutId = null;
-};
-
-const robotSounds = ["robot1", "robot2", "robot3", "robot4"];
-
-const robotSoundIndex = ref(0);
-
-const triggerRobotTalk = (duration = 1000) => {
-  robotSoundIndex.value = (robotSoundIndex.value + 1) % robotSounds.length;
-  clearRobotTalkTimeout();
-  robotIsTalking.value = true;
-  soundStore.playSound(robotSounds[robotSoundIndex.value] as any);
-  robotTalkTimeoutId = window.setTimeout(() => {
-    robotTalkTimeoutId = null;
-    robotIsTalking.value = false;
-  }, duration);
-};
-
-const playPop = () => {
-  soundStore.playSound("pop");
-};
-
-const partyPlayersByPoints = computed(() =>
-  [...partyStore.players].sort(
-    (a: any, b: any) => (b.points ?? 0) - (a.points ?? 0),
-  ),
-);
-
-const leaderWatchSnapshot = computed(() =>
-  partyPlayersByPoints.value.map((p: any) => ({
-    playerId: p.playerId,
-    username: p.username,
-    points: p.points,
-  })),
-);
-
-const leaderId = computed(() => leaderWatchSnapshot.value[0]?.playerId || null);
-const leaderUsername = computed(
-  () => leaderWatchSnapshot.value[0]?.username || null,
-);
-
-const leaderGapTemplates = [
-  "Look at them go! [Player] is leaving everyone else in the dust!",
-  "[Player] is on absolute fire! The gap is getting massive!",
-  "Is anyone even trying to catch up? [Player] is playing in a league of their own right now!",
-  "Unbelievable pace! [Player] is sprinting ahead and looking unstoppable!",
-] as const;
-
-const leaderGapTemplateIndex = ref(0);
-const leaderGapTemplate = ref<string | null>(null);
-let lastLeaderGapKey = "";
-
-const leaderGapActive = computed(() => {
-  const first = partyPlayersByPoints.value[0];
-  const second = partyPlayersByPoints.value[1];
-  const firstPoints = Number(first?.points ?? 0);
-  const secondPoints = Number(second?.points ?? 0);
-  return firstPoints - secondPoints >= 3;
-});
-
-watch(
-  [() => partyStore.buzzerState, leaderId, leaderGapActive],
-  ([buzzerState, currentLeaderId, gapActive]) => {
-    if (buzzerState !== "open") return;
-    if (!gapActive) return;
-    if (!currentLeaderId) return;
-    const key = `${currentLeaderId}|${gameStore.currentRoundIndex}`;
-    if (key === lastLeaderGapKey) return;
-    lastLeaderGapKey = key;
-    const template =
-      leaderGapTemplates[
-        leaderGapTemplateIndex.value % leaderGapTemplates.length
-      ] ?? leaderGapTemplates[0];
-    leaderGapTemplateIndex.value =
-      (leaderGapTemplateIndex.value + 1) % leaderGapTemplates.length;
-    leaderGapTemplate.value = template;
-  },
-);
-
-const leaderGapMessageBefore = computed(() => {
-  const t = leaderGapTemplate.value || leaderGapTemplates[0];
-  return t.split("[Player]")[0] || "";
-});
-
-const leaderGapMessageAfter = computed(() => {
-  const t = leaderGapTemplate.value || leaderGapTemplates[0];
-  return t.split("[Player]")[1] || "";
-});
-
-watch(
-  leaderWatchSnapshot,
-  (next, prev) => {
-    const nextLeaderId = next?.[0]?.playerId;
-    const prevLeaderId = prev?.[0]?.playerId;
-    if (!nextLeaderId || nextLeaderId === prevLeaderId) return;
-
-    const nextLeaderName = next?.[0]?.username || "Player";
-    const template =
-      leaderTemplates[leaderTemplateIndex.value % leaderTemplates.length] ??
-      leaderTemplates[0];
-    leaderTemplateIndex.value =
-      (leaderTemplateIndex.value + 1) % leaderTemplates.length;
-
-    leaderTemplate.value = template;
-    leaderNameUpper.value = String(nextLeaderName).toUpperCase();
-    leaderMessageVisible.value = true;
-
-    clearLeaderHideTimeout();
-    leaderHideTimeoutId = window.setTimeout(() => {
-      leaderHideTimeoutId = null;
-      leaderMessageVisible.value = false;
-    }, 4000);
-  },
-  { deep: true },
-);
-
-const leaderMessageBefore = computed(() => {
-  const t = leaderTemplate.value || leaderTemplates[0];
-  return t.split("[New Leader]")[0] || "";
-});
-
-const leaderMessageAfter = computed(() => {
-  const t = leaderTemplate.value || leaderTemplates[0];
-  return t.split("[New Leader]")[1] || "";
-});
-
 const isFinalRound = computed(() => Boolean(props.isFinalRound));
-const bonusRoundType = computed(() => props.bonusRoundType ?? null);
-const isBonusRound = computed(() => Boolean(bonusRoundType.value));
-const isDoublePointsRound = computed(
-  () => isFinalRound.value || isBonusRound.value,
-);
+const isBonusRound = computed(() => Boolean(props.bonusRoundType));
+const isDoublePointsRound = computed(() => isFinalRound.value || isBonusRound.value);
 const pointsForCorrect = computed(() => (isDoublePointsRound.value ? 2 : 1));
 const pointsForWrong = computed(() => (isDoublePointsRound.value ? 4 : 2));
 
-const resultClass = computed(() => {
-  if (!partyStore.activePlayerId) return "timeout";
-  return partyStore.roundResult || "";
-});
-
-const findUsernameById = (playerId: string | null) => {
-  if (!playerId) return null;
-  return (
-    partyStore.players.find((p: any) => p.playerId === playerId)?.username ||
-    null
-  );
-};
-
-const isFreezeActive = computed(
-  () => typeof partyStore.freezeUntilAt === "number",
-);
-
-const freezeTemplates = [
-  "STONE COLD! [Player] used the freeze powerup.",
-  "ICE ICE BABY! [Player] hit the freeze powerup.",
-  "BRRR... [Player] just froze everyone.",
-  "CHILL OUT! [Player] triggered freeze.",
-] as const;
-
-const freezeTemplateIndex = ref(0);
-const freezeTemplate = ref<string | null>(null);
-let lastFreezeUntilAt: number | null = null;
-watch(
-  () => partyStore.freezeUntilAt,
-  (untilAt) => {
-    if (typeof untilAt !== "number") {
-      lastFreezeUntilAt = null;
-      return;
-    }
-    if (untilAt <= Date.now()) return;
-    if (lastFreezeUntilAt === untilAt) return;
-    lastFreezeUntilAt = untilAt;
-    const template =
-      freezeTemplates[freezeTemplateIndex.value % freezeTemplates.length] ??
-      freezeTemplates[0];
-    freezeTemplateIndex.value =
-      (freezeTemplateIndex.value + 1) % freezeTemplates.length;
-    freezeTemplate.value = template;
-  },
-);
-
-const freezeMessageBefore = computed(() => {
-  const t = freezeTemplate.value || freezeTemplates[0];
-  return t.split("[Player]")[0] || "";
-});
-
-const freezeMessageAfter = computed(() => {
-  const t = freezeTemplate.value || freezeTemplates[0];
-  return t.split("[Player]")[1] || "";
-});
-
-const freezeActorNameUpper = computed(() => {
-  const username = findUsernameById(partyStore.freezeByPlayerId);
-  return (username || "HOST").toUpperCase();
-});
-
-const lightsOutTemplates = [
-  "WHAT?! I CAN'T SEE! Oh.. [Player] turned the lights off",
-  "BLACKOUT! [Player] just killed the lights",
-  "DID THE LIGHTS JUST GO OUT? [Player] did that",
-  "NO LIGHTS, NO MERCY. [Player] flipped the switch",
-] as const;
-
-const lightsOutTemplateIndex = ref(0);
-const lightsOutTemplate = ref<string | null>(null);
-let lastLightsOutUntilAt: number | null = null;
-watch(
-  () => (partyStore as any).lightsOutUntilAt as number | null | undefined,
-  (untilAt) => {
-    if (typeof untilAt !== "number") {
-      lastLightsOutUntilAt = null;
-      return;
-    }
-    if (untilAt <= Date.now()) return;
-    if (lastLightsOutUntilAt === untilAt) return;
-    lastLightsOutUntilAt = untilAt;
-    const template =
-      lightsOutTemplates[
-        lightsOutTemplateIndex.value % lightsOutTemplates.length
-      ] ?? lightsOutTemplates[0];
-    lightsOutTemplateIndex.value =
-      (lightsOutTemplateIndex.value + 1) % lightsOutTemplates.length;
-    lightsOutTemplate.value = template;
-  },
-);
-
-const lightsOutMessageBefore = computed(() => {
-  const t = lightsOutTemplate.value || lightsOutTemplates[0];
-  return t.split("[Player]")[0] || "";
-});
-
-const lightsOutMessageAfter = computed(() => {
-  const t = lightsOutTemplate.value || lightsOutTemplates[0];
-  return t.split("[Player]")[1] || "";
-});
-
-const lightsOutActorNameUpper = computed(() => {
-  const username = findUsernameById(
-    (partyStore as any).lightsOutByPlayerId || null,
-  );
-  return (username || "HOST").toUpperCase();
-});
-
-const hashToUint32 = (input: string) => {
-  let hash = 2166136261;
-  for (let i = 0; i < input.length; i++) {
-    hash ^= input.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
-};
-
-const mulberry32 = (seed: number) => {
-  return () => {
-    let t = (seed += 0x6d2b79f5);
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-};
-
-const scrambleText = (text: string, seed: number) => {
-  const str = String(text || "");
-  if (str.length < 2) return str;
-
-  const scrambleWord = (word: string, wordSeed: number) => {
-    if (word.length < 2) return word;
-    const chars = word.split("");
-    const rand = mulberry32(wordSeed);
-    for (let i = chars.length - 1; i > 0; i--) {
-      const j = Math.floor(rand() * (i + 1));
-      const a = chars[i];
-      const b = chars[j];
-      if (typeof a !== "string" || typeof b !== "string") continue;
-      chars[i] = b;
-      chars[j] = a;
-    }
-    return chars.join("");
-  };
-
-  const parts = str.split(/(\s+)/);
-  return parts
-    .map((part, index) => {
-      if (/^\s+$/.test(part)) return part;
-      const partSeed = hashToUint32(`${seed}|${index}|${part}`);
-      return scrambleWord(part, partSeed);
-    })
-    .join("");
-};
-
-const optionColors = [
-  { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
-  { color: "var(--neon-blue)", glow: "var(--blue-glow)" },
-  { color: "var(--neon-purple)", glow: "var(--purple-glow)" },
-  { color: "var(--neon-yellow)", glow: "var(--yellow-glow)" },
-] as const;
-
-const getOptionStyle = (index: number) => {
-  const palette = optionColors;
-  const fallback =
-    palette[0] ??
-    ({ color: "var(--neon-blue)", glow: "var(--blue-glow)" } as const);
-  const entry = palette.length ? palette[index % palette.length] : fallback;
-  return {
-    "--opt-color": entry?.color ?? fallback.color,
-    "--opt-glow": entry?.glow ?? fallback.glow,
-  } as Record<string, string>;
-};
+const resultClass = computed(() => partyStore.activePlayerId ? (partyStore.roundResult || "") : "timeout");
 
 const optionsForPrompt = computed(() => {
   const options: any[] = (gameStore.currentRound?.options || []).slice(0, 4);
@@ -530,47 +185,27 @@ const optionsForPrompt = computed(() => {
 });
 
 const currentActiveMessage = computed(() => {
-  // PRIORITY 1: Someone buzzed or round finished (Always tops everything)
   if (partyStore.buzzerState === "answering") {
-    return {
-      type: "answering",
-      key: "answering",
-      class: "status-pill answering",
-    };
+    return { type: "answering", key: "answering", class: "status-pill answering" };
   }
   if (partyStore.roundResult && gameStore.gameState !== "revealing") {
-    return {
-      type: "result",
-      key: "result",
-      class: `status-pill result ${resultClass.value}`,
-    };
+    return { type: "result", key: "result", class: `status-pill result ${resultClass.value}` };
   }
-
-  // PRIORITY 2: Powerups (Only show if nobody is answering right now)
   if (partyStore.isLightsOut) {
     return { type: "lightsOut", key: "lightsOut", class: "powerup-text" };
   }
   if (isFreezeActive.value) {
     return { type: "freeze", key: "freeze", class: "powerup-text" };
   }
-
-  // PRIORITY 3: Standard messages & Leader events
   if (leaderMessageVisible.value) {
     return { type: "leaderEvent", key: "leader", class: "leader-text" };
   }
   if (partyStore.buzzerState === "open") {
-    if (isFinalRound.value) {
-      return { type: "openFinal", key: "final", class: "status-pill open" };
-    }
-    if (isBonusRound.value) {
-      return { type: "openBonus", key: "bonus", class: "status-pill open" };
-    }
-    if (leaderGapActive.value) {
-      return { type: "openGap", key: "gap", class: "status-pill open" };
-    }
+    if (isFinalRound.value) return { type: "openFinal", key: "final", class: "status-pill open" };
+    if (isBonusRound.value) return { type: "openBonus", key: "bonus", class: "status-pill open" };
+    if (leaderGapActive.value) return { type: "openGap", key: "gap", class: "status-pill open" };
     return { type: "openRegular", key: "regular", class: "status-pill open" };
   }
-
   return { type: "none", key: "none", class: "" };
 });
 
@@ -580,7 +215,7 @@ watch(
     if (nextKey === "none" || nextKey === prevKey) return;
     triggerRobotTalk();
     playPop();
-  },
+  }
 );
 </script>
 
@@ -756,15 +391,5 @@ watch(
 
 .leader-text::before {
   border-right-color: var(--neon-yellow);
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(236, 72, 153, 0.8);
-  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-wrapper" :class="addCRT ? 'crt' : ''" ref="wrapper">
+  <div class="canvas-wrapper" :class="{ crt: addCRT }" ref="wrapper">
     <canvas
       ref="canvasRef"
       :width="internalSize"
@@ -12,249 +12,200 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch, onUnmounted } from "vue";
-import colorPalette from "../../data/colorPalette";
-import { usePlayerStore } from "@/stores/player";
-import { useSoundStore } from "@/stores/sound";
-import { useConfigStore } from "@/stores/config";
+import { computed, ref, onMounted, watch, onUnmounted } from "vue"
+import colorPalette from "../../data/colorPalette"
+import { usePlayerStore } from "@/stores/player"
+import { useSoundStore } from "@/stores/sound"
+import { useConfigStore } from "@/stores/config"
+import { useCanvasBase } from "@/composables/useCanvasBase"
 
 const props = defineProps({
   pixelArray: Array,
   resolution: Number,
   isRevealing: Boolean,
   isStatusIcon: Boolean,
-  timerDuration: Number | undefined,
-  pauseReveal: Boolean | undefined,
+  timerDuration: Number,
+  pauseReveal: Boolean,
   mousePos: Object,
   isMagnifierMode: Boolean,
   muteSound: Boolean,
-});
+})
 
-const emit = defineEmits(["mousemove", "touchstart", "touchmove"]);
+defineEmits(["mousemove", "touchstart", "touchmove"])
 
-const soundStore = useSoundStore();
-const timerDuration = props.timerDuration || 15;
+const internalSize = 600
+const { 
+  canvasRef, 
+  getContext, 
+  calculateGrid, 
+  createParticles, 
+  updateAndDrawParticles, 
+  setAnimationFrameId, 
+  getAnimationFrameId,
+  stopAnimation 
+} = useCanvasBase(internalSize)
 
-const canvasRef = ref(null);
-const internalSize = 600;
+const soundStore = useSoundStore()
+const playerStore = usePlayerStore()
 
-const playerStore = usePlayerStore();
-let autoAngle = 0;
-const offset = 90;
+const addCRT = computed(() => useConfigStore().addCRTFilter)
+const timerDuration = props.timerDuration || 15
 
-const getAutoMousePos = () => {
-  autoAngle += 0.035;
-  const centerX = internalSize / 2 + offset;
-  const centerY = internalSize / 2 + offset;
+let autoAngle = 0
+const offset = 90
+let intervalId = null
 
-  return {
-    x: centerX + Math.sin(autoAngle) * 200,
-    y: centerY + Math.cos(autoAngle * 0.5) * 200,
-  };
-};
+const flatPixelList = ref([])
+const displayedPixels = ref([])
 
-const addCRT = computed(() => useConfigStore().addCRTFilter);
-
-const displayedPixels = ref([]);
-const particles = ref([]);
-let intervalId = null;
-let animationFrame = null;
-
-const createParticles = (x, y, color, cellSize) => {
-  const count = 4;
-  for (let i = 0; i < count; i++) {
-    particles.value.push({
-      x: x * cellSize + cellSize / 2,
-      y: y * cellSize + cellSize / 2,
-      vx: (Math.random() - 0.5) * 4,
-      vy: (Math.random() - 0.5) * 4,
-      life: 1.0,
-      color: color,
-    });
-  }
-};
-
-const allPixelsFromProp = () => {
-  const list = [];
-  if (!props.pixelArray) return list;
+const updateFlatPixelList = () => {
+  const list = []
+  if (!props.pixelArray) return
   props.pixelArray.forEach((row, y) => {
     if (Array.isArray(row)) {
       row.forEach((val, x) => {
-        if (val !== 0) list.push({ x, y, val });
-      });
+        if (val !== 0) list.push({ x, y, val })
+      })
     }
-  });
-  return list;
-};
+  })
+  flatPixelList.value = list
+}
+
+const getAutoMousePos = () => {
+  autoAngle += 0.035
+  const centerX = internalSize / 2 + offset
+  const centerY = internalSize / 2 + offset
+  return {
+    x: centerX + Math.sin(autoAngle) * 200,
+    y: centerY + Math.cos(autoAngle * 0.5) * 200,
+  }
+}
 
 const startReveal = () => {
-  if (intervalId) clearInterval(intervalId);
-  displayedPixels.value = [];
-  particles.value = [];
-  if (!props.pixelArray || !props.pixelArray[0]) return;
+  if (intervalId) clearInterval(intervalId)
+  updateFlatPixelList()
+  displayedPixels.value = []
+  
+  if (!props.pixelArray || !props.pixelArray[0]) return
 
-  const allVisible = allPixelsFromProp();
+  const allVisible = [...flatPixelList.value]
   if (!props.isRevealing) {
-    displayedPixels.value = allVisible;
-    if (!animationFrame) render();
-    return;
+    displayedPixels.value = allVisible
+    if (!getAnimationFrameId()) render()
+    return
   }
 
-  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000;
-  const dynamicSpeed =
-    allVisible.length > 0 ? totalDurationMs / allVisible.length : 0;
-  allVisible.sort(() => Math.random() - 0.5);
+  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000
+  const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0
+  allVisible.sort(() => Math.random() - 0.5)
+
+  const resolution = props.pixelArray.length
+  const { cellSize } = calculateGrid(resolution)
 
   intervalId = setInterval(() => {
-    if (props.pauseReveal) return;
+    if (props.pauseReveal) return
     if (allVisible.length > 0) {
-      const next = allVisible.pop();
-      displayedPixels.value.push({ ...next, createdAt: Date.now() });
-      const res = props.pixelArray.length;
-      const cellSize = internalSize / res;
-      const color = colorPalette[next.val] || "#fff";
-      createParticles(next.x, next.y, color, cellSize);
-      if (!props.muteSound) soundStore.playSound("reveal");
+      const next = allVisible.pop()
+      displayedPixels.value.push({ ...next, createdAt: Date.now() })
+      
+      const color = colorPalette[next.val] || "#fff"
+      createParticles(next.x * cellSize, next.y * cellSize, color, cellSize)
+      
+      if (!props.muteSound) soundStore.playSound("reveal")
     } else {
-      clearInterval(intervalId);
-      intervalId = null;
+      clearInterval(intervalId)
+      intervalId = null
     }
-  }, dynamicSpeed);
+  }, dynamicSpeed)
 
-  if (!animationFrame) render();
-};
+  if (!getAnimationFrameId()) render()
+}
+
+const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
+  pixels.forEach((p) => {
+    const color = colorPalette[p.val]
+    let scale = 1
+    if (props.isRevealing && p.createdAt) {
+      scale = Math.min(1, (now - p.createdAt) / 100)
+    }
+    const currentSize = baseSize * scale
+    const offsetPos = (baseSize - currentSize) / 2
+
+    ctx.shadowColor = color
+    ctx.shadowBlur = p.val === 1 ? 0 : 15 * scale
+    ctx.fillStyle = color
+    ctx.fillRect(
+      p.x * cellSize + gap + offsetPos,
+      p.y * cellSize + gap + offsetPos,
+      currentSize,
+      currentSize
+    )
+
+    if (p.val === 1) {
+      ctx.strokeStyle = "rgba(175, 175, 175, 0.5)"
+      ctx.lineWidth = 0.5
+      ctx.strokeRect(p.x * cellSize + gap, p.y * cellSize + gap, baseSize, baseSize)
+    }
+  })
+}
 
 const render = () => {
   if (props.pauseReveal) {
-    animationFrame = requestAnimationFrame(render);
-    return;
+    setAnimationFrameId(requestAnimationFrame(render))
+    return
   }
-  const canvas = canvasRef.value;
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
+  const ctx = getContext()
+  if (!ctx) return
 
-  const res = props.pixelArray.length;
-  const cellSize = internalSize / res;
-  const gap = cellSize * 0.05;
-  const baseSize = cellSize - gap * 2;
-  const now = Date.now();
+  const resolution = props.pixelArray?.length || 16
+  const { cellSize, gap, baseSize } = calculateGrid(resolution)
+  const now = Date.now()
 
-  const drawPixels = () => {
-    const pixelsToDraw =
-      props.isRevealing || props.pauseReveal
-        ? displayedPixels.value
-        : allPixelsFromProp();
-    pixelsToDraw.forEach((p) => {
-      const color = colorPalette[p.val];
-      let scale = 1;
-      if (props.isRevealing && p.createdAt) {
-        const elapsed = now - p.createdAt;
-        scale = Math.min(1, elapsed / 100);
-      }
-      const currentSize = baseSize * scale;
-      const offsetPos = (baseSize - currentSize) / 2;
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 15 * scale;
-      ctx.fillStyle = color;
-      ctx.fillRect(
-        p.x * cellSize + gap + offsetPos,
-        p.y * cellSize + gap + offsetPos,
-        currentSize,
-        currentSize,
-      );
-      if (p.val === 1) {
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = "rgba(175, 175, 175, 0.5)";
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(
-          p.x * cellSize + gap,
-          p.y * cellSize + gap,
-          baseSize,
-          baseSize,
-        );
-      }
-    });
-  };
+  ctx.clearRect(0, 0, internalSize, internalSize)
 
-  ctx.clearRect(0, 0, internalSize, internalSize);
+  const pixelsToDraw = props.isRevealing || props.pauseReveal ? displayedPixels.value : flatPixelList.value
 
   if (props.isMagnifierMode && !props.isStatusIcon) {
-    const activePos = playerStore.isCreatorMode
-      ? getAutoMousePos()
-      : props.mousePos;
-    const radius = 90;
-    const offset = 90;
-    const viewX = activePos.x - offset;
-    const viewY = activePos.y - offset;
+    const activePos = playerStore.isCreatorMode ? getAutoMousePos() : props.mousePos
+    const radius = 90
+    const viewX = activePos.x - offset
+    const viewY = activePos.y - offset
 
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(viewX, viewY, radius, 0, Math.PI * 2);
-    ctx.clip();
-    drawPixels();
-    ctx.restore();
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(viewX, viewY, radius, 0, Math.PI * 2)
+    ctx.clip()
+    drawPixels(ctx, pixelsToDraw, baseSize, cellSize, gap, now)
+    ctx.restore()
 
-    ctx.strokeStyle = "#ec4899";
-    ctx.lineWidth = 20;
-    ctx.shadowColor = "#ec4899";
-    ctx.shadowBlur = 10;
-    ctx.stroke();
+    ctx.strokeStyle = "#ec4899"
+    ctx.lineWidth = 20
+    ctx.shadowColor = "#ec4899"
+    ctx.shadowBlur = 10
+    ctx.stroke()
 
-    const angle = Math.atan2(activePos.y - viewY, activePos.x - viewX);
-    const startX = viewX + Math.cos(angle) * radius;
-    const startY = viewY + Math.sin(angle) * radius;
-
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(activePos.x, activePos.y);
-    ctx.stroke();
-    ctx.fill();
+    const angle = Math.atan2(activePos.y - viewY, activePos.x - viewX)
+    ctx.beginPath()
+    ctx.moveTo(viewX + Math.cos(angle) * radius, viewY + Math.sin(angle) * radius)
+    ctx.lineTo(activePos.x, activePos.y)
+    ctx.stroke()
   } else {
-    drawPixels();
+    drawPixels(ctx, pixelsToDraw, baseSize, cellSize, gap, now)
   }
 
-  for (let i = particles.value.length - 1; i >= 0; i--) {
-    const p = particles.value[i];
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life -= 0.02;
-    if (p.life <= 0) {
-      particles.value.splice(i, 1);
-      continue;
-    }
-    ctx.globalAlpha = p.life;
-    ctx.fillStyle = p.color;
-    ctx.fillRect(p.x, p.y, 3, 3);
-  }
-  ctx.globalAlpha = 1.0;
-  animationFrame = requestAnimationFrame(render);
-};
+  updateAndDrawParticles(ctx)
+  setAnimationFrameId(requestAnimationFrame(render))
+}
 
-const getImageUrl = () => {
-  if (!canvasRef.value) return null;
-  return canvasRef.value.toDataURL("image/png");
-};
+defineExpose({ getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null })
 
-defineExpose({ getImageUrl });
+watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })
 
-watch(
-  () => props.pixelArray,
-  () => {
-    if (props.pixelArray?.length > 0) startReveal();
-  },
-  { deep: true },
-);
-watch(
-  () => props.isRevealing,
-  () => {
-    if (props.pixelArray?.length > 0) startReveal();
-  },
-);
-onMounted(() => startReveal());
+onMounted(() => startReveal())
 onUnmounted(() => {
-  clearInterval(intervalId);
-  if (animationFrame) cancelAnimationFrame(animationFrame);
-});
+  clearInterval(intervalId)
+  stopAnimation()
+})
 </script>
 
 <style scoped>

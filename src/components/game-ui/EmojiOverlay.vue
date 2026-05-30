@@ -75,22 +75,6 @@ watch(
   bottom: -60px;
   font-size: 4rem;
   user-select: none;
-  animation: float-up 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes float-up {
-  0% {
-    transform: translateY(0) scale(0.5) rotate(0deg);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-    transform: translateY(-10vh) scale(1.2) rotate(10deg);
-  }
-  100% {
-    transform: translateY(-110vh) translateX(var(--drift)) scale(1)
-      rotate(-20deg);
-    opacity: 0;
-  }
+  animation: float-up-emoji 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 </style>

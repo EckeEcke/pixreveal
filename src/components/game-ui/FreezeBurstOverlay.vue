@@ -113,34 +113,4 @@ onUnmounted(() => clear());
   filter: drop-shadow(0 6px 16px rgba(56, 189, 248, 0.35));
   animation: freeze-float-up 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-
-@keyframes freeze-wash {
-  0% {
-    opacity: 0;
-    transform: scale(1.02);
-  }
-  20% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-
-@keyframes freeze-float-up {
-  0% {
-    transform: translateY(0) scale(0.7) rotate(0deg);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-    transform: translateY(-12vh) scale(1) rotate(10deg);
-  }
-  100% {
-    transform: translateY(-75vh) translateX(var(--drift)) scale(1) rotate(-15deg);
-    opacity: 0;
-  }
-}
 </style>

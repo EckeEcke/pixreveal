@@ -104,21 +104,4 @@ onMounted(() => {
   animation: starReveal 0.55s cubic-bezier(0.18, 1.4, 0.4, 1) forwards;
   animation-delay: 1.5s;
 }
-
-@keyframes starReveal {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-    filter: blur(8px) drop-shadow(0 0 0 #ffd700);
-  }
-  70% {
-    opacity: 1;
-    transform: scale(1.08);
-    filter: blur(0) drop-shadow(0 0 18px #ffd700);
-  }
-  100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 8px #ffd700);
-  }
-}
 </style>

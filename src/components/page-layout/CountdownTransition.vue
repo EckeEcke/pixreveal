@@ -63,26 +63,4 @@ onMounted(() => {
 .pop-leave-active {
   animation: pop-out 0.2s ease-in;
 }
-
-@keyframes pop-in {
-  0% {
-    transform: scale(2);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes pop-out {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-}
 </style>

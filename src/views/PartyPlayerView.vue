@@ -711,16 +711,6 @@ onMounted(() => {
   opacity: 0.7;
 }
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(236, 72, 153, 0.8);
-  }
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

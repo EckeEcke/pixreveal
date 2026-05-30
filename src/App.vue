@@ -229,21 +229,6 @@ onBeforeUnmount(() => {
   filter: blur(1px);
 }
 
-@keyframes blink {
-  0% {
-    opacity: 0;
-  }
-  25% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

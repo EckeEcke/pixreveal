@@ -228,30 +228,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   animation: score-bump-out 0.15s ease-in forwards;
 }
 
-@keyframes score-bump {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.4);
-    color: var(--neon-yellow);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes score-bump-out {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-}
-
 .hud-bonus-popup {
   position: absolute;
   top: -20px;
@@ -306,24 +282,6 @@ const avatarStyle = computed<CSSProperties>(() => {
 
 .float-malus-leave-active {
   display: none;
-}
-
-@keyframes float-up {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  20% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
 }
 
 .player-hud {

@@ -128,43 +128,20 @@ const checkAnswer = (answer, event) => {
   animation: shine-sweep 0.5s steps(8) forwards;
 }
 
-@keyframes shine-sweep {
-  0% {
-    left: -150%;
-    opacity: 1;
-  }
-  100% {
-    left: 150%;
-    opacity: 1;
-  }
-}
-
 .answer-btn.is-correct {
   background-color: var(--neon-success);
   color: white;
   box-shadow: 0 0 30px var(--neon-success);
   border-color: var(--neon-success);
+  animation: success-shake 1.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 .answer-btn.is-wrong {
   background-color: var(--neon-error);
   color: var(--white);
-  animation: success-shake 1.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  box-shadow: 0 0 30px var(--neon-success);
+  animation: shake-fail 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  box-shadow: 0 0 30px var(--neon-error);
   border-color: var(--neon-error);
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-12px);
-  }
-  75% {
-    transform: translateX(12px);
-  }
 }
 
 .answer-btn:disabled:not(.is-correct):not(.is-wrong) {
@@ -175,28 +152,6 @@ const checkAnswer = (answer, event) => {
   .answer-btn {
     padding: 18px;
     font-size: 20px;
-  }
-}
-
-@keyframes success-shake {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  15% {
-    transform: translateY(-6px);
-  }
-  30% {
-    transform: translateY(4px);
-  }
-  45% {
-    transform: translateY(-4px);
-  }
-  60% {
-    transform: translateY(2px);
-  }
-  75% {
-    transform: translateY(-1px);
   }
 }
 </style>
