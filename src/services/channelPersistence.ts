@@ -41,7 +41,6 @@ export const readAllowedIds = (roomId: string): Set<string> | null => {
   try {
     const key = allowedIdsStorageKey(roomId);
 
-    // Prefer sessionStorage to avoid localStorage spam.
     const raw = sessionStorage.getItem(key) ?? localStorage.getItem(key);
     if (!raw) return null;
 

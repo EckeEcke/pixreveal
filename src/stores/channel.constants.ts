@@ -1,0 +1,9 @@
+export const SUBSCRIBE_TIMEOUT_MS = 22_000;
+export const CONNECTION_LOSS_TIMEOUT_MS = 60_000;
+export const NO_HOST_GRACE_MS = 8_000;
+export const INACTIVITY_GRACE_MS = 30_000;
+export const HEARTBEAT_INTERVAL_MS = 20_000;
+export const CONNECT_WATCHDOG_MS = 3_000;
+export const FORCE_RECONNECT_COOLDOWN_MS = 8_000;
+export const MAX_PLAYERS_REGULAR = 8;
+export const MAX_PLAYERS_PARTY_NON_HOST = 8;
