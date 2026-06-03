@@ -12,7 +12,6 @@ import {
 } from "@/services/workerTimers";
 import { toast } from "vue3-toastify";
 import type { UserData } from "@/types/channel";
-import { isHostFlag } from "@/utils/realtime";
 import { usePartyStore } from "./party";
 import { useConnectionState } from "@/composables/useConnectionState";
 import { useInactivity } from "@/composables/useInactivity";
@@ -20,22 +19,16 @@ import { usePlayerManagement } from "@/composables/usePlayerManagement";
 import { useSessionPersistence } from "@/composables/useSessionPersistence";
 import {
   SUBSCRIBE_TIMEOUT_MS,
-  NO_HOST_GRACE_MS,
   HEARTBEAT_INTERVAL_MS,
-  MAX_PLAYERS_REGULAR,
-  MAX_PLAYERS_PARTY_NON_HOST,
 } from "./channel.constants";
+import { useSubscriptionLifecycle } from "@/composables/useSubscriptionLifecycle";
+import { useMemberEvents }          from "@/composables/useMemberEvents";
+import { useChatEvents }            from "@/composables/useChatEvents";
 
 export const useChannelStore = defineStore("channel", () => {
   const router = useRouter();
   const configStore = useConfigStore();
   const playerStore = usePlayerStore();
-
-  const debug = (...args: any[]) => {
-    if (import.meta.env?.DEV) {
-      console.log("[channel]", new Date().toISOString(), ...args);
-    }
-  };
 
   // ─── Core state ────────────────────────────────────────────────────────────
   const activeChannel = shallowRef<any>(null);
@@ -234,7 +227,6 @@ export const useChannelStore = defineStore("channel", () => {
   const resetConnection = () =>
     reset({ clearPersisted: false, keepIdentity: true, keepGameRunning: true });
 
-  // ─── Event setup ───────────────────────────────────────────────────────────
   const setupEvents = (myPlayerId: string) => {
     playerId.value = myPlayerId;
     const channel = activeChannel.value;
@@ -246,242 +238,47 @@ export const useChannelStore = defineStore("channel", () => {
     visibilityHandler.value = inactivity.handleVisibilityChange;
     document.addEventListener("visibilitychange", visibilityHandler.value);
 
-    channel.bind("realtime:subscription_succeeded", (members: any) => {
-      debug("subscription_succeeded", {
-        roomId: currentRoomId.value,
-        isHost: isHost.value,
-        mode: mode.value,
-      });
-
-      if (subscribeTimeoutId.value) {
-        window.clearTimeout(subscribeTimeoutId.value);
-        subscribeTimeoutId.value = null;
-      }
-
-      const hash = members.presence?.hash || {};
-      const totalMembers = Object.keys(hash).length;
-      const hasHost = Object.keys(hash).some((id) =>
-        isHostFlag(hash[id]?.host),
-      );
-      const nonHostMembers = Object.keys(hash).filter(
-        (id) => !isHostFlag(hash[id]?.host),
-      ).length;
-
-      // Client-side lobby limit enforcement.
-      if (!isHost.value && !onlineGameRunning.value) {
-        const isFull =
-          mode.value === "party"
-            ? nonHostMembers > MAX_PLAYERS_PARTY_NON_HOST
-            : totalMembers > MAX_PLAYERS_REGULAR;
-        if (isFull) {
-          toast.error("Room is already full");
-          reset();
-          router.push("/");
-          return;
+    useSubscriptionLifecycle({
+      channel,
+      isHost,
+      mode,
+      playerId,
+      onlineGameRunning,
+      subscribeTimeoutId,
+      noHostGraceTimeoutId,
+      configStore,
+      playerMgmt,
+      sessionPersistence,
+      loading,
+      router,
+      reset,
+      setGameRunning,
+      onResubscribed: () => {
+        if (isHost.value && mode.value === "party" && onlineGameRunning.value) {
+          workerSetTimeout(() => {
+            try {
+              usePartyStore().broadcastPartyState?.("host-resubscribed");
+            } catch {}
+          }, 0);
         }
-      }
-
-      if (!isHost.value && !hasHost) {
-        debug("no_host_presence", { totalMembers });
-        if (!loading.isReconnecting) loading.setReconnecting();
-        if (noHostGraceTimeoutId.value)
-          window.clearTimeout(noHostGraceTimeoutId.value);
-        noHostGraceTimeoutId.value = window.setTimeout(() => {
-          noHostGraceTimeoutId.value = null;
-          const stillNoHost = !playerMgmt.playersOnline.value.some(
-            (p) => p.isHost,
-          );
-          if (stillNoHost) {
-            if (!loading.isReconnecting) loading.setReconnecting();
-            activeChannel.value?.trigger("client-party-state-request", {
-              requestedBy: playerId.value,
-            });
-          }
-        }, NO_HOST_GRACE_MS);
-      }
-
-      const nextPlayers = Object.keys(hash).map((id) => {
-        if (isHostFlag(hash[id].host) && hash[id].rounds)
-          configStore.maxRounds = hash[id].rounds;
-        if (isHostFlag(hash[id].host) && hash[id].duration)
-          configStore.revealTime = hash[id].duration;
-        return {
-          playerId: id,
-          username: hash[id].name,
-          avatarIndex: hash[id].avatar,
-          isHost: isHostFlag(hash[id].host),
-          isOnline: true,
-          points: 0,
-          hasFinished: false,
-          correctAnswers: 0,
-        };
-      });
-
-      playerMgmt.playersOnline.value = nextPlayers;
-
-      // Rehydrate allowlist on host reconnect.
-      if (isHost.value && onlineGameRunning.value) {
-        playerMgmt.rehydrateAllowedIds();
-      } else {
-        playerMgmt.lockAllowedIdsForRunningGame();
-      }
-
-      if (loading.isReconnecting) loading.clear();
-
-      // On host reconnect broadcast party state so controllers resync.
-      if (isHost.value && mode.value === "party" && onlineGameRunning.value) {
-        workerSetTimeout(() => {
-          try {
-            usePartyStore().broadcastPartyState?.("host-resubscribed");
-          } catch {
-            /* ignore */
-          }
-        }, 0);
-      }
-
-      const persisted = sessionPersistence.readSession();
-      if (persisted?.wasInGame && persisted?.mode === mode.value) {
-        setGameRunning(true);
-        if (mode.value === "party") {
-          if (
-            router.currentRoute.value.path === "/" ||
-            router.currentRoute.value.path === "/play-party"
-          ) {
-            if (persisted.lastRole === "host") router.push("/party-host");
-            else router.push("/party-player");
-          }
-          activeChannel.value?.trigger("client-party-state-request", {
-            requestedBy: playerId.value,
-          });
-        }
-      }
-
-      if (mode.value === "party" && onlineGameRunning.value) {
-        channel.trigger("client-party-state-request", {
-          requestedBy: playerId.value,
-        });
-      }
-
-      if (!isHost.value && (!hasHost || totalMembers <= 1)) {
-        channel.trigger("client-party-state-request", {
-          requestedBy: playerId.value,
-        });
-      }
-
-      if (
-        router.currentRoute.value.path === "/" ||
-        router.currentRoute.value.path === "/play-party" ||
-        router.currentRoute.value.path === "/play-online"
-      ) {
-        loading.clear();
-        router.push(mode.value === "party" ? "/party-lobby" : "/lobby");
-      }
+      },
     });
 
-    channel.bind("realtime:subscription_error", (err: any) => {
-      debug("subscription_error", err);
-      if (subscribeTimeoutId.value) {
-        window.clearTimeout(subscribeTimeoutId.value);
-        subscribeTimeoutId.value = null;
-      }
-      if (err?.type === "AuthError") {
-        toast.error(
-          "Auth failed (invalid signature). Check APINATOR_SECRET matches your VITE_APINATOR_KEY.",
-          { icon: "🔑" },
-        );
-      } else {
-        toast.error("Failed to join room. Please try again.", { icon: "🚫" });
-      }
-      reset();
-      router.push("/");
+    useMemberEvents({
+      channel,
+      isHost,
+      mode,
+      playerId,
+      onlineGameRunning,
+      noHostGraceTimeoutId,
+      messages,
+      playerMgmt,
+      loading,
+      router,
+      reset,
     });
 
-    channel.bind("realtime:error", (err: any) => {
-      debug("realtime_error", err);
-      console.error("Realtime error:", err);
-    });
-
-    channel.bind("realtime:member_added", (member: any) => {
-      playerMgmt.addPlayer({
-        playerId: member.user_id,
-        username: member.user_info.name,
-        avatarIndex: member.user_info.avatar,
-        isHost: isHostFlag(member.user_info.host),
-        isOnline: true,
-        points: 0,
-        hasFinished: false,
-        correctAnswers: 0,
-      });
-      messages.value.push({
-        id: `sys-${Date.now()}`,
-        username: "System",
-        text: `${member.user_info.name} joined the lobby`,
-        isSystem: true,
-      });
-
-      // Cancel no-host grace if host just appeared.
-      if (
-        !isHost.value &&
-        isHostFlag(member.user_info.host) &&
-        noHostGraceTimeoutId.value
-      ) {
-        window.clearTimeout(noHostGraceTimeoutId.value);
-        noHostGraceTimeoutId.value = null;
-        if (loading.isReconnecting) loading.clear();
-      }
-
-      if (isHost.value && onlineGameRunning.value) {
-        playerMgmt.allowRejoinDuringRunningGame(member.user_id);
-        if (
-          playerMgmt.allowedIdsDuringGame.value &&
-          !playerMgmt.allowedIdsDuringGame.value.has(member.user_id)
-        ) {
-          channel.trigger("client-join-blocked", { targetId: member.user_id });
-        }
-      }
-
-      // Lobby limit enforcement.
-      if (isHost.value && !onlineGameRunning.value) {
-        if (mode.value === "party") {
-          const nonHostCount = playerMgmt.playersOnline.value.filter(
-            (p) => !p.isHost,
-          ).length;
-          if (nonHostCount > MAX_PLAYERS_PARTY_NON_HOST) {
-            channel.trigger("client-join-blocked", {
-              targetId: member.user_id,
-            });
-          }
-        } else {
-          if (playerMgmt.playersOnline.value.length > MAX_PLAYERS_REGULAR) {
-            channel.trigger("client-join-blocked", {
-              targetId: member.user_id,
-            });
-          }
-        }
-      }
-    });
-
-    channel.bind("realtime:member_removed", (member: any) => {
-      playerMgmt.removePlayer(member.user_id || member.id);
-    });
-
-    channel.bind("client-join-blocked", (data: { targetId?: string }) => {
-      if (!data?.targetId || String(data.targetId) !== playerId.value) return;
-      toast.error("Room is already full");
-      reset();
-      router.push("/");
-    });
-
-    channel.bind("client-chat-message", (data: any) => {
-      messages.value.push({
-        ...data,
-        isSystem: false,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      });
-    });
+    useChatEvents({ channel, messages });
   };
 
   // ─── Session creation helpers ──────────────────────────────────────────────
