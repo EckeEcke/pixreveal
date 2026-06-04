@@ -2,46 +2,14 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { shuffle } from "@/utils/random";
 import { useConfigStore } from "./config";
-
-type PixelGrid = number[][];
-
-export type Drawing = {
-  name: string;
-  category: string;
-  data: PixelGrid;
-  primaryColor: number;
-  options?: RoundOption[];
-};
-
-export type RoundOption = {
-  title: string;
-  isCorrect: boolean;
-};
-
-export type Round = {
-  answer: string;
-  data: PixelGrid;
-  options: RoundOption[];
-};
-
-export type GameState =
-  | "starting"
-  | "revealing"
-  | "answering"
-  | "feedback"
-  | "revealed"
-  | "gameover";
+import type { Drawing, RoundOption, Round, GameState } from "@/types/game";
 
 export const useGameStore = defineStore("game", () => {
-  // =============================
-  // STATE
-  // =============================
+  // ─── State ─────────────────────────────────────────────────────────────────
 
   const gameState = ref<GameState>("starting");
-
   const rounds = ref<Round[]>([]);
   const currentRoundIndex = ref(0);
-
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
   const playSound = ref(false);
@@ -49,20 +17,16 @@ export const useGameStore = defineStore("game", () => {
 
   const configStore = useConfigStore();
 
-  // =============================
-  // COMPUTED
-  // =============================
+  // ─── Computed ──────────────────────────────────────────────────────────────
 
   const maxRounds = computed(() => configStore.maxRounds);
   const filteredDrawings = computed(() => configStore.filteredDrawings);
 
-  const currentRound = computed<Round | null>(() => {
-    return rounds.value[currentRoundIndex.value] ?? null;
-  });
+  const currentRound = computed<Round | null>(
+    () => rounds.value[currentRoundIndex.value] ?? null,
+  );
 
-  // =============================
-  // PURE HELPERS
-  // =============================
+  // ─── Pure helpers ──────────────────────────────────────────────────────────
 
   function getDistractors(drawing: Drawing, pool: Drawing[]): Drawing[] {
     const colorMatches: Drawing[] = [];
@@ -98,10 +62,7 @@ export const useGameStore = defineStore("game", () => {
 
     const options: RoundOption[] = shuffle([
       { title: drawing.name, isCorrect: true },
-      ...distractors.map((d) => ({
-        title: d.name,
-        isCorrect: false,
-      })),
+      ...distractors.map((d) => ({ title: d.name, isCorrect: false })),
     ]);
 
     return {
@@ -117,36 +78,30 @@ export const useGameStore = defineStore("game", () => {
     );
   }
 
-  // =============================
-  // ACTIONS
-  // =============================
+  // ─── Actions ───────────────────────────────────────────────────────────────
 
   const setGameState = (newState: GameState) => {
     gameState.value = newState;
   };
 
-  const stopAllTimers = () => {
-    // Platzhalter für timer cleanup
-  };
-
   const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
-    stopAllTimers();
     revealTime.value = customRevealTime;
 
     if (customRounds) {
+      // Online: Runden kommen vom Host, configStore mit syncen
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
       configStore.revealTime = customRevealTime;
     } else {
+      // Lokal: Runden selbst generieren, configStore ist bereits Source of Truth
       const shuffled = shuffle([...filteredDrawings.value]);
-      const selectedDrawings = shuffled.slice(0, maxRounds.value);
-      rounds.value = buildRounds(selectedDrawings);
+      rounds.value = buildRounds(shuffled.slice(0, maxRounds.value));
     }
 
     currentRoundIndex.value = 0;
     isGameOver.value = false;
     selectedOption.value = null;
-    setGameState("starting"); // Erste Runde zeigt die Transition
+    setGameState("starting");
   };
 
   const nextRound = () => {
@@ -160,40 +115,28 @@ export const useGameStore = defineStore("game", () => {
   };
 
   const addSuddenDeathRound = () => {
-    const usedAnswers = rounds.value.map((r) => r.answer);
-    const unusedDrawings = filteredDrawings.value.filter((d) => !usedAnswers.includes(d.name));
-    let nextDrawing: Drawing;
-    if (unusedDrawings.length === 0) {
-      const shuffled = shuffle([...filteredDrawings.value]);
-      nextDrawing = shuffled[0] as Drawing;
-    } else {
-      const shuffled = shuffle([...unusedDrawings]);
-      nextDrawing = shuffled[0] as Drawing;
-    }
-
-    const pool = shuffle(
-      filteredDrawings.value.filter((d) => d.name !== nextDrawing.name),
+    const usedAnswers = new Set(rounds.value.map((r) => r.answer));
+    const unused = filteredDrawings.value.filter(
+      (d) => !usedAnswers.has(d.name),
     );
-    const distractors = pool.slice(0, 3);
-    const options: RoundOption[] = shuffle([
-      { title: nextDrawing.name, isCorrect: true },
-      ...distractors.map((d) => ({
-        title: d.name,
-        isCorrect: false,
-      })),
-    ]);
+    const pool = unused.length > 0 ? unused : filteredDrawings.value;
+    const nextDrawing = shuffle([...pool])[0] as Drawing;
 
-    const newRound: Round = {
-      answer: nextDrawing.name,
-      data: nextDrawing.data,
-      options,
-    };
+    // selectedDrawings als Drawing-Array aus bereits gespielten Antworten
+    const selectedDrawings = filteredDrawings.value.filter((d) =>
+      usedAnswers.has(d.name),
+    );
+    const newRound = createRound(
+      nextDrawing,
+      filteredDrawings.value,
+      selectedDrawings,
+    );
+
     rounds.value.push(newRound);
     currentRoundIndex.value = rounds.value.length - 1;
   };
 
   const setRoundIndex = (index: number) => {
-    stopAllTimers();
     const next = Math.max(0, Math.min(index, rounds.value.length - 1));
     currentRoundIndex.value = next;
     selectedOption.value = null;
@@ -202,7 +145,6 @@ export const useGameStore = defineStore("game", () => {
   };
 
   const reset = () => {
-    stopAllTimers();
     rounds.value = [];
     currentRoundIndex.value = 0;
     selectedOption.value = null;
