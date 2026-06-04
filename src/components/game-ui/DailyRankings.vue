@@ -1,11 +1,13 @@
 <template>
   <div>
-    <h2 class="logo">DAILY <span>RANKINGS</span></h2>
-    <p v-if="isYesterday">RANKINGS FOR <strong>YESTERDAY</strong></p>
-    <p v-else-if="sortedRankings.length <= 0">NO RANKINGS YET FOR TODAY</p>
-    <p v-else>
-      RANKINGS FOR <strong>{{ dailyStore.date }}</strong>
-    </p>
+    <div class="card">
+      <h2 class="logo">DAILY <span>RANKINGS</span></h2>
+      <p v-if="isYesterday">RANKINGS FOR <strong>YESTERDAY</strong></p>
+      <p v-else-if="sortedRankings.length <= 0">NO RANKINGS YET FOR TODAY</p>
+      <p v-else>
+        RANKINGS FOR <strong>{{ dailyStore.date }}</strong>
+      </p>
+    </div>
     <LoadingAnimation v-if="dailyStore.isLoading" />
     <template v-else>
       <div
@@ -22,7 +24,7 @@
       </div>
     </template>
 
-    <DailyCountdown class="countdown"/>
+    <DailyCountdown class="countdown" />
     <ButtonPrimary
       v-if="!isYesterday"
       data-sfx="click"
@@ -30,6 +32,13 @@
       @clicked="$router.push('/rankings-yesterday')"
     >
       VIEW YESTERDAY RANKINGS
+    </ButtonPrimary>
+    <ButtonPrimary
+      data-sfx="click"
+      class="btn-primary"
+      @clicked="$router.push('/hall-of-fame')"
+    >
+      OPEN HALL OF FAME
     </ButtonPrimary>
     <ButtonSecondary
       data-sfx="click"
@@ -66,11 +75,10 @@ const sortedRankings = computed(() => {
 h2 {
   font-family: "8bit";
   text-align: center;
-  margin: 64px auto 32px;
+  margin-bottom: 16px;
 }
 
 p {
-  margin-bottom: 32px;
   text-align: center;
   letter-spacing: 1px;
 }
@@ -86,5 +94,19 @@ p {
 .btn-primary {
   width: 260px;
   margin: 16px auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  border-radius: 8px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  width: 100%;
+  max-width: 616px;
+  box-sizing: border-box;
+  margin-bottom: 32px;
 }
 </style>

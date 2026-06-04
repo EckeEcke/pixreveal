@@ -14,6 +14,7 @@ export default async function handler(req, res) {
 
     let data = await client.get(`daily:${targetDate}:set`);
     let rankings = await client.lRange(`daily:${targetDate}:rankings`, 0, -1);
+    const winnersRaw = await client.lRange("daily:winners", 0, -1);
 
     if (!data) {
       const yesterdayDate = new Date();
@@ -39,6 +40,7 @@ export default async function handler(req, res) {
     const parsedData = JSON.parse(data);
     const parsedRankings = rankings.map((r) => JSON.parse(r));
     const parsedYesterdayRankings = parsedData.yesterdayRankings ?? [];
+    const parsedWinners = winnersRaw.map((w) => JSON.parse(w));
 
     await client.disconnect();
 
@@ -47,6 +49,7 @@ export default async function handler(req, res) {
       rounds: parsedData.dailyRounds,
       mode: parsedData.mode,
       rankings: parsedRankings,
+      winners: parsedWinners,
       yesterdayRankings: parsedYesterdayRankings,
     });
   } catch (error) {

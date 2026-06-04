@@ -34,6 +34,9 @@
       <router-link class="internal-link" data-sfx="click" to="/about">
         <Icon icon="pixel:info-circle" /> ABOUT
       </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/hall-of-fame">
+        <Icon icon="pixel:crown-solid" /> HALL OF FAME
+      </router-link>
       <router-link class="internal-link" data-sfx="click" to="/user-gallery">
         <Icon icon="pixel:image-solid" /> USER ART GALLERY
       </router-link>

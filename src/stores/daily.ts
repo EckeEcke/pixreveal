@@ -10,6 +10,7 @@ export const useDailyStore = defineStore("daily", () => {
   const error = ref(null);
   const dailyRankings = ref([]);
   const yesterdayRankings = ref([]);
+  const winners = ref([]);
   const getDailyKey = () => {
     if (!date.value) return null;
     return `pix_daily_${date.value}`;
@@ -41,6 +42,7 @@ export const useDailyStore = defineStore("daily", () => {
       dailyRounds.value = data.rounds || [];
       dailyRankings.value = data.rankings || [];
       yesterdayRankings.value = data.yesterdayRankings || [];
+      winners.value = data.winners || [];
       date.value = data.date || "";
       mode.value = data.mode || "classic";
 
@@ -91,6 +93,7 @@ export const useDailyStore = defineStore("daily", () => {
     dailyRounds,
     dailyRankings,
     yesterdayRankings,
+    winners,
     date,
     isLoading,
     error,

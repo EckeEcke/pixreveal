@@ -45,6 +45,16 @@ export default async function handler(req, res) {
     );
     const yesterdayRankings = yesterdayRankingsRaw.map((r) => JSON.parse(r));
 
+    if (yesterdayRankings.length > 0) {
+      const yesterdayWinner = yesterdayRankings[0];
+      const winnerPayload = {
+        date: yesterdayStr,
+        winner: yesterdayWinner,
+      };
+
+      await client.lPush("daily:winners", JSON.stringify(winnerPayload));
+    }
+
     const shuffled = [...drawings].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, 5);
 

@@ -230,6 +230,12 @@ const router = createRouter({
       component: () => import("@/views/GalleryView.vue"),
       meta: { robots: "noindex" },
     },
+    {
+      path: "/hall-of-fame",
+      name: "hall-of-fame",
+      component: () => import("@/views/HallOfFameView.vue"),
+      meta: { robots: "noindex" },
+    },
     // Path Guard: always put at the bottom!
     {
       path: "/:pathMatch(.*)*",
