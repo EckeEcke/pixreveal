@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { readAllowedIds, writeAllowedIds } from "@/services/channelPersistence";
-import type { Player } from "@/types/channel";
+import type { Player } from "@/types/player";
 
 type PlayerManagementCallbacks = {
   getIsHost: () => boolean;
@@ -19,18 +19,18 @@ export function usePlayerManagement({
   const allowedIdsDuringGame = ref<Set<string> | null>(null);
 
   const addPlayer = (player: Player) => {
-    if (!playersOnline.value.some((p) => p.playerId === player.playerId)) {
+    if (!playersOnline.value.some((p: Player) => p.playerId === player.playerId)) {
       playersOnline.value.push(player);
     }
   };
 
   const removePlayer = (id: string) => {
-    playersOnline.value = playersOnline.value.filter((p) => p.playerId !== id);
+    playersOnline.value = playersOnline.value.filter((p: Player) => p.playerId !== id);
   };
 
   const lockAllowedIdsForRunningGame = () => {
     if (!getIsHost() || !getGameRunning()) return;
-    const ids = new Set(playersOnline.value.map((p) => p.playerId));
+    const ids = new Set(playersOnline.value.map((p: Player) => p.playerId));
     if (getPlayerId()) ids.add(getPlayerId());
     allowedIdsDuringGame.value = ids;
     const roomId = getCurrentRoomId();

@@ -7,9 +7,12 @@ export interface UseSuddenDeathOptions {
   getChannel: () => any;
   getCurrentRoundIndex: () => number;
   getCurrentRound: () => any;
+  getPlayers: () => PartyPlayer[];
   onAddSuddenDeathRound: () => void;
   onOpenBuzzer: () => void;
   onBroadcastPartyState: (reason: string) => void;
+  setIsRevealing: (value: boolean) => void;
+  setAnswerDeadlineAt: (value: number | null) => void;
 }
 
 // ─── Composable ───────────────────────────────────────────────────────────────
@@ -18,9 +21,12 @@ export function useSuddenDeath({
   getChannel,
   getCurrentRoundIndex,
   getCurrentRound,
+  getPlayers,
   onAddSuddenDeathRound,
   onOpenBuzzer,
   onBroadcastPartyState,
+  setIsRevealing,
+  setAnswerDeadlineAt,
 }: UseSuddenDeathOptions) {
   const isSuddenDeath = ref(false);
   const suddenDeathPlayerIds = ref<string[]>([]);
@@ -30,7 +36,8 @@ export function useSuddenDeath({
    * Returns the players tied for the highest score.
    * Returns an empty array if there's no tie (< 2 candidates).
    */
-  const getSuddenDeathCandidates = (players: PartyPlayer[]): PartyPlayer[] => {
+  const getSuddenDeathCandidates = (): PartyPlayer[] => {
+    const players = getPlayers();
     if (players.length < 2) return [];
 
     let maxPts = -Infinity;
@@ -56,13 +63,10 @@ export function useSuddenDeath({
     onOpenBuzzer();
   };
 
-  const nextSuddenDeathRound = (
-    isRevealing: { value: boolean },
-    answerDeadlineAt: { value: number | null },
-  ) => {
-    isRevealing.value = true;
+  const nextSuddenDeathRound = () => {
+    setIsRevealing(true);
     onAddSuddenDeathRound();
-    answerDeadlineAt.value = null;
+    setAnswerDeadlineAt(null);
     getChannel()?.trigger("client-party-next-round", {
       roundIndex: getCurrentRoundIndex(),
       newRound: getCurrentRound(),

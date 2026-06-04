@@ -7,7 +7,7 @@ import {
 } from "@/stores/channel.constants";
 import type { Ref } from "vue";
 import type { Router } from "vue-router";
-import type { Player } from "@/types/channel";
+import type { Player } from "@/types/player";
 
 interface PresenceMember {
   name: string;

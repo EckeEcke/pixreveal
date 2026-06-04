@@ -16,6 +16,7 @@ import type {
   PartyPlayer,
   PartyStatePayload,
 } from "@/types/party";
+import type { Player } from "@/types/player";
 import { usePowerups } from "@/composables/usePowerups";
 import { useBuzzerRetry } from "@/composables/useBuzzerRetry";
 import { useAnswerRetry } from "@/composables/useAnswerRetry";
@@ -94,9 +95,16 @@ export const usePartyStore = defineStore("party", () => {
     getChannel: () => channel.value,
     getCurrentRoundIndex: () => gameStore.currentRoundIndex,
     getCurrentRound: () => gameStore.currentRound,
+    getPlayers: () => players.value, // ← das fehlt bei dir
     onAddSuddenDeathRound: () => gameStore.addSuddenDeathRound(),
     onOpenBuzzer: () => openBuzzer(),
     onBroadcastPartyState: (reason) => broadcastPartyState(reason),
+    setIsRevealing: (v) => {
+      isRevealing.value = v;
+    },
+    setAnswerDeadlineAt: (v) => {
+      answerDeadlineAt.value = v;
+    },
   });
 
   // ─── Player helpers ──────────────────────────────────────────────────────────
@@ -198,8 +206,8 @@ export const usePartyStore = defineStore("party", () => {
 
   const startGame = () => {
     players.value = channelStore.playersOnline
-      .filter((p) => !p.isHost && p.isOnline)
-      .map((p) => ({
+      .filter((p: Player) => !p.isHost && p.isOnline)
+      .map((p: Player) => ({
         playerId: p.playerId,
         username: p.username,
         avatarIndex: p.avatarIndex,
@@ -877,11 +885,7 @@ export const usePartyStore = defineStore("party", () => {
     showSuddenDeathTransition: suddenDeath.showSuddenDeathTransition,
     getSuddenDeathCandidates: suddenDeath.getSuddenDeathCandidates,
     startSuddenDeath: suddenDeath.startSuddenDeath,
-    nextSuddenDeathRound: (isRevealingRef: any, answerDeadlineAtRef: any) =>
-      suddenDeath.nextSuddenDeathRound(
-        isRevealingRef ?? isRevealing,
-        answerDeadlineAtRef ?? answerDeadlineAt,
-      ),
+    nextSuddenDeathRound: suddenDeath.nextSuddenDeathRound,
 
     // Retry state (useful for UI indicators)
     pendingBuzz: buzzerRetry.pendingBuzz,

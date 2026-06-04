@@ -5,6 +5,7 @@ import { useGameStore } from "./game";
 import { usePlayerStore } from "./player";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
+import type { Player } from "@/types/player";
 
 export const useOnlineStore = defineStore("online", () => {
   const channelStore = useChannelStore();
@@ -29,7 +30,7 @@ export const useOnlineStore = defineStore("online", () => {
     playerStore.points = 0;
     playerStore.correctAnswers = 0;
 
-    channelStore.playersOnline.forEach((p) => {
+    channelStore.playersOnline.forEach((p: Player) => {
       p.points = 0;
       p.correctAnswers = 0;
       p.hasFinished = false;
@@ -80,7 +81,7 @@ export const useOnlineStore = defineStore("online", () => {
       "client-player-finished",
       (data: { playerId: string; points: number; correctAnswers: number }) => {
         const player = channelStore.playersOnline.find(
-          (p) => p.playerId === data.playerId,
+          (p: Player) => p.playerId === data.playerId,
         );
         if (player) {
           player.points = data.points;
@@ -120,7 +121,7 @@ export const useOnlineStore = defineStore("online", () => {
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
     const me = channelStore.playersOnline.find(
-      (p) => p.playerId === channelStore.playerId,
+      (p: Player) => p.playerId === channelStore.playerId,
     );
 
     if (me) {

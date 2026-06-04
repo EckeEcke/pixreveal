@@ -1,7 +1,7 @@
 import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { defineStore } from "pinia";
-import type { Drawing, RoundOption } from "./game";
+import type { Drawing, RoundOption } from "@/types/game";
 import allDrawings from "@/data/drawings.json";
 import { useConfigStore } from "./config";
 import { useSoundStore } from "./sound";

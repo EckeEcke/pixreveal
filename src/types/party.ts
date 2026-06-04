@@ -13,6 +13,18 @@ export type PartyPlayer = {
   isDecrypter: boolean;
 };
 
+export type PartyPlayerStats = {
+  playerId: string;
+  username: string;
+  avatarIndex: number;
+  wrongAnswers: number;
+  correctAnswers: number;
+  quickestAnswer: number | null;
+  powerupsUsed: number;
+  emojisSent: number;
+  isDecrypter: boolean;
+};
+
 export type PartyStatePayload = {
   sentAt: number;
   roundIndex: number;

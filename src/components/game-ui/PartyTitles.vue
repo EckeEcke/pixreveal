@@ -35,18 +35,7 @@ import {
   workerClearInterval,
   workerSetInterval,
 } from "@/services/workerTimers";
-
-type PartyPlayerStats = {
-  playerId: string;
-  username: string;
-  avatarIndex: number;
-  wrongAnswers: number;
-  correctAnswers: number;
-  quickestAnswer: number | null;
-  powerupsUsed: number;
-  emojisSent: number;
-  isDecrypter: boolean;
-};
+import type { PartyPlayerStats } from "@/types/party";
 
 const props = defineProps<{
   players: PartyPlayerStats[];

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import allDrawings from "../data/drawings.json";
-import type { Drawing } from "./game";
+import type { Drawing } from "@/types/game";
 import drawings from "@/data/drawings.json";
 import { toast } from "vue3-toastify";
 import { useSoundStore } from "./sound";

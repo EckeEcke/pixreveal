@@ -1,5 +1,5 @@
 import drawings from "@/data/drawings.json";
-import type { Drawing } from "@/stores/game";
+import type { Drawing } from "@/types/game";
 
 export const shuffle = <T>(array: readonly T[]): T[] =>
   [...array].sort(() => Math.random() - 0.5);
