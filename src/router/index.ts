@@ -234,7 +234,12 @@ const router = createRouter({
       path: "/hall-of-fame",
       name: "hall-of-fame",
       component: () => import("@/views/HallOfFameView.vue"),
-      meta: { robots: "noindex" },
+      meta: {
+        robots: "index, follow",
+        title: "PixReveal Hall of Fame - Daily Challenge Winners",
+        description:
+          "Check out the PixReveal Daily Champions! See who guessed the drawings with the highest score and learn how to secure your own place in the Hall of Fame.",
+      },
     },
     // Path Guard: always put at the bottom!
     {

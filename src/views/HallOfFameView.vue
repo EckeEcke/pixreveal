@@ -6,10 +6,17 @@
       </button>
     </div>
     <div class="card">
-      <h1 class="logo">HALL OF <span>FAME</span></h1>
+      <h1 class="logo">
+        PIX<span>REVEAL</span><br />HALL OF <span>FAME</span>
+      </h1>
       <p class="subline">
         <Icon icon="pixel:sparkles" /> All winners of Daily Challenge
         <Icon icon="pixel:sparkles" />
+      </p>
+      <p class="desc">
+        Welcome to the Hall of Fame! These players successfully solved
+        the daily challenge with the highest scores. Want to enter the
+        Hall of Fame? Play today's challenge, guess the revealing drawing and secure your place among the best!
       </p>
       <ButtonPrimary
         v-if="!isYesterday"
@@ -95,13 +102,25 @@ main {
 }
 
 .subline {
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   display: flex;
   place-items: center;
   gap: 8px;
   text-align: center;
   color: var(--neon-yellow);
   font-weight: 700;
+}
+
+.desc {
+    font-size: 14px;
+    text-wrap: balance;
+    text-align: center;
+    margin-bottom: 32px;
+    line-height: 1.25;
+}
+
+h1 {
+    margin-bottom: 16px;
 }
 
 .card {
