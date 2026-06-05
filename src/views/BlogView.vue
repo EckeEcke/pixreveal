@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">05-26-26</span>
+        </div>
+        <h3 class="log-title">Hall of Fame for Daily Challenge winners</h3>
+        <p>
+          So far PixReveal only had a daily leaderboard for the current day and
+          the day before. This felt a bit lame. I wanted to honor the winners
+          more. Therefore I added a Hall of Fame, where each daily winner is
+          displayed with their name, avatar, score and the date they won. You
+          can check it out here:
+          <router-link to="/hall-of-fame">enter Hall of Fame</router-link>
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">05-28-26</span>
         </div>
         <h3 class="log-title">New sudden death added to party mode!</h3>
