@@ -21,7 +21,7 @@ const router = createRouter({
         title: "PixReveal - Guess the Pixel Art",
         description:
           "Guess pixel art drawings in real-time with your friends. Host a local party game, join online lobbies, or solve the daily puzzle directly in your browser.",
-        canonical: "https://pixreveal.com/",
+        canonical: "https://www.pixreveal.com/",
       },
     },
     {
@@ -33,7 +33,7 @@ const router = createRouter({
         title: "Editor - PixReveal",
         description:
           "Create your own pixel art drawings and contribute to the official PixReveal game gallery.",
-        canonical: "https://pixreveal.com/editor",
+        canonical: "https://www.pixreveal.com/editor",
       },
     },
     {
@@ -45,7 +45,7 @@ const router = createRouter({
         title: "Singleplayer Modes - PixReveal",
         description:
           "Test your skills in 5 singleplayer modes. Race against time or beat the daily puzzle challenge.",
-        canonical: "https://pixreveal.com/singleplayer",
+        canonical: "https://www.pixreveal.com/singleplayer",
       },
     },
     {
@@ -159,7 +159,7 @@ const router = createRouter({
         title: "Play Local Party Game - PixReveal",
         description:
           "Connect your smartphones, set up your room, and get ready for a local multiplayer pixel art showdown.",
-        canonical: "https://pixreveal.com/play-party",
+        canonical: "https://www.pixreveal.com/play-party",
       },
     },
     {
@@ -171,7 +171,7 @@ const router = createRouter({
         title: "Play Online Multiplayer - PixReveal",
         description:
           "Join or host online custom lobbies to compete against your friends worldwide.",
-        canonical: "https://pixreveal.com/play-online",
+        canonical: "https://www.pixreveal.com/play-online",
       },
     },
     {
@@ -183,7 +183,7 @@ const router = createRouter({
         title: "Free Jackbox Alternative - Local Party Multiplayer | PixReveal",
         description:
           "Turn your smartphones into controllers! Host PixReveal on your TV or laptop and play the ultimate party game with your friends.",
-        canonical: "https://pixreveal.com/free-jackbox-alternative",
+        canonical: "https://www.pixreveal.com/free-jackbox-alternative",
       },
     },
     {
@@ -195,7 +195,7 @@ const router = createRouter({
         title: "Free Games like Skribbl.io & Gartic Phone | PixReveal",
         description:
           "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
-        canonical: "https://pixreveal.com/free-skribbl-and-gartic-alternative",
+        canonical: "https://www.pixreveal.com/free-skribbl-and-gartic-alternative",
       },
     },
     {
@@ -207,7 +207,7 @@ const router = createRouter({
         title: "Free Games like Pixel Guessr | PixReveal",
         description:
           "Looking for a quiz game about guessing pixel drawings? Play this multiplayer pixel quiz directly in your browser!",
-        canonical: "https://pixreveal.com/free-pixel-guessr-alternative",
+        canonical: "https://www.pixreveal.com/free-pixel-guessr-alternative",
       },
     },
     {
@@ -219,7 +219,7 @@ const router = createRouter({
         title: "About PixReveal",
         description:
           "Learn more about the development, the roadmap, and the features behind PixReveal.",
-        canonical: "https://pixreveal.com/about",
+        canonical: "https://www.pixreveal.com/about",
       },
     },
     {
@@ -231,7 +231,7 @@ const router = createRouter({
         title: "PixReveal Blog - Updates & News",
         description:
           "Stay up to date with the latest features, patch notes, and multiplayer announcements from PixReveal.",
-        canonical: "https://pixreveal.com/blog",
+        canonical: "https://www.pixreveal.com/blog",
       },
     },
     {
@@ -249,7 +249,7 @@ const router = createRouter({
         title: "PixReveal Hall of Fame - Daily Challenge Winners",
         description:
           "Check out the PixReveal Daily Champions! See who guessed the drawings with the highest score and learn how to secure your own place in the Hall of Fame.",
-        canonical: "https://pixreveal.com/hall-of-fame",
+        canonical: "https://www.pixreveal.com/hall-of-fame",
       },
     },
     // Path Guard: always put at the bottom!
