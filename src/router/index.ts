@@ -21,6 +21,7 @@ const router = createRouter({
         title: "PixReveal - Guess the Pixel Art",
         description:
           "Guess pixel art drawings in real-time with your friends. Host a local party game, join online lobbies, or solve the daily puzzle directly in your browser.",
+        canonical: "https://pixreveal.com/",
       },
     },
     {
@@ -32,6 +33,7 @@ const router = createRouter({
         title: "Editor - PixReveal",
         description:
           "Create your own pixel art drawings and contribute to the official PixReveal game gallery.",
+        canonical: "https://pixreveal.com/editor",
       },
     },
     {
@@ -43,6 +45,7 @@ const router = createRouter({
         title: "Singleplayer Modes - PixReveal",
         description:
           "Test your skills in 5 singleplayer modes. Race against time or beat the daily puzzle challenge.",
+        canonical: "https://pixreveal.com/singleplayer",
       },
     },
     {
@@ -156,6 +159,7 @@ const router = createRouter({
         title: "Play Local Party Game - PixReveal",
         description:
           "Connect your smartphones, set up your room, and get ready for a local multiplayer pixel art showdown.",
+        canonical: "https://pixreveal.com/play-party",
       },
     },
     {
@@ -167,6 +171,7 @@ const router = createRouter({
         title: "Play Online Multiplayer - PixReveal",
         description:
           "Join or host online custom lobbies to compete against your friends worldwide.",
+        canonical: "https://pixreveal.com/play-online",
       },
     },
     {
@@ -178,6 +183,7 @@ const router = createRouter({
         title: "Free Jackbox Alternative - Local Party Multiplayer | PixReveal",
         description:
           "Turn your smartphones into controllers! Host PixReveal on your TV or laptop and play the ultimate party game with your friends.",
+        canonical: "https://pixreveal.com/free-jackbox-alternative",
       },
     },
     {
@@ -189,6 +195,7 @@ const router = createRouter({
         title: "Free Games like Skribbl.io & Gartic Phone | PixReveal",
         description:
           "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
+        canonical: "https://pixreveal.com/free-skribbl-and-gartic-alternative",
       },
     },
     {
@@ -197,9 +204,10 @@ const router = createRouter({
       component: () => import("@/views/FreePixelGuessrView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Games like Skribbl.io & Gartic Phone | PixReveal",
+        title: "Free Games like Pixel Guessr | PixReveal",
         description:
-          "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
+          "Looking for a quiz game about guessing pixel drawings? Play this multiplayer pixel quiz directly in your browser!",
+        canonical: "https://pixreveal.com/free-pixel-guessr-alternative",
       },
     },
     {
@@ -211,6 +219,7 @@ const router = createRouter({
         title: "About PixReveal",
         description:
           "Learn more about the development, the roadmap, and the features behind PixReveal.",
+        canonical: "https://pixreveal.com/about",
       },
     },
     {
@@ -222,6 +231,7 @@ const router = createRouter({
         title: "PixReveal Blog - Updates & News",
         description:
           "Stay up to date with the latest features, patch notes, and multiplayer announcements from PixReveal.",
+        canonical: "https://pixreveal.com/blog",
       },
     },
     {
@@ -239,6 +249,7 @@ const router = createRouter({
         title: "PixReveal Hall of Fame - Daily Challenge Winners",
         description:
           "Check out the PixReveal Daily Champions! See who guessed the drawings with the highest score and learn how to secure your own place in the Hall of Fame.",
+        canonical: "https://pixreveal.com/hall-of-fame",
       },
     },
     // Path Guard: always put at the bottom!
@@ -371,6 +382,48 @@ router.onError((err: any) => {
     window.location.reload();
   } catch {
     window.location.reload();
+  }
+});
+
+router.afterEach((to) => {
+  if (to.meta.title) {
+    document.title = String(to.meta.title);
+  }
+
+  let metaDescription = document.querySelector('meta[name="description"]');
+  if (to.meta.description) {
+    if (!metaDescription) {
+      metaDescription = document.createElement("meta");
+      metaDescription.setAttribute("name", "description");
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute("content", String(to.meta.description));
+  } else if (metaDescription) {
+    metaDescription.remove();
+  }
+
+  let metaRobots = document.querySelector('meta[name="robots"]');
+  if (to.meta.robots) {
+    if (!metaRobots) {
+      metaRobots = document.createElement("meta");
+      metaRobots.setAttribute("name", "robots");
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute("content", String(to.meta.robots));
+  } else if (metaRobots) {
+    metaRobots.setAttribute("content", "index, follow");
+  }
+
+  let canonicalLink = document.querySelector('link[rel="canonical"]');
+  if (to.meta.canonical) {
+    if (!canonicalLink) {
+      canonicalLink = document.createElement("link");
+      canonicalLink.setAttribute("rel", "canonical");
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute("href", String(to.meta.canonical));
+  } else if (canonicalLink) {
+    canonicalLink.remove();
   }
 });
 

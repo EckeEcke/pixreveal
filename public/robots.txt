@@ -1,6 +1,15 @@
 User-agent: *
 Allow: /
 Allow: /editor
+Allow: /free-jackbox-alternative
+Allow: /free-skribbl-and-gartic-alternative
+Allow: /free-pixel-guessr-alternative
+Allow: /hall-of-fame
+Allow: /blog
+Allow: /about
+Allow: /play-online
+Allow: /play-party
+Allow: /singleplayer
 Disallow: /classic
 Disallow: /online
 Disallow: /gameover
