@@ -1,6 +1,6 @@
 <template>
   <main class="page">
-    <div class="setup-card card">
+    <ContentPage>
       <h1>
         <span class="pre-headline">FREE JACKBOX ALTERNATIVE</span>
         <br />
@@ -36,11 +36,13 @@
         </router-link>
       </div>
       <PartyHowTo />
-    </div>
+      <router-link to="/" class="link">GO TO HOME</router-link>
+    </ContentPage>
   </main>
 </template>
 
 <script setup lang="ts">
+import ContentPage from "@/components/page-layout/ContentPage.vue";
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 </script>
@@ -56,32 +58,6 @@ h1 {
   display: flex;
   justify-content: center;
   padding: 16px;
-}
-
-.card {
-  width: 100%;
-  max-width: 600px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  backdrop-filter: blur(20px);
-  background: var(--card-bg);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  padding: 32px;
-  box-sizing: border-box;
-}
-
-.card::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 30%;
-  height: 300%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(30deg);
-  animation: shine 4s forwards;
-  pointer-events: none;
 }
 
 .pre-headline {
@@ -133,5 +109,12 @@ h2 {
 .party-desc {
   margin: 32px 0;
   line-height: 1.5;
+}
+
+.link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  color: var(--color-secondary);
 }
 </style>

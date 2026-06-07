@@ -24,10 +24,24 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
   width: 100%;
 }
 
+.content-view::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  animation: shine 4s forwards;
+  pointer-events: none;
+}
+
 .content-view {
+  position: relative;
   display: flex;
   flex-direction: column;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
   background: rgba(0, 0, 0, 0.5);
@@ -37,6 +51,7 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
   width: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .content-wrapper {
