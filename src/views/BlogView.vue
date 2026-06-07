@@ -129,7 +129,7 @@
         <p>
           PixReveal features a pixel art editor to submit your own pixel art to
           be added to the game. Out of appreciation for art created, I built a
-          <router-link to="/user/gallery">user art gallery</router-link> page
+          <router-link to="/user-gallery">user art gallery</router-link> page
           displaying all (approved) user generated drawings. You can also use
           the gallery to check if your drawing was already approved. If it is
           not listed yet, then approval is still pending.
