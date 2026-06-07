@@ -75,6 +75,8 @@ export default async function handler(req, res) {
       { EX: 60 * 60 * 24 * 3 },
     );
 
+    await client.expire(`daily:${today}:rankings`, 60 * 60 * 24 * 3);
+
     await client.disconnect();
     return res.status(200).json({ success: true, date: today });
   } catch (error) {
