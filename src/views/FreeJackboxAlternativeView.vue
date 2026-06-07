@@ -7,6 +7,8 @@
         LOCAL PARTY MULTIPLAYER QUIZ
       </h1>
 
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+
       <p class="party-desc">
         PixReveal is the ultimate free Jackbox alternative and the perfect
         browser party game for your next game night, team building event, or
@@ -17,12 +19,12 @@
       </p>
 
       <p class="party-desc">
-        Host the <strong>pixel guessing game</strong> on the big
-        screen and use your phones as controllers. Watch the pixel art unveil
-        piece by piece. Think you know it? Hit the buzzer on your phone and
-        guess! A correct answer gets you 1 point, while a wrong answer costs you
-        -2 points. Use chaotic power-ups to sabotage your friends or coworkers
-        and win the game!
+        Host the <strong>pixel guessing game</strong> on the big screen and use
+        your phones as controllers. Watch the pixel art unveil piece by piece.
+        Think you know it? Hit the buzzer on your phone and guess! A correct
+        answer gets you 1 point, while a wrong answer costs you -2 points. Use
+        chaotic power-ups to sabotage your friends or coworkers and win the
+        game!
       </p>
 
       <div class="cta-container">
@@ -40,6 +42,7 @@
 
 <script setup lang="ts">
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
+import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 </script>
 
 <style scoped>
@@ -77,7 +80,7 @@ h1 {
   height: 300%;
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
-  animation: shine 4s infinite;
+  animation: shine 4s forwards;
   pointer-events: none;
 }
 

@@ -7,21 +7,25 @@
         FAST-PACED MULTIPLAYER PIXEL ART QUIZ
       </h1>
 
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+
       <p class="party-desc">
-        Welcome to PixReveal, the ultimate <strong>multiplayer pixel guesser</strong> 
-        game designed for quick-witted players. If you love a fast-paced 
-        <strong>pixel art quiz</strong> where an image unveils pixel by pixel, 
-        you are in the right place. Challenge your friends or coworkers in a 
-        competitive <strong>pixel guessing game</strong> directly in your browser — no 
-        login or app required.
+        Welcome to PixReveal, the ultimate
+        <strong>multiplayer pixel guesser</strong>
+        game designed for quick-witted players. If you love a fast-paced
+        <strong>pixel art quiz</strong> where an image unveils pixel by pixel,
+        you are in the right place. Challenge your friends or coworkers in a
+        competitive <strong>pixel guessing game</strong> directly in your
+        browser — no login or app required.
       </p>
 
       <p class="party-desc">
-        How fast can you spot the hidden picture? As the blocks appear, the rush 
-        is on! Hit the buzzer on your phone to lock in your answer. Score points for a 
-        correct guess, but watch out: wrong answers will cost you. Outsmart your rivals 
-        by dropping chaotic power-ups to block their screen and secure your title as 
-        the ultimate <strong>Pixel Guessr</strong> Champion.
+        How fast can you spot the hidden picture? As the blocks appear, the rush
+        is on! Hit the buzzer on your phone to lock in your answer. Score points
+        for a correct guess, but watch out: wrong answers will cost you.
+        Outsmart your rivals by dropping chaotic power-ups to block their screen
+        and secure your title as the ultimate
+        <strong>Pixel Guessr</strong> Champion.
       </p>
 
       <div class="cta-container">
@@ -37,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import YoutubeEmbed from '@/components/page-ui/YoutubeEmbed.vue';
 </script>
 
 <style scoped>
@@ -74,7 +79,7 @@ h1 {
   height: 300%;
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
-  animation: shine 4s infinite;
+  animation: shine 4s forwards;
   pointer-events: none;
 }
 

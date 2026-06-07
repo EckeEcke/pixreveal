@@ -7,21 +7,25 @@
         FREE MULTIPLAYER PIXEL GUESSING QUIZ
       </h1>
 
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+
       <p class="party-desc">
-        Love multiplayer drawing games but tired of terrible mouse doodles? 
-        PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone, 
-        designed for players who want to focus purely on the hype of guessing. 
-        If you are looking for a fast-paced <strong>multiplayer pixel quiz</strong> 
-        where zero drawing skills are required, you can play right in your browser 
-        with no login or app needed.
+        Love multiplayer drawing games but tired of terrible mouse doodles?
+        PixReveal is the ultimate free alternative to Skribbl.io and Gartic
+        Phone, designed for players who want to focus purely on the hype of
+        guessing. If you are looking for a fast-paced
+        <strong>multiplayer pixel quiz</strong>
+        where zero drawing skills are required, you can play right in your
+        browser with no login or app needed.
       </p>
 
       <p class="party-desc">
-        Instead of forcing your friends to sketch with a clunky touchscreen or mouse, 
-        PixReveal features beautiful, pre-made pixel art that reveals itself piece by piece. 
-        It brings back the nostalgic thrill of a classic <strong>pixel guessing game</strong>. 
-        Host the game on a big screen, use your phones as controllers, hit the buzzer, 
-        and guess! Sabotage your friends with chaotic power-ups to take the win.
+        Instead of forcing your friends to sketch with a clunky touchscreen or
+        mouse, PixReveal features beautiful, pre-made pixel art that reveals
+        itself piece by piece. It brings back the nostalgic thrill of a classic
+        <strong>pixel guessing game</strong>. Host the game on a big screen, use
+        your phones as controllers, hit the buzzer, and guess! Sabotage your
+        friends with chaotic power-ups to take the win.
       </p>
 
       <div class="cta-container">
@@ -37,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import YoutubeEmbed from '@/components/page-ui/YoutubeEmbed.vue';
 </script>
 
 <style scoped>
@@ -74,7 +79,7 @@ h1 {
   height: 300%;
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
-  animation: shine 4s infinite;
+  animation: shine 4s forwards;
   pointer-events: none;
 }
 
