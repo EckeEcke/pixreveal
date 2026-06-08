@@ -36,6 +36,7 @@
         </ButtonLinkSecondary>
       </div>
       <PartyHowTo />
+      <FAQComponent :items="jackboxFaqs"></FAQComponent>
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
   </main>
@@ -47,6 +48,30 @@ import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
+import FAQComponent from "@/components/page-ui/FAQComponent.vue";
+
+const jackboxFaqs = [
+  {
+    question: "What does \"Jackbox style\" mean for PixReveal?",
+    answer: "It means you only need one central screen to host the game—like a PC, tablet, or TV. Everyone else connects instantly using their own smartphones as controllers to hit the buzzer and select their answers."
+  },
+  {
+    question: "How do friends connect and join the room?",
+    answer: "PixReveal is built exclusively for playing with friends. Joining is instant and seamless: players can either type in the room ID on their devices, click a shared invite link, or simply scan a QR code from the host screen to jump straight into the action."
+  },
+  {
+    question: "What is the goal of the game and how do you score?",
+    answer: "The goal is to recognize the drawing before your friends do as the pixels pop up randomly across the canvas. When you think you know it, hit the buzzer and choose from 4 answer options on your phone. Getting a correct answer awards 1 point, but guessing incorrectly penalizes you with -2 points."
+  },
+  {
+    question: "What are bonus rounds?",
+    answer: "Every 5 rounds, a bonus round with special effects triggers. In these bonus rounds, as well as in the final round of the game, the stakes are doubled: you get double points for a correct guess, but you also lose double the points for a wrong answer."
+  },
+  {
+    question: "Do players need an app or registration?",
+    answer: "No, players can just join the game directly via browser. You can set an avatar image and a player name. Or just use a default random name."
+  }
+]
 </script>
 
 <style scoped>

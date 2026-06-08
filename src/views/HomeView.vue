@@ -156,6 +156,10 @@ h2 {
   text-decoration: none;
 }
 
+.tile-link button {
+  width: 100%;
+}
+
 .content-wrapper {
   margin: 0;
   display: grid;

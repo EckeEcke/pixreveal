@@ -235,6 +235,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/faq",
+      name: "faq",
+      component: () => import("@/views/FAQView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "FAQ PixReveal",
+        description:
+          "Frequently Asked Questions about PixReveal.",
+        canonical: "https://www.pixreveal.com/faq",
+      },
+    },
+    {
       path: "/blog",
       name: "blog",
       component: () => import("@/views/BlogView.vue"),

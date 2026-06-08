@@ -36,6 +36,7 @@
           JOIN WITH ROOM ID
         </ButtonLinkSecondary>
       </div>
+      <FAQComponent :items="pixelGuessrFaqs"></FAQComponent>
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
   </main>
@@ -46,6 +47,30 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
+import FAQComponent from "@/components/page-ui/FAQComponent.vue";
+
+const pixelGuessrFaqs = [
+  {
+    question: "How does the pixel reveal mechanic work?",
+    answer:
+      "Drawings reveal themselves pixel by pixel depending on the mode you play. In Classic mode, the pixels pop up randomly across the canvas. In Gravity mode, they drop down from the top in a Tetris-style animation.",
+  },
+  {
+    question: "What is the main objective and how do you score?",
+    answer:
+      "The goal is to recognize the drawing as quickly as possible and guess the correct answer before the timer runs out. Your score depends entirely on your speed—the faster you submit the correct answer, the more points you get.",
+  },
+  {
+    question: "Can I play Pixel Guessr solo or with other players?",
+    answer:
+      "You can play solo in singleplayer mode to chase high scores, or play with friends. There is no random matchmaking with strangers. For multiplayer, you can either host a local party game Jackbox-style using smartphones as controllers, or invite friends to a private online lobby where everyone plays on their own screen.",
+  },
+  {
+    question: "Is there a registration or account system for the leaderboard?",
+    answer:
+      "No, a registration system does not exist. You can jump straight into the game, play all modes, and submit your final scores to the global leaderboard instantly without ever needing an account.",
+  },
+];
 </script>
 
 <style scoped>

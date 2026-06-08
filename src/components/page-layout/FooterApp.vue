@@ -28,7 +28,7 @@
         data-sfx="click"
         to="/picture-reveal-game"
       >
-        <Icon icon="pixel:question" /> PICTURE REVEAL GAME
+        <Icon icon="pixel:sparkles" /> PICTURE REVEAL GAME
       </router-link>
     </div>
     <div class="link-wrapper">
@@ -40,6 +40,9 @@
       </router-link>
       <router-link class="internal-link" data-sfx="click" to="/about">
         <Icon icon="pixel:info-circle" /> ABOUT
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/faq">
+        <Icon icon="pixel:question" /> FAQ
       </router-link>
       <router-link class="internal-link" data-sfx="click" to="/hall-of-fame">
         <Icon icon="pixel:crown-solid" /> HALL OF FAME
