@@ -23,6 +23,13 @@
       >
         <Icon icon="pixel:pen" /> SKRIBBL/GARTIC ALTERNATIVE
       </router-link>
+      <router-link
+        class="internal-link"
+        data-sfx="click"
+        to="/picture-reveal-game"
+      >
+        <Icon icon="pixel:question" /> PICTURE REVEAL GAME
+      </router-link>
     </div>
     <div class="link-wrapper">
       <button class="internal-link" data-sfx="click" @click="openManual">
@@ -106,7 +113,7 @@ footer {
   border: none;
   text-decoration: underline;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .link-wrapper {

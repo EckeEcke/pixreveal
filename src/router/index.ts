@@ -211,6 +211,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/picture-reveal-game",
+      name: "picture-reveal-game",
+      component: () => import("@/views/OnlineRevealGameView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "Online Picture Reveal Game | PixReveal",
+        description:
+          "Looking for a quiz game about guessing a revealing image? Play PixReveal directly in your browser!",
+        canonical: "https://www.pixreveal.com/picture-reveal-game",
+      },
+    },
+    {
       path: "/about",
       name: "about",
       component: () => import("@/views/AboutView.vue"),
