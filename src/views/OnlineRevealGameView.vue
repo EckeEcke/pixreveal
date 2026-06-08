@@ -24,12 +24,12 @@
       </p>
 
       <div class="cta-container">
-        <router-link to="/singleplayer" class="btn-cta host">
-          PLAY SINGLEPLAYER
-        </router-link>
-        <router-link to="/play-party?role=host" class="btn-cta join">
-          HOST PARTY
-        </router-link>
+        <ButtonLinkPrimary link="/singleplayer">
+          Play Singleplayer
+        </ButtonLinkPrimary>
+        <ButtonLinkSecondary link="/play-party?role=host">
+          HOST A PARTY
+        </ButtonLinkSecondary>
       </div>
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
@@ -39,6 +39,8 @@
 <script setup lang="ts">
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue"
 import ContentPage from "@/components/page-layout/ContentPage.vue"
+import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
+import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 </script>
 
 <style scoped>

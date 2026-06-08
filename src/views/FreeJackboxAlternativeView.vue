@@ -28,12 +28,12 @@
       </p>
 
       <div class="cta-container">
-        <router-link to="/play-party?role=host" class="btn-cta host">
+        <ButtonLinkPrimary link="/play-party?role=host">
           HOST A FREE GAME
-        </router-link>
-        <router-link to="/play-party?role=join" class="btn-cta join">
+        </ButtonLinkPrimary>
+        <ButtonLinkSecondary link="/play-party?role=join">
           JOIN WITH ROOM ID
-        </router-link>
+        </ButtonLinkSecondary>
       </div>
       <PartyHowTo />
       <router-link to="/" class="link">GO TO HOME</router-link>
@@ -45,6 +45,8 @@
 import ContentPage from "@/components/page-layout/ContentPage.vue";
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
+import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
+import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 </script>
 
 <style scoped>

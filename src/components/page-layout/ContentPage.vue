@@ -3,9 +3,9 @@
     <div class="content-view">
       <div class="content-wrapper">
         <div class="close-btn-wrapper">
-          <button @click="$router.push('/')" data-sfx="back" class="close-btn">
+          <router-link to="/" data-sfx="back" class="close-btn">
             <Icon icon="pixel:window-close-solid" />
-          </button>
+          </router-link>
         </div>
         <slot></slot>
       </div>

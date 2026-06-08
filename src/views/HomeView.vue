@@ -11,38 +11,48 @@
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="classic-mode-buttons">
-              <SelectionTile
-                icon-name="pixel:user-solid"
-                :btn-function="openSingleplayer"
-                btn-text="SINGLEPLAYER"
-                sub-title="Choose your mode and start playing"
-                btn-color="var(--primary)"
-                :max-players="1"
-              />
-              <SelectionTile
-                icon-name="pixel:users-solid"
-                :btn-function="() => goToMultiplayer('party')"
-                btn-text="LOCAL PARTY MULTIPLAYER"
-                sub-title="Jackbox style: control via phone"
-                btn-color="var(--neon-yellow)"
-                :is-shiny="true"
-                :max-players="8"
-              />
-              <SelectionTile
-                icon-name="pixel:globe-solid"
-                :btn-function="() => goToMultiplayer('online')"
-                btn-text="ONLINE MULTIPLAYER"
-                sub-title="Play online together from anywhere"
-                btn-color="var(--neon-cyan)"
-                :max-players="8"
-              />
-              <SelectionTile
-                icon-name="pixel:image-solid"
-                :btn-function="openEditor"
-                btn-text="SUBMIT ART"
-                sub-title="Create and submit your own pixel art"
-                btn-color="var(--neon-success)"
-              />
+              <router-link
+                to="/singleplayer"
+                data-sfx="click"
+                class="tile-link"
+              >
+                <SelectionTile
+                  icon-name="pixel:user-solid"
+                  btn-text="SINGLEPLAYER"
+                  sub-title="Choose your mode and start playing"
+                  btn-color="var(--primary)"
+                  :max-players="1"
+                />
+              </router-link>
+              <router-link to="/play-party" data-sfx="click" class="tile-link">
+                <SelectionTile
+                  icon-name="pixel:users-solid"
+                  btn-text="LOCAL PARTY MULTIPLAYER"
+                  sub-title="Jackbox style: control via phone"
+                  btn-color="var(--neon-yellow)"
+                  :is-shiny="true"
+                  :max-players="8"
+                />
+              </router-link>
+
+              <router-link to="/play-online" data-sfx="click" class="tile-link">
+                <SelectionTile
+                  icon-name="pixel:globe-solid"
+                  btn-text="ONLINE MULTIPLAYER"
+                  sub-title="Play online together from anywhere"
+                  btn-color="var(--neon-cyan)"
+                  :max-players="8"
+                />
+              </router-link>
+
+              <router-link to="/editor" data-sfx="click" class="tile-link">
+                <SelectionTile
+                  icon-name="pixel:image-solid"
+                  btn-text="SUBMIT ART"
+                  sub-title="Create and submit your own pixel art"
+                  btn-color="var(--neon-success)"
+                />
+              </router-link>
             </div>
             <YoutubeEmbed video-id="YQl5jOqm2n0" />
             <TopPlayer />
@@ -56,9 +66,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
-import { useSoundStore } from "@/stores/sound";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
 import GameManual from "@/components/modals/GameManual.vue";
@@ -70,14 +78,11 @@ import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 
-const router = useRouter();
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
-const soundStore = useSoundStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
-
 
 const setUser = () =>
   playerStore.setUser({
@@ -86,22 +91,6 @@ const setUser = () =>
   });
 
 setUser();
-
-const openSingleplayer = () => {
-  soundStore.playSound("click");
-  router.push("/singleplayer");
-};
-
-const openEditor = () => {
-  soundStore.playSound("click");
-  router.push("/editor");
-};
-
-const goToMultiplayer = (mode) => {
-  soundStore.playSound("click");
-  router.push(mode === "party" ? "/play-party" : "/play-online");
-};
-
 
 if (document.fullscreenElement) isFullscreen.value = true;
 
@@ -161,6 +150,10 @@ h2 {
     color: var(--white);
   }
   box-sizing: border-box;
+}
+
+.tile-link {
+  text-decoration: none;
 }
 
 .content-wrapper {
