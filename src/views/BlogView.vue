@@ -4,7 +4,21 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
-          <span class="date">05-26-26</span>
+          <span class="date">06-10-26</span>
+        </div>
+        <h3 class="log-title">Improved game round generation</h3>
+        <p>
+          When you start a game of PixReveal, a random set of quiz rounds is being
+          generated for you. To increase the fun and avoid annoying early repetition of
+          drawings between rounds, I tweaked the algorithm to create as many
+          unique sets of drawings as possible before repeating one. Since PixReveal now has
+          over 200 unique drawings including user generated content, it will
+          take you a while until you see a drawing you already know.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
+          <span class="date">06-05-26</span>
         </div>
         <h3 class="log-title">Hall of Fame for Daily Challenge winners</h3>
         <p>

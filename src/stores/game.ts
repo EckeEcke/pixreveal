@@ -4,9 +4,16 @@ import { shuffle } from "@/utils/random";
 import { useConfigStore } from "./config";
 import type { Drawing, RoundOption, Round, GameState } from "@/types/game";
 
-export const useGameStore = defineStore("game", () => {
-  // ─── State ─────────────────────────────────────────────────────────────────
+function hashCode(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash.toString();
+}
 
+export const useGameStore = defineStore("game", () => {
   const gameState = ref<GameState>("starting");
   const rounds = ref<Round[]>([]);
   const currentRoundIndex = ref(0);
@@ -17,16 +24,12 @@ export const useGameStore = defineStore("game", () => {
 
   const configStore = useConfigStore();
 
-  // ─── Computed ──────────────────────────────────────────────────────────────
-
   const maxRounds = computed(() => configStore.maxRounds);
   const filteredDrawings = computed(() => configStore.filteredDrawings);
 
   const currentRound = computed<Round | null>(
     () => rounds.value[currentRoundIndex.value] ?? null,
   );
-
-  // ─── Pure helpers ──────────────────────────────────────────────────────────
 
   function getDistractors(drawing: Drawing, pool: Drawing[]): Drawing[] {
     const colorMatches: Drawing[] = [];
@@ -52,10 +55,13 @@ export const useGameStore = defineStore("game", () => {
   function createRound(
     drawing: Drawing,
     allDrawings: Drawing[],
-    selectedDrawings: Drawing[],
+    playedHashes: string[],
   ): Round {
     const pool = shuffle(
-      allDrawings.filter((d) => !selectedDrawings.includes(d)),
+      allDrawings.filter(
+        (d) =>
+          d.name !== drawing.name && !playedHashes.includes(hashCode(d.name)),
+      ),
     );
 
     const distractors = getDistractors(drawing, pool);
@@ -72,13 +78,11 @@ export const useGameStore = defineStore("game", () => {
     };
   }
 
-  function buildRounds(drawings: Drawing[]): Round[] {
+  function buildRounds(drawings: Drawing[], playedHashes: string[]): Round[] {
     return drawings.map((drawing) =>
-      createRound(drawing, filteredDrawings.value, drawings),
+      createRound(drawing, filteredDrawings.value, playedHashes),
     );
   }
-
-  // ─── Actions ───────────────────────────────────────────────────────────────
 
   const setGameState = (newState: GameState) => {
     gameState.value = newState;
@@ -88,14 +92,33 @@ export const useGameStore = defineStore("game", () => {
     revealTime.value = customRevealTime;
 
     if (customRounds) {
-      // Online: Runden kommen vom Host, configStore mit syncen
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
       configStore.revealTime = customRevealTime;
     } else {
-      // Lokal: Runden selbst generieren, configStore ist bereits Source of Truth
-      const shuffled = shuffle([...filteredDrawings.value]);
-      rounds.value = buildRounds(shuffled.slice(0, maxRounds.value));
+      const sessionData = sessionStorage.getItem("pixreveal_played_hashes")
+      let playedHashes: string[] = sessionData ? JSON.parse(sessionData) : []
+
+      let availableDrawings = filteredDrawings.value.filter((d) => !playedHashes.includes(hashCode(d.name)))
+
+      const minRequired = maxRounds.value + 3
+      while (availableDrawings.length < minRequired && playedHashes.length > 0) {
+        playedHashes.shift()
+        availableDrawings = filteredDrawings.value.filter((d) => !playedHashes.includes(hashCode(d.name)))
+      }
+
+      const shuffled = shuffle([...availableDrawings])
+      const selectedForGame = shuffled.slice(0, maxRounds.value)
+
+      rounds.value = buildRounds(selectedForGame, playedHashes)
+
+      selectedForGame.forEach((d) => {
+        const hash = hashCode(d.name)
+        if (!playedHashes.includes(hash)) {
+          playedHashes.push(hash)
+        }
+      })
+      sessionStorage.setItem("pixreveal_played_hashes", JSON.stringify(playedHashes))
     }
 
     currentRoundIndex.value = 0;
@@ -122,14 +145,13 @@ export const useGameStore = defineStore("game", () => {
     const pool = unused.length > 0 ? unused : filteredDrawings.value;
     const nextDrawing = shuffle([...pool])[0] as Drawing;
 
-    // selectedDrawings als Drawing-Array aus bereits gespielten Antworten
-    const selectedDrawings = filteredDrawings.value.filter((d) =>
-      usedAnswers.has(d.name),
-    );
+    const sessionData = sessionStorage.getItem("pixreveal_played_names");
+    const playedNames: string[] = sessionData ? JSON.parse(sessionData) : [];
+
     const newRound = createRound(
       nextDrawing,
       filteredDrawings.value,
-      selectedDrawings,
+      playedNames,
     );
 
     rounds.value.push(newRound);
