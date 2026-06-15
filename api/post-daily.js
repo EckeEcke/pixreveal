@@ -8,9 +8,7 @@ export default async function handler(req, res) {
   const { name, userId, score, avatarIndex, date } = req.body;
 
   if (!name || score === undefined || avatarIndex === undefined || !date) {
-    return res
-      .status(400)
-      .json({ error: "name, score, avatarIndex required" });
+    return res.status(400).json({ error: "name, score, avatarIndex required" });
   }
 
   const client = createClient({
@@ -24,7 +22,11 @@ export default async function handler(req, res) {
 
     const key = `daily:${date}:rankings`;
     const entry = JSON.stringify({ name, userId, score, avatarIndex, date });
-    await client.lPush(key, entry);
+
+    await client.zAdd(key, {
+      score: Number(score),
+      value: entry,
+    });
 
     await client.disconnect();
     return res.status(200).json({ success: true });

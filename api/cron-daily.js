@@ -42,6 +42,7 @@ export default async function handler(req, res) {
       `daily:${yesterdayStr}:rankings`,
       0,
       -1,
+      { REV: true },
     );
     const yesterdayRankings = yesterdayRankingsRaw.map((r) => JSON.parse(r));
 
