@@ -13,7 +13,13 @@ export default async function handler(req, res) {
     await client.connect();
 
     let data = await client.get(`daily:${targetDate}:set`);
-    let rankings = await client.lRange(`daily:${targetDate}:rankings`, 0, -1);
+
+    let rankingsRaw = await client.zRange(
+      `daily:${targetDate}:rankings`,
+      0,
+      -1,
+      { REV: true },
+    );
     const winnersRaw = await client.lRange("daily:winners", 0, -1);
 
     if (!data) {
@@ -23,11 +29,11 @@ export default async function handler(req, res) {
 
       const [fallbackData, fallbackRankings] = await Promise.all([
         client.get(`daily:${targetDate}:set`),
-        client.lRange(`daily:${targetDate}:rankings`, 0, -1),
+        client.zRange(`daily:${targetDate}:rankings`, 0, -1, { REV: true }),
       ]);
 
       data = fallbackData;
-      rankings = fallbackRankings;
+      rankingsRaw = fallbackRankings;
     }
 
     if (!data) {
@@ -38,7 +44,7 @@ export default async function handler(req, res) {
     }
 
     const parsedData = JSON.parse(data);
-    const parsedRankings = rankings.map((r) => JSON.parse(r));
+    const parsedRankings = rankingsRaw.map((r) => JSON.parse(r));
     const parsedYesterdayRankings = parsedData.yesterdayRankings ?? [];
     const parsedWinners = winnersRaw.map((w) => JSON.parse(w));
 
