@@ -34,11 +34,11 @@ export default async function handler(req, res) {
     await client.connect();
 
     const today = new Date().toISOString().split("T")[0];
-
     const yesterdayStr = new Date(Date.now() - 864e5)
       .toISOString()
       .split("T")[0];
-    const yesterdayRankingsRaw = await client.lRange(
+
+    const yesterdayRankingsRaw = await client.zRange(
       `daily:${yesterdayStr}:rankings`,
       0,
       -1,
