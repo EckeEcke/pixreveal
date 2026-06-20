@@ -23,12 +23,21 @@
       >
         <Icon icon="pixel:pen" /> SKRIBBL/GARTIC ALTERNATIVE
       </router-link>
+    </div>
+    <div class="link-wrapper">
       <router-link
         class="internal-link"
         data-sfx="click"
         to="/picture-reveal-game"
       >
         <Icon icon="pixel:sparkles" /> PICTURE REVEAL GAME
+      </router-link>
+      <router-link
+        class="internal-link"
+        data-sfx="click"
+        to="/friday-afterwork-game"
+      >
+        <Icon icon="pixel:users" /> FRIDAY AFTERWORK GAME
       </router-link>
     </div>
     <div class="link-wrapper">

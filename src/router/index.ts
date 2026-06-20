@@ -195,7 +195,8 @@ const router = createRouter({
         title: "Free Games like Skribbl.io & Gartic Phone | PixReveal",
         description:
           "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
-        canonical: "https://www.pixreveal.com/free-skribbl-and-gartic-alternative",
+        canonical:
+          "https://www.pixreveal.com/free-skribbl-and-gartic-alternative",
       },
     },
     {
@@ -223,6 +224,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/friday-afterwork-game",
+      name: "friday-afterwork-game",
+      component: () => import("@/views/FridayGameView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "Free Friday Afterwork Game for Teams | PixReveal",
+        description:
+          "Play PixReveal with your team. A free, safe-for-work picture reveal quiz for Friday afterwork. No login, no registration – start playing instantly in the browser.",
+        canonical: "https://www.pixreveal.com/friday-afterwork-game",
+      },
+    },
+    {
       path: "/about",
       name: "about",
       component: () => import("@/views/AboutView.vue"),
@@ -241,8 +254,7 @@ const router = createRouter({
       meta: {
         robots: "index, follow",
         title: "FAQ PixReveal",
-        description:
-          "Frequently Asked Questions about PixReveal.",
+        description: "Frequently Asked Questions about PixReveal.",
         canonical: "https://www.pixreveal.com/faq",
       },
     },
