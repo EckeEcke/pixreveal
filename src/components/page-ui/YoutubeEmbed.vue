@@ -1,5 +1,7 @@
 <template>
   <div class="video-wrapper" @click="isLoaded = true">
+    <div v-html="jsonLdScript"></div>
+
     <div v-if="!isLoaded" class="video-placeholder">
       <img
         :src="`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`"
@@ -31,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const props = defineProps({
   videoId: {
@@ -41,6 +43,26 @@ const props = defineProps({
 });
 
 const isLoaded = ref(false);
+
+const jsonLdScript = computed(() => {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: "PixReveal Gameplay Trailer",
+    description:
+      "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
+    thumbnailUrl: [
+      `https://img.youtube.com/vi/${props.videoId}/maxresdefault.jpg`,
+    ],
+    uploadDate: "2026-03-01T08:00:00+01:00",
+    duration: "PT48S",
+    expires: "2040-01-01T00:00:00+01:00",
+    contentUrl: `https://www.youtube.com/watch?v=${props.videoId}`,
+    embedUrl: `https://www.youtube.com/embed/${props.videoId}`,
+  };
+
+  return `<script type="application/ld+json">${JSON.stringify(schema)}<\/script>`;
+});
 </script>
 
 <style scoped>
@@ -49,7 +71,7 @@ const isLoaded = ref(false);
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #000;
-  border: 1px solid rgba(0,0,0,0.5);
+  border: 1px solid rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
