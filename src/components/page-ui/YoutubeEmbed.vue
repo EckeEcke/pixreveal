@@ -8,6 +8,13 @@
         alt="PixReveal Gameplay Video"
         loading="lazy"
       />
+      
+      <noscript>
+        <a :href="`https://www.youtube.com/watch?v=${videoId}`" target="_blank" rel="noopener">
+          Watch PixReveal Gameplay Trailer on YouTube
+        </a>
+      </noscript>
+
       <div class="play-overlay">
         <div class="play-button"></div>
       </div>
@@ -33,36 +40,35 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed } from "vue"
 
 const props = defineProps({
   videoId: {
     type: String,
     required: true,
   },
-});
+})
 
-const isLoaded = ref(false);
+const isLoaded = ref(false)
 
 const jsonLdScript = computed(() => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    name: "PixReveal Gameplay Trailer",
-    description:
-      "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
-    thumbnailUrl: [
-      `https://img.youtube.com/vi/${props.videoId}/maxresdefault.jpg`,
+    "name": "PixReveal Gameplay Trailer",
+    "description": "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
+    "thumbnailUrl": [
+      `https://img.youtube.com/vi/${props.videoId}/maxresdefault.jpg`
     ],
-    uploadDate: "2026-03-01T08:00:00+01:00",
-    duration: "PT48S",
-    expires: "2040-01-01T00:00:00+01:00",
-    contentUrl: `https://www.youtube.com/watch?v=${props.videoId}`,
-    embedUrl: `https://www.youtube.com/embed/${props.videoId}`,
-  };
-
-  return `<script type="application/ld+json">${JSON.stringify(schema)}<\/script>`;
-});
+    "uploadDate": "2026-03-01T08:00:00+01:00",
+    "duration": "PT48S",
+    "expires": "2040-01-01T00:00:00+01:00",
+    "contentUrl": `https://www.youtube.com/watch?v=${props.videoId}`,
+    "embedUrl": `https://www.youtube.com/embed/${props.videoId}`
+  }
+  
+  return `<script type="application/ld+json">${JSON.stringify(schema)}<\/script>`
+})
 </script>
 
 <style scoped>
@@ -84,6 +90,19 @@ const jsonLdScript = computed(() => {
   object-fit: cover;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+}
+
+noscript a {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  z-index: 10;
+  text-decoration: none;
+  border-radius: 4px;
 }
 
 .video-wrapper:hover img {
