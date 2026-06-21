@@ -31,9 +31,10 @@
         }}
       </ButtonPrimary>
     </div>
+
     <div class="player-grid">
       <PlayerDisplay
-        v-for="player in winners"
+        v-for="player in paginatedWinners"
         :key="player.date"
         :subline="player.date"
         :name="player.winner.name"
@@ -42,38 +43,71 @@
         class="player-card"
       />
     </div>
+
+    <div v-if="totalPages > 1" class="pagination">
+      <button 
+        class="pagination-btn" 
+        :disabled="currentPage === 1" 
+        @click="currentPage--"
+        data-sfx="click"
+      >
+        <Icon icon="pixel:angle-left-solid" />
+      </button>
+      <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button 
+        class="pagination-btn" 
+        :disabled="currentPage === totalPages" 
+        @click="currentPage++"
+        data-sfx="click"
+      >
+        <Icon icon="pixel:angle-right-solid" />
+      </button>
+    </div>
   </main>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { Icon } from "@iconify/vue";
-import { useDailyStore } from "@/stores/daily";
-import { useGameStore } from "@/stores/game";
-import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
-import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
-import { useRouter } from "vue-router";
-import { usePlayerStore } from "@/stores/player";
+import { ref, computed } from "vue"
+import { Icon } from "@iconify/vue"
+import { useDailyStore } from "@/stores/daily"
+import { useGameStore } from "@/stores/game"
+import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue"
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
+import { useRouter } from "vue-router"
+import { usePlayerStore } from "@/stores/player"
 
-const dailyStore = useDailyStore();
-const { prepareGame } = useGameStore();
-const playerStore = usePlayerStore();
-const router = useRouter();
+const dailyStore = useDailyStore()
+const { prepareGame } = useGameStore()
+const playerStore = usePlayerStore()
+const router = useRouter()
+
+const ITEMS_PER_PAGE = 20
+const currentPage = ref(1)
 
 const startDaily = () => {
-  prepareGame(10, dailyStore.dailyRounds);
-  playerStore.gameMode = dailyStore.mode;
+  prepareGame(10, dailyStore.dailyRounds)
+  playerStore.gameMode = dailyStore.mode
   if (dailyStore.hasPlayedToday) {
-    router.push("/rankings-daily");
+    router.push("/rankings-daily")
   } else {
-    router.push("/daily");
+    router.push("/daily")
   }
-};
+}
 
-const winners = computed(() => dailyStore.winners);
+const winners = computed(() => dailyStore.winners)
+
+const totalPages = computed(() => {
+  return Math.ceil(winners.value.length / ITEMS_PER_PAGE) || 1
+})
+
+const paginatedWinners = computed(() => {
+  const start = (currentPage.value - 1) * ITEMS_PER_PAGE
+  const end = start + ITEMS_PER_PAGE
+  return winners.value.slice(start, end)
+})
 
 if (!dailyStore.dailyRounds.length) {
-  dailyStore.fetchDailyData();
+  dailyStore.fetchDailyData()
 }
 </script>
 
@@ -98,7 +132,7 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
-  margin: 32px auto;
+  margin: 32px auto 16px auto;
 }
 
 .subline {
@@ -112,15 +146,15 @@ main {
 }
 
 .desc {
-    font-size: 14px;
-    text-wrap: balance;
-    text-align: center;
-    margin-bottom: 32px;
-    line-height: 1.25;
+  font-size: 14px;
+  text-wrap: balance;
+  text-align: center;
+  margin-bottom: 32px;
+  line-height: 1.25;
 }
 
 h1 {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .card {
@@ -134,5 +168,42 @@ h1 {
   width: 100%;
   max-width: 616px;
   box-sizing: border-box;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--primary);
+  border-color: var(--neon-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #fff;
 }
 </style>
