@@ -1,6 +1,28 @@
 <template>
   <footer>
     <PlatformBar />
+
+    <div class="link-wrapper">
+      <button class="internal-link" data-sfx="click" @click="openManual">
+        <Icon icon="pixel:book" /> HOW TO PLAY
+      </button>
+      <router-link class="internal-link" data-sfx="click" to="/blog">
+        <Icon icon="pixel:bullhorn" /> BLOG
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/about">
+        <Icon icon="pixel:info-circle" /> ABOUT
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/faq">
+        <Icon icon="pixel:question" /> FAQ
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/hall-of-fame">
+        <Icon icon="pixel:crown-solid" /> HALL OF FAME
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/user-gallery">
+        <Icon icon="pixel:image-solid" /> USER ART GALLERY
+      </router-link>
+    </div>
+
     <div class="link-wrapper">
       <router-link
         class="internal-link"
@@ -24,6 +46,7 @@
         <Icon icon="pixel:pen" /> SKRIBBL/GARTIC ALTERNATIVE
       </router-link>
     </div>
+    
     <div class="link-wrapper">
       <router-link
         class="internal-link"
@@ -38,26 +61,6 @@
         to="/friday-afterwork-game"
       >
         <Icon icon="pixel:users" /> FRIDAY AFTERWORK GAME
-      </router-link>
-    </div>
-    <div class="link-wrapper">
-      <button class="internal-link" data-sfx="click" @click="openManual">
-        <Icon icon="pixel:book" /> HOW TO PLAY
-      </button>
-      <router-link class="internal-link" data-sfx="click" to="/blog">
-        <Icon icon="pixel:bullhorn" /> BLOG
-      </router-link>
-      <router-link class="internal-link" data-sfx="click" to="/about">
-        <Icon icon="pixel:info-circle" /> ABOUT
-      </router-link>
-      <router-link class="internal-link" data-sfx="click" to="/faq">
-        <Icon icon="pixel:question" /> FAQ
-      </router-link>
-      <router-link class="internal-link" data-sfx="click" to="/hall-of-fame">
-        <Icon icon="pixel:crown-solid" /> HALL OF FAME
-      </router-link>
-      <router-link class="internal-link" data-sfx="click" to="/user-gallery">
-        <Icon icon="pixel:image-solid" /> USER ART GALLERY
       </router-link>
     </div>
 
