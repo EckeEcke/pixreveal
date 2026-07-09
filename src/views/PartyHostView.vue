@@ -316,7 +316,6 @@ watch(
 
       workerSetTimeout(() => {
         pixelCanvasRef.value?.playShine();
-        console.log("shine activated")
       }, 1000);
 
       navigationTimeout = workerSetTimeout(() => {
