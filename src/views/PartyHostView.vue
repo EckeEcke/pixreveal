@@ -304,10 +304,6 @@ watch(
         newResult === "correct" ? "partyCorrect" : "partyIncorrect",
       );
 
-      nextTick(() => {
-        pixelCanvasRef.value?.playShine();
-      });
-
       if (timer.value > 0) {
         clearAllTimers();
       }
@@ -317,6 +313,10 @@ watch(
       }
 
       gameStore.setGameState("feedback");
+
+      nextTick(() => {
+        pixelCanvasRef.value?.playShine();
+      });
 
       navigationTimeout = workerSetTimeout(() => {
         if (partyStore.isSuddenDeath) {
