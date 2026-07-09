@@ -314,9 +314,9 @@ watch(
 
       gameStore.setGameState("feedback");
 
-      nextTick(() => {
+      workerSetTimeout(() => {
         pixelCanvasRef.value?.playShine();
-      });
+      }, 200);
 
       navigationTimeout = workerSetTimeout(() => {
         if (partyStore.isSuddenDeath) {
