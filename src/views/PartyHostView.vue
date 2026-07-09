@@ -43,6 +43,7 @@
 
       <div class="canvas-effects" :style="canvasEffectsStyle">
         <PixelCanvas
+          ref="pixelCanvasRef"
           :class="{ dark: partyStore.isLightsOut }"
           :pixel-array="pixelData"
           :resolution="resolution"
@@ -113,6 +114,7 @@ const configStore = useConfigStore();
 const partyStore = usePartyStore();
 const soundStore = useSoundStore();
 
+const pixelCanvasRef = ref(null);
 const pixelData = ref(Array(256).fill(0));
 const resolution = ref(16);
 const timerDuration = computed(() => unref(configStore.revealTime));
@@ -300,6 +302,11 @@ watch(
       soundStore.playSound(
         newResult === "correct" ? "partyCorrect" : "partyIncorrect",
       );
+
+      nextTick(() => {
+        pixelCanvasRef.value?.playShine();
+      });
+
       if (timer.value > 0) {
         clearAllTimers();
       }

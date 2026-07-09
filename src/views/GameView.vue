@@ -35,6 +35,7 @@
 
       <div class="canvas-effects" :style="canvasEffectsStyle">
         <PixelCanvas
+          ref="pixelCanvasRef"
           :pixel-array="pixelData"
           :resolution="resolution"
           :is-revealing="canvasIsRevealing"
@@ -86,6 +87,7 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
+const pixelCanvasRef = ref(null);
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -190,10 +192,17 @@ const handleAnswer = (selectedOption: any) => {
     soundStore.playSound("incorrect");
   }
 
+  workerSetTimeout(() => {
+    pixelCanvasRef.value?.playShine();
+  }, 650);
+
   feedbackTimeoutId = workerSetTimeout(() => {
     isRevealing.value = false;
     if (currentRound.value) {
       pixelData.value = currentRound.value.data;
+      workerSetTimeout(() => {
+        pixelCanvasRef.value?.playShine();
+      }, 650);
     }
     gameStore.setGameState("revealed");
 

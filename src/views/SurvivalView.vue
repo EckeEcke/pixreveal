@@ -18,6 +18,7 @@
         :highscore="survivalStore.highscore"
       />
       <PixelCanvas
+        ref="pixelCanvasRef"
         :pixel-array="pixelData"
         :resolution="resolution"
         :is-revealing="isRevealing"
@@ -57,6 +58,7 @@ const gameStore = useGameStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 
+const pixelCanvasRef = ref(null);
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const isRevealing = ref(true);
@@ -64,9 +66,6 @@ const isRevealing = ref(true);
 let feedbackTimeoutId = null;
 let nextRoundTimeoutId = null;
 
-/**
- * Bereitet die Anzeige für das aktuelle Bild vor
- */
 const setupDrawing = () => {
   if (survivalStore.currentDrawing) {
     survivalStore.hasAnswered = false;
@@ -76,11 +75,7 @@ const setupDrawing = () => {
   }
 };
 
-/**
- * Verarbeitet die Antwort im Survival-Modus
- */
 const handleAnswer = (answer) => {
-  // Guard: Nur Antworten zulassen, wenn wir in der Revealing-Phase sind und Zeit da ist
   if (
     gameStore.gameState !== "revealing" ||
     survivalStore.hasAnswered ||
@@ -94,7 +89,6 @@ const handleAnswer = (answer) => {
   workerClearTimeout(feedbackTimeoutId);
   workerClearTimeout(nextRoundTimeoutId);
 
-  // 1. Visuelles Feedback
   if (answer.isCorrect) {
     survivalStore.handleCorrectAnswer();
     pixelData.value = statusIcons.success;
@@ -102,38 +96,36 @@ const handleAnswer = (answer) => {
   } else {
     survivalStore.handleWrongAnswer();
     pixelData.value = statusIcons.failure;
-    // Sound wird bereits im Store abgespielt
   }
 
-  // 2. Feedback-Phase (Icon zeigen)
+  workerSetTimeout(() => {
+    pixelCanvasRef.value?.playShine();
+  }, 650);
+
   feedbackTimeoutId = workerSetTimeout(() => {
     if (survivalStore.isGameOver) return;
 
     isRevealing.value = false;
     pixelData.value = survivalStore.currentDrawing.data;
     gameStore.setGameState("revealed");
+    workerSetTimeout(() => {
+      pixelCanvasRef.value?.playShine();
+    }, 650);
 
-    // 3. Kurze Pause, dann nächstes Bild
     nextRoundTimeoutId = workerSetTimeout(() => {
       if (survivalStore.isGameOver) return;
 
-      survivalStore.setNextDrawing(); // Setzt gameState intern wieder auf 'revealing'
+      survivalStore.setNextDrawing();
       setupDrawing();
     }, 1000);
-  }, 1000);
+  }, 1500);
 };
 
-/**
- * Initialer Start nach der Transition
- */
 const start = () => {
   survivalStore.startSurvival();
   setupDrawing();
 };
 
-/**
- * Überwacht den Game-Over Status für den Redirect
- */
 watch(
   () => survivalStore.isGameOver,
   (over) => {
@@ -147,8 +139,6 @@ watch(
 onUnmounted(() => {
   workerClearTimeout(feedbackTimeoutId);
   workerClearTimeout(nextRoundTimeoutId);
-  // Beim Unmount nur Timer/Timeouts aufräumen.
-  // Den Score resetten wir beim (neu) Starten des Survival-Spiels.
 });
 </script>
 

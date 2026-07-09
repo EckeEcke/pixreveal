@@ -64,6 +64,7 @@ const socialLinks = [
   opacity: 0.8;
   text-decoration: none;
   transition: all 0.2s ease;
+  border-radius: 8px;
 }
 
 .social-bar .btn-outline:hover {

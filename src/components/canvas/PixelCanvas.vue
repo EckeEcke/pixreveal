@@ -34,15 +34,15 @@ const props = defineProps({
 defineEmits(["mousemove", "touchstart", "touchmove"])
 
 const internalSize = 600
-const { 
-  canvasRef, 
-  getContext, 
-  calculateGrid, 
-  createParticles, 
-  updateAndDrawParticles, 
-  setAnimationFrameId, 
+const {
+  canvasRef,
+  getContext,
+  calculateGrid,
+  createParticles,
+  updateAndDrawParticles,
+  setAnimationFrameId,
   getAnimationFrameId,
-  stopAnimation 
+  stopAnimation,
 } = useCanvasBase(internalSize)
 
 const soundStore = useSoundStore()
@@ -57,6 +57,9 @@ let intervalId = null
 
 const flatPixelList = ref([])
 const displayedPixels = ref([])
+
+const SHINE_DURATION = 600
+const shineState = ref(null)
 
 const updateFlatPixelList = () => {
   const list = []
@@ -85,7 +88,7 @@ const startReveal = () => {
   if (intervalId) clearInterval(intervalId)
   updateFlatPixelList()
   displayedPixels.value = []
-  
+
   if (!props.pixelArray || !props.pixelArray[0]) return
 
   const allVisible = [...flatPixelList.value]
@@ -107,10 +110,10 @@ const startReveal = () => {
     if (allVisible.length > 0) {
       const next = allVisible.pop()
       displayedPixels.value.push({ ...next, createdAt: Date.now() })
-      
+
       const color = colorPalette[next.val] || "#fff"
       createParticles(next.x * cellSize, next.y * cellSize, color, cellSize)
-      
+
       if (!props.muteSound) soundStore.playSound("reveal")
     } else {
       clearInterval(intervalId)
@@ -147,6 +150,29 @@ const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
       ctx.strokeRect(p.x * cellSize + gap, p.y * cellSize + gap, baseSize, baseSize)
     }
   })
+}
+
+const drawShine = (ctx, size, progress) => {
+  const bandWidth = size * 0.35
+  const diagLen = size * Math.SQRT2
+  const travel = diagLen + bandWidth * 2
+  const pos = -bandWidth + progress * travel
+
+  ctx.save()
+  ctx.shadowBlur = 0
+  ctx.shadowColor = "transparent"
+  ctx.globalCompositeOperation = "source-atop"
+  ctx.translate(size / 2, size / 2)
+  ctx.rotate(-Math.PI / 4)
+  ctx.translate(-diagLen / 2, -diagLen / 2)
+
+  const gradient = ctx.createLinearGradient(pos, 0, pos + bandWidth, 0)
+  gradient.addColorStop(0, "rgba(255,255,255,0)")
+  gradient.addColorStop(0.5, "rgba(255,255,255,0.9)")
+  gradient.addColorStop(1, "rgba(255,255,255,0)")
+  ctx.fillStyle = gradient
+  ctx.fillRect(pos, -diagLen, bandWidth, diagLen * 3)
+  ctx.restore()
 }
 
 const render = () => {
@@ -193,11 +219,29 @@ const render = () => {
     drawPixels(ctx, pixelsToDraw, baseSize, cellSize, gap, now)
   }
 
+  if (shineState.value) {
+    const elapsed = now - shineState.value.startTime
+    const progress = elapsed / SHINE_DURATION
+    if (progress >= 1) {
+      shineState.value = null
+    } else {
+      drawShine(ctx, internalSize, progress)
+    }
+  }
+
   updateAndDrawParticles(ctx)
   setAnimationFrameId(requestAnimationFrame(render))
 }
 
-defineExpose({ getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null })
+const playShine = () => {
+  shineState.value = { startTime: Date.now() }
+  if (!getAnimationFrameId()) render()
+}
+
+defineExpose({
+  getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null,
+  playShine,
+})
 
 watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })
 

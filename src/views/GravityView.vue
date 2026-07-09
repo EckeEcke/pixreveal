@@ -36,6 +36,7 @@
 
       <div class="canvas-effects" :style="canvasEffectsStyle">
         <PixelCanvasGravity
+          ref="pixelCanvasRef"
           :pixel-array="pixelData"
           :is-status-icon="isStatusIcon"
           :is-revealing="canvasIsRevealing || isStatusIcon"
@@ -85,6 +86,7 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
+const pixelCanvasRef = ref(null);
 const pixelData = ref<number[][]>([]);
 const hasAnswered = ref(false);
 const isStatusIcon = ref(false);
@@ -189,10 +191,17 @@ const handleAnswer = (selectedAnswer: any) => {
   }
   isStatusIcon.value = true;
 
+  workerSetTimeout(() => {
+    pixelCanvasRef.value?.playShine();
+  }, 650);
+
   feedbackTimeoutId = workerSetTimeout(() => {
     isStatusIcon.value = false;
     if (currentRound.value) {
       pixelData.value = currentRound.value.data;
+      workerSetTimeout(() => {
+        pixelCanvasRef.value?.playShine();
+      }, 650);
     }
     gameStore.setGameState("revealed");
 

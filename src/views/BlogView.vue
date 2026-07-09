@@ -4,16 +4,31 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-09-26</span>
+        </div>
+        <h3 class="log-title">
+          Adding more juice: Shine effect after answering
+        </h3>
+        <p>
+          "Juice" describes audio visual elements that make a game feel more
+          "gamey". To achieve this I added a shine effect on the feedback
+          animation after giving an answer ✅/❌ and on the revealed drawing.
+          The effect is available in all game modes.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">06-10-26</span>
         </div>
         <h3 class="log-title">Improved game round generation</h3>
         <p>
-          When you start a game of PixReveal, a random set of quiz rounds is being
-          generated for you. To increase the fun and avoid annoying early repetition of
-          drawings between rounds, I tweaked the algorithm to create as many
-          unique sets of drawings as possible before repeating one. Since PixReveal now has
-          over 200 unique drawings including user generated content, it will
-          take you a while until you see a drawing you already know.
+          When you start a game of PixReveal, a random set of quiz rounds is
+          being generated for you. To increase the fun and avoid annoying early
+          repetition of drawings between rounds, I tweaked the algorithm to
+          create as many unique sets of drawings as possible before repeating
+          one. Since PixReveal now has over 200 unique drawings including user
+          generated content, it will take you a while until you see a drawing
+          you already know.
         </p>
       </div>
       <div class="log-card">

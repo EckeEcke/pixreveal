@@ -21,12 +21,14 @@
       />
       <PixelCanvasGravity
         v-if="mode === 'gravity'"
+        ref="pixelCanvasRef"
         :pixel-array="pixelData"
         :is-status-icon="isStatusIcon"
         :is-revealing="!hasAnswered || isStatusIcon"
       />
       <PixelCanvas
         v-else
+        ref="pixelCanvasRef"
         :pixel-array="pixelData"
         :resolution="resolution"
         :is-revealing="isRevealing"
@@ -75,6 +77,7 @@ const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const dailyStore = useDailyStore();
 const gameStore = useGameStore();
+const pixelCanvasRef = ref(null);
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -138,12 +141,20 @@ const handleAnswer = (selectedAnswer) => {
     playerStore.addPoints(timer.value);
     useSoundStore().playSound("correct");
   }
+  isStatusIcon.value = true;
+
+  workerSetTimeout(() => {
+    pixelCanvasRef.value?.playShine();
+  }, 650);
 
   workerClearTimeout(revealTimeoutId);
   revealTimeoutId = workerSetTimeout(() => {
     isRevealing.value = false;
     isStatusIcon.value = false;
     pixelData.value = rounds.value[currentRoundIndex.value].data;
+    workerSetTimeout(() => {
+      pixelCanvasRef.value?.playShine();
+    }, 650);
 
     workerClearTimeout(nextRoundTimeoutId);
     nextRoundTimeoutId = workerSetTimeout(() => {

@@ -21,6 +21,7 @@
       />
 
       <PixelCanvas
+        ref="pixelCanvasRef"
         :pixel-array="pixelData"
         :resolution="resolution"
         :is-revealing="false"
@@ -72,6 +73,7 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
+const pixelCanvasRef = ref(null);
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -144,9 +146,16 @@ const handleAnswer = (selectedOption) => {
     soundStore.playSound("incorrect");
   }
 
+  workerSetTimeout(() => {
+    pixelCanvasRef.value?.playShine();
+  }, 650);
+
   feedbackTimeoutId = workerSetTimeout(() => {
     if (currentRound.value) {
       pixelData.value = currentRound.value.data;
+      workerSetTimeout(() => {
+        pixelCanvasRef.value?.playShine();
+      }, 650);
     }
     gameStore.setGameState("revealed");
 
