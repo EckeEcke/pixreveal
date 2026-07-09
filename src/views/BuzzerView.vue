@@ -21,7 +21,7 @@
     </transition>
 
     <section class="canvas-section">
-    <MinimalSettings />
+      <MinimalSettings />
       <GameHeader
         :max="timerDuration"
         :count="timer"
@@ -99,7 +99,8 @@ const gameStore = useGameStore();
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 
-const pixelCanvasRef = ref(null);
+const pixelCanvasRef = ref<{ playShine: () => void } | null>(null);
+
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
@@ -184,7 +185,7 @@ const startTimer = () => {
       if (!showAnswers.value) {
         gameStore.setGameState("answering");
       }
-      
+
       handleAnswer(null);
     }
   }, 1000);
@@ -208,7 +209,11 @@ const setupDrawing = () => {
 };
 
 const handleBuzzerPress = () => {
-  if (gameStore.gameState !== "revealing" || showAnswers.value || hasAnswered.value) {
+  if (
+    gameStore.gameState !== "revealing" ||
+    showAnswers.value ||
+    hasAnswered.value
+  ) {
     return;
   }
 
@@ -219,11 +224,11 @@ const handleBuzzerPress = () => {
   gameStore.setGameState("answering");
   soundStore.playSound("buzz");
   workerClearInterval(timerId);
-  timer.value = 5; 
-  
+  timer.value = 5;
+
   timerId = workerSetInterval(() => {
     timer.value--;
-    
+
     if (timer.value <= 2 && timer.value > 0) {
       soundStore.playSound("timer");
     }

@@ -114,7 +114,8 @@ const configStore = useConfigStore();
 const partyStore = usePartyStore();
 const soundStore = useSoundStore();
 
-const pixelCanvasRef = ref(null);
+const pixelCanvasRef = ref<{ playShine: () => void } | null>(null);
+
 const pixelData = ref(Array(256).fill(0));
 const resolution = ref(16);
 const timerDuration = computed(() => unref(configStore.revealTime));

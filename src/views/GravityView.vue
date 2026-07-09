@@ -86,7 +86,8 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
-const pixelCanvasRef = ref(null);
+const pixelCanvasRef = ref<{ playShine: () => void } | null>(null);
+
 const pixelData = ref<number[][]>([]);
 const hasAnswered = ref(false);
 const isStatusIcon = ref(false);
