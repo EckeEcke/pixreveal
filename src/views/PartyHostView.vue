@@ -316,7 +316,7 @@ watch(
 
       workerSetTimeout(() => {
         pixelCanvasRef.value?.playShine();
-      }, 200);
+      }, 500);
 
       navigationTimeout = workerSetTimeout(() => {
         if (partyStore.isSuddenDeath) {
