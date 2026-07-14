@@ -86,7 +86,10 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
-const pixelCanvasRef = ref<{ playShine: () => void } | null>(null);
+const pixelCanvasRef = ref<{
+  playShine: () => void;
+  playShake: () => void;
+} | null>(null);
 
 const pixelData = ref<number[][]>([]);
 const hasAnswered = ref(false);
@@ -149,7 +152,10 @@ const startTimer = () => {
 
   timerIntervalId = workerSetInterval(() => {
     timer.value--;
-    if (timer.value <= 3 && timer.value > 0) soundStore.playSound("timer");
+    if (timer.value <= 3 && timer.value > 0) {
+      soundStore.playSound("timer");
+      pixelCanvasRef.value?.playShake();
+    }
 
     if (timer.value <= 0) {
       workerClearInterval(timerIntervalId);

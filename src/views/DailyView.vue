@@ -104,7 +104,10 @@ const startTimer = () => {
   workerClearInterval(timerId);
   timerId = workerSetInterval(() => {
     timer.value--;
-    if (timer.value <= 3 && timer.value > 0) useSoundStore().playSound("timer");
+    if (timer.value <= 3 && timer.value > 0) {
+      useSoundStore().playSound("timer");
+      pixelCanvasRef.value?.playShake();
+    }
     if (timer.value <= 0) {
       useSoundStore().playSound("incorrect");
       workerClearInterval(timerId);

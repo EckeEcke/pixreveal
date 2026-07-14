@@ -61,6 +61,10 @@ const displayedPixels = ref([])
 const SHINE_DURATION = 600
 const shineState = ref(null)
 
+const SHAKE_DURATION = 400
+const SHAKE_MAGNITUDE = 4
+const shakeState = ref(null)
+
 const updateFlatPixelList = () => {
   const list = []
   if (!props.pixelArray) return
@@ -189,6 +193,24 @@ const render = () => {
 
   ctx.clearRect(0, 0, internalSize, internalSize)
 
+  let shakeX = 0
+  let shakeY = 0
+  if (shakeState.value) {
+    const elapsed = now - shakeState.value.startTime
+    const progress = elapsed / SHAKE_DURATION
+    if (progress >= 1) {
+      shakeState.value = null
+    } else {
+      const decay = 1 - progress
+      const magnitude = SHAKE_MAGNITUDE * decay
+      shakeX = Math.sin(progress * Math.PI * 10) * magnitude
+      shakeY = Math.cos(progress * Math.PI * 7) * magnitude
+    }
+  }
+
+  ctx.save()
+  ctx.translate(shakeX, shakeY)
+
   const pixelsToDraw = props.isRevealing || props.pauseReveal ? displayedPixels.value : flatPixelList.value
 
   if (props.isMagnifierMode && !props.isStatusIcon) {
@@ -229,6 +251,8 @@ const render = () => {
     }
   }
 
+  ctx.restore()
+
   updateAndDrawParticles(ctx)
   setAnimationFrameId(requestAnimationFrame(render))
 }
@@ -238,9 +262,15 @@ const playShine = () => {
   if (!getAnimationFrameId()) render()
 }
 
+const playShake = () => {
+  shakeState.value = { startTime: Date.now() }
+  if (!getAnimationFrameId()) render()
+}
+
 defineExpose({
   getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null,
   playShine,
+  playShake,
 })
 
 watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })

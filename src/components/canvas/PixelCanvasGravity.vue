@@ -43,8 +43,12 @@ const gravity = 0.5;
 const bounce = -0.3;
 const activePixels = ref([]);
 
-const SHINE_DURATION = 500; // ms, einmaliger Durchlauf
-const shineState = ref(null); // { startTime }
+const SHINE_DURATION = 500;
+const shineState = ref(null);
+
+const SHAKE_DURATION = 400;
+const SHAKE_MAGNITUDE = 4;
+const shakeState = ref(null);
 
 const initGravityEffect = () => {
   if (!props.pixelArray || !props.pixelArray.length) return;
@@ -121,6 +125,24 @@ const render = () => {
 
   ctx.clearRect(0, 0, internalSize, internalSize);
 
+  let shakeX = 0;
+  let shakeY = 0;
+  if (shakeState.value) {
+    const elapsed = now - shakeState.value.startTime;
+    const progress = elapsed / SHAKE_DURATION;
+    if (progress >= 1) {
+      shakeState.value = null;
+    } else {
+      const decay = 1 - progress;
+      const magnitude = SHAKE_MAGNITUDE * decay;
+      shakeX = Math.sin(progress * Math.PI * 10) * magnitude;
+      shakeY = Math.cos(progress * Math.PI * 7) * magnitude;
+    }
+  }
+
+  ctx.save();
+  ctx.translate(shakeX, shakeY);
+
   activePixels.value.forEach((p) => {
     if (props.isRevealing && !props.isStatusIcon && p.delay > 0) {
       p.delay--;
@@ -192,6 +214,8 @@ const render = () => {
     }
   }
 
+  ctx.restore();
+
   updateAndDrawParticles(ctx);
   setAnimationFrameId(requestAnimationFrame(render));
 };
@@ -201,7 +225,12 @@ const playShine = () => {
   if (!getAnimationFrameId()) render();
 };
 
-defineExpose({ playShine });
+const playShake = () => {
+  shakeState.value = { startTime: Date.now() };
+  if (!getAnimationFrameId()) render();
+};
+
+defineExpose({ playShine, playShake });
 
 watch(
   [() => props.pixelArray, () => props.isRevealing],

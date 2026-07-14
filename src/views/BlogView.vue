@@ -4,6 +4,18 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-14-26</span>
+        </div>
+        <h3 class="log-title">Adding more juice: Shake effect on low timer</h3>
+        <p>
+          To make the gameplay more exciting I added a shake effect. When the
+          timer reaches 3 or lower, the canvas starts shaking. Increasing the
+          tension and dynamics of PixReveal. The shake effect is available in
+          all game modes.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-09-26</span>
         </div>
         <h3 class="log-title">
