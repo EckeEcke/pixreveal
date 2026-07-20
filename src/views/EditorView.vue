@@ -78,6 +78,9 @@
             <button @click="generateEmpty" class="btn-outline">
               <Icon icon="pixel:trash-alt-solid" /> Clear
             </button>
+            <button @click="fillCanvas" class="btn-outline">
+              <Icon icon="pixel:paint-brush-solid" /> Fill
+            </button>
             <button
               v-if="isAdmin"
               @click="copyToClipboard"
@@ -215,6 +218,18 @@ const generateEmpty = () => {
   pixelData.value = Array.from({ length: 16 }, () => Array(16).fill(0));
   resolution.value = 16;
   syncRawInput();
+};
+
+const fillCanvas = () => {
+  pixelData.value = pixelData.value.map((row) =>
+    row.map((pixel) => {
+      if (pixel === 0) {
+        pixel = Number(selectedColor.value);
+      }
+
+      return pixel
+    }),
+  );
 };
 
 const setDrawing = (data) => {

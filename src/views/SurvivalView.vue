@@ -96,6 +96,7 @@ const handleAnswer = (answer) => {
   } else {
     survivalStore.handleWrongAnswer();
     pixelData.value = statusIcons.failure;
+    pixelCanvasRef.value?.playShake();
   }
 
   workerSetTimeout(() => {

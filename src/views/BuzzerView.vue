@@ -263,6 +263,7 @@ const handleAnswer = (selectedOption: any) => {
     soundStore.playSound("correct");
   } else {
     pixelData.value = statusIcons.failure;
+    pixelCanvasRef.value?.playShake();
     hasAnsweredCorrectly.value = false;
     soundStore.playSound("incorrect");
   }

@@ -87,7 +87,10 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 
-const pixelCanvasRef = ref<{ playShine: () => void, playShake: () => void } | null>(null);
+const pixelCanvasRef = ref<{
+  playShine: () => void;
+  playShake: () => void;
+} | null>(null);
 
 const resolution = ref(16);
 const pixelData = ref(Array(256).fill(0));
@@ -192,6 +195,7 @@ const handleAnswer = (selectedOption: any) => {
     soundStore.playSound("correct");
   } else {
     pixelData.value = statusIcons.failure;
+    pixelCanvasRef.value?.playShake();
     hasAnsweredCorrectly.value = false;
     soundStore.playSound("incorrect");
   }

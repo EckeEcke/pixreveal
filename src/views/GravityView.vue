@@ -188,6 +188,7 @@ const handleAnswer = (selectedAnswer: any) => {
     pixelData.value = statusIcons.question;
   } else if (!selectedAnswer?.isCorrect) {
     pixelData.value = statusIcons.failure;
+    pixelCanvasRef.value?.playShake();
     soundStore.playSound("incorrect");
   } else {
     pixelData.value = statusIcons.success;

@@ -4,6 +4,19 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-20-26</span>
+        </div>
+        <h3 class="log-title">Fill button for the pixel art editor</h3>
+        <p>
+          I highly appreciate users submitting pixel art to PixReveal via my
+          <router-link to="/editor">Editor</router-link>! Thank you all! Since I saw
+          some users coloring the background, I added a fill button. By clicking
+          it every pixel without a set color will be turned into the currently
+          selected color.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-14-26</span>
         </div>
         <h3 class="log-title">Adding more juice: Shake effect on low timer</h3>
