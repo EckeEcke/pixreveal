@@ -1,10 +1,12 @@
 <template>
   <header v-show="!configStore.showManual">
     <div>
-      <h1 class="logo">
-        Pix<span>Reveal</span>
-        <span class="hook">Guess the pixel art</span>
-      </h1>
+      <router-link to="/">
+        <h1 class="logo">
+          Pix<span>Reveal</span>
+          <span class="hook">Guess the pixel art</span>
+        </h1>
+      </router-link>
     </div>
     <div class="header-actions">
       <button
@@ -93,7 +95,9 @@ header {
   cursor: pointer;
   border-radius: 10px;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.7));
-  transition: transform 0.15s ease, filter 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
 }
 
 .avatar-btn:hover {
@@ -126,7 +130,7 @@ header {
   color: var(--white);
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
   @media (max-width: 575px) {
-    font-size: 13px; 
+    font-size: 13px;
   }
 }
 

@@ -79,7 +79,7 @@ const checkAnswer = (answer, event) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #222222aa;
+  background: #111111aa;
   backdrop-filter: blur(20px);
   padding: 14px;
   text-transform: uppercase;

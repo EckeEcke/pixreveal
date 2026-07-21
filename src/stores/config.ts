@@ -21,12 +21,7 @@ export const CATEGORIES = [
     color: "#a78bfa",
     icon: "🎬",
   },
-  { name: "Objects & People", color: "#94a3b8", icon: "📦" },
-  {
-    name: "Superheroes",
-    color: "#60a5fa",
-    icon: "🛡️",
-  },
+  { name: "Objects & People", color: "#60a5fa", icon: "📦" },
 ];
 
 export const allCategoryNames = CATEGORIES.map((c) => c.name);
