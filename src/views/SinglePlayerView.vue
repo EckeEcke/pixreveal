@@ -68,6 +68,7 @@
             </div>
           </div>
         </div>
+        <TopPlayer />
       </section>
     </main>
     <FooterApp />
@@ -87,6 +88,7 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
+import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -210,6 +212,7 @@ h1 {
 
 .content-wrapper {
   margin: 0;
+  margin-bottom: 32px;
   display: grid;
   grid-template-columns: 1fr;
 }
