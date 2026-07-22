@@ -22,6 +22,9 @@
     <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
       ><Icon icon="pixel:user-solid" /> 1</span
     >
+    <span v-if="highScore" class="player-info"
+      ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
+    >
   </button>
 </template>
 
@@ -38,6 +41,7 @@ const props = defineProps<{
   disabled?: boolean;
   isShiny?: boolean;
   maxPlayers?: number;
+  highScore?: number;
 }>();
 
 const soundStore = useSoundStore();

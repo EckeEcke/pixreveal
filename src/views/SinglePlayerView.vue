@@ -60,6 +60,7 @@
                 btn-text="SURVIVAL"
                 sub-title="Answer correctly to gain more time"
                 btn-color="var(--neon-error)"
+                :high-score="survivalStore.highscore"
               />
               <SelectionTile
                 icon-name="pixel:question"
@@ -92,12 +93,14 @@ import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
+import { useSurvivalStore } from "@/stores/survival";
 
 const router = useRouter();
 const route = useRoute();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const dailyStore = useDailyStore();
+const survivalStore = useSurvivalStore();
 const { prepareGame } = useGameStore();
 
 const setUser = () =>
