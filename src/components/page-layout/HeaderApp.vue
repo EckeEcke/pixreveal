@@ -1,7 +1,7 @@
 <template>
   <header v-show="!configStore.showManual">
     <div>
-      <router-link to="/">
+      <router-link to="/" class="logo-link">
         <h1 class="logo">
           Pix<span>Reveal</span>
           <span class="hook">Guess the pixel art</span>
@@ -150,5 +150,9 @@ h2 {
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
+}
+
+.logo-link {
+  text-decoration: none;
 }
 </style>
