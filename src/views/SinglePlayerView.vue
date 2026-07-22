@@ -37,6 +37,9 @@
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
               />
+              </div>
+              <h2>More Game Modes</h2>
+              <div class="mode-buttons">
               <SelectionTile
                 icon-name="pixelarticons:blocks"
                 :btn-function="startGravity"
@@ -182,6 +185,11 @@ h1 {
   }
 }
 
+h2 {
+  margin: 32px auto 16px;
+  text-transform: uppercase;
+}
+
 .singleplayer-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -225,8 +233,7 @@ h1 {
   h2 {
     color: var(--white);
     text-align: center;
-    font-size: 24px;
-    margin-top: 0;
+    font-size: 20px;
   }
 }
 
