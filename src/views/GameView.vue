@@ -111,7 +111,7 @@ const {
   bonusRoundType,
   isFinalRound,
   isBlurRoundActive,
-  canvasEffectsStyle,
+  canvasEffectsStyle: canvasEffectsStyleBase,
   canvasIsRevealing,
   showFinalRoundTransition,
   showBonusRoundTransition,
@@ -125,6 +125,21 @@ const {
   timer,
   timerDuration,
   baseRevealing: isRevealing,
+});
+
+// Beim Rundenstart soll ein bereits aktiver Filter (z. B. die Blur-
+// Bonusrunde) sofort auf seinen Zielwert springen, statt sich erst
+// dorthin einzublenden — sonst ist das neue Bild kurz zu wenig
+// verblurrt/gefiltert sichtbar (CSS-Transition würde von "none" aus
+// hochanimieren).
+const suppressFilterTransition = ref(false);
+
+const canvasEffectsStyle = computed(() => {
+  const style: Record<string, string> = { ...canvasEffectsStyleBase.value };
+  if (suppressFilterTransition.value) {
+    style.transition = "none";
+  }
+  return style;
 });
 
 const handleFinalRoundDone = () => {
@@ -170,12 +185,23 @@ const setupDrawing = () => {
   // Reset local answer state BEFORE showing new content
   hasAnswered.value = false;
   hasAnsweredCorrectly.value = false;
+
+  // Filter-Sprung beim Rundenstart ohne Transition anwenden.
+  suppressFilterTransition.value = true;
   isRevealing.value = true;
 
   pixelData.value = currentRound.value.data;
   resolution.value = Math.sqrt(pixelData.value.length);
 
   startTimer();
+
+  // Transition erst nach dem gerenderten Sprung wieder aktivieren,
+  // damit spätere Änderungen (z. B. abnehmender Blur) wieder sanft animieren.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      suppressFilterTransition.value = false;
+    });
+  });
 };
 
 const handleAnswer = (selectedOption: any) => {

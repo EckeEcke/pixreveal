@@ -3,7 +3,6 @@
     <transition name="fade" mode="out-in">
       <CountdownTransition
         v-if="gameStore.gameState === 'starting'"
-        message="GET READY"
         @done="gameStore.setGameState('revealing')"
       />
       <GameTransition
@@ -27,7 +26,7 @@
         :count="timer"
         :is-correct="hasAnsweredCorrectly"
         :is-incorrect="hasAnswered && !hasAnsweredCorrectly"
-        :is-bonus="(!!bonusRoundType || isFinalRound) && !isStatusIcon"
+        :is-bonus="(!!bonusRoundType || isFinalRound) && !hasAnswered"
         :total-score="playerStore.points"
         :currentRound="gameStore.currentRoundIndex + 1"
         :max-rounds="maxRounds"
@@ -35,11 +34,13 @@
       />
 
       <div class="canvas-effects" :style="canvasEffectsStyle">
-        <PixelCanvasGravity
+        <PixelCanvas
           ref="pixelCanvasRef"
           :pixel-array="pixelData"
-          :is-status-icon="isStatusIcon"
-          :is-revealing="canvasIsRevealing || isStatusIcon"
+          :resolution="resolution"
+          :is-revealing="canvasIsRevealing"
+          :is-status-icon="hasAnswered"
+          :timer-duration="timerDuration"
           :pauseReveal="showFinalRoundTransition || showBonusRoundTransition"
         />
         <div v-if="isBlurRoundActive" class="blur-overlay" />
@@ -59,17 +60,17 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted, watch, unref } from "vue";
 import { useRouter } from "vue-router";
-import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue";
-import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
-import GameHeader from "@/components/game-ui/GameHeader.vue";
-import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
-import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
-import { useConfigStore } from "@/stores/config";
 import { useSoundStore } from "@/stores/sound";
+import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import { useOnlineStore } from "@/stores/online";
 import { statusIcons } from "@/data/statusIcons";
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
+import { useConfigStore } from "@/stores/config";
+import GameHeader from "@/components/game-ui/GameHeader.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import { useBonusRounds } from "@/composables/useBonusRounds";
 import {
@@ -91,28 +92,24 @@ const pixelCanvasRef = ref<{
   playShake: () => void;
 } | null>(null);
 
-const pixelData = ref<number[][]>([]);
+const resolution = ref(16);
+const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
-const isStatusIcon = ref(false);
+const isRevealing = ref(true);
 const hasAnsweredCorrectly = ref(false);
-const timerDuration = computed(() => unref(configStore.revealTime) || 15);
-const timer = ref(timerDuration.value);
+const timer = ref<number>(unref(configStore.revealTime));
+const timerDuration = computed(() => unref(configStore.revealTime));
 
-let timerIntervalId: number | null = null;
+let timerId: number | null = null;
 let feedbackTimeoutId: number | null = null;
 let solutionTimeoutId: number | null = null;
 
 const currentRound = computed(() => gameStore.currentRound);
 const maxRounds = computed(() => configStore.maxRounds);
 
-const baseRevealing = computed(() => gameStore.gameState === "revealing");
-
 const {
   bonusRoundType,
   isFinalRound,
-  isBlurRoundActive,
-  canvasEffectsStyle: canvasEffectsStyleBase,
-  canvasIsRevealing,
   showFinalRoundTransition,
   showBonusRoundTransition,
   handleFinalRoundDone: markFinalRoundTransitionDone,
@@ -124,18 +121,61 @@ const {
   gameState: computed(() => gameStore.gameState),
   timer,
   timerDuration,
-  baseRevealing,
+  baseRevealing: isRevealing,
 });
 
-// Suppress CSS filter transition at round start to prevent visual jumps
+// BlurView ist ein eigenständiger Modus: JEDE reguläre Runde wird per
+// CSS-Blur-Filter enttarnt statt über den normalen Pixel-Reveal. Die
+// Bonus-Runde (vom Composable geplant, egal welcher Typ dort intern
+// vergeben wird) bekommt in BlurView KEINEN eigenen Effekt/Modus,
+// sondern nur den 2x-Punkte-Bonus und einen ganz normalen Pixel-Reveal.
+const isBonusRound = computed(() => !!bonusRoundType.value);
+
+const isBlurRoundActive = computed(() => {
+  if (isBonusRound.value) return false;
+  return gameStore.gameState === "revealing";
+});
+
+const blurAmountPx = computed(() => {
+  if (!isBlurRoundActive.value) return 0;
+  const duration = timerDuration.value || 1;
+  const ratio = Math.min(1, Math.max(0, timer.value / duration));
+  const maxBlur = 80;
+  return maxBlur * ratio;
+});
+
+// Beim Rundenstart soll der Blur sofort auf Maximalwert stehen, BEVOR
+// das neue Bild sichtbar wird — kein sanftes "Reinblenden" aus dem
+// unscharfen Zustand. Die CSS-Transition (fürs sanfte Abnehmen des
+// Blurs während des Countdowns) wird dafür kurzzeitig unterdrückt.
 const suppressFilterTransition = ref(false);
 
 const canvasEffectsStyle = computed(() => {
-  const style: Record<string, string> = { ...canvasEffectsStyleBase.value };
+  const style: { filter: string; transition?: string } = { filter: "none" };
+
+  if (!isBonusRound.value) {
+    // Filter bleibt während des Feedbacks noch aktiv (isRevealing wird
+    // erst 1500ms nach der Antwort auf false gesetzt) und faded erst
+    // beim Aufdecken der Lösung zurück auf "none".
+    const effectsActive = isRevealing.value || isBlurRoundActive.value;
+    if (effectsActive) {
+      style.filter = `blur(${blurAmountPx.value}px)`;
+    }
+  }
+
   if (suppressFilterTransition.value) {
     style.transition = "none";
   }
+
   return style;
+});
+
+const canvasIsRevealing = computed(() => {
+  // Bonus-Runde: ganz normaler Pixel-Reveal wie im Standard-Gamemode.
+  if (isBonusRound.value) return isRevealing.value;
+  // Reguläre Runde: der Blur-Filter übernimmt das "Aufdecken",
+  // der Canvas selbst soll nicht zusätzlich pixelweise aufdecken.
+  return false;
 });
 
 const handleFinalRoundDone = () => {
@@ -149,27 +189,26 @@ const handleBonusRoundDone = () => {
 };
 
 const clearAllLocalTimers = () => {
-  workerClearInterval(timerIntervalId);
+  workerClearInterval(timerId);
   workerClearTimeout(feedbackTimeoutId);
   workerClearTimeout(solutionTimeoutId);
-  timerIntervalId = null;
+  timerId = null;
   feedbackTimeoutId = null;
   solutionTimeoutId = null;
 };
 
 const startTimer = () => {
-  workerClearInterval(timerIntervalId);
+  workerClearInterval(timerId);
   timer.value = timerDuration.value;
 
-  timerIntervalId = workerSetInterval(() => {
+  timerId = workerSetInterval(() => {
     timer.value--;
     if (timer.value <= 3 && timer.value > 0) {
       soundStore.playSound("timer");
       pixelCanvasRef.value?.playShake();
     }
-
     if (timer.value <= 0) {
-      workerClearInterval(timerIntervalId);
+      workerClearInterval(timerId);
       handleAnswer(null);
     }
   }, 1000);
@@ -179,18 +218,23 @@ const setupDrawing = () => {
   if (!currentRound.value) return;
 
   clearAllLocalTimers();
+  // Reset local answer state BEFORE showing new content
   hasAnswered.value = false;
-  isStatusIcon.value = false;
   hasAnsweredCorrectly.value = false;
 
-  // Apply instant filter jump at round start
+  // Blur muss instant auf Maximalwert springen, nicht erst dorthin
+  // animieren — sonst ist das neue Bild kurz zu wenig verblurrt sichtbar.
   suppressFilterTransition.value = true;
+  isRevealing.value = true;
 
   pixelData.value = currentRound.value.data;
+  resolution.value = Math.sqrt(pixelData.value.length);
 
   startTimer();
 
-  // Re-enable smooth transition after initial frame render
+  // Transition erst wieder aktivieren, nachdem der Sprung auf
+  // Maximalblur gerendert wurde — danach animiert das Abnehmen des
+  // Blurs (durch den tickenden Timer) wieder sanft wie gewohnt.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       suppressFilterTransition.value = false;
@@ -198,7 +242,7 @@ const setupDrawing = () => {
   });
 };
 
-const handleAnswer = (selectedAnswer: any) => {
+const handleAnswer = (selectedOption: any) => {
   if (gameStore.gameState !== "revealing" || hasAnswered.value) return;
 
   hasAnswered.value = true;
@@ -207,25 +251,25 @@ const handleAnswer = (selectedAnswer: any) => {
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;
-  } else if (!selectedAnswer?.isCorrect) {
-    pixelData.value = statusIcons.failure;
-    pixelCanvasRef.value?.playShake();
-    soundStore.playSound("incorrect");
-  } else {
+  } else if (selectedOption?.isCorrect) {
     pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     const multiplier = isFinalRound.value || !!bonusRoundType.value ? 2 : 1;
     playerStore.addPoints(timer.value * multiplier);
     soundStore.playSound("correct");
+  } else {
+    pixelData.value = statusIcons.failure;
+    pixelCanvasRef.value?.playShake();
+    hasAnsweredCorrectly.value = false;
+    soundStore.playSound("incorrect");
   }
-  isStatusIcon.value = true;
 
   workerSetTimeout(() => {
     pixelCanvasRef.value?.playShine();
   }, 650);
 
   feedbackTimeoutId = workerSetTimeout(() => {
-    isStatusIcon.value = false;
+    isRevealing.value = false;
     if (currentRound.value) {
       pixelData.value = currentRound.value.data;
       workerSetTimeout(() => {
@@ -235,13 +279,12 @@ const handleAnswer = (selectedAnswer: any) => {
     gameStore.setGameState("revealed");
 
     solutionTimeoutId = workerSetTimeout(() => {
-      if (gameStore.currentRoundIndex >= configStore.maxRounds - 1) {
+      if (gameStore.currentRoundIndex >= maxRounds.value - 1) {
         onlineStore.broadcastScore();
         gameStore.setGameState("gameover");
-        router.push("/gameover");
+        const isOnlineRoute = router.currentRoute.value.path === "/online";
+        router.push(isOnlineRoute ? "/gameover-online" : "/gameover");
       } else {
-        hasAnswered.value = false;
-        hasAnsweredCorrectly.value = false;
         gameStore.nextRound();
       }
     }, 1500);
@@ -260,7 +303,6 @@ watch(
         showFinalRoundTransition.value = true;
         return;
       }
-
       if (transition === "bonus") {
         hasAnswered.value = false;
         hasAnsweredCorrectly.value = false;
@@ -286,7 +328,6 @@ onUnmounted(() => {
   gap: 0;
   max-width: 500px;
   width: 100%;
-  margin: 0 auto;
 }
 
 @media (min-width: 1024px) {

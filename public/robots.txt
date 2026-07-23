@@ -16,7 +16,7 @@ Disallow: /classic
 Disallow: /online
 Disallow: /gameover
 Disallow: /survival
-Disallow: /buzzer
+Disallow: /blur
 Disallow: /inspect
 Disallow: /lobby
 Disallow: /party-lobby

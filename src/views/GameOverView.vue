@@ -93,7 +93,8 @@ const showSingleplayerRank = computed(() => {
   return (
     playerStore.gameMode === "classic" ||
     playerStore.gameMode === "inspect" ||
-    playerStore.gameMode === "gravity"
+    playerStore.gameMode === "gravity" ||
+    playerStore.gameMode === "blur"
   );
 });
 

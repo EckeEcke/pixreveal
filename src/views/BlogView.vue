@@ -4,15 +4,32 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-23-26</span>
+        </div>
+        <h3 class="log-title">
+          Adding Blur game mode as replacement for Buzzer mode
+        </h3>
+        <p>
+          The core of PixReveal is its party multiplayer. But at the same time I
+          always wanted to provide a nice singleplayer experience. Since the
+          Buzzer mode was not really popular and hitting the buzzer when playing
+          on your own is rather pointless, I added a new game mode: Blur. Some
+          might already know the mechanic as a bonus round. The image is super
+          blurry initially and gets clearer step by step. I think it brings a
+          nice variety to PixReveal singleplayer and I hope you like it as well.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-20-26</span>
         </div>
         <h3 class="log-title">Fill button for the pixel art editor</h3>
         <p>
           I highly appreciate users submitting pixel art to PixReveal via my
-          <router-link to="/editor">Editor</router-link>! Thank you all! Since I saw
-          some users coloring the background, I added a fill button. By clicking
-          it every pixel without a set color will be turned into the currently
-          selected color.
+          <router-link to="/editor">Editor</router-link>! Thank you all! Since I
+          saw some users coloring the background, I added a fill button. By
+          clicking it every pixel without a set color will be turned into the
+          currently selected color.
         </p>
       </div>
       <div class="log-card">

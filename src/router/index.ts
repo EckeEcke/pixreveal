@@ -67,9 +67,9 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
-      path: "/buzzer",
-      name: "buzzer",
-      component: () => import("@/views/BuzzerView.vue"),
+      path: "/blur",
+      name: "blur",
+      component: () => import("@/views/BlurView.vue"),
       meta: { robots: "noindex" },
     },
     {
@@ -325,7 +325,7 @@ router.beforeEach((to, from) => {
     "/classic",
     "/online",
     "/survival",
-    "/buzzer",
+    "/blur",
     "/inspect",
     "/gravity",
     "/party-host",
@@ -335,7 +335,7 @@ router.beforeEach((to, from) => {
   const needRounds = [
     "/classic",
     "/online",
-    "/buzzer",
+    "/blur",
     "/inspect",
     "/gravity",
     "/party-host",
@@ -344,7 +344,7 @@ router.beforeEach((to, from) => {
 
   if (
     needRounds.includes(to.path) &&
-    (!gameStore.rounds || gameStore.rounds.length <= 0)
+    (!gameStore.rounds || gameStore.rounds.length <= 0 || gameStore.currentRoundIndex > 1)
   ) {
     return "/";
   }

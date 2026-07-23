@@ -44,11 +44,11 @@
         as possible to earn the most points.
       </p>
 
-      <h4>Buzzer Mode</h4>
+      <h4>Blur</h4>
       <p>
-        A true <strong>reaction test</strong>. Answer options stay hidden until
-        you hit the <strong>Buzzer</strong>. Once pressed, the reveal stops, and
-        you have only 5 seconds to make your choice.
+        A true <strong>recognition test</strong>. The iamge is very
+        <strong>blurry</strong>. Step by step the image becomes less blurry. Can
+        you figure out what it is before the image gets clear?
       </p>
 
       <h4>Survival</h4>

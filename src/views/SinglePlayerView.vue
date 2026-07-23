@@ -64,9 +64,9 @@
               />
               <SelectionTile
                 icon-name="pixel:question"
-                :btn-function="startBuzzer"
-                btn-text="BUZZER"
-                sub-title="Hit the buzzer to see answer options"
+                :btn-function="startBlur"
+                btn-text="BLUR"
+                sub-title="Guess the image as it unblurs"
                 btn-color="var(--neon-pink)"
               />
             </div>
@@ -123,10 +123,10 @@ const startGravity = () => {
   router.push("/gravity");
 };
 
-const startBuzzer = () => {
+const startBlur = () => {
   prepareGame(configStore.revealTime);
-  playerStore.gameMode = "classic";
-  router.push("/buzzer");
+  playerStore.gameMode = "blur";
+  router.push("/blur");
 };
 
 const startInspect = () => {

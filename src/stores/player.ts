@@ -28,7 +28,7 @@ export const usePlayerStore = defineStore("player", () => {
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const gameMode = ref<
-    "classic" | "inspect" | "gravity" | "survival" | "buzzer" | string
+    "classic" | "inspect" | "gravity" | "survival" | "blur" | string
   >("classic");
   const isCreatorMode = ref(false);
 

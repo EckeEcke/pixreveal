@@ -144,7 +144,7 @@ const {
   bonusRoundType,
   isFinalRound,
   isBlurRoundActive,
-  canvasEffectsStyle,
+  canvasEffectsStyle: canvasEffectsStyleBase,
   canvasIsRevealing,
   showFinalRoundTransition,
   showBonusRoundTransition,
@@ -158,6 +158,17 @@ const {
   timer,
   timerDuration,
   baseRevealing: isRevealing,
+});
+
+// Suppress CSS filter transition at round start to prevent visual jumps
+const suppressFilterTransition = ref(false);
+
+const canvasEffectsStyle = computed(() => {
+  const style: Record<string, string> = { ...canvasEffectsStyleBase.value };
+  if (suppressFilterTransition.value) {
+    style.transition = "none";
+  }
+  return style;
 });
 
 const handleFinalRoundDone = () => {
@@ -284,11 +295,22 @@ const setupDrawing = () => {
   if (!currentRound.value) return;
 
   clearAllTimers();
+
+  // Apply instant filter jump at round start
+  suppressFilterTransition.value = true;
+
   pixelData.value = currentRound.value.data;
   resolution.value = Math.sqrt(pixelData.value.length);
 
   partyStore.openBuzzer();
   startTimer();
+
+  // Re-enable smooth transition after initial frame render
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      suppressFilterTransition.value = false;
+    });
+  });
 };
 
 const lastEmoji = ref("");

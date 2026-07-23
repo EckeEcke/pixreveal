@@ -24,7 +24,7 @@ PixReveal provides 5 different singleplayer game modes:
 - Classic: pixels plopping up
 - Gravity: pixels dropping down Tetris style
 - Inspect: use a lens to inspect the dark canvas
-- Buzzer: hit the buzzer to see answer options
+- Blur: blurry image becomes clearer step by step
 - Survival: highscore challenge, how many drawings can you guess before time runs out
 
 ## Daily challenge

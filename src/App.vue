@@ -53,7 +53,7 @@ const MUSIC_ROUTES = new Set([
   "classic",
   "inspect",
   "gravity",
-  "buzzer",
+  "blur",
   "party-host",
   "online",
   "survival",
