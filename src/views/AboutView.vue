@@ -17,11 +17,11 @@
       <p>
         When you are not playing with friends in multiplayer, you can dive into
         Solo Mode, try one of five game modes, or compete in the daily
-        challenges. Use the editor to create and sumbit your own art for the world to play. I built this entire project from scratch as a solo
+        challenges. Use the editor to create and submit your own art for the
+        world to play. I built this entire project from scratch as a solo
         developer. As a frontend specialist with a passion for Vue.js, my focus
         was to create a multiplayer experience that feels snappy, modern, and
-        visually clean—bringing party game vibes straight to your
-        browser.
+        visually clean—bringing party game vibes straight to your browser.
       </p>
 
       <div class="tech-stack">
@@ -83,6 +83,21 @@
       >
         <Icon icon="logos:discord-icon" alt="link to my discord" />
       </a>
+    </section>
+
+    <section class="about-section">
+      <p>
+        I build and maintain PixReveal in my free time. If you’d like to support
+        server costs and future feature updates, consider buying me a coffee.
+      </p>
+      <a href="https://ko-fi.com/V4R823QKXZ" target="_blank"
+        ><img
+          height="36"
+          style="border: 0px; height: 36px"
+          src="https://storage.ko-fi.com/cdn/kofi4.png?v=6"
+          border="0"
+          alt="Buy Me a Coffee at ko-fi.com"
+      /></a>
     </section>
 
     <footer class="about-footer">

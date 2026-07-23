@@ -4,6 +4,17 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-24-26</span>
+        </div>
+        <h3 class="log-title">Support PixReveal on Ko-fi</h3>
+        <p>
+          My priority remains keeping PixReveal 100% free for everyone. Still I have running costs to host PixReveal. If you enjoy
+          playing and want to support the project, I’ve set up a Ko-fi page! Any
+          support helps cover server costs and fuels future updates. <a href="https://ko-fi.com/pixreveal" target="_blank">PixReveal on Ko-fi</a>
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-23-26</span>
         </div>
         <h3 class="log-title">
