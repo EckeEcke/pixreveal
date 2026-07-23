@@ -46,7 +46,7 @@
         <Icon icon="pixel:pen" /> SKRIBBL/GARTIC ALTERNATIVE
       </router-link>
     </div>
-    
+
     <div class="link-wrapper">
       <router-link
         class="internal-link"
@@ -71,6 +71,17 @@
         target="_blank"
         >HoliznaPATREON</a
       >
+    </div>
+    <div class="kofi-link">
+      <a href="https://ko-fi.com/V4R823QKXZ" target="_blank"
+        ><img
+          height="36"
+          style="border: 0px; height: 36px"
+          src="https://storage.ko-fi.com/cdn/kofi4.png?v=6"
+          border="0"
+          alt="Buy Me a Coffee at ko-fi.com"
+      /></a>
+      Help keep PixReveal free
     </div>
     <div>
       © 2026 PixReveal | Code & Design by
@@ -143,5 +154,15 @@ footer {
     gap: 16px;
     margin: 0;
   }
+}
+
+.kofi-link {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  place-items: center;
+  justify-items: center;
+  margin: 0 auto;
+  font-size: 12px;
 }
 </style>
