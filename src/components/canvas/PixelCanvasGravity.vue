@@ -58,16 +58,32 @@ const initGravityEffect = () => {
   const resolution = props.pixelArray.length;
   const { cellSize } = calculateGrid(resolution);
 
-  const maxDelayFrames =
-    !props.isRevealing || props.isStatusIcon
-      ? 0
-      : Math.max(0, (duration - 1) * 60);
+  const isInstant = !props.isRevealing || props.isStatusIcon;
 
-  props.pixelArray.forEach((row, y) => {
+  // 1. Gesamtzahl der Pixel (val !== 0) zählen
+  let totalPixelCount = 0;
+  props.pixelArray.forEach((row) => {
     if (Array.isArray(row)) {
-      row.forEach((val, x) => {
+      row.forEach((val) => {
+        if (val !== 0) totalPixelCount++;
+      });
+    }
+  });
+
+  // 2. Maximale Frame-Anzahl berechnen & Delay pro Pixel dynamisch bestimmen
+  const maxDelayFrames = isInstant ? 0 : Math.max(0, (duration - 1) * 60);
+  const delayPerPixel =
+    totalPixelCount > 1 ? maxDelayFrames / (totalPixelCount - 1) : 0;
+
+  let sequenceIndex = 0;
+
+  // 3. Reihenfolge: Von unten (y = resolution - 1) nach oben (y = 0), von links nach rechts
+  for (let y = resolution - 1; y >= 0; y--) {
+    const row = props.pixelArray[y];
+    if (Array.isArray(row)) {
+      for (let x = 0; x < row.length; x++) {
+        const val = row[x];
         if (val !== 0) {
-          const isInstant = !props.isRevealing || props.isStatusIcon;
           newList.push({
             val,
             x: x * cellSize,
@@ -75,14 +91,18 @@ const initGravityEffect = () => {
             currentY: isInstant ? y * cellSize : -50,
             velocity: 0,
             landed: isInstant,
-            delay: isInstant ? 0 : Math.floor(Math.random() * maxDelayFrames),
+            delay: isInstant
+              ? 0
+              : Math.floor(sequenceIndex * delayPerPixel),
             createdAt: Date.now(),
             particleGenerated: isInstant,
           });
+          sequenceIndex++;
         }
-      });
+      }
     }
-  });
+  }
+
   activePixels.value = newList;
 };
 
