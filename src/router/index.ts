@@ -18,9 +18,9 @@ const router = createRouter({
       component: HomeView,
       meta: {
         robots: "index, follow",
-        title: "PixReveal - Guess the Pixel Art",
+        title: "PixReveal – Free Pixel Art Party & Daily Guessing Game",
         description:
-          "Guess pixel art drawings in real-time with your friends. Host a local party game, join online lobbies, or solve the daily puzzle directly in your browser.",
+          "Play PixReveal for free: guess pixel art with friends, host a Jackbox-style party game, join online lobbies, or solve the daily challenge in your browser.",
         canonical: "https://www.pixreveal.com/",
       },
     },
@@ -42,9 +42,9 @@ const router = createRouter({
       component: () => import("@/views/SinglePlayerView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Singleplayer Modes - PixReveal",
+        title: "Pixel Art Singleplayer Game & Daily Challenge | PixReveal",
         description:
-          "Test your skills in 5 singleplayer modes. Race against time or beat the daily puzzle challenge.",
+          "Play 5 pixel art singleplayer modes, race against time, improve your high score, and solve the daily challenge directly in your browser.",
         canonical: "https://www.pixreveal.com/singleplayer",
       },
     },
@@ -156,9 +156,9 @@ const router = createRouter({
       component: () => import("@/views/PlayPartyView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Play Local Party Game - PixReveal",
+        title: "Jackbox-Style Local Party Game with Phones | PixReveal",
         description:
-          "Connect your smartphones, set up your room, and get ready for a local multiplayer pixel art showdown.",
+          "Use smartphones as controllers and play a free Jackbox-style pixel art party game on your TV or laptop with friends.",
         canonical: "https://www.pixreveal.com/play-party",
       },
     },
@@ -168,9 +168,9 @@ const router = createRouter({
       component: () => import("@/views/PlayOnlineView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Play Online Multiplayer - PixReveal",
+        title: "Online Pixel Art Multiplayer Game | PixReveal",
         description:
-          "Join or host online custom lobbies to compete against your friends worldwide.",
+          "Host or join private online lobbies, compete with friends worldwide, and guess pixel art in real time from any device.",
         canonical: "https://www.pixreveal.com/play-online",
       },
     },
@@ -180,7 +180,7 @@ const router = createRouter({
       component: () => import("@/views/FreeJackboxAlternativeView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Jackbox Alternative - Local Party Multiplayer | PixReveal",
+        title: "Free Jackbox Alternative for TV & Phones | PixReveal",
         description:
           "Turn your smartphones into controllers! Host PixReveal on your TV or laptop and play the ultimate party game with your friends.",
         canonical: "https://www.pixreveal.com/free-jackbox-alternative",
@@ -192,7 +192,7 @@ const router = createRouter({
       component: () => import("@/views/FreeGarticAlternativeView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Games like Skribbl.io & Gartic Phone | PixReveal",
+        title: "Games Like Skribbl.io & Gartic Phone | PixReveal",
         description:
           "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
         canonical:
