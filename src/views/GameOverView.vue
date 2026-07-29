@@ -138,6 +138,7 @@ const submitSingleplayerScore = () => {
 
   fetch("/api/post-singleplayer", {
     method: "POST",
+    keepalive: true,
     headers: {
       "Content-Type": "application/json",
     },
