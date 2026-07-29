@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
@@ -132,6 +132,30 @@ const goBackSingleplayer = () => {
 };
 
 gameStore.reset();
+
+const submitSingleplayerScore = () => {
+  if (!showSingleplayerRank.value) return;
+
+  fetch("/api/post-singleplayer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      mode: playerStore.gameMode,
+      score: playerStore.points,
+      revealTime: configStore.revealTime,
+      rounds: configStore.maxRounds,
+    }),
+  }).catch((error) => {
+    console.error("Failed to submit score", error);
+  });
+};
+
+onMounted(() => {
+  submitSingleplayerScore();
+});
+
 </script>
 
 <style scoped>
