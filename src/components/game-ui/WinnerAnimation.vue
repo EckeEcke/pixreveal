@@ -23,17 +23,21 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers";
+import { useConfetti } from "@/composables/useConfetti";
 
 const props = defineProps<{
   winnerName: string;
   avatarIndex: number;
   show: boolean;
   durationMs?: number;
+  isWinner?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "done"): void;
 }>();
+
+const { fireConfetti } = useConfetti();
 
 const visible = ref(false);
 let hideTimeoutId: number | null = null;
@@ -53,6 +57,8 @@ watch(
     }
 
     visible.value = true;
+    if (props.isWinner) fireConfetti()
+
     const duration = typeof props.durationMs === "number" ? props.durationMs : 3000;
     hideTimeoutId = workerSetTimeout(() => {
       hideTimeoutId = null;

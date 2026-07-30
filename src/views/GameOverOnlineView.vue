@@ -68,6 +68,7 @@
       :show="showWinnerAnimation"
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
+      :is-winner="isMe(winnerPlayer.playerId)"
       @done="showWinnerAnimation = false"
     />
   </main>

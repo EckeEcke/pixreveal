@@ -20,7 +20,9 @@
         "
       />
       <GameOverCrown
-        v-if="playerStore.gameMode === 'survival' && !survivalStore.newHighscore"
+        v-if="
+          playerStore.gameMode === 'survival' && !survivalStore.newHighscore
+        "
         class="game-over-crown"
         :highscore="survivalStore.highscore"
       />
@@ -57,7 +59,9 @@
 
       <div class="share-section">
         <h2>Challenge your friends!</h2>
-        <ShareIcons :msg="getShareMessage(playerStore.points, playerStore.gameMode)" />
+        <ShareIcons
+          :msg="getShareMessage(playerStore.points, playerStore.gameMode)"
+        />
       </div>
     </div>
   </main>
@@ -80,6 +84,7 @@ import { getRankData } from "@/utils/ranks";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
+import { useConfetti } from "@/composables/useConfetti";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -88,6 +93,8 @@ const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
 const showIntro = ref(true);
+
+const { fireConfetti } = useConfetti();
 
 const showSingleplayerRank = computed(() => {
   return (
@@ -155,8 +162,10 @@ const submitSingleplayerScore = () => {
 
 onMounted(() => {
   submitSingleplayerScore();
+  if (playerStore.gameMode === "survival" && survivalStore.newHighscore) {
+    fireConfetti();
+  }
 });
-
 </script>
 
 <style scoped>

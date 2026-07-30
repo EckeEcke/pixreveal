@@ -47,6 +47,7 @@
       :show="showWinnerAnimation"
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
+      :is-winner="isWinner || channelStore.isHost"
       @done="showWinnerAnimation = false"
     />
   </main>
@@ -83,6 +84,10 @@ const partyPlayersSorted = computed(() =>
 );
 
 const winnerPlayer = computed(() => partyPlayersSorted.value[0] ?? null);
+
+const isWinner = computed(
+  () => winnerPlayer.value?.playerId === channelStore.playerId,
+);
 
 const maxPartyPowerupsUsed = computed(() =>
   Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0)),
