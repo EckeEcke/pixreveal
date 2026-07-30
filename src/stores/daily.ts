@@ -11,6 +11,8 @@ export const useDailyStore = defineStore("daily", () => {
   const dailyRankings = ref([]);
   const yesterdayRankings = ref([]);
   const winners = ref([]);
+  const isYesterdayWinner = ref(false);
+
   const getDailyKey = () => {
     if (!date.value) return null;
     return `pix_daily_${date.value}`;
@@ -19,6 +21,43 @@ export const useDailyStore = defineStore("daily", () => {
   const storedDailyKey = ref(false);
 
   const hasPlayedToday = computed(() => storedDailyKey.value);
+
+  const updateYesterdayWinnerState = () => {
+    if (typeof window === "undefined") {
+      isYesterdayWinner.value = false;
+      return;
+    }
+
+    const playerProfile = localStorage.getItem("pixreveal:playerProfile");
+    if (!playerProfile) {
+      isYesterdayWinner.value = false;
+      return;
+    }
+
+    try {
+      const parsedProfile = JSON.parse(playerProfile);
+      const currentPlayerName = parsedProfile?.name;
+      const currentPlayerId = parsedProfile?.id;
+      const yesterdayWinnerId = Array.isArray(winners.value) && winners.value.length > 0
+        ? winners.value[0]?.winner?.userId ?? winners.value[0]?.userId
+        : null;
+      const currentPlayerKey = currentPlayerName && currentPlayerId
+        ? `${currentPlayerName}-${currentPlayerId}`
+        : null;
+
+      console.log("daily winner check", {
+        currentPlayerName,
+        currentPlayerId,
+        currentPlayerKey,
+        yesterdayWinnerId,
+        matches: Boolean(currentPlayerKey && yesterdayWinnerId && currentPlayerKey === yesterdayWinnerId),
+      });
+
+      isYesterdayWinner.value = Boolean(currentPlayerKey && yesterdayWinnerId && currentPlayerKey === yesterdayWinnerId);
+    } catch {
+      isYesterdayWinner.value = false;
+    }
+  };
 
   const markAsPlayed = () => {
     if (typeof window !== "undefined") {
@@ -49,6 +88,7 @@ export const useDailyStore = defineStore("daily", () => {
       if (typeof window !== "undefined") {
         const key = `pix_daily_${date.value}`;
         storedDailyKey.value = !!localStorage.getItem(key);
+        updateYesterdayWinnerState();
       }
     } catch (err: any) {
       error.value = err.message;
@@ -89,6 +129,7 @@ export const useDailyStore = defineStore("daily", () => {
 
   return {
     hasPlayedToday,
+    isYesterdayWinner,
     markAsPlayed,
     dailyRounds,
     dailyRankings,

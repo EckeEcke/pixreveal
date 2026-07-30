@@ -31,8 +31,12 @@ export function useConfetti() {
     confetti({
       zIndex: 10000,
       particleCount: 80,
-      spread: 60,
-      origin: { x, y },
+      spread: 90,
+        origin: { x, y },
+      shapes: [
+        confetti.shapeFromText({ text: "⭐", scalar: 2 }),
+        confetti.shapeFromText({ text: "✨", scalar: 2 }),
+      ],
       ...options,
     });
   }

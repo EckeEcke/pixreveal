@@ -54,6 +54,7 @@
                 />
               </router-link>
             </div>
+            <DailyWinner v-if="dailyStore.isYesterdayWinner" />
             <YoutubeEmbed video-id="YQl5jOqm2n0" />
             <TopPlayer />
           </div>
@@ -77,10 +78,13 @@ import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
+import DailyWinner from "@/components/game-ui/DailyWinner.vue";
+import { useDailyStore } from "@/stores/daily";
 
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
+const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 
