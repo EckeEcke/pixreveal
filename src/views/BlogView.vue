@@ -4,13 +4,31 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-30-26</span>
+        </div>
+        <h3 class="log-title">Confetti Effect added</h3>
+        <p>
+          Victories deserve a proper celebration! Setting a new highscore in
+          Survival Mode, winning a local party game or beat your friends in an
+          online match. Any of these achievements now trigger a confetti
+          animation to reward you for your achievements in PixReveal. I will
+          also add an info soon to inform you, if you won the Daily Challenge of
+          the previous day. Stay tuned.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-24-26</span>
         </div>
         <h3 class="log-title">Support PixReveal on Ko-fi</h3>
         <p>
-          My priority remains keeping PixReveal 100% free for everyone. Still I have running costs to host PixReveal. If you enjoy
-          playing and want to support the project, I’ve set up a Ko-fi page! Any
-          support helps cover server costs and fuels future updates. <a href="https://ko-fi.com/pixreveal" target="_blank">PixReveal on Ko-fi</a>
+          My priority remains keeping PixReveal 100% free for everyone. Still I
+          have running costs to host PixReveal. If you enjoy playing and want to
+          support the project, I’ve set up a Ko-fi page! Any support helps cover
+          server costs and fuels future updates.
+          <a href="https://ko-fi.com/pixreveal" target="_blank"
+            >PixReveal on Ko-fi</a
+          >
         </p>
       </div>
       <div class="log-card">
