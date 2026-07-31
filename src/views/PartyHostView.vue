@@ -27,7 +27,7 @@
     </Transition>
 
     <div>
-      <MinimalSettings />
+      <MinimalSettings :hide-keyboard="true" />
       <GameHeader
         :max="timerDuration"
         :count="timer"

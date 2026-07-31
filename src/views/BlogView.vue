@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">07-31-26</span>
+        </div>
+        <h3 class="log-title">Keyboard Controls added</h3>
+        <p>
+          To enable better highscore strats, I added keyboard controls to the
+          answer buttons in PixReveal. Press 1, 2, 3 or 4 on your keyboard to
+          select the according answer. You can also display small key hints on
+          the answer buttons by clicking the "⌨️" icon on the top right of the
+          game screen. Especially in Inspect mode this should come in quite
+          handy. On mobile this option is not available.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-30-26</span>
         </div>
         <h3 class="log-title">Confetti Effect added</h3>

@@ -113,7 +113,6 @@ const shareNative = async () => {
   font-size: 32px;
   border: none;
   color: var(--white);
-  filter: drop-shadow(0 0 8px var(--neon-social));
   opacity: 0.8;
 }
 

@@ -26,12 +26,22 @@ const generalFaqs = [
   {
     question: "What game modes are available?",
     answer:
-      "You can play in Classic mode, where pixels pop up randomly across the canvas, or in Gravity mode, where pixels drop down from the top in a Tetris-style animation.",
+      "You can play in Classic mode, where pixels pop up randomly across the canvas, or in Gravity mode, where pixels drop down from the top in a Tetris-style animation. Blur mode has a blurry image unblurring step by step. In Inspect mode the canvas is completely dark. Only through a lens you can inspect parts of the whole image. Move the lens to find out what it is.",
   },
   {
     question: "Can I play solo or with friends?",
     answer:
       "You can play solo in singleplayer mode to chase high scores, or play with friends. There is no random matchmaking with strangers. For multiplayer, you can either host a local party game Jackbox-style where one screen acts as the host and everyone uses their smartphones as controllers, or invite friends to a private online lobby where everyone plays on their own screen.",
+  },
+  {
+    question: "Is PixReveal safe for work?",
+    answer:
+      "Yes, PixReveal is safe for work. It is designed as a game for everyone. All drawings including user generated content are curated to provide a great experience for everybody.",
+  },
+  {
+    question: "Can I play PixReveal via keyboard?",
+    answer:
+      "Yes, the game is playable via keyboard! You can use 1, 2, 3 and 4 to select the according answers. By selecting the small ⌨️ keyboard icon on the top right of the game screen, you can also display small key hints on the answer buttons.",
   },
   {
     question: "I submitted art, but I don't see it in the game?",

@@ -162,7 +162,6 @@ button {
   gap: 8px;
   max-width: 400px;
   width: 100%;
-  overflow: hidden;
   @media (min-width: 768px) {
     max-width: calc(1000px + 2rem);
     grid-template-columns: 1fr 400px;
@@ -253,26 +252,58 @@ input[type="text"]:focus {
   transform: scale(0.95);
 }
 
+.close-btn svg {
+  border: 2px solid black;
+  border-radius: 2px;
+}
+
 .back-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  border: none;
-  background: none;
+  justify-content: center;
+  gap: 8px;
+  
+  padding: 8px 16px;
+  border-radius: 8px;
+  
+  background: var(--surface-dark, rgba(255, 255, 255, 0.05));
+  border: 2px solid rgba(255, 255, 255, 0.15);
   color: var(--white);
-  cursor: pointer;
-  padding: 0;
+  
   font-family: var(--font-display);
-  font-size: 24px;
-  opacity: 0.5;
-  transition: all 0.2s ease;
+  font-size: 16px;
+  text-transform: uppercase;
+  cursor: pointer;
+  
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.15s ease,
+              border-color 0.15s ease,
+              box-shadow 0.15s ease;
+              
+  box-shadow: 0px 3px 0px 0px rgba(0, 0, 0, 0.4);
+
   @media (min-width: 576px) {
-    font-size: 32px;
+    font-size: 18px;
+    padding: 10px 20px;
   }
 }
 
 .back-btn:hover {
-  opacity: 1;
-  transform: translateY(-1px);
+  background: var(--surface-hover, rgba(255, 255, 255, 0.12));
+  border-color: var(--accent-pink, #ff477e);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 0px 0px rgba(0, 0, 0, 0.5);
+}
+
+.back-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.5);
+}
+
+.back-btn:focus-visible {
+  outline: 2px solid var(--accent-pink, #ff477e);
+  outline-offset: 3px;
 }
 
 .crt {

@@ -17,17 +17,21 @@
         browser, <strong>no download needed</strong>.
       </p>
 
+      <p>
+        You get four answer options. If you think that you know the correct
+        answer, click the button. Alternatively you can also press 1, 2, 3 or 4
+        on the keyboard. But be careful: you only get one try per drawing.
+      </p>
+
       <YoutubeEmbed video-id="Prz-jTEg7fU" />
 
       <h3>The Game Modes</h3>
 
-      <h4>Classic & Blitz</h4>
+      <h4>Classic</h4>
       <p>
-        Identify the drawing as it reveals one pixel at a time. Choose from four
-        options.
-        <strong>Pro tip:</strong> In the settings, you can toggle the
-        <strong>5-second Blitz mode</strong>
-        for an extreme speed challenge. Earn stars based on your remaining time.
+        Identify the drawing as it reveals one pixel at a time. Time = Points.
+        The more time is left on the timer, the more stars ⭐ you earn. The more
+        stars you earn the higher your final rank.
       </p>
 
       <h4>Daily Challenge</h4>
@@ -126,6 +130,11 @@
         20 drawings to test your long-term recognition skills. Customize your
         experience by selecting your favorite <strong>Categories</strong>. You
         can combine as many as you like to increase the total pool of drawings.
+      </p>
+      <p>
+        Add an additional CRT filter for an even more retro look. And if you
+        want more drawings, you can activate the ugc setting (user generated
+        content) to include drawings created by users to the game.
       </p>
       <h3>Rankings</h3>
       <RankOverview />

@@ -38,6 +38,12 @@ export const useConfigStore = defineStore("config", () => {
   const isManualOpen = ref(false);
   const isSettingsOpen = ref(false);
 
+  const showKeyHints = ref(false);
+
+  const toggleKeyHints = () => {
+    showKeyHints.value = !showKeyHints.value;
+  };
+
   fetch(
     "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
   )
@@ -155,5 +161,7 @@ export const useConfigStore = defineStore("config", () => {
     closeManual,
     openSettings,
     closeSettings,
+    showKeyHints,
+    toggleKeyHints,
   };
 });

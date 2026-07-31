@@ -1,6 +1,22 @@
 <template>
   <div class="minimal-settings" :class="{ bottom: bottom }">
-    <button @click="soundStore.isAudioEnabled = !soundStore.isAudioEnabled">
+    <button
+      v-if="!hideKeyboard"
+      class="keyboard-btn"
+      @click="handleToggleKeyHints"
+      title="Toggle Keyboard Shortcuts"
+    >
+      <Icon
+        class="status-icon"
+        :icon="
+          configStore.showKeyHints
+            ? 'material-symbols:keyboard-alt-sharp'
+            : 'material-symbols:keyboard-off-sharp'
+        "
+      />
+    </button>
+
+    <button @click="toggleSound">
       <Icon
         class="status-icon"
         :icon="
@@ -10,6 +26,7 @@
         "
       />
     </button>
+
     <button @click="toggleFullscreen">
       <Icon
         class="status-icon"
@@ -20,17 +37,30 @@
 </template>
 
 <script setup>
+import { useConfigStore } from "@/stores/config";
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 
 defineProps({
   bottom: Boolean,
+  hideKeyboard: Boolean,
 });
 
 const soundStore = useSoundStore();
+const configStore = useConfigStore();
 
 const isFullscreen = ref(!!document.fullscreenElement);
+
+const handleToggleKeyHints = () => {
+  soundStore.playSound("click");
+  configStore.toggleKeyHints();
+};
+
+const toggleSound = () => {
+  soundStore.isAudioEnabled = !soundStore.isAudioEnabled;
+  soundStore.playSound("click");
+};
 
 const toggleFullscreen = () => {
   const elem = document.documentElement;
@@ -41,8 +71,11 @@ const toggleFullscreen = () => {
     } else if (elem.webkitRequestFullscreen) {
       elem.webkitRequestFullscreen();
     }
+    isFullscreen.value = true;
   } else {
-    document.exitFullscreen();
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
     isFullscreen.value = false;
   }
 };
@@ -53,10 +86,43 @@ const toggleFullscreen = () => {
   position: fixed;
   top: 8px;
   right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
 }
 
 button {
+  background: none;
+  border: none;
   color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+button:hover {
+  opacity: 1;
+}
+
+button:active {
+  transform: scale(0.9);
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+@media (pointer: coarse) {
+  .keyboard-btn {
+    display: none;
+  }
 }
 
 .bottom {
