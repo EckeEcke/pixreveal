@@ -208,7 +208,8 @@ const startLinger = () => {
 const isMyTurn = computed(
   () =>
     partyStore.buzzerState === "answering" &&
-    partyStore.activePlayerId === channelStore.playerId,
+    partyStore.activePlayerId === channelStore.playerId &&
+    !partyStore.buzzTransitionPending,
 );
 
 const isPlayerOut = computed(() => {

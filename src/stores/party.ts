@@ -41,6 +41,7 @@ export const usePartyStore = defineStore("party", () => {
   const buzzerTimeLimit = ref(15);
   const roundResult = ref<"correct" | "incorrect" | null>(null);
   const answerDeadlineAt = ref<number | null>(null);
+  const buzzTransitionPending = ref(false);
   const emojiStatistics = ref<string[]>([]);
   const replayNavAllowedUntilAt = ref<number>(0);
 
@@ -139,6 +140,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState: buzzerState.value,
     activePlayerId: activePlayerId.value,
     answerDeadlineAt: answerDeadlineAt.value,
+    buzzTransitionPending: buzzTransitionPending.value,
     lightsOutUntilAt: powerups.lightsOutUntilAt.value,
     lightsOutByPlayerId: powerups.lightsOutByPlayerId.value,
     lightsOutUsedBy: powerups.lightsOutUsedBy.value,
@@ -159,6 +161,7 @@ export const usePartyStore = defineStore("party", () => {
   const ensureAnswerTimer = () => {
     if (!isHost.value) return;
     if (buzzerState.value !== "answering" || !activePlayerId.value) return;
+    if (buzzTransitionPending.value) return;
     if (answerTimer) return;
 
     const now = Date.now();
@@ -240,6 +243,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState.value = "open";
     activePlayerId.value = null;
     answerStartedAt.value = null;
+    buzzTransitionPending.value = false;
     roundResult.value = null;
     hasAnswered.value = false;
     answerDeadlineAt.value = null;
@@ -263,19 +267,33 @@ export const usePartyStore = defineStore("party", () => {
 
     buzzerState.value = "answering";
     activePlayerId.value = playerId;
-    answerStartedAt.value = Date.now();
-    if (playerId === channelStore.playerId) hasAnswered.value = false;
-    answerDeadlineAt.value = Date.now() + roundTimeLimit.value * 1000;
+    buzzTransitionPending.value = true;
+    answerStartedAt.value = null;
+    answerDeadlineAt.value = null;
 
     channel.value?.trigger("client-party-buzzer-locked", {
       playerId,
       options: gameStore.currentRound?.options,
     });
     broadcastPartyState("buzzer-locked");
+  };
 
-    if (answerTimer) workerClearTimeout(answerTimer);
-    answerTimer = null;
+  const startAnswerPhase = () => {
+    if (!isHost.value) return;
+    if (!buzzTransitionPending.value) return;
+    if (!activePlayerId.value) return;
+
+    buzzTransitionPending.value = false;
+    answerStartedAt.value = Date.now();
+    answerDeadlineAt.value = Date.now() + roundTimeLimit.value * 1000;
+    if (activePlayerId.value === channelStore.playerId) hasAnswered.value = false;
+
+    if (answerTimer) {
+      workerClearTimeout(answerTimer);
+      answerTimer = null;
+    }
     ensureAnswerTimer();
+    broadcastPartyState("buzzer-answer-started");
   };
 
   const handleRoundTimeout = () => {
@@ -591,6 +609,7 @@ export const usePartyStore = defineStore("party", () => {
 
         activePlayerId.value = state.activePlayerId ?? null;
         buzzerState.value = state.buzzerState ?? buzzerState.value;
+        buzzTransitionPending.value = Boolean(state.buzzTransitionPending);
         answerDeadlineAt.value =
           typeof state.answerDeadlineAt === "number"
             ? state.answerDeadlineAt
@@ -817,13 +836,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState.value = "locked";
     activePlayerId.value = null;
     answerStartedAt.value = null;
-    roundResult.value = null;
-    hasAnswered.value = false;
-    answerDeadlineAt.value = null;
-    isRevealing.value = true;
-    emojiStatistics.value = [];
-
-    channelStore.setGameRunning(false);
+      buzzTransitionPending.value = false;
 
     if (buzzerTimer) {
       workerClearTimeout(buzzerTimer);
@@ -851,6 +864,7 @@ export const usePartyStore = defineStore("party", () => {
     isRevealing,
     roundTimeLimit,
     buzzerTimeLimit,
+    buzzTransitionPending,
     hasAnswered,
     answerDeadlineAt,
     emojiStatistics,
@@ -899,6 +913,7 @@ export const usePartyStore = defineStore("party", () => {
     startGame,
     openBuzzer,
     handleBuzz,
+    startAnswerPhase,
     handleRoundTimeout,
     resolveAnswer,
     nextRound,

@@ -46,4 +46,5 @@ export type PartyStatePayload = {
   buzzerTimeLimit: number;
   isSuddenDeath?: boolean;
   suddenDeathPlayerIds?: string[];
+  buzzTransitionPending?: boolean;
 };

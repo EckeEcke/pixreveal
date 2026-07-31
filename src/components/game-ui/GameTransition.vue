@@ -18,9 +18,10 @@
 import { useSoundStore } from "@/stores/sound";
 import { ref, onMounted } from "vue";
 
-defineProps({
+const props = defineProps({
   first: String,
   second: String,
+  isShort: Boolean,
 });
 
 const emit = defineEmits(["done"]);
@@ -31,13 +32,13 @@ const showSecond = ref(false);
 onMounted(() => {
   setTimeout(
     () => ((showFirst.value = true), useSoundStore().playSound("punch")),
-    200,
+    props.isShort ? 100 : 200,
   );
   setTimeout(
     () => ((showSecond.value = true), useSoundStore().playSound("punch")),
-    700,
+    props.isShort ? 300 : 700,
   );
-  setTimeout(() => emit("done"), 1200);
+  setTimeout(() => emit("done"), props.isShort ? 600 : 1200);
 });
 </script>
 
@@ -53,6 +54,7 @@ onMounted(() => {
   z-index: 99999;
   background: #0d001aaa;
   backdrop-filter: blur(4px);
+  text-transform: uppercase;
 }
 
 .line {

@@ -24,6 +24,13 @@
         second="DEATH"
         @done="handleSuddenDeathDone"
       />
+      <GameTransition
+        v-else-if="partyStore.buzzTransitionPending && partyStore.buzzerState === 'answering'"
+        :first="partyStore.activePlayer?.username || 'PLAYER'"
+        :is-short="true"
+        second="BUZZERED"
+        @done="handleBuzzTransitionDone"
+      />
     </Transition>
 
     <div>
@@ -184,6 +191,10 @@ const handleBonusRoundDone = () => {
 const handleSuddenDeathDone = () => {
   partyStore.showSuddenDeathTransition = false;
   setupDrawing();
+};
+
+const handleBuzzTransitionDone = () => {
+  partyStore.startAnswerPhase?.();
 };
 
 let lastFreezeUntilAt: number | null = null;
