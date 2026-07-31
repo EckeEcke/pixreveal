@@ -1,16 +1,41 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
+type DailyRanking = {
+  name: string;
+  score: number;
+  avatarIndex: number;
+  userId?: string;
+};
+
+type DailyWinner =
+  | {
+      date: string;
+      winner: DailyRanking;
+    }
+  | {
+      date: string;
+      userId: string;
+    };
+
+const getDailyWinnerId = (winner: DailyWinner): string | null => {
+  if ("winner" in winner) {
+    return winner.winner.userId ?? null;
+  }
+
+  return winner.userId;
+};
+
 export const useDailyStore = defineStore("daily", () => {
   const dailyRounds = ref([]);
   const date = ref("");
   const isLoading = ref(false);
   const hasSubmitted = ref(false);
-  const mode = ref("classic");
-  const error = ref(null);
-  const dailyRankings = ref([]);
-  const yesterdayRankings = ref([]);
-  const winners = ref([]);
+  const mode = ref<"classic" | "inspect" | "gravity">("classic");
+  const error = ref<string | null>(null);
+  const dailyRankings = ref<DailyRanking[]>([]);
+  const yesterdayRankings = ref<DailyRanking[]>([]);
+  const winners = ref<DailyWinner[]>([]);
   const isYesterdayWinner = ref(false);
 
   const getDailyKey = () => {
@@ -38,22 +63,32 @@ export const useDailyStore = defineStore("daily", () => {
       const parsedProfile = JSON.parse(playerProfile);
       const currentPlayerName = parsedProfile?.name;
       const currentPlayerId = parsedProfile?.id;
-      const yesterdayWinnerId = Array.isArray(winners.value) && winners.value.length > 0
-        ? winners.value[0]?.winner?.userId ?? winners.value[0]?.userId
+      const firstWinner = winners.value[0];
+      const yesterdayWinnerId = firstWinner
+        ? getDailyWinnerId(firstWinner)
         : null;
-      const currentPlayerKey = currentPlayerName && currentPlayerId
-        ? `${currentPlayerName}-${currentPlayerId}`
-        : null;
+      const currentPlayerKey =
+        currentPlayerName && currentPlayerId
+          ? `${currentPlayerName}-${currentPlayerId}`
+          : null;
 
       console.log("daily winner check", {
         currentPlayerName,
         currentPlayerId,
         currentPlayerKey,
         yesterdayWinnerId,
-        matches: Boolean(currentPlayerKey && yesterdayWinnerId && currentPlayerKey === yesterdayWinnerId),
+        matches: Boolean(
+          currentPlayerKey &&
+          yesterdayWinnerId &&
+          currentPlayerKey === yesterdayWinnerId,
+        ),
       });
 
-      isYesterdayWinner.value = Boolean(currentPlayerKey && yesterdayWinnerId && currentPlayerKey === yesterdayWinnerId);
+      isYesterdayWinner.value = Boolean(
+        currentPlayerKey &&
+        yesterdayWinnerId &&
+        currentPlayerKey === yesterdayWinnerId,
+      );
     } catch {
       isYesterdayWinner.value = false;
     }
