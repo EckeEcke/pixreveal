@@ -2,10 +2,10 @@ import {
   readPersistedSession,
   writePersistedSession,
 } from "@/services/channelPersistence";
+import type { PersistedSession as BasePersistedSession } from "@/services/channelPersistence";
 import type { UserData } from "@/types/channel";
 
-type PersistedSession =
-  import("@/services/channelPersistence").PersistedSession<UserData>;
+type PersistedSession = BasePersistedSession<UserData>;
 
 export function useSessionPersistence() {
   const persistSession = (session: PersistedSession | null) => {

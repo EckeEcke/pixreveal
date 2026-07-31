@@ -1,6 +1,5 @@
 export type BaseUserData = {
   playerId: string;
-  [key: string]: unknown;
 };
 
 export type PersistedSession<TUserData extends BaseUserData = BaseUserData> = {
