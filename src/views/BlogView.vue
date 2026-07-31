@@ -4,6 +4,20 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">08-01-26</span>
+        </div>
+        <h3 class="log-title">Major Update for Party Multiplayer!</h3>
+        <p>
+          The party mode is the core element of PixReveal. To increase the
+          quality of the multiplayer, I tweaked the mechanics: if a player
+          buzzers and gives a wrong answer, the round continues and the other
+          players get a chance to buzzer themselves. This way buzzer spamming
+          gets less rewarding, all players are more involved and the game
+          becomes more dynamic.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">07-31-26</span>
         </div>
         <h3 class="log-title">Keyboard Controls added</h3>

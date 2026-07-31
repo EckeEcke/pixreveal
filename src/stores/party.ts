@@ -42,6 +42,7 @@ export const usePartyStore = defineStore("party", () => {
   const roundResult = ref<"correct" | "incorrect" | null>(null);
   const answerDeadlineAt = ref<number | null>(null);
   const buzzTransitionPending = ref(false);
+  const buzzedPlayerIds = ref<string[]>([]);
   const emojiStatistics = ref<string[]>([]);
   const replayNavAllowedUntilAt = ref<number>(0);
 
@@ -156,6 +157,7 @@ export const usePartyStore = defineStore("party", () => {
     buzzerTimeLimit: buzzerTimeLimit.value,
     isSuddenDeath: suddenDeath.isSuddenDeath.value,
     suddenDeathPlayerIds: suddenDeath.suddenDeathPlayerIds.value,
+    buzzedPlayerIds: buzzedPlayerIds.value,
   });
 
   const ensureAnswerTimer = () => {
@@ -247,6 +249,7 @@ export const usePartyStore = defineStore("party", () => {
     roundResult.value = null;
     hasAnswered.value = false;
     answerDeadlineAt.value = null;
+    buzzedPlayerIds.value = [];
 
     channel.value?.trigger("client-party-buzzer-open", {});
     broadcastPartyState("buzzer-open");
@@ -286,7 +289,8 @@ export const usePartyStore = defineStore("party", () => {
     buzzTransitionPending.value = false;
     answerStartedAt.value = Date.now();
     answerDeadlineAt.value = Date.now() + roundTimeLimit.value * 1000;
-    if (activePlayerId.value === channelStore.playerId) hasAnswered.value = false;
+    if (activePlayerId.value === channelStore.playerId)
+      hasAnswered.value = false;
 
     if (answerTimer) {
       workerClearTimeout(answerTimer);
@@ -319,7 +323,27 @@ export const usePartyStore = defineStore("party", () => {
         : null;
     answerStartedAt.value = null;
 
-    roundResult.value = isCorrect ? "correct" : "incorrect";
+    const remainingPlayers = playerId
+      ? players.value.filter(
+          (p) =>
+            p.playerId !== playerId &&
+            !buzzedPlayerIds.value.includes(p.playerId),
+        )
+      : [];
+    const shouldReopenBuzzer =
+      !isCorrect && playerId !== null && remainingPlayers.length > 0;
+
+    if (shouldReopenBuzzer && playerId) {
+      buzzedPlayerIds.value = Array.from(
+        new Set([...buzzedPlayerIds.value, playerId]),
+      );
+    }
+
+    if (!shouldReopenBuzzer) {
+      roundResult.value = isCorrect ? "correct" : "incorrect";
+    } else {
+      roundResult.value = null;
+    }
 
     if (!playerId) {
       activePlayerId.value = null;
@@ -363,18 +387,33 @@ export const usePartyStore = defineStore("party", () => {
     }
 
     if (isHost.value) {
-      isRevealing.value = false;
-      channel.value?.trigger("client-party-round-result", {
-        playerId,
-        isCorrect,
-        correctAnswer: gameStore.currentRound?.answer,
-      });
+      if (shouldReopenBuzzer) {
+        activePlayerId.value = null;
+        buzzerState.value = "open";
+        answerStartedAt.value = null;
+        answerDeadlineAt.value = null;
+        hasAnswered.value = false;
 
-      workerSetTimeout(() => {
-        buzzerState.value = "locked";
-        broadcastPlayerScores();
-        broadcastPartyState("round-result-finalized");
-      }, 1000);
+        channel.value?.trigger("client-party-buzzer-open", {});
+        if (buzzerTimer) workerClearTimeout(buzzerTimer);
+        buzzerTimer = workerSetTimeout(() => {
+          if (buzzerState.value === "open") skipRound();
+        }, buzzerTimeLimit.value * 1000);
+        broadcastPartyState("buzzer-reopen");
+      } else {
+        isRevealing.value = false;
+        channel.value?.trigger("client-party-round-result", {
+          playerId,
+          isCorrect,
+          correctAnswer: gameStore.currentRound?.answer,
+        });
+
+        workerSetTimeout(() => {
+          buzzerState.value = "locked";
+          broadcastPlayerScores();
+          broadcastPartyState("round-result-finalized");
+        }, 1000);
+      }
     }
   };
 
@@ -675,17 +714,10 @@ export const usePartyStore = defineStore("party", () => {
         ) {
           hasAnswered.value = false;
         }
-      },
-    );
 
-    bindEvent(
-      "client-party-lightsout",
-      (data?: { untilAt?: number; byPlayerId?: string }) => {
-        const untilAt =
-          typeof data?.untilAt === "number" ? data.untilAt : Date.now() + 4000;
-        const byId =
-          typeof data?.byPlayerId === "string" ? data.byPlayerId : null;
-        powerups.setLightsOutUntil(untilAt, byId);
+        if (Array.isArray(state.buzzedPlayerIds)) {
+          buzzedPlayerIds.value = state.buzzedPlayerIds;
+        }
       },
     );
 
@@ -836,7 +868,9 @@ export const usePartyStore = defineStore("party", () => {
     buzzerState.value = "locked";
     activePlayerId.value = null;
     answerStartedAt.value = null;
-      buzzTransitionPending.value = false;
+    buzzTransitionPending.value = false;
+    buzzedPlayerIds.value = [];
+    buzzedPlayerIds.value = [];
 
     if (buzzerTimer) {
       workerClearTimeout(buzzerTimer);
@@ -925,5 +959,8 @@ export const usePartyStore = defineStore("party", () => {
     broadcastPartyState,
     setupEvents,
     reset,
+
+    // Reopen state
+    buzzedPlayerIds,
   };
 });

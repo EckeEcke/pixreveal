@@ -42,10 +42,12 @@
             class="neon-buzzer"
             aria-label="Buzz to answer"
             data-sfx="buzz"
-            :disabled="partyStore.isFrozen"
+            :disabled="partyStore.isFrozen || hasBuzzed"
             @click="handleBuzz"
           >
-            <span class="buzzer-text">BUZZ!</span>
+            <span class="buzzer-text">
+              {{ hasBuzzed ? "BUZZED" : "BUZZ!" }}
+            </span>
           </button>
         </div>
 
@@ -212,6 +214,10 @@ const isMyTurn = computed(
     !partyStore.buzzTransitionPending,
 );
 
+const hasBuzzed = computed(() =>
+  partyStore.buzzedPlayerIds?.includes(channelStore.playerId),
+);
+
 const isPlayerOut = computed(() => {
   return (
     partyStore.isSuddenDeath &&
@@ -326,6 +332,7 @@ watch(
 const handleBuzz = () => {
   if (partyStore.connectionStale) return;
   if (partyStore.isFrozen) return;
+  if (hasBuzzed.value) return;
   if (
     channelStore.connectionState &&
     channelStore.connectionState !== "connected"
@@ -553,6 +560,11 @@ onMounted(() => {
 .neon-buzzer:focus-visible {
   outline: 2px solid var(--neon-pink);
   outline-offset: 4px;
+}
+
+.neon-buzzer:disabled {
+  animation: none;
+  filter: grayscale(1);
 }
 
 .your-turn-label {

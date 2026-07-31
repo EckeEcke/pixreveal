@@ -25,7 +25,10 @@
         @done="handleSuddenDeathDone"
       />
       <GameTransition
-        v-else-if="partyStore.buzzTransitionPending && partyStore.buzzerState === 'answering'"
+        v-else-if="
+          partyStore.buzzTransitionPending &&
+          partyStore.buzzerState === 'answering'
+        "
         :first="partyStore.activePlayer?.username || 'PLAYER'"
         :is-short="true"
         second="BUZZERED"
@@ -259,6 +262,45 @@ const clearAllTimers = () => {
   navigationTimeout = null;
 };
 
+const resumeTimer = () => {
+  if (partyStore.isSuddenDeath) return;
+  if (timer.value <= 0) return;
+  if (timerId || timerEndTimeoutId) return;
+
+  timerEndTimeoutId = workerSetTimeout(() => {
+    timerEndTimeoutId = null;
+    soundStore.playSound("partyIncorrect");
+    timer.value = 0;
+    workerClearInterval(timerId);
+    timerId = null;
+    nextTick().then(() => {
+      partyStore.handleRoundTimeout();
+    });
+  }, timer.value * 1000);
+
+  timerId = workerSetInterval(() => {
+    timer.value = Math.max(0, timer.value - 1);
+
+    if (timer.value <= 3 && timer.value > 0) {
+      soundStore.playSound("timer");
+      pixelCanvasRef.value?.playShake();
+    }
+
+    if (timer.value > 0) return;
+
+    soundStore.playSound("incorrect");
+
+    timer.value = 0;
+    workerClearInterval(timerId);
+    timerId = null;
+    workerClearTimeout(timerEndTimeoutId);
+    timerEndTimeoutId = null;
+    nextTick().then(() => {
+      partyStore.handleRoundTimeout();
+    });
+  }, 1000);
+};
+
 const startTimer = () => {
   workerClearInterval(timerId);
   workerClearTimeout(timerEndTimeoutId);
@@ -419,6 +461,14 @@ watch(
       timerId = null;
       workerClearTimeout(timerEndTimeoutId);
       timerEndTimeoutId = null;
+    }
+
+    if (
+      newState === "open" &&
+      gameStore.gameState === "revealing" &&
+      timer.value > 0
+    ) {
+      resumeTimer();
     }
   },
 );

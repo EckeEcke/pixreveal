@@ -47,4 +47,5 @@ export type PartyStatePayload = {
   isSuddenDeath?: boolean;
   suddenDeathPlayerIds?: string[];
   buzzTransitionPending?: boolean;
+  buzzedPlayerIds?: string[];
 };
