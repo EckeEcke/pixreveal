@@ -39,6 +39,11 @@ const generalFaqs = [
       "Yes, PixReveal is safe for work. It is designed as a game for everyone. All drawings including user generated content are curated to provide a great experience for everybody.",
   },
   {
+    question: "I am not into anime or gaming. Can I still play the game?",
+    answer:
+    "Yes, PixReveal is customizable. Just open the settings and unselect the categories that do not fit your likings. Then these drawings will be excluded from the game. Categories are Animals & Nature, Anime & Cartoons, Food, Gaming, Movies & TV and Objects & People.",
+  },
+  {
     question: "Can I play PixReveal via keyboard?",
     answer:
       "Yes, the game is playable via keyboard! You can use 1, 2, 3 and 4 to select the according answers. By selecting the small ⌨️ keyboard icon on the top right of the game screen, you can also display small key hints on the answer buttons.",
