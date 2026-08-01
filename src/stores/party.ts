@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import { useChannelStore } from "./channel";
 import { useGameStore } from "./game";
+import { useSoundStore } from "./sound";
 import type { Round } from "@/types/game";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
@@ -26,6 +27,7 @@ import { useSuddenDeath } from "@/composables/useSuddenDeath";
 export const usePartyStore = defineStore("party", () => {
   const channelStore = useChannelStore();
   const gameStore = useGameStore();
+  const soundStore = useSoundStore();
   const configStore = useConfigStore();
   const router = useRouter();
 
@@ -399,6 +401,7 @@ export const usePartyStore = defineStore("party", () => {
         buzzerTimer = workerSetTimeout(() => {
           if (buzzerState.value === "open") skipRound();
         }, buzzerTimeLimit.value * 1000);
+        soundStore.playSound("partyIncorrect")
         broadcastPartyState("buzzer-reopen");
       } else {
         isRevealing.value = false;
