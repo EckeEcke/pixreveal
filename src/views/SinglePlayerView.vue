@@ -15,7 +15,7 @@
                 :icon-name="
                   dailyStore.hasPlayedToday
                     ? 'pixel:numbered-list-solid'
-                    : 'pixel:star'
+                    : 'pixel:calender'
                 "
                 :btn-function="startDaily"
                 btn-text="DAILY CHALLENGE"

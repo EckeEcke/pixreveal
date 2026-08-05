@@ -15,7 +15,7 @@ defineEmits(["clicked"]);
   justify-content: center;
   gap: 4px;
   background: black;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border: none;
   text-transform: uppercase;
   color: var(--primary);

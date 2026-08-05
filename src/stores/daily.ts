@@ -8,22 +8,18 @@ type DailyRanking = {
   userId?: string;
 };
 
-type DailyWinner =
-  | {
-      date: string;
-      winner: DailyRanking;
-    }
-  | {
-      date: string;
-      userId: string;
-    };
+type DailyWinner = {
+  date: string;
+  winner?: DailyRanking;
+  userId?: string;
+};
 
 const getDailyWinnerId = (winner: DailyWinner): string | null => {
-  if ("winner" in winner) {
-    return winner.winner.userId ?? null;
+  if (winner.winner?.userId) {
+    return winner.winner.userId;
   }
 
-  return winner.userId;
+  return winner.userId ?? null;
 };
 
 export const useDailyStore = defineStore("daily", () => {

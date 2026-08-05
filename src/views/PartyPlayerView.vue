@@ -433,7 +433,7 @@ const emojis = [
   "❌",
 ];
 const emojiCooldown = ref(false);
-const EMOJI_COOLDOWN_MS = 2000;
+const EMOJI_COOLDOWN_MS = 1000;
 
 const sendEmoji = (emoji) => {
   if (emojiCooldown.value) return;

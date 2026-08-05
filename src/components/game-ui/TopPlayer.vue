@@ -1,22 +1,21 @@
 <template>
   <div v-if="topRanking" class="top-player-card setup-card">
     <div class="card-header">
-      <Icon icon="pixel:crown-solid" class="crown" />
       <div class="top-player">
         <h2 class="logo">TOP<span> PLAYER</span></h2>
       </div>
 
-      <p>Top ranking in today's daily challenge</p>
+      <p>Best score in today's daily challenge</p>
     </div>
 
     <div class="player-wrapper">
-      <PlayerDisplay
-        :name="topRanking.name"
-        :avatar-index="topRanking.avatarIndex"
-        :points="topRanking.score"
-        :rounded="true"
-        :shiny="true"
-      />
+      <router-link to="/rankings-daily">
+        <TopPlayerDisplay
+          :name="topRanking.name"
+          :avatar-index="topRanking.avatarIndex"
+          :score="topRanking.score"
+        />
+      </router-link>
     </div>
 
     <div v-if="dailyStore.hasPlayedToday" class="info">
@@ -33,22 +32,13 @@
       class="btn-primary"
       @clicked="startDaily"
     >
-      <Icon icon="pixel:crown-solid" />
+      <Icon icon="pixel:play-solid" />
       Play Daily Challenge
-    </ButtonPrimary>
-    <ButtonPrimary
-      v-else
-      data-sfx="click"
-      class="btn-primary"
-      @clicked="router.push('/rankings-daily')"
-    >
-      <Icon icon="pixel:numbered-list-solid" />
-      Check Rankings
     </ButtonPrimary>
 
     <DailyCountdown />
 
-    <Icon icon="pixel:crown-solid" class="background-icon" />
+    <Icon icon="pixel:calender" class="background-icon" />
   </div>
 </template>
 
@@ -56,7 +46,7 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
 import { useDailyStore } from "@/stores/daily";
 import { useGameStore } from "@/stores/game";
 import DailyCountdown from "../page-ui/DailyCountdown.vue";
@@ -104,10 +94,14 @@ const startDaily = () => {
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  padding: 24px;
+  padding: 32px;
   max-width: 850px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+}
+
+a {
+  text-decoration: none;
 }
 
 .card-header {
@@ -172,10 +166,11 @@ p {
 .player-wrapper {
   width: 400px;
   max-width: 100%;
+  margin: 16px auto;
 }
 
 .btn-primary {
-  margin: 16px auto 0;
+  margin: 0 auto;
 }
 
 .top-player {
@@ -187,20 +182,14 @@ p {
   width: 100%;
 }
 
-@media (min-width: 576px) {
-  .top-player::before,
-  .top-player::after {
-    content: "";
-    height: 2px;
-    width: 120px;
-
-    background: linear-gradient(to right, transparent, rgba(255, 80, 180, 0.7));
-
-    border-radius: 999px;
-  }
-
-  .top-player::after {
-    transform: scaleX(-1);
+.logo {
+  font-family: "8bit";
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  margin-top: 16px;
+  font-size: 16px;
+  @media (min-width: 450px) {
+    font-size: 22px;
   }
 }
 </style>

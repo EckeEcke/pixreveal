@@ -1,12 +1,15 @@
 <template>
   <div
     class="player-hud"
-    :class="{
-      pending: isPending,
-      active: isActive,
-      first: position === 1 || shiny,
-      rounded: rounded,
-    }"
+    :class="[
+      size,
+      {
+        pending: isPending,
+        active: isActive,
+        first: position === 1 || shiny,
+        rounded: rounded,
+      },
+    ]"
   >
     <PositionInfo v-if="position" :position="position" />
     <div
@@ -18,11 +21,8 @@
       <div class="hud-username" :class="{ first: position === 1 || shiny }">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
       </div>
-      <div v-if="subline" class="hud-subline">
-        {{ subline }}
-      </div>
+      <div v-if="subline" class="hud-subline">{{ subline }}</div>
     </div>
-
     <div
       v-if="
         roundIndex ||
@@ -46,8 +46,7 @@
       <div v-if="highscore || highscore === 0" class="hud-highscore">
         <transition name="score-pop" mode="out-in">
           <div :key="highscore" class="highscore-wrapper">
-            <Icon icon="pixel:crown-solid" class="star-icon" />
-            {{ highscore }}
+            <Icon icon="pixel:crown-solid" class="star-icon" /> {{ highscore }}
           </div>
         </transition>
       </div>
@@ -66,44 +65,42 @@
         </transition>
       </div>
     </div>
-
     <div v-if="isHost" class="host-info">
-      <Icon icon="pixel:crown-solid" />
-      HOST
+      <Icon icon="pixel:crown-solid" /> HOST
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import { Icon } from "@iconify/vue";
 import PositionInfo from "./PositionInfo.vue";
-
-const props = defineProps<{
-  position?: number;
-  name?: string;
-  subline?: string;
-  avatarIndex?: number;
-  points?: number;
-  highscore?: number;
-  isPending?: boolean;
-  isHost?: boolean;
-  isActive?: boolean;
-  correctAnswers?: number;
-  roundIndex?: number;
-  maxRounds?: number;
-  showYouIndicator?: boolean;
-  rounded?: boolean;
-  shiny?: boolean;
-}>();
-
+const props = withDefaults(
+  defineProps<{
+    position?: number;
+    name?: string;
+    subline?: string;
+    avatarIndex?: number;
+    points?: number;
+    highscore?: number;
+    isPending?: boolean;
+    isHost?: boolean;
+    isActive?: boolean;
+    correctAnswers?: number;
+    roundIndex?: number;
+    maxRounds?: number;
+    showYouIndicator?: boolean;
+    rounded?: boolean;
+    shiny?: boolean;
+    size?: "medium" | "small";
+  }>(),
+  { size: "medium" },
+);
 const showBonus = ref(false);
 const lastBonus = ref(0);
 const showMalus = ref(false);
 const lastMalus = ref(0);
-
 const animateBonus = (delta: number) => {
   lastBonus.value = delta;
   showBonus.value = false;
@@ -114,7 +111,6 @@ const animateBonus = (delta: number) => {
     }, 750);
   });
 };
-
 const animateMalus = (delta: number) => {
   lastMalus.value = delta;
   showMalus.value = false;
@@ -125,7 +121,6 @@ const animateMalus = (delta: number) => {
     }, 750);
   });
 };
-
 watch(
   () => props.points,
   (newVal, oldVal) => {
@@ -139,7 +134,6 @@ watch(
     }
   },
 );
-
 const avatarStyle = computed<CSSProperties>(() => {
   const index = props.avatarIndex || 0;
   const col = index % 6;
@@ -154,7 +148,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   };
 });
 </script>
-
 <style scoped>
 .elements-right {
   display: flex;
@@ -167,7 +160,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
   margin-left: auto;
 }
-
 .hud-points,
 .hud-rounds,
 .hud-highscore {
@@ -179,29 +171,24 @@ const avatarStyle = computed<CSSProperties>(() => {
   font-size: 20px;
   font-weight: 700;
 }
-
 .score-wrapper,
 .highscore-wrapper {
   display: flex;
   align-items: center;
   gap: 4px;
 }
-
 .hud-points,
 .hud-correct {
   position: relative;
 }
-
 .negative {
   color: var(--neon-error);
 }
-
 .round-counter-view {
   display: flex;
   overflow: hidden;
   height: 1.2em;
 }
-
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition:
@@ -216,18 +203,15 @@ const avatarStyle = computed<CSSProperties>(() => {
   transform: translateY(-100%);
   opacity: 0;
 }
-
 .score-pop-enter-from {
   opacity: 0;
 }
-
 .score-pop-enter-active {
   animation: score-bump 0.3s ease-out;
 }
 .score-pop-leave-active {
   animation: score-bump-out 0.15s ease-in forwards;
 }
-
 .hud-bonus-popup {
   position: absolute;
   top: -20px;
@@ -238,7 +222,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   pointer-events: none;
   z-index: 1;
 }
-
 .hud-malus-popup {
   position: absolute;
   top: -20px;
@@ -249,41 +232,32 @@ const avatarStyle = computed<CSSProperties>(() => {
   pointer-events: none;
   z-index: 1;
 }
-
 .float-bonus-enter-active {
   animation: float-up 0.8s ease-out forwards;
 }
-
 .float-bonus-enter-from {
   opacity: 0;
   transform: translateY(10px);
 }
-
 .float-bonus-leave-active {
   display: none;
 }
-
 .float-bonus-leave-to {
   opacity: 0;
 }
-
 .float-bonus-leave-active {
   display: none;
 }
-
 .float-malus-enter-active {
   animation: float-up 0.8s ease-out forwards;
 }
-
 .float-malus-enter-from {
   opacity: 0;
   transform: translateY(10px);
 }
-
 .float-malus-leave-active {
   display: none;
 }
-
 .player-hud {
   container-type: inline-size;
   position: relative;
@@ -295,16 +269,13 @@ const avatarStyle = computed<CSSProperties>(() => {
   backdrop-filter: blur(5px);
   min-width: 240px;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
-
   background-size: 100% 4px;
   background: rgba(10, 4, 20, 0.92);
   box-sizing: border-box;
 }
-
 .rounded {
   border-radius: 8px;
 }
-
 .player-hud.first::after {
   content: "";
   position: absolute;
@@ -316,20 +287,17 @@ const avatarStyle = computed<CSSProperties>(() => {
   transform: rotate(30deg);
   animation: shine 4s infinite;
 }
-
 .player-hud.active {
   border: 2px solid var(--neon-pink);
   box-shadow: 0 0 10px var(--neon-pink);
   animation: floating 1s ease-in-out infinite;
 }
-
 .hud-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
   text-align: left;
 }
-
 .hud-avatar {
   width: 36px;
   height: 36px;
@@ -341,13 +309,11 @@ const avatarStyle = computed<CSSProperties>(() => {
     height: 44px;
   }
 }
-
 @container (max-width: 260px) {
   .hud-avatar {
     display: none;
   }
 }
-
 .hud-stats {
   display: flex;
   gap: 16px;
@@ -359,7 +325,6 @@ const avatarStyle = computed<CSSProperties>(() => {
     align-items: center;
   }
 }
-
 .hud-username {
   color: #fff;
   font-size: 14px;
@@ -373,14 +338,12 @@ const avatarStyle = computed<CSSProperties>(() => {
     color: var(--neon-yellow);
   }
 }
-
 .hud-subline {
   margin-top: 2px;
   font-size: 18px;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.9);
 }
-
 .host-info {
   display: flex;
   justify-content: center;
@@ -393,24 +356,46 @@ const avatarStyle = computed<CSSProperties>(() => {
   color: black;
   font-size: 12px;
 }
-
 .pending {
   opacity: 0.4;
 }
-
 .star-icon {
   color: var(--neon-yellow);
   filter: drop-shadow(0 0 5px var(--neon-yellow));
 }
-
 .image-icon {
   color: var(--neon-blue);
   filter: drop-shadow(0 0 5px var(--neon-blue));
   height: 24px;
 }
-
 .check-icon {
   color: var(--neon-success);
   filter: drop-shadow(0 0 5px var(--neon-success));
+} /* SMALL VARIANT */
+.player-hud.small {
+  gap: 10px;
+  padding: 10px;
+}
+.player-hud.small .hud-avatar {
+  width: 34px;
+  height: 34px;
+}
+.player-hud.small .hud-username {
+  font-size: 16px;
+}
+.player-hud.small .hud-points,
+.player-hud.small .hud-highscore,
+.player-hud.small .hud-rounds {
+  font-size: 17px;
+  padding: 6px;
+}
+.player-hud.small .star-icon,
+.player-hud.small .image-icon {
+  width: 18px;
+  height: 18px;
+}
+.player-hud.small .elements-right {
+  gap: 8px;
+  padding: 6px;
 }
 </style>

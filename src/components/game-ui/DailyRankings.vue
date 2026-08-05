@@ -20,6 +20,7 @@
           :avatar-index="ranking.avatarIndex"
           :points="ranking.score"
           :position="index + 1"
+          size="small"
         />
       </div>
     </template>
