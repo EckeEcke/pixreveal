@@ -49,7 +49,7 @@
                 <SelectionTile
                   icon-name="pixel:image-solid"
                   btn-text="SUBMIT ART"
-                  sub-title="Create and submit your own pixel art"
+                  sub-title="Create your own pixel art and add it"
                   btn-color="var(--neon-success)"
                 />
               </router-link>

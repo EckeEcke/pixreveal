@@ -110,4 +110,8 @@ p {
   box-sizing: border-box;
   margin-bottom: 32px;
 }
+
+.btn-primary {
+  width: 100%;
+}
 </style>

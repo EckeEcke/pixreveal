@@ -451,6 +451,10 @@ const downloadDrawing = () => {
   margin: 24px 0 16px;
 }
 
+.btn-primary {
+  width: 100%;
+}
+
 .btn-outline {
   background: transparent;
   border: 1px solid #3f4257;
