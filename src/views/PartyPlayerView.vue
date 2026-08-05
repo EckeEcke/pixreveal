@@ -59,6 +59,7 @@
           <AnswerButtons
             :hasAnswered="hasAnswered"
             :answers="answersForUi"
+            :inputDisabled="!isMyTurn"
             @answered="handleAnswer"
           />
           <div class="timer-container">

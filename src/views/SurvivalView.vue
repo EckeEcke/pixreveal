@@ -31,6 +31,7 @@
       <AnswerButtons
         :hasAnswered="survivalStore.hasAnswered"
         :answers="survivalStore.currentDrawing?.options || []"
+        :inputDisabled="gameStore.gameState !== 'revealing'"
         @answered="handleAnswer"
       />
     </section>

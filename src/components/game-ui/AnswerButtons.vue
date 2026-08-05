@@ -7,7 +7,7 @@
     >
       <button
         class="answer-btn"
-        :disabled="hasAnswered"
+        :disabled="hasAnswered || inputDisabled"
         :style="{
           '--btn-color': buttonColors[index % buttonColors.length].color,
           '--btn-glow': buttonColors[index % buttonColors.length].glow,
@@ -24,7 +24,7 @@
       </button>
 
       <span
-        v-if="configStore.showKeyHints && !hasAnswered"
+        v-if="configStore.showKeyHints && !hasAnswered && !inputDisabled"
         class="key-hint"
         :style="{
           '--btn-color': buttonColors[index % buttonColors.length].color,
@@ -46,6 +46,7 @@ import { vibrateError, vibrateSuccess } from "@/utils/vibration";
 const props = defineProps({
   answers: Array,
   hasAnswered: Boolean,
+  inputDisabled: Boolean,
 });
 
 const emit = defineEmits(["answered"]);
@@ -62,7 +63,8 @@ const soundStore = useSoundStore();
 const selectedAnswer = ref(undefined);
 
 const checkAnswer = (answer, event) => {
-  if (event) event.currentTarget.blur();
+  if (props.hasAnswered || props.inputDisabled) return;
+  if (event && event.currentTarget) event.currentTarget.blur();
   selectedAnswer.value = answer;
 
   if (answer.isCorrect) {
@@ -76,7 +78,16 @@ const checkAnswer = (answer, event) => {
 };
 
 const handleKeydown = (event) => {
-  if (props.hasAnswered) return;
+  // If any full-screen transition/overlay is visible, ignore keyboard input.
+  if (typeof document !== "undefined") {
+    if (
+      document.querySelector(".game-transition") ||
+      document.querySelector(".get-ready")
+    )
+      return;
+  }
+
+  if (props.hasAnswered || props.inputDisabled) return;
 
   const key = event.key;
   if (["1", "2", "3", "4"].includes(key)) {

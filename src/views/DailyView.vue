@@ -45,6 +45,7 @@
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
         :answers="rounds[currentRoundIndex].options"
+        :inputDisabled="showTransition || !isRevealing"
         @answered="handleAnswer"
       />
     </section>

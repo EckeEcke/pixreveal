@@ -56,6 +56,11 @@
           v-if="showAnswers"
           :hasAnswered="hasAnswered"
           :answers="currentRound?.options || []"
+          :inputDisabled="
+            showFinalRoundTransition ||
+            showBonusRoundTransition ||
+            gameStore.gameState !== 'revealing'
+          "
           @answered="handleAnswer"
         />
         <div v-else class="buzzer-container">

@@ -51,6 +51,11 @@
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
         :answers="currentRound?.options || []"
+        :inputDisabled="
+          showFinalRoundTransition ||
+          showBonusRoundTransition ||
+          gameStore.gameState !== 'revealing'
+        "
         @answered="handleAnswer"
       />
     </section>
@@ -97,15 +102,15 @@ const pixelData = ref(Array(256).fill(0));
 const hasAnswered = ref(false);
 const isRevealing = ref(true);
 const hasAnsweredCorrectly = ref(false);
-const timer = ref<number>(unref(configStore.revealTime));
-const timerDuration = computed(() => unref(configStore.revealTime));
+const timer = ref<number>(Number(unref(configStore.revealTime)));
+const timerDuration = computed(() => Number(unref(configStore.revealTime)));
 
 let timerId: number | null = null;
 let feedbackTimeoutId: number | null = null;
 let solutionTimeoutId: number | null = null;
 
 const currentRound = computed(() => gameStore.currentRound);
-const maxRounds = computed(() => configStore.maxRounds);
+const maxRounds = computed(() => Number(configStore.maxRounds));
 
 const {
   bonusRoundType,
@@ -127,11 +132,6 @@ const {
   baseRevealing: isRevealing,
 });
 
-// Beim Rundenstart soll ein bereits aktiver Filter (z. B. die Blur-
-// Bonusrunde) sofort auf seinen Zielwert springen, statt sich erst
-// dorthin einzublenden — sonst ist das neue Bild kurz zu wenig
-// verblurrt/gefiltert sichtbar (CSS-Transition würde von "none" aus
-// hochanimieren).
 const suppressFilterTransition = ref(false);
 
 const canvasEffectsStyle = computed(() => {

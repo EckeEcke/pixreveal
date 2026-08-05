@@ -39,6 +39,7 @@
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
         :answers="currentRound?.options || []"
+        :inputDisabled="gameStore.gameState !== 'revealing'"
         @answered="handleAnswer"
       />
     </section>
