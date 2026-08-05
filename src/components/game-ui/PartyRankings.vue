@@ -14,6 +14,7 @@
           :name="player.username"
           :avatar-index="player.avatarIndex"
           :points="player.points"
+          :size="partyPlayersSorted.length > 5 ? 'small' : 'medium'"
           :is-active="activePlayerId === player.playerId"
         />
       </div>

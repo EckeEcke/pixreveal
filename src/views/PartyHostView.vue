@@ -80,7 +80,6 @@
         :freeze-until-at="partyStore.freezeUntilAt"
         :freeze-by-player-id="partyStore.freezeByPlayerId"
       />
-      <PowerUpInfo class="powerup-info" />
     </div>
     <EmojiOverlay :new-emoji="lastEmoji" />
     <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
@@ -104,7 +103,6 @@ import CountdownTransition from "@/components/page-layout/CountdownTransition.vu
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import PartyRankings from "@/components/game-ui/PartyRankings.vue";
-import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
