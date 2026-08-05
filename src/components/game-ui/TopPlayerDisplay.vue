@@ -6,7 +6,6 @@
       active: isActive
     }"
   >
-    <!-- Avatar ohne gelben Border & ohne Krone -->
     <div class="avatar-container">
       <div
         v-if="avatarIndex !== undefined"
@@ -16,8 +15,7 @@
       <div class="avatar-shine"></div>
     </div>
 
-    <!-- Pill: Clean, heben sich durch hellen Pixel-Border & dunklen Body ab -->
-    <div class="player-pill">
+    <div class="player-pill" v-if="name">
       <span class="player-name">
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
       </span>

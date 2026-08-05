@@ -11,15 +11,17 @@
           {{ currentSlide.message }}
         </div>
         <div v-if="currentSlide.players?.length" class="who">
-          <div class="mini-avatars">
+          <div
+            v-for="p in currentSlide.players"
+            :key="p.playerId"
+            class="player-pill"
+          >
             <div
-              v-for="p in currentSlide.players"
-              :key="p.playerId"
               class="mini-avatar"
               :style="avatarStyleFor(p.avatarIndex)"
             />
+            <span class="player-pill-name">{{ p.playerNameUpper }}</span>
           </div>
-          <span class="player">{{ currentSlide.playerNamesUpper }}</span>
         </div>
       </div>
     </Transition>
@@ -71,16 +73,18 @@ const minQuickestAnswer = computed(() => {
   return min;
 });
 
+type SlidePlayer = {
+  playerId: string;
+  playerNameUpper: string;
+  avatarIndex: number;
+};
+
 type Slide = {
   key: string;
   emoji: string;
   title: string;
   message: string;
-  players: Array<{
-    playerId: string;
-    playerNameUpper: string;
-    avatarIndex: number;
-  }>;
+  players: SlidePlayer[];
   playerNamesUpper: string;
 };
 
@@ -222,7 +226,7 @@ const slides = computed<Slide[]>(() => {
     const first = items[0];
     if (!first) continue;
 
-    const slidePlayers = [...items]
+    const slidePlayers: SlidePlayer[] = [...items]
       .sort((a, b) => a.playerNameUpper.localeCompare(b.playerNameUpper))
       .map((p) => ({
         playerId: p.playerId,
@@ -336,7 +340,7 @@ onBeforeUnmount(() => stop());
   align-items: start;
   gap: 16px;
   width: 100%;
-  margin: 16px 0 24px;
+  margin: 16px 0;
   @media (min-width: 576px) {
     grid-template-columns: 80px auto;
   }
@@ -345,13 +349,14 @@ onBeforeUnmount(() => stop());
 .title-pill {
   padding: 12px 32px;
   border-radius: 8px;
+  text-align: left;
   font-weight: 900;
   font-size: 18px;
   letter-spacing: 1px;
   line-height: 1.5;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  border: 2px solid var(--neon-yellow);
+  border: 2px solid var(--primary);
   color: rgba(255, 255, 255, 0.92);
   @media (min-width: 576px) {
     font-size: 20px;
@@ -389,27 +394,35 @@ onBeforeUnmount(() => stop());
 
 .who {
   margin-top: 16px;
-  opacity: 0.95;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
 }
 
-.mini-avatars {
+.player-pill {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .mini-avatar {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
   background-color: #2d3748;
+  flex-shrink: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.player {
+.player-pill-name {
   color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 </style>

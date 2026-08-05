@@ -141,7 +141,7 @@ const goBackSingleplayer = () => {
 gameStore.reset();
 
 const submitSingleplayerScore = () => {
-  if (!showSingleplayerRank.value) return;
+  if (!showSingleplayerRank.value || playerStore.points <= 0) return;
 
   fetch("/api/post-singleplayer", {
     method: "POST",

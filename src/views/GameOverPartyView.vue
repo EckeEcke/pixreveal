@@ -29,8 +29,8 @@
             <Icon icon="pixel:arrow-left" /> Go back
           </ButtonSecondary>
         </div>
+        <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
       </div>
-      <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
       <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
         <PlayerDisplay
           :position="index + 1"
@@ -239,7 +239,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 48px;
 }
 
 .party-subtitle {
@@ -281,5 +280,9 @@ main {
 .party-wrapper {
   width: 800px;
   max-width: 100%;
+}
+
+.logo {
+  margin-bottom: 16px;
 }
 </style>

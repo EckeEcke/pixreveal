@@ -12,13 +12,6 @@
     <div>
       <div v-if="!waitingForFinalResults" class="results-card">
         <h1 class="logo">GAME <span>OVER</span></h1>
-        <h2 class="rank-prophet" v-if="winnerPlayer">
-          {{
-            isMe(winnerPlayer.playerId)
-              ? "YOU WIN!"
-              : `${winnerPlayer.username.toUpperCase()} WINS!`
-          }}
-        </h2>
 
         <div class="gameover-actions">
           <ButtonPrimary
@@ -221,17 +214,6 @@ main {
   text-align: center;
   margin-bottom: 32px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  .rank-prophet {
-    margin: 0 auto 16px;
-  }
-}
-
-.rank-prophet {
-  color: #ffcc00;
-  text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-  animation: floating 2s ease-in-out infinite;
-  font-weight: bold;
-  font-size: 24px;
 }
 
 .results-card::after {
