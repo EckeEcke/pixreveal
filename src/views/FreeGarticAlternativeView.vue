@@ -25,7 +25,7 @@
         itself piece by piece. It brings back the nostalgic thrill of a classic
         <strong>pixel guessing game</strong>. Host the game on a big screen, use
         your phones as controllers, hit the buzzer, and guess! Sabotage your
-        friends with chaotic power-ups to take the win.
+        friends with chaotic power-ups to take the win. PixReveal supports up to 10 players.
       </p>
 
       <div class="cta-container">

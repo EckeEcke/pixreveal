@@ -14,7 +14,7 @@
         PixReveal is a free, browser-based image reveal quiz where pictures progressively 
         unfold pixel by pixel. It is completely safe for work (SFW) and anyone can understand the 
         gameplay instantly. You can jump straight into the action with your team with no registration, 
-        no downloads, and no login needed.
+        no downloads, and no login needed. PixReveal supports up to 10 players, covering the group size of an average agile team.
       </p>
 
       <p class="party-desc">

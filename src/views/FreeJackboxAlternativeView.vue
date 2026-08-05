@@ -15,7 +15,7 @@
         office break with your colleagues. If you love
         <strong>games like Jackbox</strong> or a fast-paced
         <strong>multiplayer pixel quiz</strong>, you can play right in your
-        browser with no login or app needed.
+        browser with no login or app needed. PixReveal supports up to 10 players.
       </p>
 
       <p class="party-desc">

@@ -16,7 +16,7 @@
         <strong>pixel art quiz</strong> where an image unveils pixel by pixel,
         you are in the right place. Challenge your friends or coworkers in a
         competitive <strong>pixel guessing game</strong> directly in your
-        browser — no login or app required.
+        browser — no login or app required. PixReveal supports up to 10 players.
       </p>
 
       <p class="party-desc">
