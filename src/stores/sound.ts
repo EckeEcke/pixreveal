@@ -25,7 +25,7 @@ import robot4Sound from "@/assets/audio/robot-talk4.mp3";
 
 export const useSoundStore = defineStore("sound", () => {
   const isAudioEnabled = ref(
-    localStorage.getItem("pixreveal_audio") === "true",
+    localStorage.getItem("pixreveal_audio") !== "false",
   );
 
   const sources = {
