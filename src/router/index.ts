@@ -18,9 +18,9 @@ const router = createRouter({
       component: HomeView,
       meta: {
         robots: "index, follow",
-        title: "PixReveal – Free Pixel Art Party & Daily Guessing Game",
+        title: "PixReveal – Free Online Pixel Art Party & Daily Guessing Game",
         description:
-          "Play PixReveal for free: guess pixel art with friends, host a Jackbox-style party game, join online lobbies, or solve the daily challenge in your browser.",
+          "Play PixReveal for free in your browser: guess pixel art with friends, host a Jackbox-style party game, join online lobbies, or solve the daily challenge.",
         canonical: "https://www.pixreveal.com/",
       },
     },
@@ -30,9 +30,9 @@ const router = createRouter({
       component: () => import("@/views/EditorView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Editor - PixReveal",
+        title: "Pixel Art Editor & Drawing Tool | PixReveal",
         description:
-          "Create your own pixel art drawings and contribute to the official PixReveal game gallery.",
+          "Create custom pixel art directly in your browser and submit your drawings to be featured in official PixReveal game modes!",
         canonical: "https://www.pixreveal.com/editor",
       },
     },
@@ -42,9 +42,10 @@ const router = createRouter({
       component: () => import("@/views/SinglePlayerView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Pixel Art Singleplayer Game & Daily Challenge | PixReveal",
+        title:
+          "Free Singleplayer Pixel Art Games & Daily Challenge | PixReveal",
         description:
-          "Play 5 pixel art singleplayer modes, race against time, improve your high score, and solve the daily challenge directly in your browser.",
+          "Play 5 unique pixel art singleplayer modes: race against time, beat high scores, and solve the daily challenge directly in your browser for free.",
         canonical: "https://www.pixreveal.com/singleplayer",
       },
     },
@@ -156,9 +157,9 @@ const router = createRouter({
       component: () => import("@/views/PlayPartyView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Jackbox-Style Local Party Game with Phones | PixReveal",
+        title: "Play Local Party Game – Use Phones as Controllers | PixReveal",
         description:
-          "Use smartphones as controllers and play a free Jackbox-style pixel art party game on your TV or laptop with friends.",
+          "Host a local party game on your TV or screen. Players join instantly with their smartphones. No app download required!",
         canonical: "https://www.pixreveal.com/play-party",
       },
     },
@@ -182,7 +183,7 @@ const router = createRouter({
         robots: "index, follow",
         title: "Free Jackbox Alternative for TV & Phones | PixReveal",
         description:
-          "Turn your smartphones into controllers! Host PixReveal on your TV or laptop and play the ultimate party game with your friends.",
+          "Looking for a free game like Jackbox? Turn your smartphones into controllers and host PixReveal on your TV or laptop for your next party.",
         canonical: "https://www.pixreveal.com/free-jackbox-alternative",
       },
     },
@@ -192,7 +193,7 @@ const router = createRouter({
       component: () => import("@/views/FreeGarticAlternativeView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Games Like Skribbl.io & Gartic Phone | PixReveal",
+        title: "Free Alternative to Skribbl.io & Gartic Phone | PixReveal",
         description:
           "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
         canonical:
@@ -205,9 +206,9 @@ const router = createRouter({
       component: () => import("@/views/FreePixelGuessrView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Games like Pixel Guessr | PixReveal",
+        title: "Free Pixel Guessr Alternative – Guess Pixel Art | PixReveal",
         description:
-          "Looking for a quiz game about guessing pixel drawings? Play this multiplayer pixel quiz directly in your browser!",
+          "Love Pixel Guessr? Play PixReveal, the free pixel drawing quiz with singleplayer modes, daily challenges, and online multiplayer.",
         canonical: "https://www.pixreveal.com/free-pixel-guessr-alternative",
       },
     },
@@ -217,9 +218,9 @@ const router = createRouter({
       component: () => import("@/views/OnlineRevealGameView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Online Picture Reveal Game | PixReveal",
+        title: "Free Online Picture Reveal Game & Image Quiz | PixReveal",
         description:
-          "Looking for a quiz game about guessing a revealing image? Play PixReveal directly in your browser!",
+          "Test your recognition skills in PixReveal: a free online picture reveal quiz where you guess the hidden image pixel by pixel!",
         canonical: "https://www.pixreveal.com/picture-reveal-game",
       },
     },
@@ -229,9 +230,9 @@ const router = createRouter({
       component: () => import("@/views/FridayGameView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Friday Afterwork Game for Teams | PixReveal",
+        title: "Free Friday Afterwork Game for Teams and coworkers | PixReveal",
         description:
-          "Play PixReveal with your team. A free, safe-for-work picture reveal quiz for Friday afterwork. No login, no registration – start playing instantly in the browser.",
+          "The perfect free, safe-for-work team bonding game! No login or registration required – jump straight into a quick picture reveal quiz in your browser.",
         canonical: "https://www.pixreveal.com/friday-afterwork-game",
       },
     },
@@ -282,7 +283,7 @@ const router = createRouter({
       component: () => import("@/views/HallOfFameView.vue"),
       meta: {
         robots: "index, follow",
-        title: "PixReveal Hall of Fame - Daily Challenge Winners",
+        title: "Hall of Fame – Daily Challenge Winners | PixReveal",
         description:
           "Check out the PixReveal Daily Champions! See who guessed the drawings with the highest score and learn how to secure your own place in the Hall of Fame.",
         canonical: "https://www.pixreveal.com/hall-of-fame",
