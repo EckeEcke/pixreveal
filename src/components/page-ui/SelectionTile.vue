@@ -17,7 +17,7 @@
       </div>
     </div>
     <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
-      ><Icon icon="pixel:users-solid" /> 2-8</span
+      ><Icon icon="pixel:users-solid" /> 2-10</span
     >
     <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
       ><Icon icon="pixel:user-solid" /> 1</span

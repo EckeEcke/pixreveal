@@ -34,6 +34,11 @@ const generalFaqs = [
       "You can play solo in singleplayer mode to chase high scores, or play with friends. There is no random matchmaking with strangers. For multiplayer, you can either host a local party game Jackbox-style where one screen acts as the host and everyone uses their smartphones as controllers, or invite friends to a private online lobby where everyone plays on their own screen.",
   },
   {
+    question: "How many players can play multiplayer?",
+    answer:
+      "Party Mode and Online Multiplayer both support up to 10 players.",
+  },
+  {
     question: "Is PixReveal safe for work?",
     answer:
       "Yes, PixReveal is safe for work. It is designed as a game for everyone. All drawings including user generated content are curated to provide a great experience for everybody.",

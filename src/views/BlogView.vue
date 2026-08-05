@@ -4,6 +4,21 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">08-05-26</span>
+        </div>
+        <h3 class="log-title">
+          Maximum amount of players in multiplayer raised to 10!
+        </h3>
+        <p>
+          Now up to 10 people can play together in local party or online
+          multiplayer. This means more chaos, more powerups, more competition,
+          more fun! I also added a daily champion card that you see on the
+          homepage if you won yesterday's daily challenge. Have you already
+          played today's daily challenge?
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">08-01-26</span>
         </div>
         <h3 class="log-title">Major Update for Party Multiplayer!</h3>

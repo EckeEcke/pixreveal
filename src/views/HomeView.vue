@@ -31,7 +31,7 @@
                   sub-title="Jackbox style: control via phone"
                   btn-color="var(--neon-yellow)"
                   :is-shiny="true"
-                  :max-players="8"
+                  :max-players="10"
                 />
               </router-link>
 
@@ -41,7 +41,7 @@
                   btn-text="ONLINE MULTIPLAYER"
                   sub-title="Play online together from anywhere"
                   btn-color="var(--neon-cyan)"
-                  :max-players="8"
+                  :max-players="10"
                 />
               </router-link>
 
