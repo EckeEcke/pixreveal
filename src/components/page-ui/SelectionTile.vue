@@ -5,7 +5,7 @@
     :style="{ '--btn-color': btnColor }"
     @click="handleClick"
     @mouseenter="soundStore.handleHoverSound"
-    :disabled="disabled"
+    :disabled="disabled || loading"
   >
     <Icon :icon="iconName || ''" class="background-icon" />
     <div class="glow-layer"></div>
@@ -25,6 +25,9 @@
     <span v-if="highScore" class="player-info"
       ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
     >
+    <div v-if="loading" class="loading-overlay">
+      <span class="spinner"></span>
+    </div>
   </button>
 </template>
 
@@ -39,6 +42,7 @@ const props = defineProps<{
   subTitle?: string;
   btnColor?: string;
   disabled?: boolean;
+  loading?: boolean;
   isShiny?: boolean;
   maxPlayers?: number;
   highScore?: number;
@@ -211,5 +215,29 @@ const handleClick = (event: MouseEvent) => {
   gap: 4px;
   min-width: 36px;
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--btn-color);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

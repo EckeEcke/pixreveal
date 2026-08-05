@@ -4,6 +4,22 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">08-06-26</span>
+        </div>
+        <h3 class="log-title">New navigation for singleplayer</h3>
+        <p>
+          The Daily Challenge and Classic mode are by far the most popular
+          singleplayer options on PixReveal. So I've given the homepage a
+          refresh: instead of a single "Singleplayer" tile, you'll now find a
+          "Play Now" option that takes you straight into the action. The Daily
+          Challenge takes its place right on the homepage too, so you can jump
+          into it directly without any extra clicks. "Submit Your Art" and the
+          full singleplayer mode selection have moved further down the page to
+          make room.
+        </p>
+      </div>
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">08-05-26</span>
         </div>
         <h3 class="log-title">

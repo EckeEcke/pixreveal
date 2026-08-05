@@ -11,19 +11,37 @@
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="classic-mode-buttons">
-              <router-link
-                to="/singleplayer"
+              <SelectionTile
+                :btn-function="startClassic"
                 data-sfx="click"
-                class="tile-link"
-              >
-                <SelectionTile
-                  icon-name="pixel:user-solid"
-                  btn-text="SINGLEPLAYER"
-                  sub-title="Choose your mode and start playing"
-                  btn-color="var(--primary)"
-                  :max-players="1"
-                />
-              </router-link>
+                icon-name="pixel:play-solid"
+                btn-text="PLAY NOW"
+                sub-title="Jump right into the classic game mode"
+                btn-color="var(--primary)"
+                :max-players="1"
+              />
+
+              <SelectionTile
+                data-sfx="click"
+                :icon-name="
+                  dailyStore.hasPlayedToday
+                    ? 'pixel:numbered-list-solid'
+                    : 'pixel:calender'
+                "
+                :btn-function="startDaily"
+                btn-text="DAILY CHALLENGE"
+                :sub-title="
+                  dailyStore.hasPlayedToday
+                    ? 'Check today\'s results'
+                    : 'New puzzle every day with global leaderboard'
+                "
+                btn-color="var(--neon-success)"
+                :loading="dailyStore.isLoading"
+                :is-shiny="
+                  true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
+                "
+              />
+
               <router-link to="/play-party" data-sfx="click" class="tile-link">
                 <SelectionTile
                   icon-name="pixel:users-solid"
@@ -44,18 +62,32 @@
                   :max-players="10"
                 />
               </router-link>
-
+            </div>
+            <DailyWinner v-if="dailyStore.isYesterdayWinner" />
+            <YoutubeEmbed video-id="YQl5jOqm2n0" />
+            <div class="classic-mode-buttons">
+              <router-link
+                to="/singleplayer"
+                data-sfx="click"
+                class="tile-link"
+              >
+                <SelectionTile
+                  icon-name="pixel:user-solid"
+                  btn-text="MORE MODES"
+                  sub-title="Play Blur, Gravity, Inspect & Survival"
+                  btn-color="var(--neon-blue)"
+                  :max-players="1"
+                />
+              </router-link>
               <router-link to="/editor" data-sfx="click" class="tile-link">
                 <SelectionTile
                   icon-name="pixel:image-solid"
                   btn-text="SUBMIT ART"
                   sub-title="Create your own pixel art and add it"
-                  btn-color="var(--neon-success)"
+                  btn-color="var(--neon-pink)"
                 />
               </router-link>
             </div>
-            <DailyWinner v-if="dailyStore.isYesterdayWinner" />
-            <YoutubeEmbed video-id="YQl5jOqm2n0" />
             <TopPlayer />
           </div>
         </div>
@@ -73,6 +105,7 @@ import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import { useChannelStore } from "@/stores/channel";
 import { useConfigStore } from "@/stores/config";
+import { useGameStore } from "@/stores/game";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
@@ -80,6 +113,7 @@ import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import DailyWinner from "@/components/game-ui/DailyWinner.vue";
 import { useDailyStore } from "@/stores/daily";
+import { useRouter } from "vue-router";
 
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
@@ -87,6 +121,25 @@ const configStore = useConfigStore();
 const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
+const { prepareGame } = useGameStore();
+
+const router = useRouter();
+
+const startDaily = () => {
+  prepareGame(10, dailyStore.dailyRounds);
+  playerStore.gameMode = dailyStore.mode;
+  if (dailyStore.hasPlayedToday) {
+    router.push("/rankings-daily");
+  } else {
+    router.push("/daily");
+  }
+};
+
+const startClassic = () => {
+  prepareGame(configStore.revealTime);
+  playerStore.gameMode = "classic";
+  router.push("/classic");
+};
 
 const setUser = () =>
   playerStore.setUser({

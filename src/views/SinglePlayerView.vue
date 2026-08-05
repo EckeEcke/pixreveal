@@ -11,41 +11,11 @@
           <div class="mode-section">
             <div class="mode-buttons">
               <SelectionTile
-                data-sfx="click"
-                :icon-name="
-                  dailyStore.hasPlayedToday
-                    ? 'pixel:numbered-list-solid'
-                    : 'pixel:calender'
-                "
-                :btn-function="startDaily"
-                btn-text="DAILY CHALLENGE"
-                :sub-title="
-                  dailyStore.hasPlayedToday
-                    ? 'Check today\'s results'
-                    : 'New puzzle every day with global leaderboard'
-                "
-                btn-color="var(--neon-yellow)"
-                :disabled="dailyStore.isLoading"
-                :is-shiny="
-                  true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
-                "
-              />
-              <SelectionTile
-                icon-name="pixel:sparkles"
-                :btn-function="startClassic"
-                btn-text="CLASSIC REVEAL"
-                sub-title="Drawing gets revealed pixel by pixel"
-                btn-color="var(--primary)"
-              />
-              </div>
-              <h2>More Game Modes</h2>
-              <div class="mode-buttons">
-              <SelectionTile
                 icon-name="pixelarticons:blocks"
                 :btn-function="startGravity"
                 btn-text="GRAVITY"
                 sub-title="Pixels dropping in from the top in Tetris style"
-                btn-color="var(--neon-success)"
+                btn-color="var(--neon-yellow)"
               />
               <SelectionTile
                 icon-name="pixel:search"
@@ -68,6 +38,36 @@
                 btn-text="BLUR"
                 sub-title="Guess the image as it unblurs"
                 btn-color="var(--neon-pink)"
+              />
+            </div>
+            <h2>Popular</h2>
+            <div class="mode-buttons">
+            <SelectionTile
+                icon-name="pixel:sparkles"
+                :btn-function="startClassic"
+                btn-text="CLASSIC REVEAL"
+                sub-title="Drawing gets revealed pixel by pixel"
+                btn-color="var(--primary)"
+              />
+              <SelectionTile
+                data-sfx="click"
+                :icon-name="
+                  dailyStore.hasPlayedToday
+                    ? 'pixel:numbered-list-solid'
+                    : 'pixel:calender'
+                "
+                :btn-function="startDaily"
+                btn-text="DAILY CHALLENGE"
+                :sub-title="
+                  dailyStore.hasPlayedToday
+                    ? 'Check today\'s results'
+                    : 'New puzzle every day with global leaderboard'
+                "
+                btn-color="var(--neon-success)"
+                :loading="dailyStore.isLoading"
+                :is-shiny="
+                  true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
+                "
               />
             </div>
           </div>

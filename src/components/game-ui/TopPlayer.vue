@@ -18,14 +18,6 @@
       </router-link>
     </div>
 
-    <div v-if="dailyStore.hasPlayedToday" class="info">
-      <Icon icon="pixel:check-circle-solid" />
-      <div>
-        <p>You already played today!</p>
-        <p>Come back tomorrow to play again.</p>
-      </div>
-    </div>
-
     <ButtonPrimary
       v-if="!dailyStore.hasPlayedToday"
       data-sfx="click"
@@ -111,32 +103,6 @@ a {
 .crown {
   font-size: 24px;
   color: var(--neon-yellow);
-}
-
-.info-box {
-  box-sizing: border-box;
-}
-
-.info {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  color: var(--neon-success);
-  font-weight: 700;
-  width: 400px;
-  max-width: 100%;
-}
-
-.info p {
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.info p:nth-of-type(2) {
-  color: var(--color-secondary);
-  font-weight: 400;
-  line-height: 1;
-  font-size: 12px;
 }
 
 .background-icon {
