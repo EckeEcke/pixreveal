@@ -30,7 +30,7 @@
             icon="streamline-pixel:business-products-magic-rabbit"
             class="icon"
           />
-          Bonus rounds with special rulesets
+          Bonus rounds with special rulesets.
         </li>
         <li>
           <Icon

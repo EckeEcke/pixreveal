@@ -93,7 +93,7 @@
             data-sfx="click"
             @click="hostGame"
           >
-            HOST PARTY
+            CREATE ROOM
           </button>
 
           <div v-else class="join-container">

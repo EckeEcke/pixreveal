@@ -7,21 +7,21 @@
           <span class="emoji">&#x1F526;</span>
           <div>
             <div class="name">lights out</div>
-            <div class="desc">darken the canvas for 4 seconds</div>
+            <div class="desc">Darken the canvas for 4 seconds</div>
           </div>
         </li>
         <li class="item">
           <span class="emoji">&#x1F500;</span>
           <div>
             <div class="name">scramble</div>
-            <div class="desc">mix up the letters of the answers</div>
+            <div class="desc">Mix up the letters of the answers</div>
           </div>
         </li>
         <li class="item">
           <span class="emoji">&#x2744;&#xFE0F;</span>
           <div>
             <div class="name">freeze</div>
-            <div class="desc">stop your friends from acting for 4 seconds</div>
+            <div class="desc">Stop your friends from acting for 4 seconds</div>
           </div>
         </li>
       </ul>
@@ -40,7 +40,7 @@
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  border: 1px solid var(--neon-blue);
+  border: 2px solid var(--primary);
   box-sizing: border-box;
   font-weight: 900;
   font-size: 20px;
