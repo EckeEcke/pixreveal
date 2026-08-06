@@ -12,13 +12,6 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import DailyRankings from "@/components/game-ui/DailyRankings.vue";
-import { useDailyStore } from "@/stores/daily";
-
-const dailyStore = useDailyStore();
-
-if (!dailyStore.dailyRounds.length) {
-  dailyStore.fetchDailyData();
-}
 </script>
 
 <style scoped>

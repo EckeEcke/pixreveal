@@ -61,11 +61,11 @@ const MUSIC_ROUTES = new Set([
 ]);
 
 const tracklist = [
-  '/assets/audio/music10.mp3',
-  '/assets/audio/music11.mp3',
-  '/assets/audio/music12.mp3',
-  '/assets/audio/music13.mp3',
-]
+  "/assets/audio/music10.mp3",
+  "/assets/audio/music11.mp3",
+  "/assets/audio/music12.mp3",
+  "/assets/audio/music13.mp3",
+];
 
 const randomIndex = Math.floor(Math.random() * tracklist.length);
 
@@ -150,8 +150,9 @@ const handleVisibilityChange = () => {
   }
 };
 
+dailyStore.fetchDailyData();
+
 onMounted(() => {
-  dailyStore.fetchDailyData();
   requestWakeLock();
   document.addEventListener("visibilitychange", handleVisibilityChange);
   const urlParams = new URLSearchParams(window.location.search);

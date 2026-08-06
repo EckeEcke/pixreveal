@@ -105,10 +105,6 @@ const paginatedWinners = computed(() => {
   const end = start + ITEMS_PER_PAGE
   return winners.value.slice(start, end)
 })
-
-if (!dailyStore.dailyRounds.length) {
-  dailyStore.fetchDailyData()
-}
 </script>
 
 <style scoped>
