@@ -28,6 +28,11 @@
                     ? 'pixel:numbered-list-solid'
                     : 'pixel:calender'
                 "
+                :max-players="
+                  !dailyStore.hasPlayedToday
+                    ? 1
+                    : undefined
+                "
                 :btn-function="startDaily"
                 btn-text="DAILY CHALLENGE"
                 :sub-title="
