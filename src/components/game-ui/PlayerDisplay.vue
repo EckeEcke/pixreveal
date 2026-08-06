@@ -438,7 +438,7 @@ const avatarStyle = computed<CSSProperties>(() => {
 .history-box.incorrect {
   background: var(--neon-error);
 }
-.history-box:nth-child(5)::after {
+.history-box:nth-child(5n)::after {
   content: "★";
   position: absolute;
   top: 40%;
