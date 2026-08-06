@@ -99,7 +99,7 @@
         <div class="join-terminal">
           <input
             v-model="joinRoomId"
-            placeholder="Enter room ID"
+            placeholder="Enter ID"
             :maxlength="ROOM_ID_LENGTH"
             autocapitalize="on"
             class="terminal-input"
@@ -255,7 +255,7 @@ h2 {
 
 .join-terminal {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 120px 1fr;
   gap: 8px;
 }
 
