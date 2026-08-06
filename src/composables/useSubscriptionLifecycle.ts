@@ -99,6 +99,7 @@ export function syncPlayersFromHash(
       points: 0,
       hasFinished: false,
       correctAnswers: 0,
+      answerHistory: [],
     });
 
     return acc;

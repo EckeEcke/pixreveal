@@ -7,4 +7,5 @@ export interface Player {
   points: number;
   hasFinished: boolean;
   correctAnswers: number;
+  answerHistory?: boolean[];
 }

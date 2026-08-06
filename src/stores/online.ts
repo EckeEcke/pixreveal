@@ -29,11 +29,13 @@ export const useOnlineStore = defineStore("online", () => {
   const resetScoresForNextMatch = () => {
     playerStore.points = 0;
     playerStore.correctAnswers = 0;
+    playerStore.answerHistory = [];
 
     channelStore.playersOnline.forEach((p: Player) => {
       p.points = 0;
       p.correctAnswers = 0;
       p.hasFinished = false;
+      p.answerHistory = [];
     });
   };
 
@@ -79,7 +81,7 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind(
       "client-player-finished",
-      (data: { playerId: string; points: number; correctAnswers: number }) => {
+      (data: { playerId: string; points: number; correctAnswers: number; answerHistory: boolean[]; }) => {
         const player = channelStore.playersOnline.find(
           (p: Player) => p.playerId === data.playerId,
         );
@@ -87,6 +89,7 @@ export const useOnlineStore = defineStore("online", () => {
           player.points = data.points;
           player.hasFinished = true;
           player.correctAnswers = data.correctAnswers;
+          player.answerHistory = data.answerHistory;
         }
       },
     );
@@ -120,6 +123,7 @@ export const useOnlineStore = defineStore("online", () => {
 
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
+    const answerHistory = playerStore.answerHistory;
     const me = channelStore.playersOnline.find(
       (p: Player) => p.playerId === channelStore.playerId,
     );
@@ -128,12 +132,14 @@ export const useOnlineStore = defineStore("online", () => {
       me.points = points;
       me.hasFinished = true;
       me.correctAnswers = correctAnswers;
+      me.answerHistory = answerHistory
     }
 
     channel.trigger("client-player-finished", {
       playerId: channelStore.playerId,
       points,
       correctAnswers,
+      answerHistory,
     });
   };
 

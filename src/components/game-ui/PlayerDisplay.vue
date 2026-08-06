@@ -22,6 +22,9 @@
         {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
       </div>
       <div v-if="subline" class="hud-subline">{{ subline }}</div>
+      <div v-if="sublineSmall" class="hud-subline-small">
+        {{ sublineSmall }}
+      </div>
     </div>
     <div
       v-if="
@@ -68,6 +71,14 @@
     <div v-if="isHost" class="host-info">
       <Icon icon="pixel:crown-solid" /> HOST
     </div>
+    <div v-if="answerHistory?.length" class="hud-round-history">
+      <span
+        v-for="(correct, i) in answerHistory"
+        :key="i"
+        class="history-box"
+        :class="correct ? 'correct' : 'incorrect'"
+      ></span>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -81,6 +92,7 @@ const props = withDefaults(
     position?: number;
     name?: string;
     subline?: string;
+    sublineSmall?: string;
     avatarIndex?: number;
     points?: number;
     highscore?: number;
@@ -94,6 +106,7 @@ const props = withDefaults(
     rounded?: boolean;
     shiny?: boolean;
     size?: "medium" | "small";
+    answerHistory?: boolean[];
   }>(),
   { size: "medium" },
 );
@@ -263,8 +276,10 @@ const avatarStyle = computed<CSSProperties>(() => {
   position: relative;
   overflow: hidden;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+  row-gap: 4px;
   padding: 12px;
   backdrop-filter: blur(5px);
   min-width: 240px;
@@ -344,6 +359,11 @@ const avatarStyle = computed<CSSProperties>(() => {
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.9);
 }
+.hud-subline-small {
+  margin-top: 4px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
 .host-info {
   display: flex;
   justify-content: center;
@@ -397,5 +417,40 @@ const avatarStyle = computed<CSSProperties>(() => {
 .player-hud.small .elements-right {
   gap: 8px;
   padding: 6px;
+}
+.hud-round-history {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 0;
+}
+.history-box {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.history-box.correct {
+  background: var(--neon-success);
+}
+.history-box.incorrect {
+  background: var(--neon-error);
+}
+.history-box:nth-child(5)::after {
+  content: "★";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  color: var(--neon-yellow);
+  pointer-events: none;
+  -webkit-text-stroke: 1px black;
+}
+.player-hud.small .history-box {
+  width: 12px;
+  height: 12px;
 }
 </style>

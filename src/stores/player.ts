@@ -27,10 +27,11 @@ export const usePlayerStore = defineStore("player", () => {
   const avatarIndex: Ref<number> = ref(savedProfile.avatar ?? 0);
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
+  const answerHistory: Ref<boolean[]> = ref([]);
   const gameMode = ref<
     "classic" | "inspect" | "gravity" | "survival" | "blur" | string
   >("classic");
-  const isCreatorMode = ref(false);
+  const isCreatorMode: Ref<boolean> = ref(false);
 
   watch([playerName, avatarIndex, playerId], ([newName, newAvatar, newId]) => {
     localStorage.setItem(
@@ -48,6 +49,7 @@ export const usePlayerStore = defineStore("player", () => {
     setAvatar(user.avatar);
     points.value = 0;
     correctAnswers.value = 0;
+    answerHistory.value = [];
   };
 
   const setPlayerName = (newName: string) => {
@@ -67,6 +69,10 @@ export const usePlayerStore = defineStore("player", () => {
     if (earnedPoints > 0) correctAnswers.value++;
   };
 
+  const pushToAnswerHistory = (isCorrect: boolean) => {
+    answerHistory.value.push(isCorrect);
+  }
+
   return {
     controllerId,
     playerId,
@@ -76,8 +82,10 @@ export const usePlayerStore = defineStore("player", () => {
     correctAnswers,
     gameMode,
     isCreatorMode,
+    answerHistory,
     setUser,
     setAvatar,
     addPoints,
+    pushToAnswerHistory,
   };
 });

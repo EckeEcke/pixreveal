@@ -182,11 +182,10 @@ const setupDrawing = () => {
   if (!currentRound.value) return;
 
   clearAllLocalTimers();
-  // Reset local answer state BEFORE showing new content
+
   hasAnswered.value = false;
   hasAnsweredCorrectly.value = false;
 
-  // Filter-Sprung beim Rundenstart ohne Transition anwenden.
   suppressFilterTransition.value = true;
   isRevealing.value = true;
 
@@ -195,8 +194,6 @@ const setupDrawing = () => {
 
   startTimer();
 
-  // Transition erst nach dem gerenderten Sprung wieder aktivieren,
-  // damit spätere Änderungen (z. B. abnehmender Blur) wieder sanft animieren.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       suppressFilterTransition.value = false;
@@ -225,6 +222,8 @@ const handleAnswer = (selectedOption: any) => {
     hasAnsweredCorrectly.value = false;
     soundStore.playSound("incorrect");
   }
+
+  playerStore.pushToAnswerHistory(selectedOption?.isCorrect ?? false);
 
   workerSetTimeout(() => {
     pixelCanvasRef.value?.playShine();

@@ -110,7 +110,7 @@
             data-sfx="click"
             @click="joinGame"
           >
-            JOIN
+            JOIN ROOM
           </button>
         </div>
       </div>

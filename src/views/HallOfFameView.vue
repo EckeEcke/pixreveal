@@ -36,7 +36,7 @@
       <PlayerDisplay
         v-for="player in paginatedWinners"
         :key="player.date"
-        :subline="player.date"
+        :subline-small="player.date"
         :name="player.winner.name"
         :avatar-index="player.winner.avatarIndex"
         :points="player.winner.score"

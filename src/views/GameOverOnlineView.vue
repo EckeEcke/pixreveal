@@ -47,6 +47,7 @@
           :is-pending="!player.hasFinished"
           :correct-answers="player.correctAnswers"
           :show-you-indicator="isMe(player.playerId)"
+          :answer-history="player.answerHistory"
         />
       </div>
 
@@ -67,7 +68,7 @@
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
@@ -95,7 +96,7 @@ const showIntro = ref(true);
 const showWinnerAnimation = ref(false);
 const winnerAnimationShown = ref(false);
 
-const isMe = (id) => id === channelStore.playerId;
+const isMe = (id: string) => id === channelStore.playerId;
 
 const playersOnline = computed(() => channelStore.playersOnline);
 const playersSortedByPoints = computed(() => {

@@ -62,6 +62,7 @@ export function buildPlayerFromMember(member: RawMember): Player {
     points: 0,
     hasFinished: false,
     correctAnswers: 0,
+    answerHistory: [],
   };
 }
 
