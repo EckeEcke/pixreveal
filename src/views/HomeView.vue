@@ -16,9 +16,10 @@
                 data-sfx="click"
                 icon-name="pixel:play-solid"
                 btn-text="PLAY NOW"
-                sub-title="Jump right into the classic game mode"
+                sub-title="Classic mode: guess what it is as the drawing is revealed"
                 btn-color="var(--primary)"
                 :max-players="1"
+
               />
 
               <SelectionTile
@@ -37,8 +38,8 @@
                 btn-text="DAILY CHALLENGE"
                 :sub-title="
                   dailyStore.hasPlayedToday
-                    ? 'Check today\'s results'
-                    : 'New puzzle every day with global leaderboard'
+                    ? 'Check today\'s leaderboard'
+                    : 'Play today\'s challenge, climb the leaderboard'
                 "
                 btn-color="var(--neon-success)"
                 :loading="dailyStore.isLoading"
@@ -50,8 +51,8 @@
               <router-link to="/play-party" data-sfx="click" class="tile-link">
                 <SelectionTile
                   icon-name="pixel:users-solid"
-                  btn-text="LOCAL PARTY MULTIPLAYER"
-                  sub-title="Jackbox style: control via phone"
+                  btn-text="PARTY MULTIPLAYER"
+                  sub-title="Local party fun — Jackbox style, phone controls, powerups"
                   btn-color="var(--neon-yellow)"
                   :is-shiny="true"
                   :max-players="10"
@@ -79,7 +80,7 @@
                 <SelectionTile
                   icon-name="pixel:user-solid"
                   btn-text="MORE MODES"
-                  sub-title="Play Blur, Gravity, Inspect & Survival"
+                  sub-title="Play Blur, Gravity, Inspect or Survival"
                   btn-color="var(--neon-blue)"
                   :max-players="1"
                 />
@@ -87,8 +88,8 @@
               <router-link to="/editor" data-sfx="click" class="tile-link">
                 <SelectionTile
                   icon-name="pixel:image-solid"
-                  btn-text="SUBMIT ART"
-                  sub-title="Create your own pixel art and add it"
+                  btn-text="PIXEL ART EDITOR"
+                  sub-title="Create your own drawing and submit it to PixReveal"
                   btn-color="var(--neon-pink)"
                 />
               </router-link>
