@@ -19,8 +19,7 @@
 
       <div v-if="!dailyStore.hasSubmitted">
         <p>
-          Submit your score to unlock today's daily rankings and see your global
-          position!
+          See where you rank today and lock in your score on the global leaderboard!
         </p>
         <ButtonPrimary
           v-if="!isPosting"
@@ -28,9 +27,9 @@
           class="btn-primary"
           @click="showAvatarModal = true"
         >
-          <Icon icon="pixel:arrow-circle-up-solid" /> SUBMIT YOUR SCORE
+          <Icon icon="pixel:arrow-circle-up-solid" /> POST SCORE TO LEADERBOARD
         </ButtonPrimary>
-        <LoadingAnimation v-else :text="'SUBMITTING...'" />
+        <LoadingAnimation v-else :text="'POSTING...'" />
       </div>
       <ButtonSecondary
         data-sfx="click"
@@ -88,34 +87,35 @@ const shareMessage = computed(
     `I reached ${playerStore.points}⭐ in PixReveal Daily Challenge! Can you beat my score?`,
 );
 
-const post = async () => {
+const post = () => {
   showAvatarModal.value = false;
-  isPosting.value = true;
   if (!playerStore.playerName) {
     showAvatarModal.value = true;
     return;
   }
+  
   const userId = `${playerStore.playerName}-${playerStore.playerId}`;
+  
   dailyStore.dailyRankings.push({
     name: playerStore.playerName,
     userId,
     score: playerStore.points,
     avatarIndex: playerStore.avatarIndex,
   });
-  await dailyStore.postRanking(
+
+  dailyStore.postRanking(
     playerStore.playerName,
     playerStore.points,
     playerStore.avatarIndex,
     dailyStore.date,
     userId,
   );
+
   toast.success(
     "Score submitted. Check your position on the daily leaderboard!",
   );
-  router.push("/rankings-daily");
-
-  isPosting.value = false;
   soundStore.playSound("confirm");
+  router.push("/rankings-daily");
 };
 </script>
 

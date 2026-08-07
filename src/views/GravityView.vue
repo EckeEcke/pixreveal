@@ -240,14 +240,14 @@ const handleAnswer = (selectedAnswer: any) => {
     gameStore.setGameState("revealed");
 
     solutionTimeoutId = workerSetTimeout(() => {
-      if (gameStore.currentRoundIndex >= configStore.maxRounds - 1) {
+      gameStore.nextRound();
+
+      if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
-        gameStore.setGameState("gameover");
         router.push("/gameover");
       } else {
         hasAnswered.value = false;
         hasAnsweredCorrectly.value = false;
-        gameStore.nextRound();
       }
     }, 1500);
   }, 1500);

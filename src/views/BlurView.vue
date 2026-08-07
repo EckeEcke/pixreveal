@@ -284,13 +284,14 @@ const handleAnswer = (selectedOption: any) => {
     gameStore.setGameState("revealed");
 
     solutionTimeoutId = workerSetTimeout(() => {
-      if (gameStore.currentRoundIndex >= maxRounds.value - 1) {
+      gameStore.nextRound();
+
+      if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
-        gameStore.setGameState("gameover");
-        const isOnlineRoute = router.currentRoute.value.path === "/online";
+        const isOnlineRoute =
+          router.currentRoute.value.name === "online" ||
+          router.currentRoute.value.path === "/online";
         router.push(isOnlineRoute ? "/gameover-online" : "/gameover");
-      } else {
-        gameStore.nextRound();
       }
     }, 1500);
   }, 1500);

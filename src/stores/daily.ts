@@ -140,6 +140,7 @@ export const useDailyStore = defineStore("daily", () => {
     try {
       const response = await fetch("/api/post-daily", {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, userId, score, avatarIndex, date }),
       });

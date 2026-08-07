@@ -165,12 +165,11 @@ const handleAnswer = (selectedOption) => {
     gameStore.setGameState("revealed");
 
     solutionTimeoutId = workerSetTimeout(() => {
-      if (gameStore.currentRoundIndex >= maxRounds.value - 1) {
+      gameStore.nextRound();
+
+      if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
-        gameStore.setGameState("gameover");
         router.push("/gameover");
-      } else {
-        gameStore.nextRound();
       }
     }, 1500);
   }, 1500);
