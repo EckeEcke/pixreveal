@@ -148,10 +148,10 @@ const activePlayerName = computed(() => partyStore.activePlayer?.username || "Pl
 const activePlayerNameUpper = computed(() => activePlayerName.value.toUpperCase());
 
 const openPromptTemplates = [
-  { line1: "THINK YOU KNOW THE ANSWER?", line2Before: "HIT THE ", line2After: "!" },
-  { line1: "READY TO MAKE A GUESS?", line2Before: "SMASH THE ", line2After: "!" },
-  { line1: "GOT IT FIGURED OUT?", line2Before: "PRESS ", line2After: "!" },
-  { line1: "FEELING CONFIDENT?", line2Before: "GO FOR THE ", line2After: "!" },
+  { line1: "Think you know the answer?", line2Before: "Hit the ", line2After: "!" },
+  { line1: "Ready to make a guess?", line2Before: "Smash the ", line2After: "!" },
+  { line1: "Got it figured out?", line2Before: "Press ", line2After: "!" },
+  { line1: "Feeling confident?", line2Before: "Go for the ", line2After: "!" },
 ] as const;
 
 const openPromptIndex = ref(0);
@@ -236,17 +236,30 @@ watch(
   }
 }
 
-.status-pill {
-  padding: 12px 32px;
+/* Basis-Sprechblase mit meilenweit besserem Kontrast */
+.status-pill,
+.powerup-text,
+.leader-text {
+  padding: 12px 24px;
   border-radius: 8px;
   font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 1px;
+  font-size: 24px;
+  letter-spacing: 0.5px;
   line-height: 1.5;
   text-align: left;
-  text-transform: uppercase;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.status-pill {
+  background: #1e293b;
+  text-shadow: 
+    -1px -1px 0 #000000,
+     1px -1px 0 #000000,
+    -1px  1px 0 #000000,
+     1px  1px 0 #000000,
+     0px  2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .status-pill.result {
@@ -254,48 +267,66 @@ watch(
 }
 
 .status-pill.open {
-  border: 2px solid var(--neon-pink);
-}
-
-.pink-text {
-  color: var(--neon-pink);
-  animation: pulse-glow 1.5s infinite ease-in-out;
-}
-
-.green-text {
-  color: var(--neon-success);
-  animation: pulse-glow 1.5s infinite ease-in-out;
-}
-
-.red-text {
-  color: var(--neon-error);
-  animation: pulse-glow 1.5s infinite ease-in-out;
+  background: var(--primary);
+  color: #ffffff;
 }
 
 .status-pill.answering {
-  border: 2px solid var(--neon-blue);
-  color: rgba(255, 255, 255, 0.85);
+  background: var(--neon-blue);
+  color: #ffffff;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 .status-pill.correct {
-  border: 2px solid var(--neon-success);
-  color: var(--neon-success);
+  background: #10b981;
+  color: #ffffff;
 }
 
 .status-pill.incorrect {
-  border: 2px solid var(--neon-error);
-  color: var(--neon-error);
+  background: #ef4444;
+  color: #ffffff;
 }
 
 .status-pill.timeout {
-  border: 2px solid var(--neon-blue);
-  color: var(--neon-blue);
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.powerup-text {
+  background: #0284c7;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 
+    -1px -1px 0 #000000,
+     1px -1px 0 #000000,
+    -1px  1px 0 #000000,
+     1px  1px 0 #000000,
+     0px  2px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.leader-text {
+  background: #d97706;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.pink-text {
+  color: #38bdf8;
+}
+
+.green-text {
+  color: #dcfce7;
+
+}
+
+.red-text {
+  color: #fee2e2;
 }
 
 .waiting-player {
-  color: #fff;
+  color: #ffffff;
   opacity: 0.95;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
 }
@@ -306,44 +337,16 @@ watch(
   white-space: normal;
 }
 
-.answer-highlight {
-  color: white;
-}
-
+.answer-highlight,
 .player-highlight {
-  color: white;
-}
-
-.powerup-text {
-  padding: 12px 32px;
-  border-radius: 8px;
-  background: rgba(56, 189, 248, 0.12);
-  border: 2px solid rgba(56, 189, 248, 0.5);
-  color: rgba(255, 255, 255, 0.9);
+  color: #fef08a;
   font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 1px;
-  line-height: 1.5;
-  text-transform: uppercase;
-  text-align: left;
-}
-
-.leader-text {
-  padding: 12px 32px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid var(--neon-yellow);
-  color: var(--neon-yellow);
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 1px;
-  line-height: 1.5;
-  text-transform: uppercase;
-  text-align: left;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+  padding: 0 2px;
 }
 
 .white-text {
-  color: var(--white);
+  color: #ffffff;
 }
 
 .buzzer-status > div:last-child {
@@ -361,12 +364,12 @@ watch(
   height: 0;
   border-style: solid;
   border-width: 8px 12px 8px 0;
-  border-color: transparent currentColor transparent transparent;
+  border-color: transparent #1e293b transparent transparent;
   z-index: 10;
 }
 
 .status-pill.open::before {
-  border-right-color: var(--neon-pink);
+  border-right-color: var(--primary);
 }
 
 .status-pill.answering::before {
@@ -374,22 +377,22 @@ watch(
 }
 
 .status-pill.correct::before {
-  border-right-color: var(--neon-success);
+  border-right-color: #10b981;
 }
 
 .status-pill.incorrect::before {
-  border-right-color: var(--neon-error);
+  border-right-color: #ef4444;
 }
 
 .status-pill.timeout::before {
-  border-right-color: var(--neon-blue);
+  border-right-color: #3b82f6;
 }
 
 .powerup-text::before {
-  border-right-color: rgba(56, 189, 248, 0.5);
+  border-right-color: #0284c7;
 }
 
 .leader-text::before {
-  border-right-color: var(--neon-yellow);
+  border-right-color: #d97706;
 }
 </style>
