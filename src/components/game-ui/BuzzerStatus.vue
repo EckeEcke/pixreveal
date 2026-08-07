@@ -236,30 +236,17 @@ watch(
   }
 }
 
-/* Basis-Sprechblase mit meilenweit besserem Kontrast */
-.status-pill,
-.powerup-text,
-.leader-text {
-  padding: 12px 24px;
+.status-pill {
+  padding: 12px 32px;
   border-radius: 8px;
   font-weight: 900;
-  font-size: 24px;
-  letter-spacing: 0.5px;
+  font-size: 20px;
+  letter-spacing: 1px;
   line-height: 1.5;
   text-align: left;
-  color: #ffffff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.status-pill {
-  background: #1e293b;
-  text-shadow: 
-    -1px -1px 0 #000000,
-     1px -1px 0 #000000,
-    -1px  1px 0 #000000,
-     1px  1px 0 #000000,
-     0px  2px 4px rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
 }
 
 .status-pill.result {
@@ -267,66 +254,48 @@ watch(
 }
 
 .status-pill.open {
-  background: var(--primary);
-  color: #ffffff;
+  border: 2px solid var(--neon-pink);
+}
+
+.pink-text {
+  color: var(--neon-pink);
+  animation: pulse-glow 1.5s infinite ease-in-out;
+}
+
+.green-text {
+  color: var(--neon-success);
+  animation: pulse-glow 1.5s infinite ease-in-out;
+}
+
+.red-text {
+  color: var(--neon-error);
+  animation: pulse-glow 1.5s infinite ease-in-out;
 }
 
 .status-pill.answering {
-  background: var(--neon-blue);
-  color: #ffffff;
+  border: 2px solid var(--neon-blue);
+  color: rgba(255, 255, 255, 0.85);
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 .status-pill.correct {
-  background: #10b981;
-  color: #ffffff;
+  border: 2px solid var(--neon-success);
+  color: var(--neon-success);
 }
 
 .status-pill.incorrect {
-  background: #ef4444;
-  color: #ffffff;
+  border: 2px solid var(--neon-error);
+  color: var(--neon-error);
 }
 
 .status-pill.timeout {
-  background: #3b82f6;
-  color: #ffffff;
-}
-
-.powerup-text {
-  background: #0284c7;
-  color: #ffffff;
-  text-transform: uppercase;
-  text-shadow: 
-    -1px -1px 0 #000000,
-     1px -1px 0 #000000,
-    -1px  1px 0 #000000,
-     1px  1px 0 #000000,
-     0px  2px 4px rgba(0, 0, 0, 0.8);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.leader-text {
-  background: #d97706;
-  color: #ffffff;
-  text-transform: uppercase;
-}
-
-.pink-text {
-  color: #38bdf8;
-}
-
-.green-text {
-  color: #dcfce7;
-
-}
-
-.red-text {
-  color: #fee2e2;
+  border: 2px solid var(--neon-blue);
+  color: var(--neon-blue);
 }
 
 .waiting-player {
-  color: #ffffff;
+  color: #fff;
   opacity: 0.95;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
 }
@@ -337,16 +306,44 @@ watch(
   white-space: normal;
 }
 
-.answer-highlight,
+.answer-highlight {
+  color: white;
+}
+
 .player-highlight {
-  color: #fef08a;
+  color: white;
+}
+
+.powerup-text {
+  padding: 12px 32px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 2px solid rgba(56, 189, 248, 0.5);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 900;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
-  padding: 0 2px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.leader-text {
+  padding: 12px 32px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--neon-yellow);
+  color: var(--neon-yellow);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  text-align: left;
 }
 
 .white-text {
-  color: #ffffff;
+  color: var(--white);
 }
 
 .buzzer-status > div:last-child {
@@ -364,12 +361,12 @@ watch(
   height: 0;
   border-style: solid;
   border-width: 8px 12px 8px 0;
-  border-color: transparent #1e293b transparent transparent;
+  border-color: transparent currentColor transparent transparent;
   z-index: 10;
 }
 
 .status-pill.open::before {
-  border-right-color: var(--primary);
+  border-right-color: var(--neon-pink);
 }
 
 .status-pill.answering::before {
@@ -377,22 +374,22 @@ watch(
 }
 
 .status-pill.correct::before {
-  border-right-color: #10b981;
+  border-right-color: var(--neon-success);
 }
 
 .status-pill.incorrect::before {
-  border-right-color: #ef4444;
+  border-right-color: var(--neon-error);
 }
 
 .status-pill.timeout::before {
-  border-right-color: #3b82f6;
+  border-right-color: var(--neon-blue);
 }
 
 .powerup-text::before {
-  border-right-color: #0284c7;
+  border-right-color: rgba(56, 189, 248, 0.5);
 }
 
 .leader-text::before {
-  border-right-color: #d97706;
+  border-right-color: var(--neon-yellow);
 }
 </style>
