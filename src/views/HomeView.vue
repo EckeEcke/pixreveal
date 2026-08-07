@@ -88,6 +88,7 @@
                 />
               </router-link>
             </div>
+            <StepsComponent />
             <TopPlayer />
           </div>
         </div>
@@ -112,6 +113,7 @@ import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import DailyWinner from "@/components/game-ui/DailyWinner.vue";
+import StepsComponent from "@/components/page-ui/StepsComponent.vue";
 import { useDailyStore } from "@/stores/daily";
 import { useRouter } from "vue-router";
 import { useDailyCountDown } from "@/composables/useDailyCountDown";

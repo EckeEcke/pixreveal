@@ -347,7 +347,7 @@ onBeforeUnmount(() => stop());
 }
 
 .title-pill {
-  padding: 12px 32px;
+  padding: 16px;
   border-radius: 8px;
   text-align: left;
   font-weight: 900;
