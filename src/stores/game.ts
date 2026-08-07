@@ -20,7 +20,41 @@ export const useGameStore = defineStore("game", () => {
   const selectedOption = ref<RoundOption | null>(null);
   const isGameOver = ref(false);
   const playSound = ref(false);
-  const revealTime = ref(15);
+
+  const scores = ref<number[]>([]);
+  const isLoadingScores = ref(false);
+
+  const fetchScores = async () => {
+    if (isLoadingScores.value || scores.value.length > 0) return;
+    isLoadingScores.value = true;
+
+    try {
+      const res = await fetch("/api/singleplayer-scores?mode=classic");
+      if (res.ok) {
+        const data = await res.json();
+        scores.value = (data.scores || []).sort(
+          (a: number, b: number) => a - b,
+        );
+      }
+    } catch (err) {
+      console.error("Failed to fetch scores", err);
+    } finally {
+      isLoadingScores.value = false;
+    }
+  };
+
+  fetchScores();
+
+  const getPercentile = (playerScore: number): number | null => {
+    if (!scores.value.length) return null;
+
+    const lowerScoresCount = scores.value.filter((s) => s < playerScore).length;
+    const percentile = Math.floor(
+      (lowerScoresCount / scores.value.length) * 100,
+    );
+
+    return Math.min(99, Math.max(0, percentile));
+  };
 
   const configStore = useConfigStore();
 
@@ -89,36 +123,44 @@ export const useGameStore = defineStore("game", () => {
   };
 
   const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
-    revealTime.value = customRevealTime;
-
     if (customRounds) {
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
       configStore.revealTime = customRevealTime;
     } else {
-      const sessionData = sessionStorage.getItem("pixreveal_played_hashes")
-      let playedHashes: string[] = sessionData ? JSON.parse(sessionData) : []
+      const sessionData = sessionStorage.getItem("pixreveal_played_hashes");
+      let playedHashes: string[] = sessionData ? JSON.parse(sessionData) : [];
 
-      let availableDrawings = filteredDrawings.value.filter((d) => !playedHashes.includes(hashCode(d.name)))
+      let availableDrawings = filteredDrawings.value.filter(
+        (d) => !playedHashes.includes(hashCode(d.name)),
+      );
 
-      const minRequired = maxRounds.value + 3
-      while (availableDrawings.length < minRequired && playedHashes.length > 0) {
-        playedHashes.shift()
-        availableDrawings = filteredDrawings.value.filter((d) => !playedHashes.includes(hashCode(d.name)))
+      const minRequired = maxRounds.value + 3;
+      while (
+        availableDrawings.length < minRequired &&
+        playedHashes.length > 0
+      ) {
+        playedHashes.shift();
+        availableDrawings = filteredDrawings.value.filter(
+          (d) => !playedHashes.includes(hashCode(d.name)),
+        );
       }
 
-      const shuffled = shuffle([...availableDrawings])
-      const selectedForGame = shuffled.slice(0, maxRounds.value)
+      const shuffled = shuffle([...availableDrawings]);
+      const selectedForGame = shuffled.slice(0, maxRounds.value);
 
-      rounds.value = buildRounds(selectedForGame, playedHashes)
+      rounds.value = buildRounds(selectedForGame, playedHashes);
 
       selectedForGame.forEach((d) => {
-        const hash = hashCode(d.name)
+        const hash = hashCode(d.name);
         if (!playedHashes.includes(hash)) {
-          playedHashes.push(hash)
+          playedHashes.push(hash);
         }
-      })
-      sessionStorage.setItem("pixreveal_played_hashes", JSON.stringify(playedHashes))
+      });
+      sessionStorage.setItem(
+        "pixreveal_played_hashes",
+        JSON.stringify(playedHashes),
+      );
     }
 
     currentRoundIndex.value = 0;
@@ -183,7 +225,10 @@ export const useGameStore = defineStore("game", () => {
     selectedOption,
     isGameOver,
     playSound,
-    revealTime,
+    scores,
+    isLoadingScores,
+    fetchScores,
+    getPercentile,
     prepareGame,
     nextRound,
     addSuddenDeathRound,

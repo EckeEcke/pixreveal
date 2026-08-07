@@ -31,6 +31,14 @@
       </div>
 
       <div
+        v-if="showSingleplayerRank && percentile !== null"
+        class="percentile-tag"
+      >
+        <Icon icon="pixel:chart-up" />
+        Better than <span>{{ percentile }}%</span> of players
+      </div>
+
+      <div
         v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
         class="rank-prophet highscore-message"
       >
@@ -116,6 +124,14 @@ const getRankDataForShare = (score) =>
     revealTime: configStore.revealTime,
   });
 
+const percentile = computed(() => {
+  const maxScore = Number(configStore.revealTime) * Number(configStore.maxRounds);
+  if (!maxScore) return null;
+  
+  const normalizedScore = Number(playerStore.points) / maxScore;
+  return gameStore.getPercentile(normalizedScore);
+});
+
 const getShareMessage = (score, mode) => {
   if (mode === "classic") {
     const rankTitle = getRankDataForShare(score).title;
@@ -137,8 +153,6 @@ const goBackSingleplayer = () => {
   gameStore.reset?.();
   router.push("/");
 };
-
-gameStore.reset();
 
 const submitSingleplayerScore = () => {
   if (!showSingleplayerRank.value || playerStore.points <= 0) return;
@@ -211,6 +225,29 @@ main {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   .rank-prophet {
     margin: 0 auto 16px;
+  }
+}
+
+.percentile-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  font-size: 14px;
+  color: #cccccc;
+
+  span {
+    color: #00ffcc;
+    font-weight: bold;
+  }
+
+  svg {
+    font-size: 16px;
+    color: #00ffcc;
   }
 }
 

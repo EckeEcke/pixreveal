@@ -4,6 +4,21 @@
     <div class="log-grid">
       <div class="log-card">
         <div class="log-info">
+          <span class="date">08-07-26</span>
+        </div>
+        <h3 class="log-title">New game stats and animations</h3>
+        <p>
+          Thanks to everyone playing Singleplayer mode, a brand-new feature is
+          here! You can now see how your score stacks up against other players
+          at the end of every round (e.g., "Better than 90% of players"). Plus,
+          a huge visual overhaul is live: feel the thrill with a satisfying zoom
+          on correct answers and watch pixels collapse when you miss!
+        </p>
+      </div>
+    </div>
+    <div class="log-grid">
+      <div class="log-card">
+        <div class="log-info">
           <span class="date">08-06-26</span>
         </div>
         <h3 class="log-title">New navigation for singleplayer</h3>
