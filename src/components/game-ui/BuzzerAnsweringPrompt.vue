@@ -1,5 +1,10 @@
 <template>
-  <span class="waiting-player">{{ activePlayerName }}</span>
+  <span class="waiting-player">
+    <InlineAvatar
+      v-if="activeAvatarIndex !== null"
+      :avatarIndex="activeAvatarIndex"
+    />{{ activePlayerName }}
+  </span>
   hit the buzzer! Is it
   <span
     v-for="(opt, index) in options"
@@ -23,6 +28,19 @@ defineProps<{
   isXlzActive: boolean;
 }>();
 
+import { computed } from "vue";
+import { usePartyStore } from "@/stores/party";
+import InlineAvatar from "./InlineAvatar.vue";
+
+const partyStore = usePartyStore();
+
+const activeAvatarIndex = computed(() => {
+  const id = partyStore.activePlayerId ?? null;
+  if (!id) return null;
+  const p = partyStore.players.find((pl: any) => pl.playerId === id);
+  return p ? p.avatarIndex : null;
+});
+
 const optionColors = [
   { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
   { color: "var(--neon-blue)", glow: "var(--blue-glow)" },
@@ -38,3 +56,13 @@ const getOptionStyle = (index: number) => {
   };
 };
 </script>
+
+<style scoped>
+/* keep avatar and player name together on same line */
+.waiting-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35ch;
+  white-space: nowrap;
+}
+</style>

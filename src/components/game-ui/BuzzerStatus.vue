@@ -35,7 +35,11 @@
                 >s</span
               >
               for
-              <span class="player-highlight">{{ activePlayerNameUpper }}</span
+              <span class="player-highlight">
+                <InlineAvatar
+                  v-if="activeAvatarIndex !== null"
+                  :avatarIndex="activeAvatarIndex"
+                />{{ activePlayerNameUpper }} </span
               >.
             </template>
 
@@ -45,26 +49,46 @@
                 gameStore.currentRound?.answer
               }}</span
               >.
-              <span class="player-highlight">{{ activePlayerName }}</span> loses
-              {{ pointsForWrong }} points.
+              <span class="player-highlight">
+                <InlineAvatar
+                  v-if="activeAvatarIndex !== null"
+                  :avatarIndex="activeAvatarIndex"
+                />{{ activePlayerName }}
+              </span>
+              loses {{ pointsForWrong }} points.
             </template>
           </template>
 
           <template v-else-if="currentActiveMessage.type === 'lightsOut'">
             {{ lightsOutMessageBefore }}
-            <span class="player-highlight">{{ lightsOutActorNameUpper }}</span>
+            <span class="player-highlight">
+              <InlineAvatar
+                v-if="lightsOutAvatarIndex !== null"
+                :avatarIndex="lightsOutAvatarIndex"
+              />{{ lightsOutActorNameUpper }}
+            </span>
             {{ lightsOutMessageAfter }}
           </template>
 
           <template v-else-if="currentActiveMessage.type === 'freeze'">
             {{ freezeMessageBefore }}
-            <span class="player-highlight">{{ freezeActorNameUpper }}</span>
+            <span class="player-highlight">
+              <InlineAvatar
+                v-if="freezeAvatarIndex !== null"
+                :avatarIndex="freezeAvatarIndex"
+              />{{ freezeActorNameUpper }}
+            </span>
             {{ freezeMessageAfter }}
           </template>
 
           <template v-else-if="currentActiveMessage.type === 'leaderEvent'">
             {{ leaderMessageBefore }}
-            <span class="player-highlight">{{ leaderNameUpper }}</span>
+            <span class="player-highlight">
+              <InlineAvatar
+                v-if="leaderAvatarIndex !== null"
+                :avatarIndex="leaderAvatarIndex"
+              />{{ leaderNameUpper }}
+            </span>
             {{ leaderMessageAfter }}
           </template>
 
@@ -84,9 +108,12 @@
 
           <template v-else-if="currentActiveMessage.type === 'openGap'">
             {{ leaderGapMessageBefore }}
-            <span class="player-highlight">{{
-              leaderUsername?.toUpperCase?.() || "PLAYER"
-            }}</span>
+            <span class="player-highlight">
+              <InlineAvatar
+                v-if="leaderAvatarIndex !== null"
+                :avatarIndex="leaderAvatarIndex"
+              />{{ leaderUsername?.toUpperCase?.() || "PLAYER" }}
+            </span>
             {{ leaderGapMessageAfter }}
           </template>
 
@@ -104,6 +131,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import InlineAvatar from "./InlineAvatar.vue";
 import { usePartyStore } from "@/stores/party";
 import { useGameStore } from "@/stores/game";
 import { useRobotModerator } from "@/composables/useRobotModerator";
@@ -144,35 +172,84 @@ const {
   lightsOutActorNameUpper,
 } = usePowerupEvents(partyStore);
 
-const activePlayerName = computed(() => partyStore.activePlayer?.username || "Player");
-const activePlayerNameUpper = computed(() => activePlayerName.value.toUpperCase());
+const activePlayerName = computed(
+  () => partyStore.activePlayer?.username || "Player",
+);
+const activePlayerNameUpper = computed(() =>
+  activePlayerName.value.toUpperCase(),
+);
+
+const activeAvatarIndex = computed(() => {
+  const id = partyStore.activePlayerId ?? null;
+  if (!id) return null;
+  const p = partyStore.players.find((pl: any) => pl.playerId === id);
+  return p ? p.avatarIndex : null;
+});
+
+const freezeAvatarIndex = computed(() => {
+  const id = partyStore.freezeByPlayerId ?? null;
+  if (!id) return null;
+  const p = partyStore.players.find((pl: any) => pl.playerId === id);
+  return p ? p.avatarIndex : null;
+});
+
+const lightsOutAvatarIndex = computed(() => {
+  const id = partyStore.lightsOutByPlayerId ?? null;
+  if (!id) return null;
+  const p = partyStore.players.find((pl: any) => pl.playerId === id);
+  return p ? p.avatarIndex : null;
+});
+
+const leaderAvatarIndex = computed(() => {
+  const name = leaderUsername.value;
+  if (!name) return null;
+  const p = partyStore.players.find((pl: any) => pl.username === name);
+  return p ? p.avatarIndex : null;
+});
 
 const openPromptTemplates = [
-  { line1: "Think you know the answer?", line2Before: "Hit the ", line2After: "!" },
-  { line1: "Ready to make a guess?", line2Before: "Smash the ", line2After: "!" },
+  {
+    line1: "Think you know the answer?",
+    line2Before: "Hit the ",
+    line2After: "!",
+  },
+  {
+    line1: "Ready to make a guess?",
+    line2Before: "Smash the ",
+    line2After: "!",
+  },
   { line1: "Got it figured out?", line2Before: "Press ", line2After: "!" },
   { line1: "Feeling confident?", line2Before: "Go for the ", line2After: "!" },
 ] as const;
 
 const openPromptIndex = ref(0);
-const openPrompt = computed(() => openPromptTemplates[openPromptIndex.value % openPromptTemplates.length] ?? openPromptTemplates[0]);
+const openPrompt = computed(
+  () =>
+    openPromptTemplates[openPromptIndex.value % openPromptTemplates.length] ??
+    openPromptTemplates[0],
+);
 
 watch(
   () => partyStore.buzzerState,
   (next, prev) => {
     if (next === "open" && prev !== "open") {
-      openPromptIndex.value = (openPromptIndex.value + 1) % openPromptTemplates.length;
+      openPromptIndex.value =
+        (openPromptIndex.value + 1) % openPromptTemplates.length;
     }
   },
 );
 
 const isFinalRound = computed(() => Boolean(props.isFinalRound));
 const isBonusRound = computed(() => Boolean(props.bonusRoundType));
-const isDoublePointsRound = computed(() => isFinalRound.value || isBonusRound.value);
+const isDoublePointsRound = computed(
+  () => isFinalRound.value || isBonusRound.value,
+);
 const pointsForCorrect = computed(() => (isDoublePointsRound.value ? 2 : 1));
 const pointsForWrong = computed(() => (isDoublePointsRound.value ? 4 : 2));
 
-const resultClass = computed(() => partyStore.activePlayerId ? (partyStore.roundResult || "") : "timeout");
+const resultClass = computed(() =>
+  partyStore.activePlayerId ? partyStore.roundResult || "" : "timeout",
+);
 
 const optionsForPrompt = computed(() => {
   const options: any[] = (gameStore.currentRound?.options || []).slice(0, 4);
@@ -186,10 +263,18 @@ const optionsForPrompt = computed(() => {
 
 const currentActiveMessage = computed(() => {
   if (partyStore.buzzerState === "answering") {
-    return { type: "answering", key: "answering", class: "status-pill answering" };
+    return {
+      type: "answering",
+      key: "answering",
+      class: "status-pill answering",
+    };
   }
   if (partyStore.roundResult && gameStore.gameState !== "revealing") {
-    return { type: "result", key: "result", class: `status-pill result ${resultClass.value}` };
+    return {
+      type: "result",
+      key: "result",
+      class: `status-pill result ${resultClass.value}`,
+    };
   }
   if (partyStore.isLightsOut) {
     return { type: "lightsOut", key: "lightsOut", class: "powerup-text" };
@@ -201,9 +286,12 @@ const currentActiveMessage = computed(() => {
     return { type: "leaderEvent", key: "leader", class: "leader-text" };
   }
   if (partyStore.buzzerState === "open") {
-    if (isFinalRound.value) return { type: "openFinal", key: "final", class: "status-pill open" };
-    if (isBonusRound.value) return { type: "openBonus", key: "bonus", class: "status-pill open" };
-    if (leaderGapActive.value) return { type: "openGap", key: "gap", class: "status-pill open" };
+    if (isFinalRound.value)
+      return { type: "openFinal", key: "final", class: "status-pill open" };
+    if (isBonusRound.value)
+      return { type: "openBonus", key: "bonus", class: "status-pill open" };
+    if (leaderGapActive.value)
+      return { type: "openGap", key: "gap", class: "status-pill open" };
     return { type: "openRegular", key: "regular", class: "status-pill open" };
   }
   return { type: "none", key: "none", class: "" };
@@ -215,7 +303,7 @@ watch(
     if (nextKey === "none" || nextKey === prevKey) return;
     triggerRobotTalk();
     playPop();
-  }
+  },
 );
 </script>
 
@@ -244,6 +332,11 @@ watch(
   letter-spacing: 1px;
   line-height: 1.5;
   text-align: left;
+  text-shadow:
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
 }
@@ -290,13 +383,20 @@ watch(
 
 .status-pill.timeout {
   border: 2px solid var(--neon-blue);
-  color: var(--neon-blue);
 }
 
 .waiting-player {
   color: #fff;
   opacity: 0.95;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+}
+/* keep avatar and player name together on same line */
+.waiting-player,
+.player-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35ch;
+  white-space: nowrap;
 }
 
 .prompt-option {
@@ -338,6 +438,8 @@ watch(
   line-height: 1.5;
   text-align: left;
 }
+
+/* Inline avatar styles moved to InlineAvatar component */
 
 .white-text {
   color: var(--white);
