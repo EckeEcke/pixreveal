@@ -244,7 +244,6 @@ watch(
   letter-spacing: 1px;
   line-height: 1.5;
   text-align: left;
-  text-transform: uppercase;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
 }
@@ -324,7 +323,6 @@ watch(
   font-size: 20px;
   letter-spacing: 1px;
   line-height: 1.5;
-  text-transform: uppercase;
   text-align: left;
 }
 
@@ -338,7 +336,6 @@ watch(
   font-size: 20px;
   letter-spacing: 1px;
   line-height: 1.5;
-  text-transform: uppercase;
   text-align: left;
 }
 
