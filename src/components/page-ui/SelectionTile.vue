@@ -9,6 +9,9 @@
   >
     <Icon :icon="iconName || ''" class="background-icon" />
     <div class="glow-layer"></div>
+
+    <span v-if="isNew" class="new-badge">NEW</span>
+
     <div class="btn-content">
       <Icon :icon="iconName || ''" class="btn-icon" />
       <div class="text-wrapper">
@@ -25,6 +28,7 @@
     <span v-if="highScore" class="player-info"
       ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
     >
+    <span v-if="cornerText" class="corner-info"><Icon icon="pixel:clock" /> {{ cornerText }}</span>
     <div v-if="loading" class="loading-overlay">
       <span class="spinner"></span>
     </div>
@@ -46,6 +50,8 @@ const props = defineProps<{
   isShiny?: boolean;
   maxPlayers?: number;
   highScore?: number;
+  isNew?: boolean;
+  cornerText?: string;
 }>();
 
 const soundStore = useSoundStore();
@@ -214,6 +220,54 @@ const handleClick = (event: MouseEvent) => {
   align-items: center;
   gap: 4px;
   min-width: 36px;
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.new-badge {
+  position: absolute;
+  top: 10px;
+  left: calc(var(--left-block-width) + 8px);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #000;
+  background: var(--neon-yellow);
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px var(--yellow-glow);
+  animation: new-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes new-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(255, 210, 63, 0.6);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 14px rgba(255, 210, 63, 0.9);
+  }
+}
+
+.corner-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 2;
+  min-width: 70px;
+  text-align: left;
+  color: var(--color-secondary);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 12px;
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
 }
 

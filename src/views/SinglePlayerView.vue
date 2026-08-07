@@ -54,7 +54,7 @@
                 :icon-name="
                   dailyStore.hasPlayedToday
                     ? 'pixel:numbered-list-solid'
-                    : 'pixel:calender'
+                    : 'pixel:trophy-solid'
                 "
                 :btn-function="startDaily"
                 btn-text="DAILY CHALLENGE"
@@ -63,11 +63,13 @@
                     ? 'Check today\'s results'
                     : 'New puzzle every day with global leaderboard'
                 "
-                btn-color="var(--neon-success)"
+                btn-color="var(--neon-blue)"
                 :loading="dailyStore.isLoading"
                 :is-shiny="
                   true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
                 "
+                :corner-text="timeLeft"
+                :is-new="!dailyStore.hasPlayedToday"
               />
             </div>
           </div>
@@ -92,6 +94,7 @@ import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import { useSurvivalStore } from "@/stores/survival";
+import { useDailyCountdown } from "@/composables/useDailyCountdown";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
@@ -99,6 +102,9 @@ const configStore = useConfigStore();
 const dailyStore = useDailyStore();
 const survivalStore = useSurvivalStore();
 const { prepareGame } = useGameStore();
+
+const { timeLeft } = useDailyCountdown();
+
 
 const setUser = () =>
   playerStore.setUser({

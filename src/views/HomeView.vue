@@ -19,7 +19,6 @@
                 sub-title="Classic mode: guess what it is as the drawing is revealed"
                 btn-color="var(--primary)"
                 :max-players="1"
-
               />
 
               <SelectionTile
@@ -27,13 +26,9 @@
                 :icon-name="
                   dailyStore.hasPlayedToday
                     ? 'pixel:numbered-list-solid'
-                    : 'pixel:calender'
+                    : 'pixel:trophy-solid'
                 "
-                :max-players="
-                  !dailyStore.hasPlayedToday
-                    ? 1
-                    : undefined
-                "
+                :max-players="!dailyStore.hasPlayedToday ? 1 : undefined"
                 :btn-function="startDaily"
                 btn-text="DAILY CHALLENGE"
                 :sub-title="
@@ -41,11 +36,10 @@
                     ? 'Check today\'s leaderboard'
                     : 'Play today\'s challenge, climb the leaderboard'
                 "
-                btn-color="var(--neon-success)"
+                btn-color="var(--neon-blue)"
                 :loading="dailyStore.isLoading"
-                :is-shiny="
-                  true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
-                "
+                :corner-text="timeLeft"
+                :is-new="!dailyStore.hasPlayedToday"
               />
 
               <router-link to="/play-party" data-sfx="click" class="tile-link">
@@ -81,7 +75,7 @@
                   icon-name="pixel:user-solid"
                   btn-text="MORE MODES"
                   sub-title="Play Blur, Gravity, Inspect or Survival"
-                  btn-color="var(--neon-blue)"
+                  btn-color="var(--neon-social)"
                   :max-players="1"
                 />
               </router-link>
@@ -120,6 +114,7 @@ import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import DailyWinner from "@/components/game-ui/DailyWinner.vue";
 import { useDailyStore } from "@/stores/daily";
 import { useRouter } from "vue-router";
+import { useDailyCountdown } from "@/composables/useDailyCountdown";
 
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
@@ -128,6 +123,7 @@ const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 const { prepareGame } = useGameStore();
+const { timeLeft } = useDailyCountdown();
 
 const router = useRouter();
 
