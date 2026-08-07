@@ -71,7 +71,6 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
 import { useOnlineStore } from "@/stores/online";
-import { statusIcons } from "@/data/statusIcons";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import { useConfigStore } from "@/stores/config";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
@@ -95,6 +94,8 @@ const soundStore = useSoundStore();
 const pixelCanvasRef = ref<{
   playShine: () => void;
   playShake: () => void;
+  triggerCorrectAnswer: () => void;
+  triggerIncorrectAnswer: () => void;
 } | null>(null);
 
 const resolution = ref(16);
@@ -129,11 +130,6 @@ const {
   baseRevealing: isRevealing,
 });
 
-// BlurView ist ein eigenständiger Modus: JEDE reguläre Runde wird per
-// CSS-Blur-Filter enttarnt statt über den normalen Pixel-Reveal. Die
-// Bonus-Runde (vom Composable geplant, egal welcher Typ dort intern
-// vergeben wird) bekommt in BlurView KEINEN eigenen Effekt/Modus,
-// sondern nur den 2x-Punkte-Bonus und einen ganz normalen Pixel-Reveal.
 const isBonusRound = computed(() => !!bonusRoundType.value);
 
 const isBlurRoundActive = computed(() => {
@@ -149,19 +145,12 @@ const blurAmountPx = computed(() => {
   return maxBlur * ratio;
 });
 
-// Beim Rundenstart soll der Blur sofort auf Maximalwert stehen, BEVOR
-// das neue Bild sichtbar wird — kein sanftes "Reinblenden" aus dem
-// unscharfen Zustand. Die CSS-Transition (fürs sanfte Abnehmen des
-// Blurs während des Countdowns) wird dafür kurzzeitig unterdrückt.
 const suppressFilterTransition = ref(false);
 
 const canvasEffectsStyle = computed(() => {
   const style: { filter: string; transition?: string } = { filter: "none" };
 
   if (!isBonusRound.value) {
-    // Filter bleibt während des Feedbacks noch aktiv (isRevealing wird
-    // erst 1500ms nach der Antwort auf false gesetzt) und faded erst
-    // beim Aufdecken der Lösung zurück auf "none".
     const effectsActive = isRevealing.value || isBlurRoundActive.value;
     if (effectsActive) {
       style.filter = `blur(${blurAmountPx.value}px)`;
@@ -176,10 +165,7 @@ const canvasEffectsStyle = computed(() => {
 });
 
 const canvasIsRevealing = computed(() => {
-  // Bonus-Runde: ganz normaler Pixel-Reveal wie im Standard-Gamemode.
   if (isBonusRound.value) return isRevealing.value;
-  // Reguläre Runde: der Blur-Filter übernimmt das "Aufdecken",
-  // der Canvas selbst soll nicht zusätzlich pixelweise aufdecken.
   return false;
 });
 
@@ -223,12 +209,9 @@ const setupDrawing = () => {
   if (!currentRound.value) return;
 
   clearAllLocalTimers();
-  // Reset local answer state BEFORE showing new content
   hasAnswered.value = false;
   hasAnsweredCorrectly.value = false;
 
-  // Blur muss instant auf Maximalwert springen, nicht erst dorthin
-  // animieren — sonst ist das neue Bild kurz zu wenig verblurrt sichtbar.
   suppressFilterTransition.value = true;
   isRevealing.value = true;
 
@@ -237,9 +220,6 @@ const setupDrawing = () => {
 
   startTimer();
 
-  // Transition erst wieder aktivieren, nachdem der Sprung auf
-  // Maximalblur gerendert wurde — danach animiert das Abnehmen des
-  // Blurs (durch den tickenden Timer) wieder sanft wie gewohnt.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       suppressFilterTransition.value = false;
@@ -255,32 +235,20 @@ const handleAnswer = (selectedOption: any) => {
   clearAllLocalTimers();
 
   if (playerStore.isCreatorMode) {
-    pixelData.value = statusIcons.question;
   } else if (selectedOption?.isCorrect) {
-    pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     const multiplier = isFinalRound.value || !!bonusRoundType.value ? 2 : 1;
     playerStore.addPoints(timer.value * multiplier);
     soundStore.playSound("correct");
+    pixelCanvasRef.value?.triggerCorrectAnswer();
   } else {
-    pixelData.value = statusIcons.failure;
-    pixelCanvasRef.value?.playShake();
     hasAnsweredCorrectly.value = false;
     soundStore.playSound("incorrect");
+    pixelCanvasRef.value?.triggerIncorrectAnswer();
   }
-
-  workerSetTimeout(() => {
-    pixelCanvasRef.value?.playShine();
-  }, 650);
 
   feedbackTimeoutId = workerSetTimeout(() => {
     isRevealing.value = false;
-    if (currentRound.value) {
-      pixelData.value = currentRound.value.data;
-      workerSetTimeout(() => {
-        pixelCanvasRef.value?.playShine();
-      }, 650);
-    }
     gameStore.setGameState("revealed");
 
     solutionTimeoutId = workerSetTimeout(() => {
@@ -293,8 +261,8 @@ const handleAnswer = (selectedOption: any) => {
           router.currentRoute.value.path === "/online";
         router.push(isOnlineRoute ? "/gameover-online" : "/gameover");
       }
-    }, 1500);
-  }, 1500);
+    }, 800);
+  }, 1000);
 };
 
 watch(

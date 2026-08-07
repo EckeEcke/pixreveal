@@ -59,7 +59,6 @@ import { usePlayerStore } from "@/stores/player";
 import { useConfigStore } from "@/stores/config";
 import { useOnlineStore } from "@/stores/online";
 import { useSoundStore } from "@/stores/sound";
-import { statusIcons } from "@/data/statusIcons";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -138,30 +137,19 @@ const handleAnswer = (selectedOption) => {
   clearAllLocalTimers();
 
   if (playerStore.isCreatorMode) {
-    pixelData.value = statusIcons.question;
+    // Creator mode
   } else if (selectedOption?.isCorrect) {
-    pixelData.value = statusIcons.success;
     hasAnsweredCorrectly.value = true;
     playerStore.addPoints(timer.value);
     soundStore.playSound("correct");
+    pixelCanvasRef.value?.triggerCorrectAnswer();
   } else {
-    pixelData.value = statusIcons.failure;
-    pixelCanvasRef.value?.playShake();
     hasAnsweredCorrectly.value = false;
     soundStore.playSound("incorrect");
+    pixelCanvasRef.value?.triggerIncorrectAnswer();
   }
 
-  workerSetTimeout(() => {
-    pixelCanvasRef.value?.playShine();
-  }, 650);
-
   feedbackTimeoutId = workerSetTimeout(() => {
-    if (currentRound.value) {
-      pixelData.value = currentRound.value.data;
-      workerSetTimeout(() => {
-        pixelCanvasRef.value?.playShine();
-      }, 650);
-    }
     gameStore.setGameState("revealed");
 
     solutionTimeoutId = workerSetTimeout(() => {
@@ -169,10 +157,13 @@ const handleAnswer = (selectedOption) => {
 
       if (gameStore.isGameOver) {
         onlineStore.broadcastScore();
-        router.push("/gameover");
+        const isOnlineRoute =
+          router.currentRoute.value.name === "online" ||
+          router.currentRoute.value.path === "/online";
+        router.push(isOnlineRoute ? "/gameover-online" : "/gameover");
       }
-    }, 1500);
-  }, 1500);
+    }, 600);
+  }, 1000);
 };
 
 // Lupe/Magnifier Positionen
@@ -224,7 +215,11 @@ onUnmounted(() => {
   gap: 0;
   max-width: 500px;
   width: 100%;
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
+  .game-layout {
+    position: relative;
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
@@ -236,5 +231,14 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   margin: 16px 0 32px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

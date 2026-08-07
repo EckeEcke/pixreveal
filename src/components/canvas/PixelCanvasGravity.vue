@@ -42,17 +42,22 @@ const addCRT = computed(() => useConfigStore().addCRTFilter);
 const gravity = 0.5;
 const bounce = -0.3;
 const activePixels = ref([]);
+const animatedPhysicsPixels = ref([]);
 
 const SHINE_DURATION = 500;
 const shineState = ref(null);
 
-const SHAKE_DURATION = 400;
-const SHAKE_MAGNITUDE = 4;
+const SHAKE_DURATION = 800;
+const SHAKE_MAGNITUDE = 6;
 const shakeState = ref(null);
+
+const POP_DURATION = 350;
+const popState = ref(null);
 
 const initGravityEffect = () => {
   if (!props.pixelArray || !props.pixelArray.length) return;
 
+  animatedPhysicsPixels.value = [];
   const newList = [];
   const duration = configStore.revealTime || 15;
   const resolution = props.pixelArray.length;
@@ -60,7 +65,6 @@ const initGravityEffect = () => {
 
   const isInstant = !props.isRevealing || props.isStatusIcon;
 
-  // 1. Gesamtzahl der Pixel (val !== 0) zählen
   let totalPixelCount = 0;
   props.pixelArray.forEach((row) => {
     if (Array.isArray(row)) {
@@ -70,14 +74,12 @@ const initGravityEffect = () => {
     }
   });
 
-  // 2. Maximale Frame-Anzahl berechnen & Delay pro Pixel dynamisch bestimmen
   const maxDelayFrames = isInstant ? 0 : Math.max(0, (duration - 1) * 60);
   const delayPerPixel =
     totalPixelCount > 1 ? maxDelayFrames / (totalPixelCount - 1) : 0;
 
   let sequenceIndex = 0;
 
-  // 3. Reihenfolge: Von unten (y = resolution - 1) nach oben (y = 0), von links nach rechts
   for (let y = resolution - 1; y >= 0; y--) {
     const row = props.pixelArray[y];
     if (Array.isArray(row)) {
@@ -106,6 +108,67 @@ const initGravityEffect = () => {
   activePixels.value = newList;
 };
 
+const preparePhysicsPixels = () => {
+  const resolution = props.pixelArray?.length || 16;
+  const { cellSize, gap } = calculateGrid(resolution);
+
+  const drops = [];
+  props.pixelArray.forEach((row, y) => {
+    if (Array.isArray(row)) {
+      row.forEach((val, x) => {
+        if (val !== 0) {
+          drops.push({
+            xPos: x * cellSize + gap,
+            yPos: y * cellSize + gap,
+            color: colorPalette[val] || "#fff",
+            vx: (Math.random() - 0.5) * 6,
+            vy: -1 - Math.random() * 3,
+            gravity: 0.65,
+            rot: 0,
+            vRot: (Math.random() - 0.5) * 0.2,
+          });
+        }
+      });
+    }
+  });
+
+  animatedPhysicsPixels.value = drops;
+  activePixels.value = [];
+};
+
+const triggerCorrectAnswer = () => {
+  // Alle Pixel sofort an ihre Ziel-Position setzen
+  activePixels.value.forEach((p) => {
+    p.currentY = p.targetY;
+    p.landed = true;
+    p.delay = 0;
+  });
+
+  playPop();
+  playShine();
+
+  if (!getAnimationFrameId()) render();
+};
+
+const triggerIncorrectAnswer = () => {
+  // 1. Motiv sofort vollständig anzeigen
+  activePixels.value.forEach((p) => {
+    p.currentY = p.targetY;
+    p.landed = true;
+    p.delay = 0;
+  });
+
+  // 2. Shake-Effekt starten
+  playShake();
+
+  // 3. Drop erst nach 1 Sekunde ausführen
+  setTimeout(() => {
+    preparePhysicsPixels();
+  }, 1000);
+
+  if (!getAnimationFrameId()) render();
+};
+
 const drawShine = (ctx, size, progress) => {
   const bandWidth = size * 0.35;
   const diagLen = size * Math.SQRT2;
@@ -127,6 +190,33 @@ const drawShine = (ctx, size, progress) => {
   ctx.fillStyle = gradient;
   ctx.fillRect(pos, -diagLen, bandWidth, diagLen * 3);
   ctx.restore();
+};
+
+const updateAndDrawPhysicsPixels = (ctx, baseSize) => {
+  for (let i = animatedPhysicsPixels.value.length - 1; i >= 0; i--) {
+    const p = animatedPhysicsPixels.value[i];
+
+    p.xPos += p.vx;
+    p.yPos += p.vy;
+    p.vy += p.gravity;
+    p.rot += p.vRot;
+
+    if (p.yPos > internalSize + 80 || p.yPos < -150) {
+      animatedPhysicsPixels.value.splice(i, 1);
+      continue;
+    }
+
+    ctx.save();
+    ctx.translate(p.xPos + baseSize / 2, p.yPos + baseSize / 2);
+    ctx.rotate(p.rot);
+
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 8;
+    ctx.fillRect(-baseSize / 2, -baseSize / 2, baseSize, baseSize);
+
+    ctx.restore();
+  }
 };
 
 const render = () => {
@@ -160,8 +250,21 @@ const render = () => {
     }
   }
 
+  let scaleFactor = 1;
+  if (popState.value) {
+    const elapsed = now - popState.value.startTime;
+    const progress = elapsed / POP_DURATION;
+    if (progress >= 1) {
+      popState.value = null;
+    } else {
+      scaleFactor = 1 + Math.sin(progress * Math.PI) * 0.07;
+    }
+  }
+
   ctx.save();
-  ctx.translate(shakeX, shakeY);
+  ctx.translate(internalSize / 2 + shakeX, internalSize / 2 + shakeY);
+  ctx.scale(scaleFactor, scaleFactor);
+  ctx.translate(-internalSize / 2, -internalSize / 2);
 
   activePixels.value.forEach((p) => {
     if (props.isRevealing && !props.isStatusIcon && p.delay > 0) {
@@ -224,6 +327,10 @@ const render = () => {
     }
   });
 
+  if (animatedPhysicsPixels.value.length > 0) {
+    updateAndDrawPhysicsPixels(ctx, baseSize);
+  }
+
   if (shineState.value) {
     const elapsed = now - shineState.value.startTime;
     const progress = elapsed / SHINE_DURATION;
@@ -250,7 +357,19 @@ const playShake = () => {
   if (!getAnimationFrameId()) render();
 };
 
-defineExpose({ playShine, playShake });
+const playPop = () => {
+  popState.value = { startTime: Date.now() };
+  if (!getAnimationFrameId()) render();
+};
+
+defineExpose({
+  getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null,
+  playShine,
+  playShake,
+  playPop,
+  triggerCorrectAnswer,
+  triggerIncorrectAnswer,
+});
 
 watch(
   [() => props.pixelArray, () => props.isRevealing],

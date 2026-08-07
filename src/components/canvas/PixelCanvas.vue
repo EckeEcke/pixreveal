@@ -28,7 +28,7 @@ const props = defineProps({
   pauseReveal: Boolean,
   mousePos: Object,
   isMagnifierMode: Boolean,
-  muteSound: Boolean,
+  muteSound: Boolean
 })
 
 defineEmits(["mousemove", "touchstart", "touchmove"])
@@ -42,7 +42,7 @@ const {
   updateAndDrawParticles,
   setAnimationFrameId,
   getAnimationFrameId,
-  stopAnimation,
+  stopAnimation
 } = useCanvasBase(internalSize)
 
 const soundStore = useSoundStore()
@@ -58,12 +58,17 @@ let intervalId = null
 const flatPixelList = ref([])
 const displayedPixels = ref([])
 
-const SHINE_DURATION = 600
+const SHINE_DURATION = 500
 const shineState = ref(null)
 
 const SHAKE_DURATION = 400
-const SHAKE_MAGNITUDE = 4
+const SHAKE_MAGNITUDE = 6
 const shakeState = ref(null)
+
+const POP_DURATION = 350
+const popState = ref(null)
+
+const animatedPixels = ref([])
 
 const updateFlatPixelList = () => {
   const list = []
@@ -84,12 +89,13 @@ const getAutoMousePos = () => {
   const centerY = internalSize / 2 + offset
   return {
     x: centerX + Math.sin(autoAngle) * 200,
-    y: centerY + Math.cos(autoAngle * 0.5) * 200,
+    y: centerY + Math.cos(autoAngle * 0.5) * 200
   }
 }
 
 const startReveal = () => {
   if (intervalId) clearInterval(intervalId)
+  animatedPixels.value = []
   updateFlatPixelList()
   displayedPixels.value = []
 
@@ -128,6 +134,59 @@ const startReveal = () => {
   if (!getAnimationFrameId()) render()
 }
 
+const preparePhysicsPixels = (type) => {
+  const resolution = props.pixelArray?.length || 16
+  const { cellSize, gap } = calculateGrid(resolution)
+
+  animatedPixels.value = flatPixelList.value.map((p) => {
+    const xPos = p.x * cellSize + gap
+    const yPos = p.y * cellSize + gap
+
+    return {
+      xPos,
+      yPos,
+      color: colorPalette[p.val] || "#fff",
+      vx: (Math.random() - 0.5) * 6,
+      vy: -1 - Math.random() * 3,
+      gravity: 0.65,
+      rot: 0,
+      vRot: (Math.random() - 0.5) * 0.2
+    }
+  })
+
+  displayedPixels.value = []
+}
+
+const triggerCorrectAnswer = () => {
+  if (intervalId) {
+    clearInterval(intervalId)
+    intervalId = null
+  }
+
+  displayedPixels.value = [...flatPixelList.value]
+  playPop()
+  playShine()
+
+  if (!getAnimationFrameId()) render()
+}
+
+const triggerIncorrectAnswer = () => {
+  if (intervalId) {
+    clearInterval(intervalId)
+    intervalId = null
+  }
+
+  displayedPixels.value = [...flatPixelList.value]
+
+  playShake()
+
+  setTimeout(() => {
+    preparePhysicsPixels("drop")
+  }, 1000)
+
+  if (!getAnimationFrameId()) render()
+}
+
 const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
   pixels.forEach((p) => {
     const color = colorPalette[p.val]
@@ -138,6 +197,7 @@ const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
     const currentSize = baseSize * scale
     const offsetPos = (baseSize - currentSize) / 2
 
+    ctx.save()
     ctx.shadowColor = color
     ctx.shadowBlur = p.val === 1 ? 0 : 15 * scale
     ctx.fillStyle = color
@@ -153,7 +213,35 @@ const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
       ctx.lineWidth = 0.5
       ctx.strokeRect(p.x * cellSize + gap, p.y * cellSize + gap, baseSize, baseSize)
     }
+    ctx.restore()
   })
+}
+
+const updateAndDrawPhysicsPixels = (ctx, baseSize) => {
+  for (let i = animatedPixels.value.length - 1; i >= 0; i--) {
+    const p = animatedPixels.value[i]
+
+    p.xPos += p.vx
+    p.yPos += p.vy
+    p.vy += p.gravity
+    p.rot += p.vRot
+
+    if (p.yPos > internalSize + 80 || p.yPos < -150) {
+      animatedPixels.value.splice(i, 1)
+      continue
+    }
+
+    ctx.save()
+    ctx.translate(p.xPos + baseSize / 2, p.yPos + baseSize / 2)
+    ctx.rotate(p.rot)
+
+    ctx.fillStyle = p.color
+    ctx.shadowColor = p.color
+    ctx.shadowBlur = 8
+    ctx.fillRect(-baseSize / 2, -baseSize / 2, baseSize, baseSize)
+
+    ctx.restore()
+  }
 }
 
 const drawShine = (ctx, size, progress) => {
@@ -208,10 +296,24 @@ const render = () => {
     }
   }
 
-  ctx.save()
-  ctx.translate(shakeX, shakeY)
+  let scaleFactor = 1
+  if (popState.value) {
+    const elapsed = now - popState.value.startTime
+    const progress = elapsed / POP_DURATION
+    if (progress >= 1) {
+      popState.value = null
+    } else {
+      scaleFactor = 1 + Math.sin(progress * Math.PI) * 0.07
+    }
+  }
 
-  const pixelsToDraw = props.isRevealing || props.pauseReveal ? displayedPixels.value : flatPixelList.value
+  ctx.save()
+  ctx.translate(internalSize / 2 + shakeX, internalSize / 2 + shakeY)
+  ctx.scale(scaleFactor, scaleFactor)
+  ctx.translate(-internalSize / 2, -internalSize / 2)
+
+  // IMMER displayedPixels zeichnen (nicht bedingt durch falls isRevealing/pauseReveal)
+  const pixelsToDraw = displayedPixels.value
 
   if (props.isMagnifierMode && !props.isStatusIcon) {
     const activePos = playerStore.isCreatorMode ? getAutoMousePos() : props.mousePos
@@ -241,6 +343,10 @@ const render = () => {
     drawPixels(ctx, pixelsToDraw, baseSize, cellSize, gap, now)
   }
 
+  if (animatedPixels.value.length > 0) {
+    updateAndDrawPhysicsPixels(ctx, baseSize)
+  }
+
   if (shineState.value) {
     const elapsed = now - shineState.value.startTime
     const progress = elapsed / SHINE_DURATION
@@ -267,10 +373,18 @@ const playShake = () => {
   if (!getAnimationFrameId()) render()
 }
 
+const playPop = () => {
+  popState.value = { startTime: Date.now() }
+  if (!getAnimationFrameId()) render()
+}
+
 defineExpose({
   getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null,
   playShine,
   playShake,
+  playPop,
+  triggerCorrectAnswer,
+  triggerIncorrectAnswer
 })
 
 watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })

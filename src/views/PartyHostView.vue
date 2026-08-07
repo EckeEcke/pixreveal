@@ -168,7 +168,6 @@ const {
   baseRevealing: isRevealing,
 });
 
-// Suppress CSS filter transition at round start to prevent visual jumps
 const suppressFilterTransition = ref(false);
 
 const canvasEffectsStyle = computed(() => {
@@ -347,7 +346,6 @@ const setupDrawing = () => {
 
   clearAllTimers();
 
-  // Apply instant filter jump at round start
   suppressFilterTransition.value = true;
 
   pixelData.value = currentRound.value.data;
@@ -356,7 +354,6 @@ const setupDrawing = () => {
   partyStore.openBuzzer();
   startTimer();
 
-  // Re-enable smooth transition after initial frame render
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       suppressFilterTransition.value = false;

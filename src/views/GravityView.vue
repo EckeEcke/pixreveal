@@ -27,7 +27,7 @@
         :count="timer"
         :is-correct="hasAnsweredCorrectly"
         :is-incorrect="hasAnswered && !hasAnsweredCorrectly"
-        :is-bonus="(!!bonusRoundType || isFinalRound) && !isStatusIcon"
+        :is-bonus="!!bonusRoundType || isFinalRound"
         :total-score="playerStore.points"
         :currentRound="gameStore.currentRoundIndex + 1"
         :max-rounds="maxRounds"
@@ -38,8 +38,7 @@
         <PixelCanvasGravity
           ref="pixelCanvasRef"
           :pixel-array="pixelData"
-          :is-status-icon="isStatusIcon"
-          :is-revealing="canvasIsRevealing || isStatusIcon"
+          :is-revealing="canvasIsRevealing"
           :pauseReveal="showFinalRoundTransition || showBonusRoundTransition"
         />
         <div v-if="isBlurRoundActive" class="blur-overlay" />
@@ -74,7 +73,6 @@ import { usePlayerStore } from "@/stores/player";
 import { useConfigStore } from "@/stores/config";
 import { useSoundStore } from "@/stores/sound";
 import { useOnlineStore } from "@/stores/online";
-import { statusIcons } from "@/data/statusIcons";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import { useBonusRounds } from "@/composables/useBonusRounds";
 import {
@@ -94,18 +92,18 @@ const soundStore = useSoundStore();
 const pixelCanvasRef = ref<{
   playShine: () => void;
   playShake: () => void;
+  triggerCorrectAnswer: () => void;
+  triggerIncorrectAnswer: () => void;
 } | null>(null);
 
 const pixelData = ref<number[][]>([]);
 const hasAnswered = ref(false);
-const isStatusIcon = ref(false);
 const hasAnsweredCorrectly = ref(false);
 const timerDuration = computed(() => unref(configStore.revealTime) || 15);
 const timer = ref(timerDuration.value);
 
 let timerIntervalId: number | null = null;
 let feedbackTimeoutId: number | null = null;
-let solutionTimeoutId: number | null = null;
 
 const currentRound = computed(() => gameStore.currentRound);
 const maxRounds = computed(() => configStore.maxRounds);
@@ -156,10 +154,8 @@ const handleBonusRoundDone = () => {
 const clearAllLocalTimers = () => {
   workerClearInterval(timerIntervalId);
   workerClearTimeout(feedbackTimeoutId);
-  workerClearTimeout(solutionTimeoutId);
   timerIntervalId = null;
   feedbackTimeoutId = null;
-  solutionTimeoutId = null;
 };
 
 const startTimer = () => {
@@ -185,7 +181,6 @@ const setupDrawing = () => {
 
   clearAllLocalTimers();
   hasAnswered.value = false;
-  isStatusIcon.value = false;
   hasAnsweredCorrectly.value = false;
 
   // Apply instant filter jump at round start
@@ -203,6 +198,18 @@ const setupDrawing = () => {
   });
 };
 
+const goToNextRound = () => {
+  gameStore.nextRound();
+
+  if (gameStore.isGameOver) {
+    onlineStore.broadcastScore();
+    const isOnlineRoute =
+      router.currentRoute.value.name === "online" ||
+      router.currentRoute.value.path === "/online";
+    router.push(isOnlineRoute ? "/gameover-online" : "/gameover");
+  }
+};
+
 const handleAnswer = (selectedAnswer: any) => {
   if (gameStore.gameState !== "revealing" || hasAnswered.value) return;
 
@@ -210,47 +217,29 @@ const handleAnswer = (selectedAnswer: any) => {
   gameStore.setGameState("feedback");
   clearAllLocalTimers();
 
-  if (playerStore.isCreatorMode) {
-    pixelData.value = statusIcons.question;
-  } else if (!selectedAnswer?.isCorrect) {
-    pixelData.value = statusIcons.failure;
-    pixelCanvasRef.value?.playShake();
-    soundStore.playSound("incorrect");
-  } else {
-    pixelData.value = statusIcons.success;
+  if (selectedAnswer?.isCorrect) {
     hasAnsweredCorrectly.value = true;
+    pixelCanvasRef.value?.triggerCorrectAnswer();
+
     const multiplier = isFinalRound.value || !!bonusRoundType.value ? 2 : 1;
     playerStore.addPoints(timer.value * multiplier);
     soundStore.playSound("correct");
-  }
-  isStatusIcon.value = true;
 
-  workerSetTimeout(() => {
-    pixelCanvasRef.value?.playShine();
-  }, 650);
-
-  feedbackTimeoutId = workerSetTimeout(() => {
-    isStatusIcon.value = false;
-    if (currentRound.value) {
-      pixelData.value = currentRound.value.data;
-      workerSetTimeout(() => {
-        pixelCanvasRef.value?.playShine();
-      }, 650);
-    }
-    gameStore.setGameState("revealed");
-
-    solutionTimeoutId = workerSetTimeout(() => {
-      gameStore.nextRound();
-
-      if (gameStore.isGameOver) {
-        onlineStore.broadcastScore();
-        router.push("/gameover");
-      } else {
-        hasAnswered.value = false;
-        hasAnsweredCorrectly.value = false;
-      }
+    feedbackTimeoutId = workerSetTimeout(() => {
+      goToNextRound();
     }, 1500);
-  }, 1500);
+  } else {
+    hasAnsweredCorrectly.value = false;
+    pixelCanvasRef.value?.triggerIncorrectAnswer();
+    soundStore.playSound("incorrect");
+
+    // 1.8s gibt Zeit für Shake, Blur-Fade (1s) und anschließenden Pixel-Drop
+    feedbackTimeoutId = workerSetTimeout(() => {
+      goToNextRound();
+    }, 1800);
+  }
+
+  playerStore.pushToAnswerHistory(selectedAnswer?.isCorrect ?? false);
 };
 
 watch(
@@ -322,7 +311,7 @@ onUnmounted(() => {
 .canvas-effects {
   position: relative;
   width: 100%;
-  transition: filter 600ms ease;
+  transition: filter 800ms ease-out;
   will-change: filter;
 }
 

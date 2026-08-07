@@ -7,6 +7,7 @@
         @done="start"
       />
     </transition>
+
     <section class="canvas-section">
       <MinimalSettings />
       <GameHeader
@@ -19,12 +20,12 @@
         :max-rounds="maxRounds"
         :is-survival="false"
       />
+
       <PixelCanvasGravity
         v-if="mode === 'gravity'"
         ref="pixelCanvasRef"
         :pixel-array="pixelData"
-        :is-status-icon="isStatusIcon"
-        :is-revealing="!hasAnswered || isStatusIcon"
+        :is-revealing="!hasAnswered"
       />
       <PixelCanvas
         v-else
@@ -41,10 +42,11 @@
         @touchmove="updateTouchPos"
       />
     </section>
+
     <section class="answer-section">
       <AnswerButtons
         :hasAnswered="hasAnswered && !playerStore.isCreatorMode"
-        :answers="rounds[currentRoundIndex].options"
+        :answers="rounds[currentRoundIndex]?.options || []"
         :inputDisabled="showTransition"
         @answered="handleAnswer"
       />
@@ -53,169 +55,166 @@
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from "vue";
-import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
-import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue";
-import { useGameStore } from "@/stores/game";
-import { usePlayerStore } from "@/stores/player";
-import { useDailyStore } from "@/stores/daily";
-import { useSoundStore } from "@/stores/sound";
-import CountdownTransition from "@/components/page-layout/CountdownTransition.vue";
-import router from "@/router";
-import { statusIcons } from "@/data/statusIcons";
-import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
-import { useConfigStore } from "@/stores/config";
-import GameHeader from "@/components/game-ui/GameHeader.vue";
-import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
+import { computed, ref, onUnmounted } from "vue"
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue"
+import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue"
+import { useGameStore } from "@/stores/game"
+import { usePlayerStore } from "@/stores/player"
+import { useDailyStore } from "@/stores/daily"
+import { useSoundStore } from "@/stores/sound"
+import CountdownTransition from "@/components/page-layout/CountdownTransition.vue"
+import router from "@/router"
+import AnswerButtons from "@/components/game-ui/AnswerButtons.vue"
+import { useConfigStore } from "@/stores/config"
+import GameHeader from "@/components/game-ui/GameHeader.vue"
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue"
 import {
   workerClearInterval,
   workerClearTimeout,
   workerSetInterval,
   workerSetTimeout,
-} from "@/services/workerTimers";
+} from "@/services/workerTimers"
 
-const playerStore = usePlayerStore();
-const configStore = useConfigStore();
-const dailyStore = useDailyStore();
-const gameStore = useGameStore();
-const pixelCanvasRef = ref(null);
-const resolution = ref(16);
-const pixelData = ref(Array(256).fill(0));
-const hasAnswered = ref(false);
-const isStatusIcon = ref(false);
-const isRevealing = ref(dailyStore.mode !== "inspect");
-const showTransition = ref(true);
-const timerDuration = configStore.revealTime;
-const timer = ref(timerDuration);
-let timerId = null;
-let revealTimeoutId = null;
-let nextRoundTimeoutId = null;
-const hasAnsweredCorrectly = ref(false);
-const mode = dailyStore.mode;
+const playerStore = usePlayerStore()
+const configStore = useConfigStore()
+const dailyStore = useDailyStore()
+const gameStore = useGameStore()
+const soundStore = useSoundStore()
 
-const rounds = computed(() => gameStore.rounds);
-const currentRoundIndex = computed(() => gameStore.currentRoundIndex);
+const pixelCanvasRef = ref(null)
+const resolution = ref(16)
+const pixelData = ref(Array(256).fill(0))
+const hasAnswered = ref(false)
+const isRevealing = ref(dailyStore.mode !== "inspect")
+const showTransition = ref(true)
+const timerDuration = configStore.revealTime
+const timer = ref(timerDuration)
 
-const nextRound = useGameStore().nextRound;
-const maxRounds = useConfigStore().maxRounds;
+let timerId = null
+let revealTimeoutId = null
+let nextRoundTimeoutId = null
+
+const hasAnsweredCorrectly = ref(false)
+const mode = dailyStore.mode
+
+const rounds = computed(() => gameStore.rounds)
+const currentRoundIndex = computed(() => gameStore.currentRoundIndex)
+
+const nextRound = useGameStore().nextRound
+const maxRounds = useConfigStore().maxRounds
+
+const clearAllLocalTimers = () => {
+  workerClearInterval(timerId)
+  workerClearTimeout(revealTimeoutId)
+  workerClearTimeout(nextRoundTimeoutId)
+  timerId = null
+  revealTimeoutId = null
+  nextRoundTimeoutId = null
+}
 
 const startTimer = () => {
-  if (!pixelData.value || !pixelData.value[0]) return;
-  if (timer.value < timerDuration) timer.value = timerDuration;
-  workerClearInterval(timerId);
+  if (!pixelData.value || !pixelData.value[0]) return
+  if (timer.value < timerDuration) timer.value = timerDuration
+  workerClearInterval(timerId)
+
   timerId = workerSetInterval(() => {
-    timer.value--;
+    timer.value--
     if (timer.value <= 3 && timer.value > 0) {
-      useSoundStore().playSound("timer");
-      pixelCanvasRef.value?.playShake();
+      soundStore.playSound("timer")
+      pixelCanvasRef.value?.playShake()
     }
     if (timer.value <= 0) {
-      useSoundStore().playSound("incorrect");
-      workerClearInterval(timerId);
-      timerId = null;
-      handleAnswer(false);
+      workerClearInterval(timerId)
+      timerId = null
+      handleAnswer(null)
     }
-  }, 1000);
-};
+  }, 1000)
+}
 
 const setDrawing = (data) => {
-  hasAnswered.value = false;
-  isRevealing.value = mode !== "inspect";
-  pixelData.value = data;
-  resolution.value = Math.sqrt(data.length);
-  hasAnsweredCorrectly.value = false;
-  timer.value = timerDuration;
-  startTimer();
-};
+  clearAllLocalTimers()
+  hasAnswered.value = false
+  isRevealing.value = mode !== "inspect"
+  pixelData.value = data
+  resolution.value = Math.sqrt(data.length)
+  hasAnsweredCorrectly.value = false
+  timer.value = timerDuration
+  startTimer()
+}
 
 const handleAnswer = (selectedAnswer) => {
-  if (hasAnswered.value) return;
-  hasAnswered.value = true;
-  workerClearInterval(timerId);
-  timerId = null;
+  if (hasAnswered.value) return
+  hasAnswered.value = true
+  clearAllLocalTimers()
 
   if (playerStore.isCreatorMode) {
-    pixelData.value = statusIcons.question;
-  } else if (!selectedAnswer?.isCorrect) {
-    pixelData.value = statusIcons.failure;
-    pixelCanvasRef.value?.playShake();
-    useSoundStore().playSound("incorrect");
+    // Creator mode
+  } else if (selectedAnswer?.isCorrect) {
+    hasAnsweredCorrectly.value = true
+    playerStore.addPoints(timer.value)
+    soundStore.playSound("correct")
+    pixelCanvasRef.value?.triggerCorrectAnswer()
   } else {
-    pixelData.value = statusIcons.success;
-    hasAnsweredCorrectly.value = true;
-    playerStore.addPoints(timer.value);
-    useSoundStore().playSound("correct");
+    hasAnsweredCorrectly.value = false
+    soundStore.playSound("incorrect")
+    pixelCanvasRef.value?.triggerIncorrectAnswer()
   }
-  isStatusIcon.value = true;
 
-  workerSetTimeout(() => {
-    pixelCanvasRef.value?.playShine();
-  }, 650);
-
-  workerClearTimeout(revealTimeoutId);
   revealTimeoutId = workerSetTimeout(() => {
-    isRevealing.value = false;
-    isStatusIcon.value = false;
-    pixelData.value = rounds.value[currentRoundIndex.value].data;
-    workerSetTimeout(() => {
-      pixelCanvasRef.value?.playShine();
-    }, 650);
+    isRevealing.value = false
 
-    workerClearTimeout(nextRoundTimeoutId);
     nextRoundTimeoutId = workerSetTimeout(() => {
-      nextRound();
+      nextRound()
       if (gameStore.isGameOver) {
-        router.push("/gameover-daily");
+        router.push("/gameover-daily")
       } else {
-        setDrawing(rounds.value[currentRoundIndex.value].data);
+        setDrawing(rounds.value[currentRoundIndex.value].data)
       }
-    }, 1500);
-  }, 1500);
-};
+    }, 600)
+  }, 1000)
+}
 
-const mousePos = ref({ x: 300, y: 300 });
+const mousePos = ref({ x: 300, y: 300 })
 
 const updateMousePos = (event) => {
-  const rect = event.target.getBoundingClientRect();
-  const scaleX = 600 / rect.width;
-  const scaleY = 600 / rect.height;
+  const rect = event.target.getBoundingClientRect()
+  const scaleX = 600 / rect.width
+  const scaleY = 600 / rect.height
   mousePos.value = {
     x: (event.clientX - rect.left) * scaleX,
     y: (event.clientY - rect.top) * scaleY,
-  };
-};
+  }
+}
 
 const updateTouchPos = (event) => {
-  if (event.cancelable) event.preventDefault();
+  if (event.cancelable) event.preventDefault()
 
-  const touch = event.touches[0];
+  const touch = event.touches[0]
   const canvasElement = event.currentTarget.$el
     ? event.currentTarget.$el.querySelector("canvas")
-    : event.target;
+    : event.target
 
-  const rect = canvasElement.getBoundingClientRect();
+  const rect = canvasElement.getBoundingClientRect()
 
-  const scaleX = 600 / rect.width;
-  const scaleY = 600 / rect.height;
+  const scaleX = 600 / rect.width
+  const scaleY = 600 / rect.height
 
   mousePos.value = {
     x: (touch.clientX - rect.left) * scaleX,
     y: (touch.clientY - rect.top) * scaleY,
-  };
-};
+  }
+}
 
 const start = () => {
-  showTransition.value = false;
-  setDrawing(rounds.value[currentRoundIndex.value].data);
-};
+  showTransition.value = false
+  setDrawing(rounds.value[currentRoundIndex.value].data)
+}
 
-dailyStore.markAsPlayed();
+dailyStore.markAsPlayed()
 
 onUnmounted(() => {
-  workerClearTimeout(revealTimeoutId);
-  workerClearTimeout(nextRoundTimeoutId);
-  workerClearInterval(timerId);
-});
+  clearAllLocalTimers()
+})
 </script>
 
 <style scoped>
@@ -225,7 +224,10 @@ onUnmounted(() => {
   gap: 0;
   max-width: 500px;
   width: 100%;
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
+  .game-layout {
     position: relative;
     grid-template-columns: 1fr 400px;
     gap: 64px;
@@ -238,5 +240,14 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   margin: 16px 0 32px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
