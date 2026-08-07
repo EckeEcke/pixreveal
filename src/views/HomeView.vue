@@ -36,7 +36,7 @@
                     ? 'Check today\'s leaderboard'
                     : 'Play today\'s challenge, climb the leaderboard'
                 "
-                btn-color="var(--neon-blue)"
+                btn-color="var(--neon-social)"
                 :loading="dailyStore.isLoading"
                 :corner-text="timeLeft"
                 :is-new="!dailyStore.hasPlayedToday"
@@ -75,7 +75,7 @@
                   icon-name="pixel:user-solid"
                   btn-text="MORE MODES"
                   sub-title="Play Blur, Gravity, Inspect or Survival"
-                  btn-color="var(--neon-social)"
+                  btn-color="var(--neon-blue)"
                   :max-players="1"
                 />
               </router-link>

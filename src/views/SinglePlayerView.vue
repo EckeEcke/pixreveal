@@ -25,19 +25,19 @@
                 btn-color="var(--neon-cyan)"
               />
               <SelectionTile
+                icon-name="pixel:question"
+                :btn-function="startBlur"
+                btn-text="BLUR"
+                sub-title="Guess the image as it unblurs"
+                btn-color="var(--neon-pink)"
+              />
+              <SelectionTile
                 icon-name="pixel:hockey-mask-solid"
                 :btn-function="startSurvival"
                 btn-text="SURVIVAL"
                 sub-title="Answer correctly to gain more time"
                 btn-color="var(--neon-error)"
                 :high-score="survivalStore.highscore"
-              />
-              <SelectionTile
-                icon-name="pixel:question"
-                :btn-function="startBlur"
-                btn-text="BLUR"
-                sub-title="Guess the image as it unblurs"
-                btn-color="var(--neon-pink)"
               />
             </div>
             <h2>Popular</h2>
@@ -63,7 +63,7 @@
                     ? 'Check today\'s results'
                     : 'New puzzle every day with global leaderboard'
                 "
-                btn-color="var(--neon-blue)"
+                btn-color="var(--neon-social)"
                 :loading="dailyStore.isLoading"
                 :is-shiny="
                   true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
