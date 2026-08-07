@@ -1,6 +1,6 @@
 import { ref, onScopeDispose } from "vue";
 
-export function useDailyCountdown(resetHourUTC = 7) {
+export function useDailyCountDown(resetHourUTC = 7) {
   const timeLeft = ref("00:00:00");
   let timerInterval: ReturnType<typeof setInterval> | null = null;
 

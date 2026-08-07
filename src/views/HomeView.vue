@@ -114,7 +114,7 @@ import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import DailyWinner from "@/components/game-ui/DailyWinner.vue";
 import { useDailyStore } from "@/stores/daily";
 import { useRouter } from "vue-router";
-import { useDailyCountdown } from "@/composables/useDailyCountdown";
+import { useDailyCountDown } from "@/composables/useDailyCountDown";
 
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
@@ -123,7 +123,7 @@ const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 const { prepareGame } = useGameStore();
-const { timeLeft } = useDailyCountdown();
+const { timeLeft } = useDailyCountDown();
 
 const router = useRouter();
 

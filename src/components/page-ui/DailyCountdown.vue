@@ -12,9 +12,9 @@ vue
 
 <script setup>
 import { Icon } from "@iconify/vue";
-import { useDailyCountdown } from "@/composables/useDailyCountdown";
+import { useDailyCountDown } from "@/composables/useDailyCountDown";
 
-const { timeLeft } = useDailyCountdown();
+const { timeLeft } = useDailyCountDown();
 </script>
 
 <style scoped>

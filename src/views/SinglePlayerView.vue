@@ -94,7 +94,7 @@ import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import { useSurvivalStore } from "@/stores/survival";
-import { useDailyCountdown } from "@/composables/useDailyCountdown";
+import { useDailyCountDown } from "@/composables/useDailyCountDown";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
@@ -103,7 +103,7 @@ const dailyStore = useDailyStore();
 const survivalStore = useSurvivalStore();
 const { prepareGame } = useGameStore();
 
-const { timeLeft } = useDailyCountdown();
+const { timeLeft } = useDailyCountDown();
 
 
 const setUser = () =>
