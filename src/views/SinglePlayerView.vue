@@ -61,7 +61,7 @@
                 :sub-title="
                   dailyStore.hasPlayedToday
                     ? 'Check today\'s results'
-                    : 'New puzzle every day with global leaderboard'
+                    : 'Play today\'s challenge, climb the leaderboard'
                 "
                 btn-color="var(--neon-social)"
                 :loading="dailyStore.isLoading"
