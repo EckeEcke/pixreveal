@@ -120,7 +120,7 @@ const handleIntroDone = () => {
 
 const getRankDataForShare = (score) =>
   getRankData(score, {
-    maxRounds: configStore.maxRounds,
+    maxRounds: gameStore.rounds.length,
     revealTime: configStore.revealTime,
   });
 

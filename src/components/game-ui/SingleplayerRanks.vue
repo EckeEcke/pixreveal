@@ -12,16 +12,18 @@
 import { computed } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { getRankData } from "@/utils/ranks";
+import { useGameStore } from "@/stores/game";
 
 const props = defineProps<{
   points: number;
 }>();
 
 const configStore = useConfigStore();
+const gameStore = useGameStore();
 
 const rankData = computed(() => {
   return getRankData(props.points, {
-    maxRounds: configStore.maxRounds,
+    maxRounds: gameStore.rounds.length,
     revealTime: configStore.revealTime,
   });
 });

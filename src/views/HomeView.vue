@@ -124,7 +124,7 @@ const configStore = useConfigStore();
 const dailyStore = useDailyStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
-const { prepareGame } = useGameStore();
+const { prepareGame, createRounds, resetAndStartGame } = useGameStore();
 const { timeLeft } = useDailyCountDown();
 
 const router = useRouter();
@@ -140,7 +140,7 @@ const startDaily = () => {
 };
 
 const startClassic = () => {
-  prepareGame(configStore.revealTime);
+  resetAndStartGame(createRounds(5));
   playerStore.gameMode = "classic";
   router.push("/classic");
 };

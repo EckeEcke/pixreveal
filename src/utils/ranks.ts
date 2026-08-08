@@ -21,21 +21,21 @@ export const getRankData = (
       description: "You see the art before it even exists. Pure sorcery!",
     };
   }
-  if (safeScore > 90) {
+  if (adjustedScore > 90) {
     return {
       title: "EAGLE EYE",
       class: "rank-eagle",
       description: "Sharp as a 4K monitor in a 720p world. Impressive!",
     };
   }
-  if (safeScore > 60) {
+  if (adjustedScore > 60) {
     return {
       title: "GRID GLITCHER",
       class: "rank-glitcher",
       description: "You're getting there. Not a total blur, but not HD yet.",
     };
   }
-  if (safeScore > 30) {
+  if (adjustedScore > 30) {
     return {
       title: "BLURRY VISION",
       class: "rank-blurry",

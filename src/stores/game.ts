@@ -122,51 +122,56 @@ export const useGameStore = defineStore("game", () => {
     gameState.value = newState;
   };
 
+  const createRounds = (maxRounds: number) => {
+    const sessionData = sessionStorage.getItem("pixreveal_played_hashes");
+    let playedHashes: string[] = sessionData ? JSON.parse(sessionData) : [];
+
+    let availableDrawings = filteredDrawings.value.filter(
+      (d) => !playedHashes.includes(hashCode(d.name)),
+    );
+
+    const minRequired = maxRounds + 3;
+    while (availableDrawings.length < minRequired && playedHashes.length > 0) {
+      playedHashes.shift();
+      availableDrawings = filteredDrawings.value.filter(
+        (d) => !playedHashes.includes(hashCode(d.name)),
+      );
+    }
+
+    const shuffled = shuffle([...availableDrawings]);
+    const selectedForGame = shuffled.slice(0, maxRounds);
+
+    rounds.value = buildRounds(selectedForGame, playedHashes);
+
+    selectedForGame.forEach((d) => {
+      const hash = hashCode(d.name);
+      if (!playedHashes.includes(hash)) {
+        playedHashes.push(hash);
+      }
+    });
+    sessionStorage.setItem(
+      "pixreveal_played_hashes",
+      JSON.stringify(playedHashes),
+    );
+  };
+
+  const resetAndStartGame = () => {
+    currentRoundIndex.value = 0;
+    isGameOver.value = false;
+    selectedOption.value = null;
+    setGameState("starting");
+  };
+
   const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
     if (customRounds) {
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
       configStore.revealTime = customRevealTime;
     } else {
-      const sessionData = sessionStorage.getItem("pixreveal_played_hashes");
-      let playedHashes: string[] = sessionData ? JSON.parse(sessionData) : [];
-
-      let availableDrawings = filteredDrawings.value.filter(
-        (d) => !playedHashes.includes(hashCode(d.name)),
-      );
-
-      const minRequired = maxRounds.value + 3;
-      while (
-        availableDrawings.length < minRequired &&
-        playedHashes.length > 0
-      ) {
-        playedHashes.shift();
-        availableDrawings = filteredDrawings.value.filter(
-          (d) => !playedHashes.includes(hashCode(d.name)),
-        );
-      }
-
-      const shuffled = shuffle([...availableDrawings]);
-      const selectedForGame = shuffled.slice(0, maxRounds.value);
-
-      rounds.value = buildRounds(selectedForGame, playedHashes);
-
-      selectedForGame.forEach((d) => {
-        const hash = hashCode(d.name);
-        if (!playedHashes.includes(hash)) {
-          playedHashes.push(hash);
-        }
-      });
-      sessionStorage.setItem(
-        "pixreveal_played_hashes",
-        JSON.stringify(playedHashes),
-      );
+      createRounds(maxRounds.value);
     }
 
-    currentRoundIndex.value = 0;
-    isGameOver.value = false;
-    selectedOption.value = null;
-    setGameState("starting");
+    resetAndStartGame()
   };
 
   const nextRound = () => {
@@ -229,7 +234,9 @@ export const useGameStore = defineStore("game", () => {
     isLoadingScores,
     fetchScores,
     getPercentile,
+    createRounds,
     prepareGame,
+    resetAndStartGame,
     nextRound,
     addSuddenDeathRound,
     setRoundIndex,

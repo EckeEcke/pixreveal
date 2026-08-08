@@ -29,7 +29,7 @@
         :is-bonus="(!!bonusRoundType || isFinalRound) && !hasAnswered"
         :total-score="playerStore.points"
         :currentRound="gameStore.currentRoundIndex + 1"
-        :max-rounds="maxRounds"
+        :max-rounds="gameStore.rounds.length"
         :is-survival="false"
       />
 
