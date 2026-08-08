@@ -55,6 +55,14 @@ let autoAngle = 0
 const offset = 90
 let intervalId = null
 
+// Tracks browser tab visibility so we can skip purely cosmetic work
+// (particle bursts) while the tab is inactive, without touching the
+// actual pixel reveal progress.
+const isPageHidden = ref(document.hidden)
+const handleVisibilityChange = () => {
+  isPageHidden.value = document.hidden
+}
+
 const flatPixelList = ref([])
 const displayedPixels = ref([])
 
@@ -121,8 +129,12 @@ const startReveal = () => {
       const next = allVisible.pop()
       displayedPixels.value.push({ ...next, createdAt: Date.now() })
 
-      const color = colorPalette[next.val] || "#fff"
-      createParticles(next.x * cellSize, next.y * cellSize, color, cellSize)
+      // Skip particle spawning while the tab is inactive - purely
+      // cosmetic, and avoids a burst of queued particles on refocus.
+      if (!isPageHidden.value) {
+        const color = colorPalette[next.val] || "#fff"
+        createParticles(next.x * cellSize, next.y * cellSize, color, cellSize)
+      }
 
       if (!props.muteSound) soundStore.playSound("reveal")
     } else {
@@ -389,8 +401,12 @@ defineExpose({
 
 watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })
 
-onMounted(() => startReveal())
+onMounted(() => {
+  document.addEventListener("visibilitychange", handleVisibilityChange)
+  startReveal()
+})
 onUnmounted(() => {
+  document.removeEventListener("visibilitychange", handleVisibilityChange)
   clearInterval(intervalId)
   stopAnimation()
 })
