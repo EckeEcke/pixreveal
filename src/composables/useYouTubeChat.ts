@@ -218,12 +218,13 @@ export function useYouTubeChat() {
       return null;
     }
 
-    // broadcastStatus=active is unreliable: it's known to return an empty
-    // list even when a broadcast is genuinely live (YouTube API quirk), and
-    // it also excludes broadcasts still in "ready"/"testing". Fetch
-    // broadcastStatus=all instead and filter client-side so we can see
-    // exactly what state the broadcast is actually in.
-    const url = `${YOUTUBE_API_BASE}/liveBroadcasts?part=snippet,status&broadcastStatus=all&broadcastType=all&mine=true&maxResults=25`;
+    // IMPORTANT: liveBroadcasts.list only allows ONE of {id, mine,
+    // broadcastStatus} as a filter at a time — combining mine=true with
+    // broadcastStatus=* is rejected by the API with 400 "Incompatible
+    // parameters". So we use mine=true alone and filter client-side below,
+    // which also sidesteps the known quirk where broadcastStatus=active
+    // returns empty even when a broadcast is genuinely live.
+    const url = `${YOUTUBE_API_BASE}/liveBroadcasts?part=snippet,status&broadcastType=all&mine=true&maxResults=25`;
 
     const resp = await fetch(url, { headers });
     const data = await resp.json();
