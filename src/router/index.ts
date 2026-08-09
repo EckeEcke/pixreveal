@@ -56,6 +56,12 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
+      path: "/stream",
+      name: "stream",
+      component: () => import("@/components/streaming/StreamingMode.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/online",
       name: "online",
       component: () => import("@/views/GameView.vue"),
@@ -287,6 +293,18 @@ const router = createRouter({
         description:
           "Check out the PixReveal Daily Champions! See who guessed the drawings with the highest score and learn how to secure your own place in the Hall of Fame.",
         canonical: "https://www.pixreveal.com/hall-of-fame",
+      },
+    },
+    {
+      path: "/partners",
+      name: "partners",
+      component: () => import("@/views/PartnersView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "Gaming Partners & Communities | PixReveal",
+        description:
+          "Discover featured gaming communities and partners like GameBuddies.io. Connect with players, find teammates, and level up your multiplayer experience.",
+        canonical: "https://www.pixreveal.com/partners",
       },
     },
     // Path Guard: always put at the bottom!

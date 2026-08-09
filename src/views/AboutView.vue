@@ -77,7 +77,7 @@
         <Icon icon="devicon:linkedin" alt="link to my linkedin" />
       </a>
       <a
-        href="https://discord.gg/XMTAw7FXd"
+        href="https://discord.gg/NuYwabjXUj"
         target="_blank"
         rel="noopener noreferrer"
       >
