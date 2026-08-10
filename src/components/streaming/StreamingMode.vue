@@ -182,7 +182,7 @@ const FALLBACK_POINTS = 1;
 
 function pointsForRank(rank: number): number {
   const index = rank - 1; // rank is 1-based
-  return index < RANK_POINTS.length ? RANK_POINTS[index] : FALLBACK_POINTS;
+  return RANK_POINTS[index] ?? FALLBACK_POINTS;
 }
 
 // How long after a round's timer ends we still attribute chat answers to
@@ -254,6 +254,7 @@ function pruneOldRounds(nowMs: number) {
 function findRoundForTimestamp(messageTimeMs: number): RoundRecord | null {
   for (let i = rounds.value.length - 1; i >= 0; i--) {
     const r = rounds.value[i];
+    if (!r) continue;
     const windowEnd =
       r.endedAt === null ? Infinity : r.endedAt + LATENCY_GRACE_MS;
     if (messageTimeMs >= r.startedAt && messageTimeMs <= windowEnd) {
@@ -380,13 +381,14 @@ function onChatMessage(item: any) {
  */
 function handleLocalAnswer(index: number) {
   const round = rounds.value.find((r) => r.id === currentRoundRecordId.value);
-  if (!round || !round.options[index]) return;
+  if (!round) return;
+  const option = round.options[index];
+  if (!option) return;
 
   const usernameKey = "streamer";
   if (round.guessed.has(usernameKey)) return;
   round.guessed.add(usernameKey);
 
-  const option = round.options[index];
   const isCorrect = option.isCorrect;
 
   let stars = 0;
