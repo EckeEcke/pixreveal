@@ -152,7 +152,6 @@ const roundSeconds = computed(() =>
   Math.max(0, Math.ceil(roundDuration.value / 1000)),
 );
 
-const answeredThisRound = new Set<string>();
 const acceptedAnswers = ref<
   {
     username: string;
@@ -169,7 +168,100 @@ const chatDebug = ref("");
 
 const streamStore = useStreamStore();
 const channelStore = useChannelStore();
-let currentChatSession = 0;
+
+// ---------------------------------------------------------------------
+// Scoring: rank-based points (1st correct = 5, 2nd = 3, 3rd = 2, rest = 1)
+// with round-history attribution so answers sent during the pause +
+// stream/chat delay still get credited to the round they actually
+// answered, instead of being lost or wrongly scored against whatever
+// round happens to be on screen when we process them.
+// ---------------------------------------------------------------------
+
+const RANK_POINTS = [5, 3, 2];
+const FALLBACK_POINTS = 1;
+
+function pointsForRank(rank: number): number {
+  const index = rank - 1; // rank is 1-based
+  return index < RANK_POINTS.length ? RANK_POINTS[index] : FALLBACK_POINTS;
+}
+
+// How long after a round's timer ends we still attribute chat answers to
+// it, to cover stream-delivery delay (viewer sees the puzzle late) plus
+// chat polling jitter. Tune to your actually observed stream latency.
+const LATENCY_GRACE_MS = 3000;
+
+// Rounds older than their grace window by this much get pruned from
+// memory so this doesn't grow unbounded over a long stream.
+const PRUNE_BUFFER_MS = 30_000;
+
+type RoundOption = { title: string; isCorrect: boolean }; // title = normalized
+type RoundResult = {
+  username: string;
+  text: string;
+  stars: number;
+  createdAt: number;
+  isCorrect: boolean;
+};
+type RoundRecord = {
+  id: number;
+  answer: string; // normalized drawing name (free-text accepted answer)
+  options: RoundOption[]; // normalized titles, for numeric 1-4 matching
+  startedAt: number;
+  endedAt: number | null; // null while the round's timer is still running
+  guessed: Set<string>; // per-round dedup, keyed by lowercased username
+  correctCount: number;
+  results: RoundResult[];
+};
+
+const rounds = ref<RoundRecord[]>([]);
+let nextRoundId = 1;
+const currentRoundRecordId = ref<number | null>(null);
+
+/**
+ * Normalizes a guess/answer for comparison: lowercase, trims whitespace,
+ * strips diacritics (é -> e), collapses punctuation/extra spaces, and
+ * strips common filler people type around multiple-choice answers (e.g.
+ * "Antwort: 2", "1)", emoji keycap digits like "1️⃣").
+ */
+function normalizeAnswer(raw: string): string {
+  return raw
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // strip accents
+    .replace(/[\u20e3]/g, "") // strip emoji "keycap" combining mark (1️⃣ -> 1)
+    .replace(/\ufe0f/g, "") // strip emoji variation selector
+    .toLowerCase()
+    .trim()
+    .replace(/\b(antwort|option|nummer|nr)\b/g, "") // common filler words
+    .replace(/[^\p{L}\p{N}\s]/gu, "") // strip punctuation, keep letters/numbers/spaces
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function pruneOldRounds(nowMs: number) {
+  rounds.value = rounds.value.filter((r) => {
+    if (r.endedAt === null) return true; // still active, always keep
+    const windowEnd = r.endedAt + LATENCY_GRACE_MS;
+    return nowMs - windowEnd < PRUNE_BUFFER_MS;
+  });
+}
+
+/**
+ * Finds which tracked round a message's timestamp belongs to: the round
+ * whose [startedAt, endedAt ?? +Infinity] window (extended by
+ * LATENCY_GRACE_MS once ended) contains the message's publishedAt time.
+ * Scans newest-first since rounds don't overlap by design.
+ */
+function findRoundForTimestamp(messageTimeMs: number): RoundRecord | null {
+  for (let i = rounds.value.length - 1; i >= 0; i--) {
+    const r = rounds.value[i];
+    const windowEnd =
+      r.endedAt === null ? Infinity : r.endedAt + LATENCY_GRACE_MS;
+    if (messageTimeMs >= r.startedAt && messageTimeMs <= windowEnd) {
+      return r;
+    }
+  }
+  return null;
+}
 
 function shuffle<T>(arr: T[]) {
   return arr.slice().sort(() => Math.random() - 0.5);
@@ -203,23 +295,12 @@ function buildOptionsForDrawing(drawing: any, all: any[]) {
   return opts;
 }
 
-const chatLatencyMs = 3000;
-
-function computeStarsFromRemaining(remainingMs: number) {
-  const max = 5;
-  const ratio = Math.max(0, remainingMs / roundDuration.value);
-  return Math.max(1, Math.ceil(ratio * max));
-}
-
-function getChatStarCount() {
-  const remaining = Math.max(0, timeLeft.value - chatLatencyMs);
-  return computeStarsFromRemaining(remaining);
-}
-
-function getLocalStarCount() {
-  return computeStarsFromRemaining(timeLeft.value);
-}
-
+/**
+ * Handles one incoming YouTube chat message: figures out which round it
+ * actually belongs to (via publishedAt, not "whatever is on screen now"),
+ * enforces one attempt per user per round, matches numeric (1-4) or
+ * free-text guesses, and awards rank-based points on a correct answer.
+ */
 function onChatMessage(item: any) {
   const author =
     item.authorDetails?.displayName || item.authorDetails?.channelId || "anon";
@@ -228,75 +309,116 @@ function onChatMessage(item: any) {
     (item.snippet?.textMessageDetails &&
       item.snippet.textMessageDetails.messageText) ||
     "";
-  if (!currentDrawing.value) return;
+  const publishedAt: string | undefined = item.snippet?.publishedAt;
 
-  chatDebug.value = `recv=${text} author=${author} options=${currentOptions.value.length}`;
+  if (!text || !publishedAt) return;
 
-  const usernameKey = author.toLowerCase();
-  if (answeredThisRound.has(usernameKey)) return;
+  const messageTimeMs = new Date(publishedAt).getTime();
+  const round = findRoundForTimestamp(messageTimeMs);
 
-  const trimmed = text.trim();
-  const numericMatch = trimmed.match(/^\s*([1-4])(?:\uFE0F|\u20E3)?\s*$/);
-  if (numericMatch && currentOptions.value.length >= 4) {
-    handleChatAnswer(author, Number(numericMatch[1]) - 1);
+  if (!round) {
+    chatDebug.value = `recv=${text} author=${author} (no matching round — outside any grace window)`;
     return;
   }
 
-  if (
-    trimmed.toLowerCase() ===
-    String(currentDrawing.value.name).trim().toLowerCase()
-  ) {
-    answeredThisRound.add(usernameKey);
-    const stars = getChatStarCount();
-    acceptedAnswers.value.push({
-      username: author,
-      text,
-      stars,
-      drawing: currentDrawing.value.name,
-      createdAt: Date.now(),
-      isCorrect: true,
-    });
+  chatDebug.value = `recv=${text} author=${author} round=${round.id}`;
+
+  const usernameKey = author.toLowerCase();
+  if (round.guessed.has(usernameKey)) return; // one attempt per user per round
+  round.guessed.add(usernameKey);
+
+  const trimmed = text.trim();
+  const numericMatch = trimmed.match(/^\s*([1-4])(?:\uFE0F|\u20E3)?\s*$/);
+
+  let isCorrect = false;
+  let answerText = text;
+
+  if (numericMatch && round.options.length >= 4) {
+    const idx = Number(numericMatch[1]) - 1;
+    const opt = round.options[idx];
+    if (opt) {
+      isCorrect = opt.isCorrect;
+      answerText = opt.title;
+    }
+  } else if (normalizeAnswer(trimmed) === round.answer) {
+    isCorrect = true;
+  }
+
+  let stars = 0;
+  if (isCorrect) {
+    round.correctCount += 1;
+    stars = pointsForRank(round.correctCount);
+  }
+
+  const entry: RoundResult = {
+    username: author,
+    text: answerText,
+    stars,
+    createdAt: messageTimeMs,
+    isCorrect,
+  };
+  round.results.push(entry);
+
+  if (isCorrect) {
     streamStore.addStars(author, stars);
     streamStore.addPoint(author, stars);
   }
+
+  // Only reflect in the visible ticker if this answer belongs to the round
+  // currently on screen — late answers attributed to a just-ended round
+  // still score correctly, they just won't visually appear in a ticker
+  // that has already moved on to the next drawing.
+  if (round.id === currentRoundRecordId.value) {
+    acceptedAnswers.value.push(entry);
+  }
 }
 
-function handleChatAnswer(author: string, index: number) {
-  if (!currentOptions.value || !currentOptions.value[index]) return;
-  const usernameKey = author.toLowerCase();
-  if (answeredThisRound.has(usernameKey)) return;
-  answeredThisRound.add(usernameKey);
-  const option = currentOptions.value[index];
-  const stars =
-    author === "Streamer" ? getLocalStarCount() : getChatStarCount();
-  acceptedAnswers.value.push({
-    username: author,
-    text: option.title,
+/**
+ * Handles the streamer's own local answer click. Goes through the same
+ * round/rank scoring as chat, so the streamer competes for rank alongside
+ * chat guessers, matching the original combined behavior.
+ */
+function handleLocalAnswer(index: number) {
+  const round = rounds.value.find((r) => r.id === currentRoundRecordId.value);
+  if (!round || !round.options[index]) return;
+
+  const usernameKey = "streamer";
+  if (round.guessed.has(usernameKey)) return;
+  round.guessed.add(usernameKey);
+
+  const option = round.options[index];
+  const isCorrect = option.isCorrect;
+
+  let stars = 0;
+  if (isCorrect) {
+    round.correctCount += 1;
+    stars = pointsForRank(round.correctCount);
+  }
+
+  const entry: RoundResult = {
+    username: "Streamer",
+    text: currentOptions.value[index]?.title ?? option.title,
     stars,
-    drawing: currentDrawing.value?.name,
     createdAt: Date.now(),
-    isCorrect: option.isCorrect,
-  });
-  if (option.isCorrect) {
-    streamStore.addStars(author, stars);
-    streamStore.addPoint(author, stars);
-    if (author === "Streamer") {
-      try {
-        pixelCanvas.value?.triggerCorrectAnswer?.();
-      } catch (e) {
-        /* ignore */
-      }
+    isCorrect,
+  };
+  round.results.push(entry);
+  acceptedAnswers.value.push(entry);
+
+  if (isCorrect) {
+    streamStore.addStars("Streamer", stars);
+    streamStore.addPoint("Streamer", stars);
+    try {
+      pixelCanvas.value?.triggerCorrectAnswer?.();
+    } catch (e) {
+      /* ignore */
     }
-  } else {
-    // incorrect answers do not award points
   }
 }
 
 function onLocalAnswered(answer: any) {
-  // local streamer click handling (use name 'Streamer')
-  const author = "Streamer";
   const index = currentOptions.value.findIndex((o) => o.title === answer.title);
-  if (index >= 0) handleChatAnswer(author, index);
+  if (index >= 0) handleLocalAnswer(index);
 }
 
 const topPlayers = computed(() => {
@@ -320,46 +442,25 @@ async function signIn() {
 
 async function startStreamMode() {
   if (!isSignedIn.value) {
-    const redirected = await handleRedirect(
-      clientId.value,
-      clientSecret.value || undefined,
-    );
+    await handleRedirect(clientId.value, clientSecret.value || undefined);
   }
 
   stopPolling();
   streamStore.resetAll();
   acceptedAnswers.value = [];
-  answeredThisRound.clear();
+  rounds.value = [];
   chatDebug.value = "Starting stream...";
   console.log("Starting stream mode and initializing YouTube chat polling");
 
   allDrawings.value = shuffle(drawings as any[]);
   currentIndex.value = 0;
   running.value = true;
-  nextRound();
-}
 
-async function nextRound() {
-  if (currentIndex.value >= allDrawings.value.length) {
-    running.value = false;
-    stopPolling();
-    return;
-  }
-  currentDrawing.value = allDrawings.value[currentIndex.value];
-  acceptedAnswers.value = [];
-  answeredThisRound.clear();
-  currentChatSession++;
-
-  currentRoundStart.value = Date.now();
-  timeLeft.value = roundDuration.value;
-
-  // build 4 options (1 correct + 3 distractors)
-  currentOptions.value = buildOptionsForDrawing(
-    currentDrawing.value,
-    drawings as any[],
-  );
-
-  // determine liveChatId
+  // Chat polling is started ONCE here and runs continuously for the whole
+  // stream session — it deliberately does NOT stop/restart between
+  // rounds. Stopping it during the pause would mean late answers (sent
+  // during the pause + stream delay) never arrive at all, which defeats
+  // the round-history/grace-window attribution below.
   chatDebug.value = "Looking up the active YouTube live chat...";
   const liveChatId = await fetchLiveChatIdForChannel();
   if (!liveChatId) {
@@ -369,22 +470,51 @@ async function nextRound() {
   } else {
     chatDebug.value = `Polling YouTube live chat ${liveChatId}...`;
     console.log("Starting YouTube chat polling for", liveChatId);
-    stopPolling();
-    const sessionId = currentChatSession;
-    startPolling(
-      liveChatId,
-      (item: any) => {
-        if (sessionId !== currentChatSession) return;
-        onChatMessage(item);
-      },
-      (message: string) => {
-        if (message) {
-          chatDebug.value = message;
-          console.log("YouTube chat status:", message);
-        }
-      },
-    );
+    startPolling(liveChatId, onChatMessage, (message: string) => {
+      if (message) {
+        chatDebug.value = message;
+        console.log("YouTube chat status:", message);
+      }
+    });
   }
+
+  nextRound();
+}
+
+function nextRound() {
+  if (currentIndex.value >= allDrawings.value.length) {
+    running.value = false;
+    stopPolling();
+    return;
+  }
+  currentDrawing.value = allDrawings.value[currentIndex.value];
+  acceptedAnswers.value = [];
+
+  currentRoundStart.value = Date.now();
+  timeLeft.value = roundDuration.value;
+
+  currentOptions.value = buildOptionsForDrawing(
+    currentDrawing.value,
+    drawings as any[],
+  );
+
+  pruneOldRounds(currentRoundStart.value);
+  const record: RoundRecord = {
+    id: nextRoundId++,
+    answer: normalizeAnswer(currentDrawing.value.name),
+    options: currentOptions.value.map((o) => ({
+      title: normalizeAnswer(o.title),
+      isCorrect: o.isCorrect,
+    })),
+    startedAt: currentRoundStart.value,
+    endedAt: null,
+    guessed: new Set<string>(),
+    correctCount: 0,
+    results: [],
+  };
+  rounds.value.push(record);
+  currentRoundRecordId.value = record.id;
+
   timerHandle.value = window.setInterval(() => {
     timeLeft.value = Math.max(
       0,
@@ -392,11 +522,18 @@ async function nextRound() {
         (Date.now() - (currentRoundStart.value || Date.now())),
     );
     if (timeLeft.value <= 0) {
-      // end round
+      // Mark this round's end time — it stays eligible to receive late
+      // chat answers for LATENCY_GRACE_MS after this point, it just stops
+      // being "current" for the ticker/UI.
+      const activeRound = rounds.value.find(
+        (r) => r.id === currentRoundRecordId.value,
+      );
+      if (activeRound) activeRound.endedAt = Date.now();
+
       if (timerHandle.value) window.clearInterval(timerHandle.value);
-      stopPolling();
       currentIndex.value++;
-      // short fixed delay between rounds
+      // Fixed pause between rounds. Chat polling keeps running throughout
+      // this pause (see startStreamMode) so late answers still arrive.
       setTimeout(nextRound, 5000);
     }
   }, 250);
@@ -411,6 +548,7 @@ function resetStream() {
   if (!ok) return;
   streamStore.resetAll();
   acceptedAnswers.value = [];
+  rounds.value = [];
 }
 
 onBeforeUnmount(() => {
