@@ -452,6 +452,7 @@ watch(
   () => partyStore.buzzerState,
   (newState) => {
     if (newState === "answering" && timer.value > 0) {
+      soundStore.playSound("buzz");
       workerClearInterval(timerId);
       timerId = null;
       workerClearTimeout(timerEndTimeoutId);

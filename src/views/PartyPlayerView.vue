@@ -41,7 +41,6 @@
           <button
             class="neon-buzzer"
             aria-label="Buzz to answer"
-            data-sfx="buzz"
             :disabled="partyStore.isFrozen || hasBuzzed"
             @click="handleBuzz"
           >
@@ -341,6 +340,7 @@ const handleBuzz = () => {
     return;
   if (!channelStore.activeChannel) return;
   vibrateBuzz();
+  soundStore.playSound("buzz");
   partyStore.pressBuzzer();
 };
 
@@ -486,9 +486,14 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   min-height: 100dvh;
-  padding: 32px 16px;
+  padding: 64px 16px 32px;
   width: 100%;
   max-width: 500px;
+  background: var(--card-bg);
+  box-sizing: unset;
+  @media (min-width: 550px) {
+    box-sizing: border-box;
+  }
 }
 
 .freeze-overlay {
