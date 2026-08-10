@@ -56,8 +56,9 @@
               <h3>Accepted Answers</h3>
               <ul>
                 <li v-for="(a, i) in acceptedAnswers" :key="i">
-                  <strong>{{ a.username }}</strong> — ⭐ {{ a.stars
-                  }}<span v-if="!a.isCorrect"> — "{{ a.text }}"</span>
+                  <strong>{{ a.username }}</strong>
+                  <span v-if="a.isCorrect"> — ⭐ {{ a.stars }}</span>
+                  <span v-else> — ❌</span>
                 </li>
               </ul>
             </div>
@@ -155,9 +156,7 @@ const roundSeconds = computed(() =>
 const acceptedAnswers = ref<
   {
     username: string;
-    text: string;
     stars: number;
-    drawing?: string;
     createdAt?: number;
     isCorrect?: boolean;
   }[]
@@ -197,7 +196,6 @@ const PRUNE_BUFFER_MS = 30_000;
 type RoundOption = { title: string; isCorrect: boolean }; // title = normalized
 type RoundResult = {
   username: string;
-  text: string;
   stars: number;
   createdAt: number;
   isCorrect: boolean;
@@ -325,25 +323,28 @@ function onChatMessage(item: any) {
   chatDebug.value = `recv=${text} author=${author} round=${round.id}`;
 
   const usernameKey = author.toLowerCase();
-  if (round.guessed.has(usernameKey)) return; // one attempt per user per round
-  round.guessed.add(usernameKey);
 
   const trimmed = text.trim();
   const numericMatch = trimmed.match(/^\s*([1-4])(?:\uFE0F|\u20E3)?\s*$/);
 
-  let isCorrect = false;
-  let answerText = text;
+  let matchedOption: RoundOption | undefined;
 
   if (numericMatch && round.options.length >= 4) {
-    const idx = Number(numericMatch[1]) - 1;
-    const opt = round.options[idx];
-    if (opt) {
-      isCorrect = opt.isCorrect;
-      answerText = opt.title;
-    }
-  } else if (normalizeAnswer(trimmed) === round.answer) {
-    isCorrect = true;
+    matchedOption = round.options[Number(numericMatch[1]) - 1];
+  } else {
+    const normalizedGuess = normalizeAnswer(trimmed);
+    matchedOption = round.options.find((o) => o.title === normalizedGuess);
   }
+
+  // Not a recognizable answer at all (e.g. "ok", random chat banter) —
+  // ignore completely. Doesn't consume the user's one attempt and never
+  // shows up in the ticker.
+  if (!matchedOption) return;
+
+  if (round.guessed.has(usernameKey)) return; // one attempt per user per round
+  round.guessed.add(usernameKey);
+
+  const isCorrect = matchedOption.isCorrect;
 
   let stars = 0;
   if (isCorrect) {
@@ -353,7 +354,6 @@ function onChatMessage(item: any) {
 
   const entry: RoundResult = {
     username: author,
-    text: answerText,
     stars,
     createdAt: messageTimeMs,
     isCorrect,
@@ -399,7 +399,6 @@ function handleLocalAnswer(index: number) {
 
   const entry: RoundResult = {
     username: "Streamer",
-    text: currentOptions.value[index]?.title ?? option.title,
     stars,
     createdAt: Date.now(),
     isCorrect,
