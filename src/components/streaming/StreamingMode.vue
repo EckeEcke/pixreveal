@@ -36,12 +36,6 @@
                 >Start Stream Mode</ButtonPrimary
               >
             </div>
-            <div class="chat-debug" :class="{ 'chat-debug-active': running }">
-              {{
-                chatDebug ||
-                "Chat status will appear here once stream mode starts."
-              }}
-            </div>
             <div>
               <h2>LEADERBOARD</h2>
               <PlayerDisplay
@@ -163,7 +157,6 @@ const acceptedAnswers = ref<
 >([]);
 const currentOptions = ref<any[]>([]);
 const pixelCanvas = ref<any | null>(null);
-const chatDebug = ref("");
 
 const streamStore = useStreamStore();
 const channelStore = useChannelStore();
@@ -177,7 +170,7 @@ const channelStore = useChannelStore();
 // ---------------------------------------------------------------------
 
 const RANK_POINTS = [5, 3, 2];
-const FALLBACK_POINTS = 1;
+const FALLBACK_POINTS = 0; // only the top 3 correct answers score anything
 
 function pointsForRank(rank: number): number {
   const index = rank - 1; // rank is 1-based
@@ -315,12 +308,7 @@ function onChatMessage(item: any) {
   const messageTimeMs = new Date(publishedAt).getTime();
   const round = findRoundForTimestamp(messageTimeMs);
 
-  if (!round) {
-    chatDebug.value = `recv=${text} author=${author} (no matching round — outside any grace window)`;
-    return;
-  }
-
-  chatDebug.value = `recv=${text} author=${author} round=${round.id}`;
+  if (!round) return; // outside any round's grace window — ignore
 
   const usernameKey = author.toLowerCase();
 
@@ -450,7 +438,6 @@ async function startStreamMode() {
   streamStore.resetAll();
   acceptedAnswers.value = [];
   rounds.value = [];
-  chatDebug.value = "Starting stream...";
   console.log("Starting stream mode and initializing YouTube chat polling");
 
   allDrawings.value = shuffle(drawings as any[]);
@@ -462,20 +449,13 @@ async function startStreamMode() {
   // rounds. Stopping it during the pause would mean late answers (sent
   // during the pause + stream delay) never arrive at all, which defeats
   // the round-history/grace-window attribution below.
-  chatDebug.value = "Looking up the active YouTube live chat...";
   const liveChatId = await fetchLiveChatIdForChannel();
   if (!liveChatId) {
-    chatDebug.value =
-      "No active YouTube live chat was found for this account, so chat polling is paused.";
     console.warn("No liveChatId found; streaming chat will not be polled.");
   } else {
-    chatDebug.value = `Polling YouTube live chat ${liveChatId}...`;
     console.log("Starting YouTube chat polling for", liveChatId);
     startPolling(liveChatId, onChatMessage, (message: string) => {
-      if (message) {
-        chatDebug.value = message;
-        console.log("YouTube chat status:", message);
-      }
+      if (message) console.log("YouTube chat status:", message);
     });
   }
 
@@ -622,22 +602,6 @@ input {
 }
 button {
   margin-top: 6px;
-}
-.chat-debug {
-  margin-top: 8px;
-  color: #ccc;
-  font-size: 0.85rem;
-  white-space: pre-wrap;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 8px 10px;
-  border-radius: 6px;
-  min-height: 42px;
-}
-
-.chat-debug-active {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .rankings {
