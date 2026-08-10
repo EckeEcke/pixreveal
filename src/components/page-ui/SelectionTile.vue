@@ -89,6 +89,9 @@ const handleClick = (event: MouseEvent) => {
     width: var(--left-block-width);
     background-color: var(--btn-color);
   }
+  @media (min-width: 575px) {
+    min-height: 160px;
+  }
 }
 
 .neon-btn.shiny::after,

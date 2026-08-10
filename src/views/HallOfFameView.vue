@@ -30,20 +30,17 @@
             : "PLAY DAILY CHALLENGE"
         }}
       </ButtonPrimary>
-    </div>
-
-    <div class="player-grid">
-      <PlayerDisplay
-        v-for="player in paginatedWinners"
-        :key="player.date"
-        :subline-small="player.date"
-        :name="player.winner.name"
-        :avatar-index="player.winner.avatarIndex"
-        :points="player.winner.score"
-        class="player-card"
+      <div class="player-grid">
+      <TopPlayerDisplay
+      v-for="player in paginatedWinners"
+          :key="player.date"
+          :name="player.winner.name"
+          :avatar-index="player.winner.avatarIndex"
+          :score="player.winner.score"
+          :subline="player.date"
+          class="player-card"
       />
     </div>
-
     <div v-if="totalPages > 1" class="pagination">
       <button 
         class="pagination-btn" 
@@ -63,6 +60,7 @@
         <Icon icon="pixel:angle-right-solid" />
       </button>
     </div>
+    </div>
   </main>
 </template>
 
@@ -71,7 +69,7 @@ import { ref, computed } from "vue"
 import { Icon } from "@iconify/vue"
 import { useDailyStore } from "@/stores/daily"
 import { useGameStore } from "@/stores/game"
-import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue"
+import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
 import { useRouter } from "vue-router"
 import { usePlayerStore } from "@/stores/player"
@@ -118,17 +116,16 @@ main {
 .back-btn-wrapper {
   min-width: 32px;
   width: 100%;
-  max-width: 616px;
+  max-width: 700px;
   margin-bottom: 16px;
 }
 
 .player-grid {
   width: 100%;
-  max-width: 616px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
-  margin: 32px auto 16px auto;
+  margin: 64px auto;
 }
 
 .subline {
@@ -162,7 +159,7 @@ h1 {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   width: 100%;
-  max-width: 616px;
+  max-width: 700px;
   box-sizing: border-box;
 }
 
@@ -201,5 +198,11 @@ h1 {
 .pagination-info {
   font-size: 14px;
   color: #fff;
+}
+
+.player-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 32px 0;
+  border-radius: 8px;
 }
 </style>

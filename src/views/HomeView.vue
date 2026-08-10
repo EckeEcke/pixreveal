@@ -34,7 +34,7 @@
                 :sub-title="
                   dailyStore.hasPlayedToday
                     ? 'Check today\'s leaderboard'
-                    : 'Play today\'s challenge, climb the leaderboard'
+                    : 'Put your score on the leaderboard and make it to the Hall of Fame'
                 "
                 btn-color="var(--neon-social)"
                 :loading="dailyStore.isLoading"

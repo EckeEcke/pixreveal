@@ -27,6 +27,7 @@
         </div>
       </template>
     </div>
+    <div>{{ subline }}</div>
   </div>
 </template>
 
@@ -44,6 +45,7 @@ const props = defineProps<{
   showYouIndicator?: boolean;
   isPending?: boolean;
   isActive?: boolean;
+  subline?: string;
 }>();
 
 const avatarStyle = computed<CSSProperties>(() => {
