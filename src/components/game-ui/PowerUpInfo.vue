@@ -7,7 +7,7 @@
           <span class="emoji">&#x1F526;</span>
           <div>
             <div class="name">lights out</div>
-            <div class="desc">Darken the canvas for 4 seconds</div>
+            <div class="desc">Darken the drawing</div>
           </div>
         </li>
         <li class="item">
@@ -21,7 +21,28 @@
           <span class="emoji">&#x2744;&#xFE0F;</span>
           <div>
             <div class="name">freeze</div>
-            <div class="desc">Stop your friends from acting for 4 seconds</div>
+            <div class="desc">Block friends from buzzing or acting</div>
+          </div>
+        </li>
+        <li class="item">
+          <span class="emoji">😈&#xFE0F;</span>
+          <div>
+            <div class="name">devil</div>
+            <div class="desc">Haunts the answer buttons in the next buzz</div>
+          </div>
+        </li>
+        <li class="item">
+          <span class="emoji">🙃&#xFE0F;</span>
+          <div>
+            <div class="name">upside down</div>
+            <div class="desc">Turns the image upside down</div>
+          </div>
+        </li>
+        <li class="item">
+          <span class="emoji">💨&#xFE0F;</span>
+          <div>
+            <div class="name">fart</div>
+            <div class="desc">Just try it out</div>
           </div>
         </li>
       </ul>

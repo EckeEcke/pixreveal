@@ -14,13 +14,23 @@
         }"
         :class="{
           'is-wrong':
-            hasAnswered && selectedAnswer === answer && !answer.isCorrect,
-          'is-correct': hasAnswered && answer.isCorrect,
+            hasAnswered &&
+            selectedAnswer === answer &&
+            (devilResult || !answer.isCorrect),
+          'is-correct':
+            hasAnswered &&
+            answer.isCorrect &&
+            !(devilResult && selectedAnswer === answer),
+          'is-devil': devilMode && index === devilIndex,
         }"
         @mouseenter="!hasAnswered && soundStore.handleHoverSound()"
-        @click="checkAnswer(answer, $event)"
+        @click="checkAnswer(answer, $event, index)"
       >
-        {{ answer.title || answer.name }}
+        {{
+          devilMode && index === devilIndex
+            ? "😈"
+            : answer.title || answer.name
+        }}
       </button>
 
       <span
@@ -38,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useSoundStore } from "@/stores/sound";
 import { vibrateError, vibrateSuccess } from "@/utils/vibration";
@@ -47,9 +57,13 @@ const props = defineProps({
   answers: Array,
   hasAnswered: Boolean,
   inputDisabled: Boolean,
+  devilMode: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(["answered"]);
+const emit = defineEmits(["answered", "devil-clicked"]);
 
 const buttonColors = [
   { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
@@ -62,10 +76,79 @@ const configStore = useConfigStore();
 const soundStore = useSoundStore();
 const selectedAnswer = ref(undefined);
 
-const checkAnswer = (answer, event) => {
+// --- Devil Mode state ---
+const devilIndex = ref(0);
+const devilResult = ref(false);
+let devilInterval = null;
+
+const startDevilRotation = () => {
+  stopDevilRotation();
+  devilIndex.value = 0;
+  if (!props.answers || props.answers.length === 0) return;
+  devilInterval = setInterval(() => {
+    devilIndex.value = (devilIndex.value + 1) % props.answers.length;
+    soundStore.playSound("click");
+  }, 500);
+};
+
+const stopDevilRotation = () => {
+  if (devilInterval) {
+    clearInterval(devilInterval);
+    devilInterval = null;
+  }
+};
+
+watch(
+  () => props.devilMode,
+  (isOn) => {
+    if (isOn && !props.hasAnswered && !props.inputDisabled) {
+      startDevilRotation();
+    } else {
+      stopDevilRotation();
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.hasAnswered,
+  (answered) => {
+    if (answered) stopDevilRotation();
+  }
+);
+
+// New round with a fresh answers array -> restart rotation if devil mode is on
+watch(
+  () => props.answers,
+  () => {
+    if (props.devilMode && !props.hasAnswered && !props.inputDisabled) {
+      startDevilRotation();
+    }
+  }
+);
+// --- end Devil Mode state ---
+
+const checkAnswer = (answer, event, index) => {
   if (props.hasAnswered || props.inputDisabled) return;
   if (event && event.currentTarget) event.currentTarget.blur();
+
+  const isDevilHit = props.devilMode && index === devilIndex.value;
+
   selectedAnswer.value = answer;
+  devilResult.value = isDevilHit;
+
+  if (props.devilMode) stopDevilRotation();
+
+  if (isDevilHit) {
+    console.log(
+      "[DevilMode] Devil button clicked - forcing incorrect answer",
+      answer
+    );
+    vibrateError();
+    emit("devil-clicked", { answer, index });
+    emit("answered", { ...answer, isCorrect: false });
+    return;
+  }
 
   if (answer.isCorrect) {
     soundStore.playSound("correct");
@@ -93,17 +176,19 @@ const handleKeydown = (event) => {
   if (["1", "2", "3", "4"].includes(key)) {
     const index = parseInt(key, 10) - 1;
     if (props.answers[index]) {
-      checkAnswer(props.answers[index], null);
+      checkAnswer(props.answers[index], null, index);
     }
   }
 };
 
 onMounted(() => {
   window.addEventListener("keydown", handleKeydown);
+  if (props.devilMode) soundStore.playSound("devil");
 });
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleKeydown);
+  stopDevilRotation();
 });
 </script>
 
@@ -233,6 +318,13 @@ onUnmounted(() => {
   animation: shake-fail 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   box-shadow: 0 0 30px var(--neon-error);
   border-color: var(--neon-error);
+}
+
+.answer-btn.is-devil {
+  border-color: #ff0000;
+  color: #ff0000;
+  background: #ff0000;
+  box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
 }
 
 .answer-btn:disabled:not(.is-correct):not(.is-wrong) {

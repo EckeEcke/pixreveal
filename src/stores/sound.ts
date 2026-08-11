@@ -18,6 +18,9 @@ import partyOverSound from "@/assets/audio/party-over.mp3";
 import partyCorrectSound from "@/assets/audio/correct2.mp3";
 import partyIncorrectSound from "@/assets/audio/incorrect2.mp3";
 import shuffleSound from "@/assets/audio/shuffle.mp3";
+import devilSound from "@/assets/audio/devil.mp3";
+import fartSound from "@/assets/audio/fart.mp3";
+import rewardSound from "@/assets/audio/reward.mp3";
 import robot1Sound from "@/assets/audio/robot-talk1.mp3";
 import robot2Sound from "@/assets/audio/robot-talk2.mp3";
 import robot3Sound from "@/assets/audio/robot-talk3.mp3";
@@ -43,6 +46,9 @@ export const useSoundStore = defineStore("sound", () => {
     freeze: freezeSound,
     shuffle: shuffleSound,
     electricity: electricitySound,
+    devil: devilSound,
+    fart: fartSound,
+    reward: rewardSound,
     winner: winnerSound,
     party: partyOverSound,
     partyCorrect: partyCorrectSound,

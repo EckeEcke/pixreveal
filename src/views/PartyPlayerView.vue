@@ -59,7 +59,9 @@
             :hasAnswered="hasAnswered"
             :answers="answersForUi"
             :inputDisabled="!isMyTurn"
+            :devil-mode="partyStore.isDevilActive"
             @answered="handleAnswer"
+            @devil-clicked="handleDevilClicked"
           />
           <div class="timer-container">
             <GameHeader
@@ -95,43 +97,16 @@
 
     <div class="powerup-btns">
       <button
-        class="lightsout-btn"
+        v-for="type in partyStore.powerupInventory"
+        :key="type"
+        :class="POWERUP_BTN_CLASS[type]"
         data-sfx="click"
-        :disabled="
-          partyStore.isLightsOut ||
-          partyStore.lightsOutUsedByMe ||
-          partyStore.isFrozen ||
-          partyStore.connectionStale
-        "
-        @click="partyStore.triggerLightsOut()"
+        :disabled="isPowerupTypeDisabled(type)"
+        @click="triggerFromInventory(type)"
       >
-        🔦
+        {{ POWERUP_ICON[type] }}
       </button>
-      <button
-        class="xlz-btn"
-        data-sfx="click"
-        :disabled="
-          partyStore.isXlzActive ||
-          partyStore.xlzUsedByMe ||
-          partyStore.isFrozen ||
-          partyStore.connectionStale
-        "
-        @click="partyStore.triggerXlz()"
-      >
-        🔀
-      </button>
-      <button
-        class="freeze-btn"
-        data-sfx="click"
-        :disabled="
-          partyStore.freezeUsedByMe ||
-          partyStore.isFrozen ||
-          partyStore.connectionStale
-        "
-        @click="partyStore.triggerFreeze()"
-      >
-        ❄️
-      </button>
+      <p v-if="partyStore.powerupInventory.length <= 0" class="no-powerups">No Powerups</p>
     </div>
 
     <div class="emoji-btns">
@@ -340,7 +315,15 @@ const handleBuzz = () => {
     return;
   if (!channelStore.activeChannel) return;
   vibrateBuzz();
-  soundStore.playSound("buzz");
+
+  // Fart-Powerup: aktiv, jemand hat es ausgelöst, und ich bin nicht der
+  // Auslöser selbst -> mein Buzz klingt wie ein Furz statt normal.
+  const willFart =
+    partyStore.fartCharges > 0 &&
+    partyStore.fartByPlayerId &&
+    partyStore.fartByPlayerId !== channelStore.playerId;
+
+  soundStore.playSound(willFart ? "fart" : "buzz");
   partyStore.pressBuzzer();
 };
 
@@ -408,6 +391,13 @@ const handleAnswer = (selectedAnswer) => {
   partyStore.submitAnswer(selectedAnswer);
 };
 
+const handleDevilClicked = ({ answer, index } = {}) => {
+  console.log("[DevilMode] devil-clicked received in PlayerHud", {
+    answer,
+    index,
+  });
+};
+
 const handleTimeoutAnswer = () => {
   if (hasAnswered.value) return;
   if (partyStore.isFrozen) return;
@@ -416,6 +406,74 @@ const handleTimeoutAnswer = () => {
 
   partyStore.hasAnswered = true;
   partyStore.submitAnswer(undefined);
+};
+
+// ─── Powerup inventory (random award system) ─────────────────────────────────
+
+const POWERUP_ICON = {
+  lightsOut: "🔦",
+  freeze: "❄️",
+  xlz: "🔀",
+  devil: "😈",
+  upsideDown: "🙃",
+  fart: "💨",
+};
+
+const POWERUP_BTN_CLASS = {
+  lightsOut: "lightsout-btn",
+  freeze: "freeze-btn",
+  xlz: "xlz-btn",
+  devil: "devil-btn",
+  upsideDown: "upsidedown-btn",
+  fart: "fart-btn",
+};
+
+const isPowerupTypeDisabled = (type) => {
+  if (partyStore.isFrozen || partyStore.connectionStale) return true;
+  switch (type) {
+    case "lightsOut":
+      return partyStore.isLightsOut;
+    case "freeze":
+      return false; // partyStore.freezeUsedByMe;
+    case "xlz":
+      return false;
+    case "devil":
+      return false; // partyStore.isDevilActive;
+    case "upsideDown":
+      return partyStore.isUpsideDown;
+    case "fart":
+      return false; //partyStore.isFartActive;
+    default:
+      return true;
+  }
+};
+
+const triggerFromInventory = (type) => {
+  console.log(type)
+  if (isPowerupTypeDisabled(type)) return;
+  switch (type) {
+    case "lightsOut":
+      partyStore.triggerLightsOut();
+      break;
+    case "freeze":
+      partyStore.triggerFreeze();
+      break;
+    case "xlz":
+      partyStore.triggerXlz();
+      break;
+    case "devil":
+      partyStore.triggerDevil();
+      break;
+    case "upsideDown":
+      partyStore.triggerUpsideDown();
+      break;
+    case "fart":
+      partyStore.triggerFart();
+      break;
+    default:
+      return;
+  }
+  partyStore.removePowerupFromInventory(type);
 };
 
 const emojis = [
@@ -445,6 +503,7 @@ const sendEmoji = (emoji) => {
 
 onMounted(() => {
   partyStore.setupEvents();
+  partyStore.resetPowerups;
   channelStore.activeChannel?.trigger("client-party-state-request", {
     requestedBy: channelStore.playerId,
   });
@@ -607,12 +666,16 @@ onMounted(() => {
 .powerup-btns {
   display: flex;
   gap: 16px;
+  min-height: 44px;
+  margin: 32px auto;
+  button {
+    animation: powerupPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+  }
 }
 
 .powerup-btns button {
   font-size: 32px;
   padding: 8px;
-  margin: 32px auto 16px;
 }
 
 .lightsout-btn {
@@ -715,6 +778,114 @@ onMounted(() => {
   transform: none;
 }
 
+.devil-btn {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  border: 2px solid var(--neon-purple);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-weight: 900;
+  padding: 8px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--pruple-glow);
+  box-shadow: 0 0 12px var(--pruple-glow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.devil-btn:hover:not(:disabled) {
+  background: var(--purple-bg);
+  box-shadow: 0 0 22px var(--purple-glow);
+  transform: translateY(-1px);
+}
+
+.devil-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.devil-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.fart-btn {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  border: 2px solid var(--neon-yellow);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-weight: 900;
+  padding: 8px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--yellow-glow);
+  box-shadow: 0 0 12px var(--yellow-glow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.fart-btn:hover:not(:disabled) {
+  background: var(--yellow-bg);
+  box-shadow: 0 0 22px var(--yellow-glow);
+  transform: translateY(-1px);
+}
+
+.fart-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.fart-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.upsidedown-btn {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  border: 2px solid var(--neon-cyan);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-weight: 900;
+  padding: 8px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--cyan-glow);
+  box-shadow: 0 0 12px var(--cyan-glow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.upsidedown-btn:hover:not(:disabled) {
+  background: var(--cyan-bg);
+  box-shadow: 0 0 22px var(--cyan-glow);
+  transform: translateY(-1px);
+}
+
+.upsidedown-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.upsidedown-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
 .emoji-btn {
   font-size: 32px;
   transition: all 0.3s ease-in-out;
@@ -730,6 +901,10 @@ onMounted(() => {
   opacity: 0.7;
 }
 
+.no-powerups {
+  opacity: 0.7;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -738,5 +913,11 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@keyframes powerupPop {
+  0% { transform: scale(0.5); opacity: 0 }
+  50% { transform: scale(1.3); opacity: 1 }
+  100% { transform: scale(1); opacity: 1 }
 }
 </style>

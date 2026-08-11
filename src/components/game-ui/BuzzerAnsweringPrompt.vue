@@ -5,7 +5,12 @@
       :avatarIndex="activeAvatarIndex"
     />{{ activePlayerName }}
   </span>
-  hit the buzzer! Is it
+  <template v-if="isDevilActive">
+    is playing Devil! Is it
+  </template>
+  <template v-else>
+    hit the buzzer! Is it
+  </template>
   <span
     v-for="(opt, index) in options"
     :key="`${index}-${opt}`"
@@ -22,39 +27,40 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue"
+import { usePartyStore } from "@/stores/party"
+import InlineAvatar from "./InlineAvatar.vue"
+
 defineProps<{
-  activePlayerName: string;
-  options: string[];
-  isXlzActive: boolean;
-}>();
+  activePlayerName: string
+  options: string[]
+  isXlzActive: boolean
+  isDevilActive?: boolean
+}>()
 
-import { computed } from "vue";
-import { usePartyStore } from "@/stores/party";
-import InlineAvatar from "./InlineAvatar.vue";
-
-const partyStore = usePartyStore();
+const partyStore = usePartyStore()
 
 const activeAvatarIndex = computed(() => {
-  const id = partyStore.activePlayerId ?? null;
-  if (!id) return null;
-  const p = partyStore.players.find((pl: any) => pl.playerId === id);
-  return p ? p.avatarIndex : null;
-});
+  const id = partyStore.activePlayerId ?? null
+  if (!id) return null
+  const p = partyStore.players.find((pl: any) => pl.playerId === id)
+  return p ? p.avatarIndex : null
+})
 
 const optionColors = [
   { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
   { color: "var(--neon-blue)", glow: "var(--blue-glow)" },
   { color: "var(--neon-purple)", glow: "var(--purple-glow)" },
   { color: "var(--neon-yellow)", glow: "var(--yellow-glow)" },
-] as const;
+] as const
 
 const getOptionStyle = (index: number) => {
-  const entry = optionColors[index % optionColors.length] ?? optionColors[0];
+  const entry = optionColors[index % optionColors.length] ?? optionColors[0]
   return {
     "--opt-color": entry.color,
     "--opt-glow": entry.glow,
-  };
-};
+  }
+}
 </script>
 
 <style scoped>

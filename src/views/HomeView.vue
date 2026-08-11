@@ -50,6 +50,7 @@
                   btn-color="var(--neon-yellow)"
                   :is-shiny="true"
                   :max-players="10"
+                  :is-new="true"
                 />
               </router-link>
 

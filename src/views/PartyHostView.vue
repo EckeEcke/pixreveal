@@ -54,7 +54,7 @@
       <div class="canvas-effects" :style="canvasEffectsStyle">
         <PixelCanvas
           ref="pixelCanvasRef"
-          :class="{ dark: partyStore.isLightsOut }"
+          :class="{ dark: partyStore.isLightsOut, twisted: partyStore.isUpsideDown }"
           :pixel-array="pixelData"
           :resolution="resolution"
           :is-revealing="canvasIsRevealing"
@@ -228,23 +228,11 @@ watch(
   },
 );
 
-let lastXlzActiveForRoundIndex: number | null = null;
 let lastXlzByPlayerId: string | null = null;
 watch(
-  [() => partyStore.xlzActiveForRoundIndex, () => partyStore.xlzByPlayerId],
-  ([roundIndex, byPlayerId]) => {
-    if (typeof roundIndex !== "number") {
-      lastXlzActiveForRoundIndex = null;
-      lastXlzByPlayerId = null;
-      return;
-    }
-    if (roundIndex !== gameStore.currentRoundIndex) return;
-    if (
-      lastXlzActiveForRoundIndex === roundIndex &&
-      lastXlzByPlayerId === byPlayerId
-    )
-      return;
-    lastXlzActiveForRoundIndex = roundIndex;
+  [() => partyStore.xlzCharge, () => partyStore.xlzByPlayerId],
+  ([xlzCharge, byPlayerId]) => {
+    if (xlzCharge <= 0 || !byPlayerId) return;
     lastXlzByPlayerId = typeof byPlayerId === "string" ? byPlayerId : null;
     soundStore.playSound("shuffle");
   },
@@ -525,6 +513,10 @@ onUnmounted(() => {
 .dark {
   animation: flickerBlackout 4s ease-out forwards;
   transition: filter 0.3s ease-in-out;
+}
+
+.twisted {
+  transform: rotate(180deg);
 }
 
 .rankings-column {
