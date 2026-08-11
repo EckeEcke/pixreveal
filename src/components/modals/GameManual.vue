@@ -50,7 +50,7 @@
 
       <h4>Blur</h4>
       <p>
-        A true <strong>recognition test</strong>. The iamge is very
+        A true <strong>recognition test</strong>. The image is very
         <strong>blurry</strong>. Step by step the image becomes less blurry. Can
         you figure out what it is before the image gets clear?
       </p>
@@ -67,6 +67,16 @@
         The drawing is fully complete but shrouded in darkness. Use your
         <strong>magnifying glass</strong>
         (search lens) to inspect sections and uncover the hidden pixelart.
+      </p>
+
+      <h4>Stars & Percentiles</h4>
+      <p>
+        You earn stars ⭐ in every game mode based on how much time is left when
+        you answer correctly — the faster you are, the more stars you get. In
+        singleplayer, every mode except Survival also shows you a
+        <strong>percentile ranking</strong> at the end of the round: see how
+        your score compares to other players, e.g. "you were better than 80% of
+        players."
       </p>
 
       <h3>Multiplayer and user generated content</h3>
@@ -93,12 +103,28 @@
         around a single screen, and everyone can join the fun by buzzing in with
         their own devices. No need for multiple screens or complex setups. Just
         one host starts the game, and everyone else can join as a player on
-        their phones. Use powerups to sabotage your friends. Freeze them for a
-        moment, turn off the lights or scramble up the answer options. Send
-        emotes from your phone to the host screen to react to the current game
-        (or distract other players). Bonus rounds with special effects mix up
-        the challenge. Bonus rounds and the final round allow you to gain twice
-        as much points, but also lose twice as much! Risk versus reward.
+        their phones.
+      </p>
+      <p>
+        After each round, the last-placed player (or players, decided randomly
+        in case of a points tie) is awarded a random powerup. You can hold up to
+        <strong>three powerups</strong> at once — if you earn a fourth, it
+        replaces the oldest one in your inventory. Use them to sabotage your
+        friends:
+      </p>
+      <ul>
+        <li><strong>Freeze</strong> – locks a rival's screen for a moment</li>
+        <li><strong>Lights Off</strong> – plunges the screen into darkness</li>
+        <li><strong>Scramble</strong> – shuffles a rival's answer options</li>
+        <li><strong>Devil</strong> – unleashes a chaotic effect on your opponents</li>
+        <li><strong>Upside Down</strong> – flips a rival's canvas upside down</li>
+        <li><strong>Fart</strong> – for pure chaos</li>
+      </ul>
+      <p>
+        Send emotes from your phone to the host screen to react to the current
+        game (or distract other players). Bonus rounds with special effects mix
+        up the challenge. Bonus rounds and the final round allow you to gain
+        twice as much points, but also lose twice as much! Risk versus reward.
       </p>
       <p>
         The game is designed to be enjoyed in a social setting, making it

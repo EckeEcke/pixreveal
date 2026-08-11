@@ -6,28 +6,15 @@
         <br />
         FREE MULTIPLAYER PIXEL GUESSING QUIZ
       </h1>
-
       <YoutubeEmbed video-id="YQl5jOqm2n0" />
-
-      <p class="party-desc">
-        Love multiplayer drawing games but tired of terrible mouse doodles?
-        PixReveal is the ultimate free alternative to Skribbl.io and Gartic
-        Phone, designed for players who want to focus purely on the hype of
-        guessing. If you are looking for a fast-paced
-        <strong>multiplayer pixel quiz</strong>
-        where zero drawing skills are required, you can play right in your
-        browser with no login or app needed.
+      <p class="hero-desc">
+        PixReveal is the <strong>free alternative to Skribbl.io and Gartic Phone</strong>
+        for players who want to focus purely on guessing, not drawing.
       </p>
-
-      <p class="party-desc">
-        Instead of forcing your friends to sketch with a clunky touchscreen or
-        mouse, PixReveal features beautiful, pre-made pixel art that reveals
-        itself piece by piece. It brings back the nostalgic thrill of a classic
-        <strong>pixel guessing game</strong>. Host the game on a big screen, use
-        your phones as controllers, hit the buzzer, and guess! Sabotage your
-        friends with chaotic power-ups to take the win. PixReveal supports up to 10 players.
+      <p class="hero-desc">
+        Host on a TV, join with your phones, buzz to answer, and sabotage your friends
+        with ridiculous powerups.
       </p>
-
       <div class="cta-container">
         <ButtonLinkPrimary link="/play-party?role=host">
           HOST A FREE GAME
@@ -36,6 +23,28 @@
           JOIN WITH ROOM ID
         </ButtonLinkSecondary>
       </div>
+      <div class="feature-badges">
+        <span class="badge">2–10 players</span> <span class="badge">No download</span>
+        <span class="badge">No login</span> <span class="badge">Phone controllers</span>
+      </div>
+      <PartyHowTo />
+      <section class="seo-section">
+        <h2>How is PixReveal different from Skribbl & Gartic?</h2>
+        <p class="party-desc">
+          Instead of forcing your friends to sketch with a clunky touchscreen or mouse,
+          PixReveal features beautiful, pre-made pixel art that reveals itself piece by
+          piece. It brings back the nostalgic thrill of a classic
+          <strong>pixel guessing game</strong> without requiring any drawing skills at
+          all.
+        </p>
+        <p class="party-desc">
+          If you are looking for a fast-paced
+          <strong>multiplayer pixel quiz</strong>, a
+          <strong>Skribbl.io alternative</strong>, or a
+          <strong>Gartic Phone alternative</strong>, PixReveal is playable right in your
+          browser with no login or app needed.
+        </p>
+      </section>
       <FAQComponent :items="garticFaqs"></FAQComponent>
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
@@ -45,6 +54,7 @@
 <script setup lang="ts">
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ContentPage from "@/components/page-layout/ContentPage.vue";
+import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 import FAQComponent from "@/components/page-ui/FAQComponent.vue";
@@ -79,24 +89,42 @@ const garticFaqs = [
 h1 {
   font-family: inherit;
   text-align: left;
+  line-height: 1.1;
+}
+
+.page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
 }
 
 .pre-headline {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--primary);
+  letter-spacing: 0.08em;
+}
+
+.hero-desc {
+  margin: 18px 0;
+  line-height: 1.5;
+  font-size: 1.02rem;
+}
+
+.seo-section {
+  margin-top: 40px;
 }
 
 h2 {
   margin-top: 0;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .cta-container {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
-  margin: 20px 0;
-  flex-wrap: wrap;
+  margin: 24px 0 16px;
 }
 
 @media (min-width: 576px) {
@@ -105,34 +133,25 @@ h2 {
   }
 }
 
-.btn-cta {
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 0.5px;
-  font-size: 0.9rem;
-  transition: transform 0.1s;
+.feature-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 32px;
 }
 
-.btn-cta:active {
-  transform: scale(0.98);
-}
-
-.btn-cta.host {
-  background: var(--primary);
-  color: #fff;
-}
-
-.btn-cta.join {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.85rem;
+  color: var(--white);
 }
 
 .party-desc {
-  margin: 32px 0;
-  line-height: 1.5;
+  margin: 18px 0;
+  line-height: 1.6;
 }
 
 .link {

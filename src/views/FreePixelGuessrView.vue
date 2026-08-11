@@ -6,28 +6,15 @@
         <br />
         FAST-PACED MULTIPLAYER PIXEL ART QUIZ
       </h1>
-
       <YoutubeEmbed video-id="YQl5jOqm2n0" />
-
-      <p class="party-desc">
-        Welcome to PixReveal, the ultimate
-        <strong>multiplayer pixel guesser</strong>
-        game designed for quick-witted players. If you love a fast-paced
-        <strong>pixel art quiz</strong> where an image unveils pixel by pixel,
-        you are in the right place. Challenge your friends or coworkers in a
-        competitive <strong>pixel guessing game</strong> directly in your
-        browser — no login or app required. PixReveal supports up to 10 players.
+      <p class="hero-desc">
+        PixReveal is the ultimate <strong>multiplayer pixel guesser</strong> game for
+        quick-witted players who love a fast-paced <strong>pixel art quiz</strong>.
       </p>
-
-      <p class="party-desc">
-        How fast can you spot the hidden picture? As the blocks appear, the rush
-        is on! Hit the buzzer on your phone to lock in your answer. Score points
-        for a correct guess, but watch out: wrong answers will cost you.
-        Outsmart your rivals by dropping chaotic power-ups to block their screen
-        and secure your title as the ultimate
-        <strong>Pixel Guessr</strong> Champion.
+      <p class="hero-desc">
+        Hit the buzzer on your phone to lock in your answer, score points for a
+        correct guess, and drop chaotic powerups to block your rivals' screens.
       </p>
-
       <div class="cta-container">
         <ButtonLinkPrimary link="/play-party?role=host">
           HOST A FREE GAME
@@ -36,6 +23,25 @@
           JOIN WITH ROOM ID
         </ButtonLinkSecondary>
       </div>
+      <div class="feature-badges">
+        <span class="badge">2–10 players</span> <span class="badge">No download</span>
+        <span class="badge">No login</span> <span class="badge">Phone controllers</span>
+      </div>
+      <PartyHowTo />
+      <section class="seo-section">
+        <h2>How does Pixel Guessr work?</h2>
+        <p class="party-desc">
+          How fast can you spot the hidden picture? As the blocks appear pixel by
+          pixel, the rush is on. Challenge your friends or coworkers in a competitive
+          <strong>pixel guessing game</strong> directly in your browser — no login or
+          app required.
+        </p>
+        <p class="party-desc">
+          Score points for a correct guess, but watch out: wrong answers will cost
+          you. Outsmart your rivals and secure your title as the ultimate
+          <strong>Pixel Guessr</strong> Champion.
+        </p>
+      </section>
       <FAQComponent :items="pixelGuessrFaqs"></FAQComponent>
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
@@ -44,6 +50,7 @@
 
 <script setup lang="ts">
 import ContentPage from "@/components/page-layout/ContentPage.vue";
+import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
@@ -77,6 +84,7 @@ const pixelGuessrFaqs = [
 h1 {
   font-family: inherit;
   text-align: left;
+  line-height: 1.1;
 }
 
 .page {
@@ -87,21 +95,31 @@ h1 {
 }
 
 .pre-headline {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--primary);
+  letter-spacing: 0.08em;
+}
+
+.hero-desc {
+  margin: 18px 0;
+  line-height: 1.5;
+  font-size: 1.02rem;
+}
+
+.seo-section {
+  margin-top: 40px;
 }
 
 h2 {
   margin-top: 0;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .cta-container {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
-  margin: 20px 0;
-  flex-wrap: wrap;
+  margin: 24px 0 16px;
 }
 
 @media (min-width: 576px) {
@@ -110,34 +128,25 @@ h2 {
   }
 }
 
-.btn-cta {
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 0.5px;
-  font-size: 0.9rem;
-  transition: transform 0.1s;
+.feature-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 32px;
 }
 
-.btn-cta:active {
-  transform: scale(0.98);
-}
-
-.btn-cta.host {
-  background: var(--primary);
-  color: #fff;
-}
-
-.btn-cta.join {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.85rem;
+  color: var(--white);
 }
 
 .party-desc {
-  margin: 32px 0;
-  line-height: 1.5;
+  margin: 18px 0;
+  line-height: 1.6;
 }
 
 .link {
