@@ -2,15 +2,15 @@
   <ContentPage>
     <h1 class="logo">PIXREVEAL <span>UPDATES</span> & <span>BLOG</span></h1>
     <div class="log-grid">
-    <div class="log-card">
+      <div class="log-card">
         <div class="log-info">
           <span class="date">08-11-26</span>
         </div>
         <h3 class="log-title">Major update to party mode!</h3>
         <p>
-          PixReveal's most popular game mode, Partymode, has received a massive local multiplayer upgrade with three new powerups, bringing the total to six. Instead of starting with all abilities, a dynamic balancing mechanic now grants a random powerup exclusively to the player in last place, introducing a layer of strategic mystery to matches. Players can hold up to three powerups at a time, with new acquisitions automatically replacing the oldest one if the inventory is full.        </p>
+          PixReveal's most popular game mode, Partymode, has received a massive local multiplayer upgrade with three new powerups, bringing the total to six. Instead of starting with all abilities, a dynamic balancing mechanic now grants a random powerup exclusively to the player in last place, introducing a layer of strategic mystery to matches. Players can hold up to three powerups at a time, with new acquisitions automatically replacing the oldest one if the inventory is full.        
+        </p>
       </div>
-    </div>
       <div class="log-card">
         <div class="log-info">
           <span class="date">08-07-26</span>
