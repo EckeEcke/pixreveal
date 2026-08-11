@@ -11,6 +11,20 @@
     <div class="party-wrapper">
       <div class="results-card party-results-card">
         <h1 class="logo">PARTY <span>OVER</span></h1>
+                <TopPlayerDisplay v-if="!channelStore.isHost" :avatar-index="ownPlayer.avatarIndex" :name="ownPlayer.username" :score="ownPlayer.points" class="top-player" />
+        <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
+        <div v-if="channelStore.isHost" class="final-rankings">
+          <h2>Final Rankings</h2>
+          <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
+            <PlayerDisplay
+              :position="index + 1"
+              :name="player.username"
+              :subline="getPartyTitleEmojis(player, index)"
+              :avatar-index="player.avatarIndex"
+              :points="player.points"
+            />
+          </div>
+        </div>
         <div class="party-actions">
           <ButtonPrimary
             class="btn-primary pulse-btn"
@@ -29,18 +43,8 @@
             <Icon icon="pixel:arrow-left" /> Go back
           </ButtonSecondary>
         </div>
-        <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
       </div>
-      <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
-        <PlayerDisplay
-          :position="index + 1"
-          :name="player.username"
-          :subline="getPartyTitleEmojis(player, index)"
-          :avatar-index="player.avatarIndex"
-          :points="player.points"
-          :show-you-indicator="player.playerId === channelStore.playerId"
-        />
-      </div>
+      
     </div>
     <WinnerAnimation
       v-if="winnerPlayer"
@@ -58,6 +62,7 @@ import { computed, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
 import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
@@ -191,6 +196,16 @@ const activeMembersCount = computed(
   () => channelStore.playersOnline.filter((p) => p.isOnline).length,
 );
 
+const ownPlayer = computed(() => {
+  return (
+    partyStore.players.find((p) => p.playerId === channelStore.playerId) || {
+      username: "Unknown",
+      avatarIndex: 0,
+      points: 0,
+    }
+  );
+});
+
 watch(
   () => activeMembersCount.value,
   (count) => {
@@ -284,5 +299,16 @@ main {
 
 .logo {
   margin-bottom: 16px;
+}
+
+.final-rankings {
+  background: #22222244;
+  padding: 0 16px 16px;
+  border-radius: 8px;
+  margin: 32px 0;
+}
+
+.top-player {
+  margin: 16px auto;
 }
 </style>
