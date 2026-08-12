@@ -231,6 +231,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/phone-controller-party-game",
+      name: "phone-controller-party-game",
+      component: () => import("@/views/PhoneControllerPartyGameView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "Free Phone Controller Party Game for TV and Friends | PixReveal",
+        description:
+          "Play on a TV and use your phones as controllers in this free browser party game. No app, no login, and no download required – buzz, guess pixel art, and enjoy chaotic multiplayer fun with friends.",
+        canonical: "https://www.pixreveal.com/phone-controller-party-game",
+      },
+    },
+    {
       path: "/friday-afterwork-game",
       name: "friday-afterwork-game",
       component: () => import("@/views/FridayGameView.vue"),

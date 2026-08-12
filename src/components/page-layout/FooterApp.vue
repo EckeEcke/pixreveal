@@ -64,6 +64,13 @@
       <router-link
         class="internal-link"
         data-sfx="click"
+        to="/phone-controller-party-game"
+      >
+        <Icon icon="pixel:gaming" /> PHONE CONTROLLER PARTY GAME
+      </router-link>
+      <router-link
+        class="internal-link"
+        data-sfx="click"
         to="/friday-afterwork-game"
       >
         <Icon icon="pixel:users" /> FRIDAY AFTERWORK GAME

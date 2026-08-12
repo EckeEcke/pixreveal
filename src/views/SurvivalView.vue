@@ -33,6 +33,7 @@
         :hasAnswered="survivalStore.hasAnswered"
         :answers="survivalStore.currentDrawing?.options || []"
         :inputDisabled="gameStore.gameState !== 'revealing'"
+        :devil-mode="survivalStore.solvedCount > 10"
         @answered="handleAnswer"
       />
     </section>
@@ -104,6 +105,7 @@ const handleAnswer = (answer) => {
     survivalStore.handleCorrectAnswer()
     soundStore.playSound("correct")
     pixelCanvasRef.value?.triggerCorrectAnswer()
+    if (survivalStore.solvedCount === 11) soundStore.playSound("devil")
   } else {
     survivalStore.handleWrongAnswer()
     soundStore.playSound("incorrect")
