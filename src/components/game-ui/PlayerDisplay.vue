@@ -424,11 +424,12 @@ const avatarStyle = computed<CSSProperties>(() => {
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 0;
+  align-items: center;
 }
 .history-box {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -438,19 +439,17 @@ const avatarStyle = computed<CSSProperties>(() => {
 .history-box.incorrect {
   background: var(--neon-error);
 }
-.history-box:nth-child(5n)::after {
-  content: "★";
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 30px;
-  color: var(--neon-yellow);
-  pointer-events: none;
-  -webkit-text-stroke: 1px black;
+.history-box:nth-child(5n) {
+  width: 32px;
+  height: 32px;
 }
 .player-hud.small .history-box {
   width: 12px;
   height: 12px;
+}
+
+.player-hud.small .history-box:nth-child(5n) {
+  width: 16px;
+  height: 16px;
 }
 </style>

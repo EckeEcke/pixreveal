@@ -13,6 +13,22 @@
       <div v-if="!waitingForFinalResults" class="results-card">
         <h1 class="logo">GAME <span>OVER</span></h1>
 
+        <div
+        v-for="(player, index) in playersSortedByPoints"
+        :key="player.playerId"
+      >
+        <PlayerDisplay
+          size="small"
+          :position="player.hasFinished ? index + 1 : undefined"
+          :name="player.username"
+          :avatar-index="player.avatarIndex"
+          :points="player.points"
+          :is-pending="!player.hasFinished"
+          :correct-answers="player.correctAnswers"
+          :show-you-indicator="isMe(player.playerId)"
+          :answer-history="player.answerHistory"
+        />
+      </div>
         <div class="gameover-actions">
           <ButtonPrimary
             class="btn-primary pulse-btn"
@@ -34,25 +50,14 @@
           </ButtonSecondary>
         </div>
       </div>
+    </div>
 
-      <div
-        v-for="(player, index) in playersSortedByPoints"
-        :key="player.playerId"
-      >
-        <PlayerDisplay
-          :position="player.hasFinished ? index + 1 : undefined"
-          :name="player.username"
-          :avatar-index="player.avatarIndex"
-          :points="player.points"
-          :is-pending="!player.hasFinished"
-          :correct-answers="player.correctAnswers"
-          :show-you-indicator="isMe(player.playerId)"
-          :answer-history="player.answerHistory"
-        />
-      </div>
-
-      <div v-if="waitingForFinalResults">
-        <LoadingAnimation text="WAITING FOR REMAINING PLAYERS" />
+    <div v-if="waitingForFinalResults" class="results-card">
+    <h1 class="logo">GAME <span>OVER</span></h1>
+      <LoadingAnimation text="PLEASE KEEP THIS WINDOW OPEN WHILE WAITING FOR REMAINING PLAYERS" />
+      <div v-if="joke" class="random-joke-box">
+        <h2>Random joke</h2>
+        <p>{{ joke }}</p>
       </div>
     </div>
 
@@ -151,6 +156,23 @@ const activeMembersCount = computed(
   () => channelStore.playersOnline.filter((p) => p.isOnline).length,
 );
 
+const joke = ref(undefined)
+
+const fetchJoke = async () => {
+  try {
+    const response = await fetch('/api-jokes/joke/Misc,Pun?safe-mode&type=single')
+    if (!response.ok) throw new Error('API request failed')
+    
+    const data = await response.json()
+    joke.value = data.joke
+  } catch (error) {
+    console.error('Error fetching trivia:', error)
+  }
+  setTimeout(() => {
+    if (waitingForFinalResults.value) fetchJoke()
+  }, 10000);
+}
+
 watch(
   () => activeMembersCount.value,
   (count) => {
@@ -164,6 +186,7 @@ watch(
 gameStore.reset();
 
 onMounted(() => {
+  fetchJoke();
   if (channelStore.mode === "party" && channelStore.onlineGameRunning) {
     router.replace("/gameover-party");
     return;
@@ -176,7 +199,7 @@ onMounted(() => {
 
 <style scoped>
 main {
-  width: 800px;
+  width: 600px;
   max-width: 100%;
 }
 .gameover-actions {
@@ -227,6 +250,21 @@ main {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
   animation: shine 4s infinite;
+}
+
+.random-joke-box {
+  margin-top: 32px;
+  background: #111;
+  padding: 16px;
+  border-radius: 8px;
+  h2 {
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  p {
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
 }
 </style>
 

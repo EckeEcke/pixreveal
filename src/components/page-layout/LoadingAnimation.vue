@@ -15,6 +15,7 @@ defineProps({
 <style scoped>
 .loading-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 16px;
@@ -23,6 +24,10 @@ defineProps({
 
 .loading-wrapper.small {
   gap: 0;
+}
+
+.loading-text {
+  max-width: 350px;
 }
 
 .loader {

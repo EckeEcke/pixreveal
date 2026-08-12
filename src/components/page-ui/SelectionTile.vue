@@ -28,7 +28,7 @@
     <span v-if="highScore" class="player-info"
       ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
     >
-    <span v-if="cornerText" class="corner-info"><Icon icon="pixel:clock" /> {{ cornerText }}</span>
+    <span v-if="cornerText" class="corner-info"><Icon icon="pixel:clock" /> Ends in {{ cornerText }}</span>
     <div v-if="loading" class="loading-overlay">
       <span class="spinner"></span>
     </div>
