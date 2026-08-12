@@ -160,7 +160,7 @@ const joke = ref(undefined)
 
 const fetchJoke = async () => {
   try {
-    const response = await fetch('https://jokeapi.dev')
+    const response = await fetch('https://v2.jokeapi.dev/joke/Miscellaneous,Pun,Spooky?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single')
     if (!response.ok) throw new Error('Network failed')
     
     const data = await response.json()
