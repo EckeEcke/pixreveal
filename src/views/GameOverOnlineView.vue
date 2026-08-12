@@ -160,19 +160,11 @@ const joke = ref(undefined)
 
 const fetchJoke = async () => {
   try {
-    let categories = ['Misc', 'Pun', 'Spooky']
+    const response = await fetch('https://jokeapi.dev')
+    if (!response.ok) throw new Error('Network failed')
     
-    const isDecember = new Date().getMonth() === 11
-    
-    if (isDecember) {
-      categories.push('Christmas')
-    }
-    
-    const categoryString = categories.join(',')
-    
-    const response = await fetch(`https://jokeapi.dev{categoryString}?safe-mode&type=single`)
-
-    if (!response.ok) throw new Error('API request failed')
+    const data = await response.json()
+    if (data.error) throw new Error('API error')
     
     const data = await response.json()
     joke.value = data.joke
