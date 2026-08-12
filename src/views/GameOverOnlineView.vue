@@ -166,7 +166,6 @@ const fetchJoke = async () => {
     const data = await response.json()
     if (data.error) throw new Error('API error')
     
-    const data = await response.json()
     joke.value = data.joke
   } catch (error) {
     console.error('Error fetching trivia:', error)
