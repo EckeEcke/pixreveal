@@ -5,10 +5,9 @@
       <p v-if="isYesterday">RANKINGS FOR <strong>YESTERDAY</strong></p>
       <p v-else-if="sortedRankings.length <= 0">NO RANKINGS YET FOR TODAY</p>
       <p v-else>
-        RANKINGS FOR <strong>{{ dailyStore.date }}</strong>
+        Rankings for <strong>{{ dailyStore.date }}</strong>
       </p>
-    </div>
-    <LoadingAnimation v-if="dailyStore.isLoading" />
+      <LoadingAnimation v-if="dailyStore.isLoading" />
     <template v-else>
       <div
         v-for="(ranking, index) in sortedRankings"
@@ -48,6 +47,8 @@
     >
       BACK TO HOME
     </ButtonSecondary>
+    </div>
+    
   </div>
 </template>
 
@@ -89,12 +90,12 @@ p {
 }
 
 .countdown {
-  margin-bottom: 64px;
+  margin-bottom: 32px;
 }
 
 .btn-primary {
-  width: 260px;
-  margin: 16px auto;
+  width: 100%;
+  margin: 16px auto 0;
 }
 
 .card {
@@ -111,7 +112,7 @@ p {
   margin-bottom: 32px;
 }
 
-.btn-primary {
+.player-wrapper {
   width: 100%;
 }
 </style>
