@@ -160,19 +160,24 @@ const joke = ref(undefined)
 
 const fetchJoke = async () => {
   try {
-    const response = await fetch('https://sv443.net/jokeapi/v2/joke/Miscellaneous,Pun,Spooky?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single')
+    const response = await fetch('https://icanhazdadjoke.com/', {
+      headers: { 'Accept': 'application/json' }
+    })
     if (!response.ok) throw new Error('Network failed')
-    
+
+    const contentType = response.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) {
+      throw new Error(`Unexpected content-type: ${contentType}`)
+    }
+
     const data = await response.json()
-    if (data.error) throw new Error('API error')
-    
     joke.value = data.joke
   } catch (error) {
-    console.error('Error fetching trivia:', error)
+    console.error('Error fetching joke:', error)
   }
   setTimeout(() => {
     if (waitingForFinalResults.value) fetchJoke()
-  }, 10000);
+  }, 10000)
 }
 
 watch(

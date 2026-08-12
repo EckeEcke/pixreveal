@@ -55,6 +55,10 @@ onMounted(() => {
   background: #0d001aaa;
   backdrop-filter: blur(4px);
   text-transform: uppercase;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;  
 }
 
 .line {
