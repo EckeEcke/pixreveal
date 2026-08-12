@@ -170,17 +170,8 @@ const fetchJoke = async () => {
     
     const categoryString = categories.join(',')
     
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    
-    let response
-    
-    if (isLocalhost) {
-      response = await fetch(`/api-jokes/joke/${categoryString}?safe-mode&type=single`)
-    } else {
-      const targetUrl = `https://jokeapi.dev{categoryString}?safe-mode&type=single`
-      response = await fetch(`https://corsproxy.io{encodeURIComponent(targetUrl)}`)
-    }
-    
+        const response = await fetch(`https://jokeapi.dev{categoryString}?safe-mode&type=single`
+
     if (!response.ok) throw new Error('API request failed')
     
     const data = await response.json()
