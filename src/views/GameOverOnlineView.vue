@@ -170,7 +170,7 @@ const fetchJoke = async () => {
     
     const categoryString = categories.join(',')
     
-        const response = await fetch(`https://jokeapi.dev{categoryString}?safe-mode&type=single`
+    const response = await fetch(`https://jokeapi.dev{categoryString}?safe-mode&type=single`)
 
     if (!response.ok) throw new Error('API request failed')
     
