@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import GameOverView from "../views/GameOverView.vue";
+import GameOverOnlineView from "../views/GameOverOnlineView.vue";
+import GameOverPartyView from "../views/GameOverPartyView.vue";
+import GameOverDailyView from "../views/GameOverDailyView.vue";
 import { useGameStore } from "@/stores/game";
 import { useDailyStore } from "@/stores/daily";
 import { useChannelStore } from "@/stores/channel";
@@ -112,25 +116,25 @@ const router = createRouter({
     {
       path: "/gameover-daily",
       name: "gameover-daily",
-      component: () => import("@/views/GameOverDailyView.vue"),
+      component: GameOverDailyView,
       meta: { robots: "noindex" },
     },
     {
       path: "/gameover",
       name: "gameover",
-      component: () => import("@/views/GameOverView.vue"),
+      component: GameOverView,
       meta: { robots: "noindex" },
     },
     {
       path: "/gameover-online",
       name: "gameover-online",
-      component: () => import("@/views/GameOverOnlineView.vue"),
+      component: GameOverOnlineView,
       meta: { robots: "noindex" },
     },
     {
       path: "/gameover-party",
       name: "gameover-party",
-      component: () => import("@/views/GameOverPartyView.vue"),
+      component: GameOverPartyView,
       meta: { robots: "noindex" },
     },
     {
@@ -334,7 +338,6 @@ router.beforeEach((to, from) => {
   const partyStore = usePartyStore();
   const onlineStore = useOnlineStore();
 
-  // Invite links / QR codes: `/?id=ROOMID&mode=party|online[&role=host|join]`
   if (to.path === "/" && typeof to.query?.id === "string") {
     const inviteMode = String(to.query?.mode || "");
     const inviteRole = String(to.query?.role || "join");
@@ -431,7 +434,7 @@ router.beforeEach((to, from) => {
   return true;
 });
 
-router.onError((err: any) => {
+router.onError((err) => {
   const message = String(err?.message || "");
   const name = String(err?.name || "");
   const isChunkLoadError =
@@ -494,4 +497,4 @@ router.afterEach((to) => {
   }
 });
 
-export default router;
+export default router
