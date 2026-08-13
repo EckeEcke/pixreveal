@@ -28,7 +28,7 @@
 .mode-info-list {
   list-style: none;
   padding: 0;
-  margin: 32px 0;
+  margin: 0 0 32px;
   display: grid;
   gap: 12px;
 }

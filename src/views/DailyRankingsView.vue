@@ -25,7 +25,7 @@ main {
 .back-btn-wrapper {
   min-width: 32px;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   margin-bottom: 16px;
 }
 

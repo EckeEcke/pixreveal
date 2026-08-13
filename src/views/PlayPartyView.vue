@@ -1,15 +1,16 @@
 <template>
+  <div class="back-btn-wrapper">
+    <button class="back-btn" @click="$router.back()" data-sfx="back">
+      <Icon icon="pixel:angle-left-solid" />
+    </button>
+  </div>
   <main class="page">
     <LoadingOverlay :show="channelStore.isLoading" />
     <div class="setup-card card">
-      <button @click="$router.push('/')" data-sfx="back" class="close-btn">
-        <Icon icon="pixel:window-close-solid" />
-      </button>
+              <span class="pre-headline">MODE</span>
+          <h2>LOCAL PARTY</h2>
       <div class="card-grid">
         <section class="panel panel-left" aria-label="Party setup">
-          <span class="pre-headline">MODE</span>
-          <h2>LOCAL PARTY</h2>
-
           <div class="role-toggle">
             <button
               :class="{ active: selectedRole === 'host' }"
@@ -272,6 +273,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+  row-gap: 64px;
 }
 
 .host-settings {
@@ -500,5 +502,10 @@ h2 {
   font-size: 16px;
   box-shadow: none;
   transform: none;
+}
+
+.back-btn-wrapper {
+  width: 100%;
+  max-width: 1000px;
 }
 </style>

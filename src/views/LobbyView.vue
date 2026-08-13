@@ -1,4 +1,9 @@
 <template>
+  <div class="back-btn-wrapper">
+    <button class="back-btn" @click="$router.back()" data-sfx="back">
+      <Icon icon="pixel:angle-left-solid" />
+    </button>
+  </div>
   <div class="lobby-card">
     <h1>{{ isParty ? "Party Lobby" : "Lobby" }}</h1>
     <div class="lobby-layout">
@@ -258,5 +263,11 @@ h2 {
   .lobby-left-column {
     max-width: 100%;
   }
+}
+
+.back-btn-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 16px;
 }
 </style>

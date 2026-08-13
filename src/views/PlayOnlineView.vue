@@ -1,14 +1,17 @@
 <template>
+  <div class="back-btn-wrapper">
+    <button class="back-btn" @click="$router.back()" data-sfx="back">
+      <Icon icon="pixel:angle-left-solid" />
+    </button>
+  </div>
   <main class="page">
     <LoadingOverlay :show="channelStore.isLoading" />
     <div class="setup-card card">
-      <button @click="$router.push('/')" data-sfx="back" class="close-btn">
-        <Icon icon="pixel:window-close-solid" />
-      </button>
+    <span class="pre-headline">MODE</span>
+          <h2>ONLINE GAME</h2>
       <div class="card-grid">
         <section class="panel panel-left" aria-label="Online game setup">
-          <span class="pre-headline">MODE</span>
-          <h2>ONLINE GAME</h2>
+          
 
           <div class="role-toggle">
             <button
@@ -266,6 +269,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+  row-gap: 64px;
 }
 
 .panel {
@@ -496,7 +500,8 @@ h2 {
   transform: none;
 }
 
-.online-info {
-  margin-top: 32px;
+.back-btn-wrapper {
+  width: 100%;
+  max-width: 1000px;
 }
 </style>
