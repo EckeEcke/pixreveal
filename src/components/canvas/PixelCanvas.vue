@@ -116,7 +116,7 @@ const startReveal = () => {
     return
   }
 
-  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000
+  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000 - 1000
   const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0
   allVisible.sort(() => Math.random() - 0.5)
 
