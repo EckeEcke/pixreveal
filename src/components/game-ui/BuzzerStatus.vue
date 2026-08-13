@@ -78,7 +78,7 @@
                 :avatarIndex="activeAvatarIndex"
               />{{ activePlayerNameUpper }}
             </span>
-            FARTED!
+            FARTED! 😯
           </template>
 
           <template v-else-if="currentActiveMessage.type === 'lightsOut'">

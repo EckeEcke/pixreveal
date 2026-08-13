@@ -58,11 +58,11 @@ export const useBonusRounds = (opts: UseBonusRoundsOptions) => {
       filters.push(`blur(${blurAmountPx.value}px)`);
     }
     if (bonusRoundType.value === "sepia") {
-      filters.push("sepia(1)");
+      filters.push("sepia(0.7)");
       filters.push("saturate(1.2)");
     }
     if (bonusRoundType.value === "bw") {
-      filters.push("grayscale(1)");
+      filters.push("grayscale(0.7)");
       filters.push("contrast(1.15)");
     }
     return { filter: filters.join(" ") || "none" };
