@@ -115,6 +115,9 @@ const getPartyTitleEmojis = (player, index) => {
 
   if (player.isDecrypter) badges.push("🧠");
 
+  if (player.devilVictim) badges.push("😈");
+  if (player.devilSurvivor) badges.push("👼");
+
   const minQuick = minPartyQuickestAnswer.value;
   if (typeof minQuick === "number" && player.quickestAnswer === minQuick) {
     badges.push("⚡");

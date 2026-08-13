@@ -211,6 +211,26 @@ const slides = computed<Slide[]>(() => {
         ...playerData
       });
     }
+
+    if (p.devilVictim) {
+      raw.push({
+        emoji: "😈",
+        title: "Devil's Fool",
+        message:
+          "The devil got you. Should've trusted your gut instead of the fake button.",
+        ...playerData
+      });
+    }
+
+    if (p.devilSurvivor) {
+      raw.push({
+        emoji: "👼",
+        title: "Devil Dodger",
+        message:
+          "Temptation struck and you didn't even flinch. Nice reflexes.",
+        ...playerData
+      });
+    }
   }
 
   const groups = new Map<string, typeof raw>();

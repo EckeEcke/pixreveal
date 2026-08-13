@@ -11,6 +11,8 @@ export type PartyPlayer = {
   powerupsUsed: number;
   emojisSent: number;
   isDecrypter: boolean;
+  devilVictim: boolean;
+  devilSurvivor: boolean;
 };
 
 export type PartyPlayerStats = {
@@ -23,6 +25,8 @@ export type PartyPlayerStats = {
   powerupsUsed: number;
   emojisSent: number;
   isDecrypter: boolean;
+  devilVictim: boolean;
+  devilSurvivor: boolean;
 };
 
 export type PartyStatePayload = {

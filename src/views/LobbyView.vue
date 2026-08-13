@@ -36,7 +36,7 @@
         </span>
       </div>
       <button
-        v-if="channelStore.isHost && players.length > 1"
+        v-if="channelStore.isHost && players.length > 2"
         class="start-btn pulse-btn"
         @click="startGame"
         data-sfx="click"
@@ -45,9 +45,9 @@
       </button>
       <LoadingAnimation
         v-if="
-          (channelStore.isHost && players.length === 1) || !channelStore.isHost
+          (channelStore.isHost && players.length <= 2) || !channelStore.isHost
         "
-        :text="channelStore.isHost ? 'WAITING FOR PLAYERS' : 'WAITING FOR HOST'"
+        :text="channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST'"
         class="loading-animation"
       />
     </div>

@@ -241,6 +241,8 @@ export const usePartyStore = defineStore("party", () => {
         powerupsUsed: p.powerupsUsed,
         emojisSent: p.emojisSent,
         isDecrypter: p.isDecrypter,
+        devilVictim: p.devilVictim,
+        devilSurvivor: p.devilSurvivor,
       })),
     })
   }
@@ -261,6 +263,8 @@ export const usePartyStore = defineStore("party", () => {
         powerupsUsed: 0,
         emojisSent: 0,
         isDecrypter: false,
+        devilVictim: false,
+        devilSurvivor: false,
       }))
 
     powerups.reset()
@@ -391,10 +395,6 @@ export const usePartyStore = defineStore("party", () => {
     if (playerId) {
       const player = players.value.find((p) => p.playerId === playerId)
       if (player) {
-        powerups.consumeXlzCharge()
-        powerups.consumeDevilCharge()
-        powerups.consumeFartCharge(playerId)
-        
         const isFinalRound =
           gameStore.currentRoundIndex === configStore.maxRounds - 1
         const idx = gameStore.currentRoundIndex
@@ -410,8 +410,10 @@ export const usePartyStore = defineStore("party", () => {
         if (isCorrect) {
           player.correctAnswers += 1
           if (powerups.isXlzActive?.value) player.isDecrypter = true
+          if (powerups.isDevilActive?.value) player.devilSurvivor = true
         } else {
           player.wrongAnswers += 1
+          if (powerups.isDevilActive?.value) player.devilVictim = true
           if (suddenDeath.isSuddenDeath?.value) {
             suddenDeath.eliminatePlayer(playerId)
           }
@@ -425,6 +427,10 @@ export const usePartyStore = defineStore("party", () => {
             player.quickestAnswer = elapsedMs
           }
         }
+
+        powerups.consumeXlzCharge()
+        powerups.consumeDevilCharge()
+        powerups.consumeFartCharge(playerId)
       }
     }
 
