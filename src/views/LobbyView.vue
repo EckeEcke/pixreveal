@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="back-btn-wrapper">
     <button class="back-btn" @click="$router.back()" data-sfx="back">
       <Icon icon="pixel:angle-left-solid" />
@@ -82,6 +83,8 @@
       </div>
     </div>
   </div>
+</div>
+
 </template>
 
 <script setup>
