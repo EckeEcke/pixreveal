@@ -218,6 +218,7 @@ onBeforeUnmount(() => {
   transform: translate(-50%, -50%);
   overflow: hidden;
   opacity: 0.9;
+  background: radial-gradient(circle, #4a1d63 0%, #0a0510 100%);
 }
 
 .pixel {
