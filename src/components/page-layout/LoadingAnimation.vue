@@ -27,6 +27,7 @@ defineProps({
 }
 
 .loading-text {
+  text-align: center;
   max-width: 350px;
 }
 

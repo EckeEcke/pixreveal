@@ -1,36 +1,38 @@
 <template>
   <div class="chat-wrapper">
-    <Icon icon="pixel:message-dots" class="chat-icon" @click="toggleChat" />
-    <span v-if="hasMessages" class="notification-badge"></span>
-    <div v-if="showChat" class="lobby-chat">
-      <div class="messages-area" ref="scrollContainer">
-        <div
-          v-for="msg in channelStore.messages"
-          :key="msg.id"
-          :class="['chat-row', { 'system-msg': msg.isSystem }]"
-        >
-          <template v-if="!msg.isSystem">
-            <span class="chat-user">[{{ msg.username }}]:</span>
-            <span class="chat-text">{{ msg.text }}</span>
-          </template>
-          <template v-else>
-            <span class="chat-system-text">>> {{ msg.text }}</span>
-          </template>
+    <div class="chat">
+      <Icon icon="pixel:message-dots" class="chat-icon" @click="toggleChat" />
+      <span v-if="hasMessages" class="notification-badge"></span>
+      <div v-if="showChat" class="lobby-chat">
+        <div class="messages-area" ref="scrollContainer">
+          <div
+            v-for="msg in channelStore.messages"
+            :key="msg.id"
+            :class="['chat-row', { 'system-msg': msg.isSystem }]"
+          >
+            <template v-if="!msg.isSystem">
+              <span class="chat-user">[{{ msg.username }}]:</span>
+              <span class="chat-text">{{ msg.text }}</span>
+            </template>
+            <template v-else>
+              <span class="chat-system-text">>> {{ msg.text }}</span>
+            </template>
+          </div>
         </div>
-      </div>
 
-      <div class="chat-footer">
-        <input
-          v-model="chatInput"
-          @keyup.enter="handleSend"
-          type="text"
-          placeholder="Type a message..."
-          class="chat-input"
-        />
-        <button @click="handleSend" class="btn-outline">
-          <Icon icon="pixel:play-solid" />
-          SEND
-        </button>
+        <div class="chat-footer">
+          <input
+            v-model="chatInput"
+            @keyup.enter="handleSend"
+            type="text"
+            placeholder="Type a message..."
+            class="chat-input"
+          />
+          <button @click="handleSend" class="btn-outline">
+            <Icon icon="pixel:play-solid" />
+            SEND
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -89,7 +91,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  background: rgba(10, 10, 10, 0.8);
+  background: rgba(30, 30, 30, 0.99);
   height: 200px;
   width: 100%;
   overflow: hidden;
@@ -127,15 +129,21 @@ onMounted(() => {
 }
 
 .chat-wrapper {
-  position: relative;
-  margin: 32px auto;
+  position: fixed;
+  right: 16px;
+  bottom: 48px;
+  width: 90%;
+  max-width: 400px;
 }
 
 .chat-icon {
+  background: black;
+  padding: 4px;
   position: absolute;
   right: 6px;
   top: 6px;
   font-size: 32px;
+  border-radius: 4px;
 }
 
 .chat-system-text {
@@ -197,5 +205,9 @@ onMounted(() => {
   background-color: var(--primary);
   border-radius: 50%;
   animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.chat {
+  position: relative;
 }
 </style>

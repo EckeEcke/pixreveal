@@ -1,71 +1,81 @@
 <template>
-  <div>
-    <div class="lobby-card">
-      <h1>{{ isParty ? "Party Lobby" : "Lobby" }}</h1>
-      <template v-if="!isParty">
-        <div class="room-id">ROUNDS TO PLAY: {{ configStore.maxRounds }}</div>
-        <div class="room-id">ROUND DURATION: {{ configStore.revealTime }}</div>
-      </template>
-      <div class="qr-code">
-        <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
-      </div>
-      <div class="share-room-buttons">
+  <div class="lobby-card">
+    <h1>{{ isParty ? "Party Lobby" : "Lobby" }}</h1>
+    <div class="lobby-layout">
+      <!-- Linke Spalte: Hosting & Beitritt -->
+      <div class="lobby-left-column">
+        <h2>INVITE PLAYERS</h2>
+        <div class="qr-code">
+          <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
+        </div>
+        <div class="share-room-buttons">
+          <button
+            @click="copyLinkToClipboard"
+            class="btn-outline"
+            data-sfx="click"
+          >
+            <Icon icon="pixel:link-solid" />
+            COPY INVITE LINK
+          </button>
+          <button
+            v-if="canNativeShare"
+            class="btn-outline"
+            @click="shareNative"
+            data-sfx="click"
+          >
+            <Icon icon="pixel:share" />
+            SHARE
+          </button>
+        </div>
+        <div class="room-id">
+          ROOM ID:
+          <span @click="copyToClipboard" data-sfx="click">
+            {{ channelStore.currentRoomId }}
+            <Icon icon="pixel:copy" />
+          </span>
+        </div>
+        <template v-if="!isParty">
+          <div class="room-id">Rounds to play: {{ configStore.maxRounds }}</div>
+          <div class="room-id">Round duration: {{ configStore.revealTime }}</div>
+        </template>
         <button
-          @click="copyLinkToClipboard"
-          class="btn-outline"
+          v-if="channelStore.isHost && players.length > (isParty ? 2 : 1)"
+          class="start-btn pulse-btn"
+          @click="startGame"
           data-sfx="click"
         >
-          <Icon icon="pixel:link-solid" />
-          COPY INVITE LINK
+          {{ isParty ? "START PARTY" : "START GAME" }}
         </button>
-        <button
-          v-if="canNativeShare"
-          class="btn-outline"
-          @click="shareNative"
-          data-sfx="click"
-        >
-          <Icon icon="pixel:share" />
-          SHARE
-        </button>
+        <LoadingAnimation
+          v-if="
+            (channelStore.isHost && players.length <= 2) || !channelStore.isHost
+          "
+          :text="channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST'"
+          class="loading-animation"
+        />
       </div>
-      <div class="room-id">
-        ROOM ID:
-        <span @click="copyToClipboard" data-sfx="click">
-          {{ channelStore.currentRoomId }}
-          <Icon icon="pixel:copy" />
-        </span>
-      </div>
-      <button
-        v-if="channelStore.isHost && players.length > (isParty ? 2 : 1)"
-        class="start-btn pulse-btn"
-        @click="startGame"
-        data-sfx="click"
-      >
-        {{ isParty ? "START PARTY" : "START GAME" }}
-      </button>
-      <LoadingAnimation
-        v-if="
-          (channelStore.isHost && players.length <= 2) || !channelStore.isHost
-        "
-        :text="channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST'"
-        class="loading-animation"
-      />
-    </div>
 
-    <div class="players-grid">
-      <PlayerDisplay
-        v-for="player in players"
-        :key="player.playerId"
-        :name="isParty && player.isHost ? 'HOST' : player.username"
-        :avatar-index="
-          isParty && player.isHost ? undefined : player.avatarIndex
-        "
-        :is-host="player.isHost"
-        :show-you-indicator="isMe(player.playerId)"
-      />
-      {{ mode }}
+      <!-- Rechte Spalte: Spielerliste & Chat -->
+      <div class="lobby-right-column">
+        <h2 v-if="isParty">PLAYERS IN LOBBY ({{ players.length - 1 }})</h2>
+        <h2 v-else>PLAYERS IN LOBBY ({{ players.length }})</h2>
+        <div class="players-grid">
+          <PlayerDisplay
+            v-for="player in players"
+            size="small"
+            :key="player.playerId"
+            :name="isParty && player.isHost ? 'HOST' : player.username"
+            :avatar-index="
+              isParty && player.isHost ? undefined : player.avatarIndex
+            "
+            :is-host="player.isHost"
+            :show-you-indicator="isMe(player.playerId)"
+          />
+          <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Invite more players to start</div>
+        </div>
+        <LobbyChat />
+      </div>
     </div>
-    <LobbyChat />
   </div>
 </template>
 
@@ -145,18 +155,39 @@ onMounted(() => {
 
 <style scoped>
 .lobby-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
   background: var(--card-bg);
   border: 2px solid var(--border-color);
   padding: 2rem;
-  margin-bottom: 32px;
   border-radius: 8px;
   width: 100%;
-  max-width: 420px;
+  max-width: 800px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.lobby-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  width: 100%;
+}
+
+.lobby-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px;
+  flex-shrink: 0;
+}
+
+.lobby-right-column {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 24px;
+  width: 100%;
 }
 
 .room-id {
@@ -170,16 +201,6 @@ onMounted(() => {
     color: var(--primary);
     font-weight: 700;
     cursor: pointer;
-  }
-}
-
-.clipboard-info {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 16px;
-  svg {
-    color: var(--neon-success);
   }
 }
 
@@ -197,7 +218,8 @@ onMounted(() => {
 .players-grid {
   display: grid;
   grid-template-columns: 1fr;
-  margin-bottom: 32px;
+  gap: 12px;
+  width: 100%;
 }
 
 .qr-code {
@@ -212,5 +234,29 @@ onMounted(() => {
 
 .start-btn {
   margin-top: 16px;
+}
+
+h1 {
+  margin-bottom: 32px;
+}
+
+h2 {
+  margin: 0 auto 4px;
+  text-align: center;
+}
+
+.not-enough-players {
+  margin-top: 8px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .lobby-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .lobby-left-column {
+    max-width: 100%;
+  }
 }
 </style>

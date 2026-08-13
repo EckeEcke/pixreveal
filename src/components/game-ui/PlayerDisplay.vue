@@ -19,7 +19,7 @@
     ></div>
     <div>
       <div class="hud-username" :class="{ first: position === 1 || shiny }">
-        {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
+        {{ name }}<span v-if="showYouIndicator" class="you-indicator"> (YOU)</span>
       </div>
       <div v-if="subline" class="hud-subline">{{ subline }}</div>
       <div v-if="sublineSmall" class="hud-subline-small">
@@ -377,7 +377,8 @@ const avatarStyle = computed<CSSProperties>(() => {
   padding: 8px;
   border-radius: 8px;
   color: black;
-  font-size: 12px;
+  font-size: 10px;
+  font-weight: 700;
 }
 .pending {
   opacity: 0.4;
@@ -454,5 +455,10 @@ const avatarStyle = computed<CSSProperties>(() => {
 .player-hud.small .history-box:nth-child(5n) {
   width: 16px;
   height: 16px;
+}
+
+.you-indicator {
+  font-weight: 400;
+  opacity: 0.7;
 }
 </style>
