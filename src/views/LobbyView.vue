@@ -36,7 +36,7 @@
         </span>
       </div>
       <button
-        v-if="channelStore.isHost && players.length > 2"
+        v-if="channelStore.isHost && players.length > (isParty ? 2 : 1)"
         class="start-btn pulse-btn"
         @click="startGame"
         data-sfx="click"
