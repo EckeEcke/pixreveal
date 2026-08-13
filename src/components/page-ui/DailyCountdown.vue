@@ -45,6 +45,7 @@ const { timeLeft } = useDailyCountDown();
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin-top: 2px;
 }
 
 .value {
