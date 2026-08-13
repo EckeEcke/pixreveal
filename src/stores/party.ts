@@ -479,7 +479,7 @@ export const usePartyStore = defineStore("party", () => {
       roundIndex: gameStore.currentRoundIndex,
     })
     broadcastPartyState("next-round")
-    openBuzzer()
+    // openBuzzer()
   }
 
   const skipRound = () => {

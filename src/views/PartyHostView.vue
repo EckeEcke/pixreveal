@@ -83,6 +83,7 @@
     </div>
     <EmojiOverlay :new-emoji="lastEmoji" />
     <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
+    <FartOverlay :trigger="fartTrigger" />
   </main>
 </template>
 
@@ -116,6 +117,7 @@ import {
 import EmojiOverlay from "@/components/game-ui/EmojiOverlay.vue";
 import { useBonusRounds } from "@/composables/useBonusRounds";
 import FreezeBurstOverlay from "@/components/game-ui/FreezeBurstOverlay.vue";
+import FartOverlay from "@/components/game-ui/FartOverlay.vue";
 
 const gameStore = useGameStore();
 const configStore = useConfigStore();
@@ -347,10 +349,12 @@ const setupDrawing = () => {
       suppressFilterTransition.value = false;
     });
   });
+  partyStore.openBuzzer();
 };
 
 const lastEmoji = ref("");
 const freezeBurstTrigger = ref(0);
+const fartTrigger = ref(0);
 
 const handleIncomingEmoji = (emojiChar: string) => {
   lastEmoji.value = emojiChar;
@@ -436,6 +440,7 @@ watch(
   { immediate: true },
 );
 
+let lastFartTriggerKey: string | null = null;
 watch(
   () => partyStore.buzzerState,
   (newState) => {
@@ -445,6 +450,24 @@ watch(
       timerId = null;
       workerClearTimeout(timerEndTimeoutId);
       timerEndTimeoutId = null;
+
+      const fartByPlayerId = partyStore.fartByPlayerId;
+      const activePlayerId = partyStore.activePlayerId;
+      const isFartBuzz =
+        partyStore.fartCharges > 0 &&
+        !!fartByPlayerId &&
+        !!activePlayerId &&
+        activePlayerId !== fartByPlayerId;
+
+      if (isFartBuzz) {
+        const key = `${activePlayerId}-${fartByPlayerId}`;
+        if (lastFartTriggerKey !== key) {
+          lastFartTriggerKey = key;
+          fartTrigger.value += 1;
+        }
+      }
+    } else if (newState !== "answering") {
+      lastFartTriggerKey = null;
     }
 
     if (
