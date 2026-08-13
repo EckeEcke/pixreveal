@@ -26,6 +26,7 @@
         <span class="badge">No download</span> <span class="badge">No login</span>
       </div>
       <PartyHowTo />
+      <PowerUpInfo class="powerups" />
       <section class="seo-section">
         <h2>Why PixReveal for your team?</h2>
         <p class="party-desc">
@@ -51,6 +52,7 @@
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue"
 import ContentPage from "@/components/page-layout/ContentPage.vue"
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue"
+import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue"
 import FAQComponent from "@/components/page-ui/FAQComponent.vue"
 

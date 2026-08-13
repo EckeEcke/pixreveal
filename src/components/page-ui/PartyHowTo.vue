@@ -41,7 +41,7 @@
         </li>
       </ul>
 
-      <PowerUpInfo class="powerups" />
+      
 </template>
 
 <script setup lang="ts">

@@ -118,7 +118,8 @@
           </div>
         </section>
         <section>
-          <PartyHowTo />
+          <PartyModeInfo />
+          <PowerUpInfo class="powerups" />
         </section>
       </div>
     </div>
@@ -143,7 +144,8 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
-import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
+import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue";
+import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 
 const showAvatarModal = ref(false);
 

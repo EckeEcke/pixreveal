@@ -358,11 +358,13 @@ const avatarStyle = computed<CSSProperties>(() => {
   font-size: 18px;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.9);
+  text-align: left;
 }
 .hud-subline-small {
   margin-top: 4px;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
+  text-align: left;
 }
 .host-info {
   display: flex;

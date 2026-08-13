@@ -37,6 +37,8 @@
 
       <PartyHowTo />
 
+      <PowerUpInfo class="powerups" />
+      
       <section class="seo-section">
         <h2>What is a phone controller party game?</h2>
 
@@ -99,6 +101,7 @@
 <script setup lang="ts">
 import ContentPage from "@/components/page-layout/ContentPage.vue";
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
+import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
