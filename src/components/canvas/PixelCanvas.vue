@@ -33,7 +33,7 @@ const props = defineProps({
 
 defineEmits(["mousemove", "touchstart", "touchmove"])
 
-const internalSize = 600
+const internalSize = 12000
 const {
   canvasRef,
   getContext,

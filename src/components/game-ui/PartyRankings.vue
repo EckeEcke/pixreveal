@@ -52,14 +52,10 @@ const isPlayerFrozen = (playerId: string) => {
 </script>
 
 <style scoped>
-.rankings {
-  padding-left: 24px;
-}
-
 .logo {
   text-align: center;
   margin-bottom: 32px;
-  font-size: 1.5rem;
+  font-size: 22px;
   letter-spacing: 2px;
 }
 

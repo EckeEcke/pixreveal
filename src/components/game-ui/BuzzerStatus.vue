@@ -1,10 +1,7 @@
 <template>
   <div class="buzzer-status">
-    <RobotModerator
-      :is-talking="robotIsTalking"
-      :active-message="currentActiveMessage"
-    />
-    <div>
+    <!-- Sprechblasen-Container oben -->
+    <div class="message-container">
       <Transition name="message" mode="out-in">
         <div
           :key="currentActiveMessage.key"
@@ -148,6 +145,12 @@
         </div>
       </Transition>
     </div>
+
+    <!-- Robot Moderator unten auf 100% Breite -->
+    <RobotModerator
+      :is-talking="robotIsTalking"
+      :active-message="currentActiveMessage"
+    />
   </div>
 </template>
 
@@ -298,9 +301,6 @@ const optionsForPrompt = computed(() => {
   })
 })
 
-/*
- * Host-side transient fart notification.
- */
 const isFartMessage = computed(() => {
   if (partyStore.buzzerState !== "answering") return false
 
@@ -313,9 +313,6 @@ const isFartMessage = computed(() => {
   return activePlayerId !== fartByPlayerId
 })
 
-/*
- * Explicit check for Devil mode during answering phase
- */
 const isDevilMessage = computed(() => {
   if (partyStore.buzzerState !== "answering") return false
   return partyStore.isDevilActive
@@ -430,32 +427,37 @@ watch(
 
 <style scoped>
 .buzzer-status {
-  display: grid;
-  grid-template-columns: 6% auto;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   width: 100%;
   max-width: 100%;
   margin-top: 16px;
 }
 
-@media (min-width: 576px) {
-  .buzzer-status {
-    grid-template-columns: 80px auto;
-  }
+.message-container {
+  position: relative;
+  width: 100%;
+  min-height: 140px;
 }
 
-.status-pill {
-  padding: 12px 32px;
-  border-radius: 8px;
+.status-pill,
+.powerup-text,
+.leader-text {
+  box-sizing: border-box;
+  position: relative;
+  padding: 16px 24px;
+  border-radius: 12px;
   font-weight: 900;
   font-size: 20px;
   letter-spacing: 1px;
   line-height: 1.5;
   text-align: left;
   text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  width: 100%;
+  height: 100%;
 }
 
 .status-pill.result {
@@ -502,50 +504,24 @@ watch(
   border: 2px solid var(--neon-blue);
 }
 
-.waiting-player {
-  color: #fff;
-  opacity: 0.95;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
-}
-
 .waiting-player,
 .player-highlight {
   display: inline-flex;
   align-items: center;
   gap: 0.35ch;
   white-space: nowrap;
-}
-
-.prompt-option {
-  color: var(--opt-color);
-  text-shadow: 0 0 10px var(--opt-glow);
-  white-space: normal;
+  color: white;
 }
 
 .answer-highlight {
   color: white;
 }
 
-.player-highlight {
-  color: white;
-}
-
-.devil-highlight {
-  color: var(--neon-social);
-  text-shadow: 0 0 10px var(--neon-social);
-}
-
 .powerup-text {
-  padding: 12px 32px;
-  border-radius: 8px;
+  border-radius: 12px;
   background: rgba(56, 189, 248, 0.12);
   border: 2px solid rgba(56, 189, 248, 0.5);
   color: rgba(255, 255, 255, 0.9);
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 1px;
-  line-height: 1.5;
-  text-align: left;
 }
 
 .powerup-text.devil-text {
@@ -554,70 +530,57 @@ watch(
 }
 
 .leader-text {
-  padding: 12px 32px;
-  border-radius: 8px;
+  border-radius: 12px;
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid var(--neon-yellow);
   color: var(--neon-yellow);
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 1px;
-  line-height: 1.5;
-  text-align: left;
 }
 
-.white-text {
-  color: var(--white);
-}
-
-.buzzer-status > div:last-child {
-  position: relative;
-}
-
+/* Sprechblasen-Pfeil zeigt nach unten auf den Robot-Moderator */
 .status-pill::before,
 .powerup-text::before,
 .leader-text::before {
   content: "";
   position: absolute;
-  top: 16px;
-  left: -12px;
+  bottom: -12px;
+  left: 60%;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 8px 12px 8px 0;
-  border-color: transparent currentColor transparent transparent;
+  border-width: 12px 10px 0 10px;
+  border-color: transparent transparent transparent transparent;
   z-index: 10;
 }
 
 .status-pill.open::before {
-  border-right-color: var(--neon-pink);
+  border-top-color: var(--neon-pink);
 }
 
 .status-pill.answering::before {
-  border-right-color: var(--neon-blue);
+  border-top-color: var(--neon-blue);
 }
 
 .status-pill.correct::before {
-  border-right-color: var(--neon-success);
+  border-top-color: var(--neon-success);
 }
 
 .status-pill.incorrect::before {
-  border-right-color: var(--neon-error);
+  border-top-color: var(--neon-error);
 }
 
 .status-pill.timeout::before {
-  border-right-color: var(--neon-blue);
+  border-top-color: var(--neon-blue);
 }
 
 .powerup-text::before {
-  border-right-color: rgba(56, 189, 248, 0.5);
+  border-top-color: rgba(56, 189, 248, 0.5);
 }
 
 .powerup-text.devil-text::before {
-  border-right-color: var(--neon-social);
+  border-top-color: var(--neon-social);
 }
 
 .leader-text::before {
-  border-right-color: var(--neon-yellow);
+  border-top-color: var(--neon-yellow);
 }
 </style>

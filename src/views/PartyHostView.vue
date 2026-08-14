@@ -36,6 +36,16 @@
       />
     </Transition>
 
+    <div class="buzzer-column">
+      <h1 class="logo">
+        Pix<span>Reveal</span>
+      </h1>
+      <BuzzerStatus
+        :is-final-round="isFinalRound"
+        :bonus-round-type="bonusRoundType"
+      />
+    </div>
+
     <div>
       <MinimalSettings :hide-keyboard="true" />
       <GameHeader
@@ -68,10 +78,6 @@
         />
         <div v-if="isBlurRoundActive" class="blur-overlay" />
       </div>
-      <BuzzerStatus
-        :is-final-round="isFinalRound"
-        :bonus-round-type="bonusRoundType"
-      />
     </div>
     <div class="rankings-column">
       <PartyRankings
@@ -104,6 +110,7 @@ import CountdownTransition from "@/components/page-layout/CountdownTransition.vu
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import PartyRankings from "@/components/game-ui/PartyRankings.vue";
+import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
@@ -497,23 +504,34 @@ onUnmounted(() => {
 <style scoped>
 .host-layout {
   display: grid;
-  grid-template-columns: max(600px) minmax(400px, 100%);
+  grid-template-columns: minmax(360px, 400px) max(600px) minmax(360px, 400px);
   align-items: start;
-  gap: 32px;
-  max-width: 1200px;
+  row-gap: 32px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   border-radius: 8px;
-  padding: 24px;
   box-sizing: border-box;
 }
 
-@media (max-width: 1023px) {
+.buzzer-column {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 32px;
+}
+
+@media (max-width: 1279px) {
   .host-layout {
     grid-template-columns: 1fr;
     max-width: 600px;
+  }
+
+  .buzzer-column {
+    order: -1;
   }
 }
 
@@ -545,9 +563,14 @@ onUnmounted(() => {
 .rankings-column {
   display: grid;
   height: 100%;
+  padding: 32px;
 }
 
 .powerup-info {
   margin-top: auto;
+}
+
+.logo {
+  margin-bottom: 16px;
 }
 </style>
