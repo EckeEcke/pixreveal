@@ -27,8 +27,6 @@ const {
   canvasRef,
   getContext,
   calculateGrid,
-  createParticles,
-  updateAndDrawParticles,
   setAnimationFrameId,
   getAnimationFrameId,
   stopAnimation,
@@ -97,7 +95,6 @@ const initGravityEffect = () => {
               ? 0
               : Math.floor(sequenceIndex * delayPerPixel),
             createdAt: Date.now(),
-            particleGenerated: isInstant,
           });
           sequenceIndex++;
         }
@@ -289,10 +286,6 @@ const render = () => {
         p.currentY = p.targetY;
         if (Math.abs(p.velocity) > 2) {
           soundStore.playSound("reveal");
-          if (!p.particleGenerated) {
-            createParticles(p.x, p.targetY, colorPalette[p.val], cellSize);
-            p.particleGenerated = true;
-          }
         }
         p.velocity *= bounce;
         if (Math.abs(p.velocity) < 0.5) p.landed = true;
@@ -342,8 +335,7 @@ const render = () => {
   }
 
   ctx.restore();
-
-  updateAndDrawParticles(ctx);
+  
   setAnimationFrameId(requestAnimationFrame(render));
 };
 

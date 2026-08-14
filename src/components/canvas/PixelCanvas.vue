@@ -33,13 +33,11 @@ const props = defineProps({
 
 defineEmits(["mousemove", "touchstart", "touchmove"])
 
-const internalSize = 12000
+const internalSize = 600
 const {
   canvasRef,
   getContext,
   calculateGrid,
-  createParticles,
-  updateAndDrawParticles,
   setAnimationFrameId,
   getAnimationFrameId,
   stopAnimation
@@ -55,9 +53,6 @@ let autoAngle = 0
 const offset = 90
 let intervalId = null
 
-// Tracks browser tab visibility so we can skip purely cosmetic work
-// (particle bursts) while the tab is inactive, without touching the
-// actual pixel reveal progress.
 const isPageHidden = ref(document.hidden)
 const handleVisibilityChange = () => {
   isPageHidden.value = document.hidden
@@ -120,21 +115,11 @@ const startReveal = () => {
   const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0
   allVisible.sort(() => Math.random() - 0.5)
 
-  const resolution = props.pixelArray.length
-  const { cellSize } = calculateGrid(resolution)
-
   intervalId = setInterval(() => {
     if (props.pauseReveal) return
     if (allVisible.length > 0) {
       const next = allVisible.pop()
       displayedPixels.value.push({ ...next, createdAt: Date.now() })
-
-      // Skip particle spawning while the tab is inactive - purely
-      // cosmetic, and avoids a burst of queued particles on refocus.
-      if (!isPageHidden.value) {
-        const color = colorPalette[next.val] || "#fff"
-        createParticles(next.x * cellSize, next.y * cellSize, color, cellSize)
-      }
 
       if (!props.muteSound) soundStore.playSound("reveal")
     } else {
@@ -202,28 +187,25 @@ const triggerIncorrectAnswer = () => {
 const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
   pixels.forEach((p) => {
     const color = colorPalette[p.val]
-    let scale = 1
+    let scaleAmt = 1
     if (props.isRevealing && p.createdAt) {
-      scale = Math.min(1, (now - p.createdAt) / 100)
+      scaleAmt = Math.min(1, (now - p.createdAt) / 100)
     }
-    const currentSize = baseSize * scale
+    const currentSize = baseSize * scaleAmt
     const offsetPos = (baseSize - currentSize) / 2
+    const x = p.x * cellSize + gap + offsetPos
+    const y = p.y * cellSize + gap + offsetPos
 
     ctx.save()
     ctx.shadowColor = color
-    ctx.shadowBlur = p.val === 1 ? 0 : 15 * scale
+    ctx.shadowBlur = p.val === 1 ? 0 : 15 * scaleAmt
     ctx.fillStyle = color
-    ctx.fillRect(
-      p.x * cellSize + gap + offsetPos,
-      p.y * cellSize + gap + offsetPos,
-      currentSize,
-      currentSize
-    )
+    ctx.fillRect(x, y, currentSize, currentSize)
 
     if (p.val === 1) {
       ctx.strokeStyle = "rgba(175, 175, 175, 0.5)"
       ctx.lineWidth = 0.5
-      ctx.strokeRect(p.x * cellSize + gap, p.y * cellSize + gap, baseSize, baseSize)
+      ctx.strokeRect(x, y, currentSize, currentSize)
     }
     ctx.restore()
   })
@@ -324,7 +306,6 @@ const render = () => {
   ctx.scale(scaleFactor, scaleFactor)
   ctx.translate(-internalSize / 2, -internalSize / 2)
 
-  // IMMER displayedPixels zeichnen (nicht bedingt durch falls isRevealing/pauseReveal)
   const pixelsToDraw = displayedPixels.value
 
   if (props.isMagnifierMode && !props.isStatusIcon) {
@@ -371,7 +352,6 @@ const render = () => {
 
   ctx.restore()
 
-  updateAndDrawParticles(ctx)
   setAnimationFrameId(requestAnimationFrame(render))
 }
 
@@ -416,14 +396,15 @@ onUnmounted(() => {
 .canvas-wrapper {
   background-image: radial-gradient(
     circle at center,
-    #1a1c26 0%,
-    #0a0b10 60%,
+    #0d0910 0%,
+    #050308 55%,
     #000000 100%
   );
-  border: 2px solid black;
+  border: 2px solid transparent;
   overflow: hidden;
   line-height: 0;
   touch-action: none;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 canvas {
   max-width: 100%;
