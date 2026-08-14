@@ -310,6 +310,11 @@ const downloadDrawing = () => {
 </script>
 
 <style scoped>
+.game-layout {
+  background: none;
+  gap: 16px;
+}
+
 .back-btn {
   margin: 0 auto 16px 0;
 }
@@ -488,6 +493,7 @@ h1 {
 }
 
 h3 {
+  margin-top: 0;
   margin-bottom: 8px;
 }
 
@@ -499,9 +505,16 @@ a {
   margin: 32px;
 }
 
-@media (min-width: 1024px) {
+
   .editor-section {
-    padding: 32px 0;
+    padding: 32px;
+    background: rgba(15, 12, 29, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    box-shadow: 
+      inset 0 1px 1px rgba(255, 255, 255, 0.15),
+      0 8px 32px rgba(0, 0, 0, 0.4);
   }
-}
+
 </style>
