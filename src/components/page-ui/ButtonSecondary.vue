@@ -14,7 +14,7 @@ defineEmits(["clicked"]);
   place-items: center;
   justify-content: center;
   gap: 4px;
-  background: black;
+  background: rgba(255, 255, 255, 0.05);
   padding: 14px 18px;
   border: none;
   text-transform: uppercase;

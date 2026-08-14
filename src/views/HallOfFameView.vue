@@ -156,8 +156,12 @@ h1 {
   place-items: center;
   border-radius: 8px;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4);
   width: 100%;
   max-width: 700px;
   box-sizing: border-box;

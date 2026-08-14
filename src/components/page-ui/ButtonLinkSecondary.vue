@@ -20,7 +20,7 @@ defineEmits(["clicked"]);
   place-items: center;
   justify-content: center;
   gap: 4px;
-  background: black;
+  background: rgba(255, 255, 255, 0.05);
   padding: 12px 16px;
   border: none;
   text-transform: uppercase;

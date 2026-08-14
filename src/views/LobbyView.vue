@@ -163,8 +163,12 @@ onMounted(() => {
 
 <style scoped>
 .lobby-card {
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 2rem;
   border-radius: 8px;
   width: 100%;

@@ -76,21 +76,16 @@
   grid-template-columns: 24px 1fr;
   gap: 10px;
   align-items: start;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4);
   border-radius: 8px;
   padding: 12px 14px;
-  backdrop-filter: blur(4px);
   box-sizing: border-box;
   min-width: 0;
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.item:hover {
-  transform: translateY(-2px);
-  border-color: var(--primary);
 }
 
 .emoji {

@@ -1,5 +1,5 @@
 <template>
-  <main class="host-layout setup-card">
+  <main class="host-layout">
     <Transition name="fade" mode="out-in">
       <CountdownTransition
         v-if="gameStore.gameState === 'starting'"
@@ -36,7 +36,8 @@
       />
     </Transition>
 
-    <div class="buzzer-column">
+    <!-- Linke Card -->
+    <div class="buzzer-column layout-card">
       <h1 class="logo">
         Pix<span>Reveal</span>
       </h1>
@@ -46,7 +47,8 @@
       />
     </div>
 
-    <div>
+    <!-- Mittlere Card (Spielfeld) -->
+    <div class="center-column layout-card">
       <MinimalSettings :hide-keyboard="true" />
       <GameHeader
         :max="timerDuration"
@@ -79,7 +81,9 @@
         <div v-if="isBlurRoundActive" class="blur-overlay" />
       </div>
     </div>
-    <div class="rankings-column">
+
+    <!-- Rechte Card -->
+    <div class="rankings-column layout-card">
       <PartyRankings
         :party-players-sorted="partyPlayersSorted"
         :active-player-id="partyStore.activePlayerId"
@@ -87,6 +91,7 @@
         :freeze-by-player-id="partyStore.freezeByPlayerId"
       />
     </div>
+
     <EmojiOverlay :new-emoji="lastEmoji" />
     <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
     <FartOverlay :trigger="fartTrigger" />
@@ -504,24 +509,48 @@ onUnmounted(() => {
 <style scoped>
 .host-layout {
   display: grid;
-  grid-template-columns: minmax(360px, 400px) max(600px) minmax(360px, 400px);
-  align-items: start;
-  row-gap: 32px;
-  max-width: 1400px;
+  grid-template-columns: minmax(320px, 380px) max(600px) minmax(320px, 380px);
+  gap: 8px;
+  align-items: stretch;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  border-radius: 8px;
   box-sizing: border-box;
 }
 
-.buzzer-column {
+.layout-card {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
   box-sizing: border-box;
+}
+
+.layout-card {
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.buzzer-column {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 32px;
+}
+
+.center-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.rankings-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 @media (max-width: 1279px) {
@@ -558,12 +587,6 @@ onUnmounted(() => {
 
 .twisted {
   transform: rotate(180deg);
-}
-
-.rankings-column {
-  display: grid;
-  height: 100%;
-  padding: 32px;
 }
 
 .powerup-info {

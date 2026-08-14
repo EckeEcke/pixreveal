@@ -77,14 +77,18 @@
 }
 
 .step-card {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4);
   border-radius: 8px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  backdrop-filter: blur(8px);
   transition:
     transform 0.2s ease,
     border-color 0.2s ease;
