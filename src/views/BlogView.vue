@@ -6,6 +6,15 @@
         <div class="log-info">
           <span class="date">08-15-26</span>
         </div>
+        <h3 class="log-title">Improved canvas contrast</h3>
+        <p>
+          One topic that I had on my list for quite a while: black pixels on the canvas were really hard to see. How solve it? Coloring the background lighter? Breaks the design. Making black pixels lighter? Also did not look appealing. In the end I went with a slightly brighter background plus a simple pattern to get the black pixels to pop out more, making it way easier to figure out the pixel drawing.     
+        </p>
+      </div>
+    <div class="log-card">
+        <div class="log-info">
+          <span class="date">08-15-26</span>
+        </div>
         <h3 class="log-title">New hint system for Partymode!</h3>
         <p>
           In the past Partymode worked like this: the pixel art gets revealed pixel by pixel, but players could only see the answers once they buzzered. To make it more player friendly and give players a better chance to guess, I added a new hint mechanic. Once the timer reaches 5, the robot moderator (I will call him PixBot from now on) will tell the 4 answer options. This should give players the confidence to hit the buzzer and score some precious stars.      

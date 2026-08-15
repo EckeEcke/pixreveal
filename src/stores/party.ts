@@ -984,20 +984,17 @@ export const usePartyStore = defineStore("party", () => {
       bindEvent(
         "client-party-lightsout-request",
         (data?: { playerId?: string }) => {
-          if (data?.playerId) incrementPlayerPowerupsUsed(data.playerId)
           powerups.handleLightsOutRequest?.(data)
         }
       )
 
       bindEvent("client-party-xlz-request", (data?: { playerId?: string }) => {
-        if (data?.playerId) incrementPlayerPowerupsUsed(data.playerId)
         powerups.handleXlzRequest?.(data)
       })
 
       bindEvent(
         "client-party-freeze-request",
         (data?: { playerId?: string }) => {
-          if (data?.playerId) incrementPlayerPowerupsUsed(data.playerId)
           powerups.handleFreezeRequest?.(data)
         }
       )
@@ -1005,7 +1002,6 @@ export const usePartyStore = defineStore("party", () => {
       bindEvent(
         "client-party-fart-request",
         (data?: { playerId?: string }) => {
-          if (data?.playerId) incrementPlayerPowerupsUsed(data.playerId)
           powerups.handleFartRequest?.(data)
         }
       )
@@ -1013,7 +1009,6 @@ export const usePartyStore = defineStore("party", () => {
       bindEvent(
         "client-party-devil-request",
         (data?: { playerId?: string }) => {
-          if (data?.playerId) incrementPlayerPowerupsUsed(data.playerId)
           powerups.handleDevilRequest?.(data)
         }
       )
@@ -1035,7 +1030,6 @@ export const usePartyStore = defineStore("party", () => {
       bindEvent(
         "client-party-upsidedown-request",
         (data?: { playerId?: string }) => {
-          if (data?.playerId) incrementPlayerPowerupsUsed(data.playerId)
           powerups.handleUpsideDownRequest?.(data)
         }
       )

@@ -92,6 +92,16 @@
             FARTED! 😯
           </template>
 
+          <template v-else-if="currentActiveMessage.type === 'saboteur'">
+            <span class="player-highlight">
+              <InlineAvatar
+                v-if="saboteurAvatarIndex !== null"
+                :avatarIndex="saboteurAvatarIndex"
+              />{{ saboteurPlayerNameUpper }}
+            </span>
+            IS A <span class="red-text">SABOTEUR</span>! 💣
+          </template>
+
           <template v-else-if="currentActiveMessage.type === 'lightsOut'">
             {{ lightsOutMessageBefore }}
             <span class="player-highlight">
@@ -150,6 +160,26 @@
             {{ leaderGapMessageAfter }}
           </template>
 
+          <template v-else-if="currentActiveMessage.type === 'reopen'">
+            <span class="red-text">✗ WRONG ANSWER!</span> But it's not over yet —
+            think you can answer?
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'tutorialAward'">
+            💡 Heads up: the player in <span class="red-text">last place</span> after
+            each round gets a random <span class="yellow-highlight">POWER-UP</span>!
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'tutorialPoints'">
+            💡 Reminder: a correct answer earns
+            <span class="green-text"
+              >{{ pointsForCorrect }} point<span v-if="pointsForCorrect !== 1"
+                >s</span
+              ></span
+            >, a wrong answer costs
+            <span class="red-text">{{ pointsForWrong }} points</span>!
+          </template>
+
           <template v-else-if="currentActiveMessage.type === 'openRegular'">
             {{ openPrompt.line1 }}
             <br />
@@ -169,7 +199,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue"
+import { computed, ref, watch, onUnmounted } from "vue"
 import InlineAvatar from "./InlineAvatar.vue"
 import { usePartyStore } from "@/stores/party"
 import { useGameStore } from "@/stores/game"
@@ -349,6 +379,88 @@ const showEarlyOptions = computed(() => {
   return props.timeRemaining <= EARLY_REVEAL_THRESHOLD
 })
 
+// ─── Buzzer reopen after a wrong answer ──────────────────────────────────
+// buzzedPlayerIds is populated on every reopen and cleared on a fresh
+// round start in openBuzzer(), so its length reliably tells them apart.
+const isBuzzerReopen = computed(
+  () =>
+    partyStore.buzzerState === "open" &&
+    (partyStore.buzzedPlayerIds?.length ?? 0) > 0
+)
+
+// ─── Indirect tutorials (round 2 / round 3) ──────────────────────────────
+const showAwardTutorial = computed(
+  () =>
+    partyStore.buzzerState === "open" &&
+    gameStore.currentRoundIndex === 1 &&
+    !isBuzzerReopen.value
+)
+
+const showPointsTutorial = computed(
+  () =>
+    partyStore.buzzerState === "open" &&
+    gameStore.currentRoundIndex === 2 &&
+    !isBuzzerReopen.value
+)
+
+// ─── Saboteur comment (first player to use 3 powerups, once per game) ───
+const saboteurPlayerId = ref<string | null>(null)
+const saboteurVisible = ref(false)
+let saboteurTimer: ReturnType<typeof setTimeout> | null = null
+
+const saboteurPlayerNameUpper = computed(() => {
+  const p = partyStore.players.find(
+    (pl: any) => pl.playerId === saboteurPlayerId.value
+  )
+  return (p?.username || "PLAYER").toUpperCase()
+})
+
+const saboteurAvatarIndex = computed(() => {
+  const p = partyStore.players.find(
+    (pl: any) => pl.playerId === saboteurPlayerId.value
+  )
+  return p ? p.avatarIndex : null
+})
+
+watch(
+  () => partyStore.players.map((p: any) => p.powerupsUsed),
+  () => {
+    if (saboteurPlayerId.value) return // already awarded this game
+
+    const saboteur = partyStore.players.find(
+      (p: any) => (p.powerupsUsed || 0) >= 3
+    )
+    if (!saboteur) return
+
+    saboteurPlayerId.value = saboteur.playerId
+    saboteurVisible.value = true
+
+    if (saboteurTimer) clearTimeout(saboteurTimer)
+    saboteurTimer = setTimeout(() => {
+      saboteurVisible.value = false
+    }, 4000)
+  }
+)
+
+// Reset the once-per-game saboteur state when a new game starts.
+watch(
+  () => gameStore.currentRoundIndex,
+  (next, prev) => {
+    if (next === 0 && prev !== 0) {
+      saboteurPlayerId.value = null
+      saboteurVisible.value = false
+      if (saboteurTimer) {
+        clearTimeout(saboteurTimer)
+        saboteurTimer = null
+      }
+    }
+  }
+)
+
+onUnmounted(() => {
+  if (saboteurTimer) clearTimeout(saboteurTimer)
+})
+
 const currentActiveMessage = computed(() => {
   if (isDevilMessage.value) {
     return {
@@ -382,6 +494,14 @@ const currentActiveMessage = computed(() => {
     }
   }
 
+  if (saboteurVisible.value) {
+    return {
+      type: "saboteur",
+      key: `saboteur-${saboteurPlayerId.value}`,
+      class: "powerup-text devil-text",
+    }
+  }
+
   if (partyStore.isLightsOut) {
     return {
       type: "lightsOut",
@@ -407,11 +527,35 @@ const currentActiveMessage = computed(() => {
   }
 
   if (partyStore.buzzerState === "open") {
+    if (isBuzzerReopen.value) {
+      return {
+        type: "reopen",
+        key: "reopen",
+        class: "status-pill open",
+      }
+    }
+
     if (showEarlyOptions.value) {
       return {
         type: "openEarlyOptions",
         key: "earlyOptions",
         class: "status-pill answering",
+      }
+    }
+
+    if (showAwardTutorial.value) {
+      return {
+        type: "tutorialAward",
+        key: "tutorialAward",
+        class: "status-pill open",
+      }
+    }
+
+    if (showPointsTutorial.value) {
+      return {
+        type: "tutorialPoints",
+        key: "tutorialPoints",
+        class: "status-pill open",
       }
     }
 
@@ -469,6 +613,8 @@ const messageColor = computed(() => {
   switch (currentActiveMessage.value.type) {
     case "devilActive":
       return "var(--neon-social)"
+    case "saboteur":
+      return "var(--neon-social)"
     case "fart":
     case "lightsOut":
     case "freeze":
@@ -482,10 +628,13 @@ const messageColor = computed(() => {
       return "var(--neon-blue)" // timeout
     case "leaderEvent":
       return "var(--neon-yellow)"
+    case "reopen":
     case "openFinal":
     case "openBonus":
     case "openGap":
     case "openRegular":
+    case "tutorialAward":
+    case "tutorialPoints":
       return "var(--neon-pink)"
     default:
       return "var(--primary)"
@@ -650,5 +799,9 @@ const messageColor = computed(() => {
 
 .leader-text::before {
   border-top-color: var(--neon-yellow);
+}
+
+.yellow-highlight {
+  color: var(--neon-yellow);
 }
 </style>
