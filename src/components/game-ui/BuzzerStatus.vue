@@ -13,6 +13,8 @@
               :options="optionsForPrompt"
               :is-xlz-active="partyStore.isXlzActive"
               :is-devil-active="true"
+              :max-reveal-time="maxRevealTime"
+              :time-remaining="timeRemaining"
             />
           </template>
 
@@ -21,6 +23,18 @@
               :active-player-name="activePlayerName"
               :options="optionsForPrompt"
               :is-xlz-active="partyStore.isXlzActive"
+              :max-reveal-time="maxRevealTime"
+              :time-remaining="timeRemaining"
+            />
+          </template>
+
+          <template v-else-if="currentActiveMessage.type === 'openEarlyOptions'">
+            <BuzzerAnsweringPrompt
+              active-player-name=""
+              :options="optionsForPrompt"
+              :is-xlz-active="partyStore.isXlzActive"
+              :max-reveal-time="maxRevealTime"
+              :time-remaining="timeRemaining"
             />
           </template>
 
@@ -170,6 +184,8 @@ import type { BonusRoundType } from "@/types/bonusRound"
 const props = defineProps<{
   isFinalRound?: boolean
   bonusRoundType?: BonusRoundType | null
+  timeRemaining: number
+  maxRevealTime: number
 }>()
 
 const gameStore = useGameStore()
@@ -198,9 +214,14 @@ const {
   lightsOutActorNameUpper,
 } = usePowerupEvents(partyStore)
 
-const activePlayerName = computed(() => partyStore.activePlayer?.username || "Player")
+// Empty when nobody has buzzed yet, instead of a "Player" placeholder,
+// so downstream consumers (and the early-options branch) can tell the
+// difference between "no active player" and "a player named Player".
+const activePlayerName = computed(() => partyStore.activePlayer?.username || "")
 
-const activePlayerNameUpper = computed(() => activePlayerName.value.toUpperCase())
+const activePlayerNameUpper = computed(
+  () => (activePlayerName.value || "Player").toUpperCase()
+)
 
 const activeAvatarIndex = computed(() => {
   const id = partyStore.activePlayerId ?? null
@@ -318,6 +339,16 @@ const isDevilMessage = computed(() => {
   return partyStore.isDevilActive
 })
 
+// Show the answer options while the buzzer is still open, shortly before
+// the round times out, so players get a last look even if nobody buzzed.
+const EARLY_REVEAL_THRESHOLD = 5
+const MIN_MAX_REVEAL_TIME = 10
+
+const showEarlyOptions = computed(() => {
+  if (props.maxRevealTime < MIN_MAX_REVEAL_TIME) return false
+  return props.timeRemaining <= EARLY_REVEAL_THRESHOLD
+})
+
 const currentActiveMessage = computed(() => {
   if (isDevilMessage.value) {
     return {
@@ -376,6 +407,14 @@ const currentActiveMessage = computed(() => {
   }
 
   if (partyStore.buzzerState === "open") {
+    if (showEarlyOptions.value) {
+      return {
+        type: "openEarlyOptions",
+        key: "earlyOptions",
+        class: "status-pill answering",
+      }
+    }
+
     if (isFinalRound.value) {
       return {
         type: "openFinal",
@@ -582,5 +621,41 @@ watch(
 
 .leader-text::before {
   border-top-color: var(--neon-yellow);
+}
+
+.message-enter-active {
+  transform-origin: center bottom;
+  animation: message-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.message-leave-active {
+  transform-origin: center bottom;
+  animation: message-pop-out 0.15s ease-in;
+}
+
+@keyframes message-pop-in {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes message-pop-out {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
 }
 </style>

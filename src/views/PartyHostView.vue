@@ -44,6 +44,8 @@
       <BuzzerStatus
         :is-final-round="isFinalRound"
         :bonus-round-type="bonusRoundType"
+        :max-reveal-time="timerDuration"
+        :time-remaining="timer"
       />
     </div>
 
