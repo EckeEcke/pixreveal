@@ -163,7 +163,7 @@
     <!-- Robot Moderator unten auf 100% Breite -->
     <RobotModerator
       :is-talking="robotIsTalking"
-      :active-message="currentActiveMessage"
+      :accent-color="messageColor"
     />
   </div>
 </template>
@@ -462,6 +462,35 @@ watch(
     playPop()
   }
 )
+
+// Same color mapping as the speech bubble's border, so the robot's
+// background always matches the currently visible bubble.
+const messageColor = computed(() => {
+  switch (currentActiveMessage.value.type) {
+    case "devilActive":
+      return "var(--neon-social)"
+    case "fart":
+    case "lightsOut":
+    case "freeze":
+      return "rgba(56, 189, 248, 1)"
+    case "answering":
+    case "openEarlyOptions":
+      return "var(--neon-blue)"
+    case "result":
+      if (resultClass.value === "correct") return "var(--neon-success)"
+      if (resultClass.value === "incorrect") return "var(--neon-error)"
+      return "var(--neon-blue)" // timeout
+    case "leaderEvent":
+      return "var(--neon-yellow)"
+    case "openFinal":
+    case "openBonus":
+    case "openGap":
+    case "openRegular":
+      return "var(--neon-pink)"
+    default:
+      return "var(--primary)"
+  }
+})
 </script>
 
 <style scoped>
@@ -477,7 +506,7 @@ watch(
 .message-container {
   position: relative;
   width: 100%;
-  min-height: 140px;
+  min-height: 150px;
 }
 
 .status-pill,
@@ -621,41 +650,5 @@ watch(
 
 .leader-text::before {
   border-top-color: var(--neon-yellow);
-}
-
-.message-enter-active {
-  transform-origin: center bottom;
-  animation: message-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.message-leave-active {
-  transform-origin: center bottom;
-  animation: message-pop-out 0.15s ease-in;
-}
-
-@keyframes message-pop-in {
-  0% {
-    transform: scale(0.4);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes message-pop-out {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.85);
-    opacity: 0;
-  }
 }
 </style>

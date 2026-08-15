@@ -1,7 +1,8 @@
 <template>
   <div
     class="moderator-wrapper"
-    :class="isTalking ? 'cyan-bg' : 'primary-bg'"
+    :class="{ 'is-talking': isTalking }"
+    :style="{ '--accent-color': accentColor }"
   >
     <div 
       class="avatar-crop"
@@ -23,15 +24,21 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  isTalking?: boolean
-}>()
+withDefaults(
+  defineProps<{
+    isTalking?: boolean
+    accentColor?: string
+  }>(),
+  {
+    accentColor: "var(--primary)",
+  }
+)
 </script>
 
 <style scoped>
 .moderator-wrapper {
   position: relative;
-  transition: all 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   height: 60px;
   width: 100%;
   overflow: hidden;
@@ -39,6 +46,11 @@ defineProps<{
   display: flex;
   justify-content: center;
   align-items: center;
+  background: var(--accent-color);
+}
+
+.moderator-wrapper.is-talking {
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.25);
 }
 
 @media (min-width: 576px) {
@@ -117,13 +129,5 @@ img {
   .talking {
     top: -25px;
   }
-}
-
-.cyan-bg {
-  background: var(--neon-cyan);
-}
-
-.primary-bg {
-  background: var(--primary);
 }
 </style>
