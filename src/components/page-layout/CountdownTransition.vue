@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useSoundStore } from "@/stores/sound";
 
 const emit = defineEmits(["done"]);
@@ -18,19 +18,33 @@ const current = ref("");
 
 const INTERVAL = 800;
 
-useSoundStore().playSound("correct");
+const soundStore = useSoundStore();
+soundStore.playSound("correct");
+
+// Track every scheduled timeout so we can cancel them all on unmount
+const timers = [];
+const scheduleTimeout = (fn, delay) => {
+  const id = setTimeout(fn, delay);
+  timers.push(id);
+  return id;
+};
 
 onMounted(() => {
-  setTimeout(() => {
+  scheduleTimeout(() => {
     steps.forEach((step, i) => {
-      setTimeout(() => {
+      scheduleTimeout(() => {
         current.value = step;
-        useSoundStore().playSound(step === "GO!" ? "buzz" : "timer");
+        soundStore.playSound(step === "GO!" ? "buzz" : "timer");
       }, i * INTERVAL);
     });
 
-    setTimeout(() => emit("done"), steps.length * INTERVAL);
+    scheduleTimeout(() => emit("done"), steps.length * INTERVAL);
   }, 250);
+});
+
+onUnmounted(() => {
+  timers.forEach(clearTimeout);
+  timers.length = 0;
 });
 </script>
 

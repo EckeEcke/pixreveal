@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 
@@ -85,6 +85,7 @@ import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
+import { workerSetTimeout, workerClearTimeout } from "@/services/workerTimers";
 
 import { useChannelStore } from "@/stores/channel";
 import { useOnlineStore } from "@/stores/online";
@@ -100,6 +101,14 @@ const router = useRouter();
 const showIntro = ref(true);
 const showWinnerAnimation = ref(false);
 const winnerAnimationShown = ref(false);
+const winnerSoundPlayed = ref(false);
+const partySoundPlayed = ref(false);
+
+// Handle for the recursive joke-polling timeout, so we can cancel it on unmount
+let jokeTimer: ReturnType<typeof setTimeout> | null = null;
+// Handle for the delayed party-sound timer, so we can cancel it on unmount
+let partySoundTimer: ReturnType<typeof workerSetTimeout> | null = null;
+let isMounted = true;
 
 const isMe = (id: string) => id === channelStore.playerId;
 
@@ -113,9 +122,20 @@ const waitingForFinalResults = computed(() =>
   playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
 );
 
+const playPartySoundOnce = () => {
+  if (partySoundPlayed.value) return;
+  if (!channelStore.isHost) return;
+  partySoundPlayed.value = true;
+  soundStore.playSound("party");
+};
+
 const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
+  partySoundTimer = workerSetTimeout(() => {
+    partySoundTimer = null;
+    playPartySoundOnce();
+  }, 2000);
 };
 
 watch(
@@ -171,11 +191,13 @@ const fetchJoke = async () => {
     }
 
     const data = await response.json()
-    joke.value = data.joke
+    if (isMounted) joke.value = data.joke
   } catch (error) {
     console.error('Error fetching joke:', error)
   }
-  setTimeout(() => {
+  if (!isMounted) return;
+  jokeTimer = setTimeout(() => {
+    jokeTimer = null;
     if (waitingForFinalResults.value) fetchJoke()
   }, 10000)
 }
@@ -199,8 +221,28 @@ onMounted(() => {
     return;
   }
   const winnerId = playersSortedByPoints.value[0]?.playerId;
-  if (winnerId && winnerId === channelStore.playerId)
+  if (winnerId && winnerId === channelStore.playerId) {
+    winnerSoundPlayed.value = true;
     soundStore.playSound("winner");
+  }
+});
+
+onUnmounted(() => {
+  isMounted = false;
+  if (jokeTimer) {
+    clearTimeout(jokeTimer);
+    jokeTimer = null;
+  }
+  if (partySoundTimer) {
+    workerClearTimeout(partySoundTimer);
+    partySoundTimer = null;
+  }
+  if (winnerSoundPlayed.value) {
+    soundStore.stopSound("winner");
+  }
+  if (partySoundPlayed.value) {
+    soundStore.stopSound("party");
+  }
 });
 </script>
 
@@ -278,4 +320,3 @@ main {
   }
 }
 </style>
-

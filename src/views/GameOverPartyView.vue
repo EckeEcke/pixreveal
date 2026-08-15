@@ -67,7 +67,7 @@ import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
-import { workerSetTimeout } from "@/services/workerTimers";
+import { workerSetTimeout, workerClearTimeout } from "@/services/workerTimers";
 import { useChannelStore } from "@/stores/channel";
 import { useGameStore } from "@/stores/game";
 import { usePartyStore } from "@/stores/party";
@@ -83,6 +83,8 @@ const router = useRouter();
 const showIntro = ref(true);
 const partySoundPlayed = ref(false);
 const showWinnerAnimation = ref(false);
+
+let partySoundTimer = null;
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
@@ -163,11 +165,18 @@ const playPartySoundOnce = () => {
 const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
-  workerSetTimeout(() => playPartySoundOnce(), 2000);
+  partySoundTimer = workerSetTimeout(() => {
+    partySoundTimer = null;
+    playPartySoundOnce();
+  }, 2000);
   if (winnerPlayer.value) showWinnerAnimation.value = true;
 };
 
 onUnmounted(() => {
+  if (partySoundTimer) {
+    workerClearTimeout(partySoundTimer);
+    partySoundTimer = null;
+  }
   soundStore.stopSound("party");
 });
 
