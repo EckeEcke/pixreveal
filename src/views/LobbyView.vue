@@ -45,7 +45,7 @@
           <div class="room-id">Round duration: {{ configStore.revealTime }}</div>
         </template>
         <button
-          v-if="channelStore.isHost && players.length > (isParty ? 2 : 1)"
+          v-if="channelStore.isHost && players.length > (isParty ? 2 : 1) && !isStarting"
           class="start-btn pulse-btn"
           @click="startGame"
           data-sfx="click"
@@ -54,9 +54,9 @@
         </button>
         <LoadingAnimation
           v-if="
-            (channelStore.isHost && players.length <= 2) || !channelStore.isHost
+            ((channelStore.isHost && players.length <= 2) || !channelStore.isHost) || isStarting
           "
-          :text="channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST'"
+          :text="isStarting ? 'STARTING GAME' : (channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST')"
           class="loading-animation"
         />
       </div>
@@ -123,7 +123,11 @@ const players = computed(() =>
 );
 const isMe = (id) => id === channelStore.playerId;
 
+const isStarting = ref(false);
+
 const startGame = () => {
+  if (isStarting.value) return;
+  isStarting.value = true;
   soundStore.playSound("click");
   if (isParty.value) {
     partyStore.startGame();

@@ -394,12 +394,6 @@ onUnmounted(() => {
 
 <style scoped>
 .canvas-wrapper {
-  background-image: radial-gradient(
-    circle at center,
-    #0d0910 0%,
-    #050308 55%,
-    #000000 100%
-  );
   border: 2px solid transparent;
   overflow: hidden;
   line-height: 0;
@@ -410,5 +404,24 @@ canvas {
   max-width: 100%;
   height: auto;
   cursor: none;
+}
+
+.canvas-wrapper {
+  position: relative;
+  background-color: #120f1f;
+  background-image: radial-gradient(rgba(128,0,128,0.2) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.canvas-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
 }
 </style>

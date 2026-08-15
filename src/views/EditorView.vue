@@ -360,8 +360,21 @@ const downloadDrawing = () => {
 .canvas-wrapper {
   width: 100%;
   position: relative;
-  background: #000;
   box-sizing: border-box;
+  position: relative;
+  border: 4px solid transparent;
+}
+
+.canvas-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
 }
 
 .interaction-layer {
