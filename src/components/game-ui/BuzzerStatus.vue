@@ -804,4 +804,38 @@ const messageColor = computed(() => {
 .yellow-highlight {
   color: var(--neon-yellow);
 }
+
+.message-enter-active {
+  animation: bubble-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.message-leave-active {
+  animation: bubble-pop-out 0.18s ease-in;
+}
+
+@keyframes bubble-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bubble-pop-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
 </style>
