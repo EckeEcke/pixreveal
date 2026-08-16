@@ -4,6 +4,15 @@
     <div class="log-grid">
     <div class="log-card">
         <div class="log-info">
+          <span class="date">08-16-26</span>
+        </div>
+        <h3 class="log-title">Join party game in progress possible now!</h3>
+        <p>
+          Partymode supports up to 10 players. If you wanted to join a running game, you had to wait until the end of the round. Now you can see the QR code/room id right on the host screen, join the game and start playing immidiately!
+        </p>
+      </div>
+    <div class="log-card">
+        <div class="log-info">
           <span class="date">08-15-26</span>
         </div>
         <h3 class="log-title">Improved canvas contrast</h3>

@@ -276,6 +276,14 @@ export const useChannelStore = defineStore("channel", () => {
       loading,
       router,
       reset,
+      onPlayerAllowedDuringRunningGame: (player) => {
+        if (mode.value !== "party") return;
+        workerSetTimeout(() => {
+          try {
+            usePartyStore().addLatePlayer?.(player);
+          } catch {}
+        }, 0);
+      },
     });
 
     useChatEvents({ channel, messages });

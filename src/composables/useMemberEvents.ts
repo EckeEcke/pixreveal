@@ -50,6 +50,12 @@ export interface UseMemberEventsOptions {
   loading: LoadingState;
   router: Router;
   reset(): void;
+  /**
+   * Called on the host when a new/rejoining member is let into the room
+   * while a game is already running. Used to push game/round state to
+   * the newly joined player (party mode only, wired in channel.ts).
+   */
+  onPlayerAllowedDuringRunningGame?: (player: Player) => void;
 }
 
 export function buildPlayerFromMember(member: RawMember): Player {
@@ -98,6 +104,7 @@ export function useMemberEvents({
   loading,
   router,
   reset,
+  onPlayerAllowedDuringRunningGame,
 }: UseMemberEventsOptions): void {
   channel.bind("realtime:member_added", (member: RawMember) => {
     const player = buildPlayerFromMember(member);
@@ -110,24 +117,21 @@ export function useMemberEvents({
       if (loading.isReconnecting) loading.clear();
     }
 
-    if (isHost.value && onlineGameRunning.value) {
-      playerMgmt.allowRejoinDuringRunningGame(member.user_id);
+    if (!isHost.value) return;
 
-      const isBlocked =
-        playerMgmt.allowedIdsDuringGame.value !== null &&
-        !playerMgmt.allowedIdsDuringGame.value.has(member.user_id);
+    const overCapacity = isLobbyOverCapacityAfterJoin(
+      playerMgmt.playersOnline.value,
+      mode.value,
+    );
 
-      if (isBlocked) {
-        channel.trigger("client-join-blocked", { targetId: member.user_id });
-      }
+    if (overCapacity) {
+      channel.trigger("client-join-blocked", { targetId: member.user_id });
+      return;
     }
 
-    if (isHost.value && !onlineGameRunning.value) {
-      if (
-        isLobbyOverCapacityAfterJoin(playerMgmt.playersOnline.value, mode.value)
-      ) {
-        channel.trigger("client-join-blocked", { targetId: member.user_id });
-      }
+    if (onlineGameRunning.value) {
+      playerMgmt.allowRejoinDuringRunningGame(member.user_id);
+      onPlayerAllowedDuringRunningGame?.(player);
     }
   });
 

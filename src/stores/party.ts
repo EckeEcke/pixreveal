@@ -282,6 +282,35 @@ export const usePartyStore = defineStore("party", () => {
     broadcastPartyState("game-started")
   }
 
+  const addLatePlayer = (player: Player) => {
+    if (!isHost.value) return
+    if (players.value.some((p) => p.playerId === player.playerId)) return
+
+    players.value.push({
+      playerId: player.playerId,
+      username: player.username,
+      avatarIndex: player.avatarIndex,
+      points: 0,
+      wrongAnswers: 0,
+      correctAnswers: 0,
+      quickestAnswer: null,
+      powerupsUsed: 0,
+      emojisSent: 0,
+      isDecrypter: false,
+      devilVictim: false,
+      devilSurvivor: false,
+    })
+
+    channel.value?.trigger("client-party-sync-new-player", {
+      targetId: player.playerId,
+      rounds: gameStore.rounds,
+      revealTime: configStore.revealTime,
+    })
+
+    broadcastPlayerScores()
+    broadcastPartyState("new-player-joined")
+  }
+
   const openBuzzer = () => {
     gameStore.setGameState("revealing")
     buzzerState.value = "open"
@@ -602,6 +631,22 @@ export const usePartyStore = defineStore("party", () => {
       allowReplayNavigationWindow()
       router.push("/party-player")
     })
+
+    bindEvent(
+      "client-party-sync-new-player",
+      (data: { targetId?: string; rounds?: Round[]; revealTime?: number }) => {
+        if (isHost.value) return
+        if (!data?.targetId || data.targetId !== channelStore.playerId) return
+
+        heartbeat.markHostActivity()
+        channelStore.setGameRunning(true)
+        if (Array.isArray(data.rounds)) {
+          gameStore.prepareGame(data.revealTime ?? configStore.revealTime, data.rounds)
+        }
+        allowReplayNavigationWindow()
+        router.push("/party-player")
+      }
+    )
 
     bindEvent("client-party-buzzer-open", () => {
       heartbeat.markHostActivity()
@@ -1166,6 +1211,7 @@ export const usePartyStore = defineStore("party", () => {
 
     // Actions
     startGame,
+    addLatePlayer,
     openBuzzer,
     handleBuzz,
     startAnswerPhase,

@@ -44,23 +44,31 @@
       <BuzzerStatus
         :is-final-round="isFinalRound"
         :bonus-round-type="bonusRoundType"
-        :max-reveal-time="timerDuration"
-        :time-remaining="timer"
+        :max-reveal-time="Number(timerDuration)"
+        :time-remaining="Number(timer)"
       />
+      <div v-if="partyStore.players.length <= 10" class="join-container">
+      <h2>JOIN GAME</h2>
+      <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
+      <div>
+        Room ID:
+        <p class="room-code"> <span>{{ channelStore.currentRoomId }}</span></p>
+      </div>
+      </div>
     </div>
 
     <!-- Mittlere Card (Spielfeld) -->
     <div class="center-column layout-card">
       <MinimalSettings :hide-keyboard="true" />
       <GameHeader
-        :max="timerDuration"
-        :count="timer"
+        :max="Number(timerDuration)"
+        :count="Number(timer)"
         :is-correct="false"
         :is-incorrect="false"
         :is-bonus="!!bonusRoundType || isFinalRound"
         :total-score="undefined"
         :current-round="gameStore.currentRoundIndex + 1"
-        :max-rounds="configStore.maxRounds"
+        :max-rounds="Number(configStore.maxRounds)"
         :is-survival="false"
         :is-sudden-death="partyStore.isSuddenDeath"
       />
@@ -73,7 +81,7 @@
           :resolution="resolution"
           :is-revealing="canvasIsRevealing"
           :is-status-icon="false"
-          :timer-duration="timerDuration"
+          :timer-duration="Number(timerDuration)"
           :pause-reveal="
             partyStore.buzzerState === 'answering' ||
             showFinalRoundTransition ||
@@ -119,10 +127,12 @@ import GameTransition from "@/components/game-ui/GameTransition.vue";
 import BuzzerStatus from "@/components/game-ui/BuzzerStatus.vue";
 import PartyRankings from "@/components/game-ui/PartyRankings.vue";
 import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
+import QrcodeVue from "qrcode.vue";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { usePartyStore } from "@/stores/party";
 import { useSoundStore } from "@/stores/sound";
+import { useChannelStore } from "@/stores/channel";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -139,6 +149,7 @@ const gameStore = useGameStore();
 const configStore = useConfigStore();
 const partyStore = usePartyStore();
 const soundStore = useSoundStore();
+const channelStore = useChannelStore();
 
 const pixelCanvasRef = ref<{
   playShine: () => void;
@@ -152,6 +163,11 @@ const timer = ref(timerDuration.value);
 let timerId: number | null = null;
 let timerEndTimeoutId: number | null = null;
 let navigationTimeout: number | null = null;
+
+const inviteLink = computed(
+  () =>
+    `${window.location.origin}?id=${channelStore.currentRoomId}&mode=party`,
+);
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
@@ -611,5 +627,25 @@ onUnmounted(() => {
 
 .logo {
   margin-bottom: 16px;
+}
+
+.join-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  h2 {
+    margin-bottom: 0;
+  }
+  .room-code {
+    margin: 4px 0 0;
+    font-size: 24px;
+    font-weight: 700;
+    span {
+      color: var(--primary);
+    }
+  }
 }
 </style>
