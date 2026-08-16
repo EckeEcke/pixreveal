@@ -97,6 +97,7 @@
     <EmojiOverlay :new-emoji="lastEmoji" />
     <FreezeBurstOverlay :trigger="freezeBurstTrigger" />
     <FartOverlay :trigger="fartTrigger" />
+    <DevilBurstOverlay :trigger="devilTrigger" />
   </main>
 </template>
 
@@ -132,6 +133,7 @@ import EmojiOverlay from "@/components/game-ui/EmojiOverlay.vue";
 import { useBonusRounds } from "@/composables/useBonusRounds";
 import FreezeBurstOverlay from "@/components/game-ui/FreezeBurstOverlay.vue";
 import FartOverlay from "@/components/game-ui/FartOverlay.vue";
+import DevilBurstOverlay from "@/components/game-ui/DevilBurstOverlay.vue";
 
 const gameStore = useGameStore();
 const configStore = useConfigStore();
@@ -369,6 +371,7 @@ const setupDrawing = () => {
 const lastEmoji = ref("");
 const freezeBurstTrigger = ref(0);
 const fartTrigger = ref(0);
+const devilTrigger = ref(0);
 
 const handleIncomingEmoji = (emojiChar: string) => {
   lastEmoji.value = emojiChar;
@@ -455,6 +458,8 @@ watch(
 );
 
 let lastFartTriggerKey: string | null = null;
+let lastDevilTriggerKey: string | null = null;  
+
 watch(
   () => partyStore.buzzerState,
   (newState) => {
@@ -480,8 +485,17 @@ watch(
           fartTrigger.value += 1;
         }
       }
+
+      if (partyStore.isDevilActive && partyStore.activePlayerId) {
+        const key = `${partyStore.activePlayerId}-${partyStore.devilCharges}`;
+        if (lastDevilTriggerKey !== key) {
+          lastDevilTriggerKey = key;
+          devilTrigger.value += 1;
+        }
+      }
     } else if (newState !== "answering") {
       lastFartTriggerKey = null;
+      lastDevilTriggerKey = null;
     }
 
     if (
