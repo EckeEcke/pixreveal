@@ -1,21 +1,27 @@
 <template>
   <ul class="mode-info-list">
     <li class="item">
-      <span class="emoji">&#x1F4FA;</span>
+      <Icon
+        icon="streamline-pixel:video-movies-vintage-tv-1"
+        class="icon"
+      />
       <div>
         <div class="name">host on a big screen</div>
         <div class="desc">TV or laptop — this screen shows the drawing and controls the game.</div>
       </div>
     </li>
     <li class="item">
-      <span class="emoji">&#x1F4F1;</span>
+      <Icon
+        icon="streamline-pixel:interface-essential-touch-id-smartphone"
+        class="icon"
+      />
       <div>
         <div class="name">join via phone</div>
         <div class="desc">Everyone plays from their phone — including you, if you want to join in as host.</div>
       </div>
     </li>
     <li class="item">
-      <span class="emoji">&#x1F310;</span>
+      <Icon icon="streamline-pixel:internet-network-www" class="icon" />
       <div>
         <div class="name">local or online</div>
         <div class="desc">Not in the same room? Screen-share your host screen (Zoom, Discord, etc.) so everyone can see the drawing too.</div>
@@ -24,67 +30,68 @@
   </ul>
 </template>
 
+<script setup lang="ts">
+import { Icon } from '@iconify/vue';
+</script>
+
 <style scoped>
 .mode-info-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 32px;
+  margin: 0 0 28px;
   display: grid;
-  gap: 12px;
+  gap: 4px;
 }
 
 .item {
   display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 12px;
-  align-items: start;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 14px 16px;
-  backdrop-filter: blur(4px);
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 4px;
   box-sizing: border-box;
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease;
 }
 
-.item:hover {
-  transform: translateY(-2px);
-  border-color: var(--primary);
+.item + .item {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.emoji {
-  font-size: 20px;
-  line-height: 1;
-  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.6));
+.icon {
+  font-size: 32px;
+  color: var(--primary);
+  min-width: 32px;
 }
 
 .name {
   font-weight: 900;
-  font-size: 16px;
-  letter-spacing: 1px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.95);
   text-transform: uppercase;
 }
 
 .desc {
   margin-top: 2px;
-  font-size: 14px;
-  opacity: 0.8;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.65;
   color: rgba(255, 255, 255, 0.9);
   text-transform: none;
 }
 
 @media (max-width: 575px) {
   .item {
-    padding: 10px 14px;
+    padding: 8px 2px;
+  }
+  .icon {
+    font-size: 26px;
+    min-width: 26px;
   }
   .name {
-    font-size: 14px;
+    font-size: 12px;
   }
   .desc {
-    font-size: 12px;
+    font-size: 11px;
   }
 }
 </style>

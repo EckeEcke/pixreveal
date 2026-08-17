@@ -8,8 +8,8 @@
     <main class="page">
       <LoadingOverlay :show="channelStore.isLoading" />
       <div class="setup-card card">
-                <span class="pre-headline">MODE</span>
-            <h2>LOCAL PARTY</h2>
+            <h1>PARTY MULTIPLAYER</h1>
+          <span class="pre-headline">CREATE OR JOIN A GAME</span>
         <div class="card-grid">
           <section class="panel panel-left" aria-label="Party setup">
             <div class="role-toggle">
@@ -121,7 +121,6 @@
           </section>
           <section>
             <PartyModeInfo />
-            <PowerUpInfo class="powerups" />
           </section>
         </div>
       </div>
@@ -148,7 +147,6 @@ import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
 import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue";
-import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 
 const showAvatarModal = ref(false);
 
@@ -263,11 +261,14 @@ const joinGame = () => {
 }
 
 .pre-headline {
+  display: block;
+  text-align: center;
   color: var(--primary);
 }
 h2 {
   margin-top: 0;
   margin-bottom: 32px;
+  text-align: center;
 }
 
 .start-btn {
@@ -512,5 +513,20 @@ h2 {
 .back-btn-wrapper {
   width: 100%;
   max-width: 1000px;
+}
+
+.pre-headline {
+  display: block;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.setup-card h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 32px;
+  margin-bottom: 4px;
+  text-align: center;
 }
 </style>

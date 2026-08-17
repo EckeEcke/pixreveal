@@ -6,7 +6,9 @@
     </button>
   </div>
   <div class="lobby-card">
-    <h1>{{ isParty ? "Party Lobby" : "Lobby" }}</h1>
+    <h1>{{ isParty ? "PARTY LOBBY" : "ONLINE LOBBY" }}</h1>
+    <span class="pre-headline">{{ configStore.maxRounds }} Rounds · {{ configStore.revealTime }}s per round</span>
+    <h1></h1>
     <div class="lobby-layout">
       <!-- Linke Spalte: Hosting & Beitritt -->
       <div class="lobby-left-column">
@@ -40,10 +42,6 @@
             <Icon icon="pixel:copy" />
           </span>
         </div>
-        <template v-if="!isParty">
-          <div class="room-id">Rounds to play: {{ configStore.maxRounds }}</div>
-          <div class="room-id">Round duration: {{ configStore.revealTime }}</div>
-        </template>
         <button
           v-if="channelStore.isHost && players.length > (isParty ? 2 : 1) && !isStarting"
           class="start-btn pulse-btn"
@@ -192,6 +190,7 @@ onMounted(() => {
 .lobby-left-column {
   display: flex;
   flex-direction: column;
+  align-items: start;
   gap: 16px;
   width: 100%;
   max-width: 420px;
@@ -202,7 +201,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
 }
 
@@ -236,12 +235,19 @@ onMounted(() => {
   grid-template-columns: 1fr;
   gap: 12px;
   width: 100%;
+  margin-top: 16px;
 }
 
 .qr-code {
   display: flex;
   justify-content: center;
-  margin: 16px auto;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(15, 12, 29, 0.75);  
+  backdrop-filter: blur(12px);
 }
 
 .loading-animation {
@@ -257,13 +263,14 @@ h1 {
 }
 
 h2 {
-  margin: 0 auto 4px;
-  text-align: center;
+  margin: 0 0 4px;
+  text-align: left;
 }
 
 .not-enough-players {
   margin-top: 8px;
-  text-align: center;
+  text-align: left;
+  opacity: 0.7;
 }
 
 @media (max-width: 768px) {
@@ -280,5 +287,20 @@ h2 {
   width: 100%;
   max-width: 800px;
   margin-bottom: 16px;
+}
+
+.pre-headline {
+  display: block;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.lobby-card h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 32px;
+  margin-bottom: 4px;
+  text-align: center;
 }
 </style>

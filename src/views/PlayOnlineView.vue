@@ -8,12 +8,10 @@
     <main class="page">
       <LoadingOverlay :show="channelStore.isLoading" />
       <div class="setup-card card">
-      <span class="pre-headline">MODE</span>
-            <h2>ONLINE GAME</h2>
+        <h1>ONLINE MULTIPLAYER</h1>
+        <span class="pre-headline">CREATE OR JOIN A GAME</span>
         <div class="card-grid">
           <section class="panel panel-left" aria-label="Online game setup">
-            
-
             <div class="role-toggle">
               <button
                 :class="{ active: selectedRole === 'host' }"
@@ -263,11 +261,22 @@ const joinGame = () => {
 }
 
 .pre-headline {
+  display: block;
   color: var(--primary);
+  text-align: center;
+  margin-bottom: 64px;
 }
-h2 {
-  margin-top: 0;
-  margin-bottom: 32px;
+
+.setup-card h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 32px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.start-btn {
+  margin-top: 32px;
 }
 
 .card-grid {

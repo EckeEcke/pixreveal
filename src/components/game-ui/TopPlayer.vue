@@ -5,7 +5,7 @@
         <h2 class="logo">TOP<span> PLAYER</span></h2>
       </div>
 
-      <p>Best score in today's daily challenge</p>
+      <p>Current leader in today's daily challenge</p>
     </div>
 
     <div class="player-wrapper">
