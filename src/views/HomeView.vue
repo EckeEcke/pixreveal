@@ -34,7 +34,7 @@
                 :sub-title="
                   dailyStore.hasPlayedToday
                     ? 'Check today\'s leaderboard'
-                    : 'Put your score on the leaderboard and make it to the Hall of Fame'
+                    : 'Compete for the top position on the global leaderboard'
                 "
                 btn-color="var(--neon-social)"
                 :loading="dailyStore.isLoading"
@@ -46,7 +46,7 @@
                 <SelectionTile
                   icon-name="pixel:users-solid"
                   btn-text="PARTY MULTIPLAYER"
-                  sub-title="Local party fun — Jackbox style, phone controls, powerups"
+                  sub-title="Jackbox style, phones as controlers, powerups and social chaos"
                   btn-color="var(--neon-yellow)"
                   :is-shiny="true"
                   :max-players="10"

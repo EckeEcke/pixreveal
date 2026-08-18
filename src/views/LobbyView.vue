@@ -42,14 +42,16 @@
             <Icon icon="pixel:copy" />
           </span>
         </div>
-        <button
-          v-if="channelStore.isHost && players.length > (isParty ? 2 : 1) && !isStarting"
-          class="start-btn pulse-btn"
-          @click="startGame"
+        <ButtonPrimary
+          v-if="channelStore.isHost"
           data-sfx="click"
+          class="start-btn"
+          :class="players.length > (isParty ? 2 : 1) ? 'pulse-btn' : ''"
+          @clicked="startGame"
+          :disabled="channelStore.isHost && players.length < (isParty ? 3 : 2) && !isStarting"
         >
-          {{ isParty ? "START PARTY" : "START GAME" }}
-        </button>
+        {{ isParty ? "START PARTY" : "START GAME" }}
+        </ButtonPrimary>
         <LoadingAnimation
           v-if="
             ((channelStore.isHost && players.length <= 2) || !channelStore.isHost) || isStarting
@@ -72,10 +74,11 @@
             :avatar-index="
               isParty && player.isHost ? undefined : player.avatarIndex
             "
+            :class="isParty && player.isHost ? 'hidden' : ''"
             :is-host="player.isHost"
             :show-you-indicator="isMe(player.playerId)"
           />
-          <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Invite more players to start</div>
+          <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>
         </div>
         <LobbyChat />
       </div>
@@ -88,6 +91,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import { useOnlineStore } from "@/stores/online";
 import { useConfigStore } from "@/stores/config";
 import { useChannelStore } from "@/stores/channel";
@@ -224,6 +228,7 @@ onMounted(() => {
   flex-wrap: wrap;
   row-gap: 8px;
   column-gap: 16px;
+  width: 100%;
   .btn-outline {
     width: auto;
     flex-grow: 1;
@@ -256,6 +261,8 @@ onMounted(() => {
 
 .start-btn {
   margin-top: 16px;
+  height: 64px;
+  font-size: 20px;
 }
 
 h1 {
@@ -302,5 +309,9 @@ h2 {
   font-size: 32px;
   margin-bottom: 4px;
   text-align: center;
+}
+
+.hidden {
+  display: none;
 }
 </style>

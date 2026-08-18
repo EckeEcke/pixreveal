@@ -532,13 +532,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-:root {
-  --neon-pink: #ec4899;
-  --neon-blue: #00d4ff;
-  --neon-success: #00ff00;
-  --neon-error: #ff0066;
-}
-
 .player-layout {
   display: flex;
   flex-direction: column;
@@ -655,6 +648,8 @@ onMounted(() => {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 8px;
   margin: 0 auto 64px;
+  width: 95%;
+  box-sizing: border-box;
   border: 2px solid var(--neon-pink);
   box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
   border-radius: 8px;
@@ -669,7 +664,8 @@ onMounted(() => {
   min-height: 44px;
   margin: 32px auto;
   button {
-    animation: powerupPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    animation: powerupPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-shadow: 2px 2px 4px black;
   }
 }
 
@@ -681,8 +677,8 @@ onMounted(() => {
 .lightsout-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 2px solid var(--neon-blue);
-  background: rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--neon-blue);
+  background: var(--blue-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
@@ -714,8 +710,8 @@ onMounted(() => {
 .xlz-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 2px solid var(--neon-purple);
-  background: rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--neon-purple);
+  background: var(--purple-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
@@ -747,8 +743,8 @@ onMounted(() => {
 .freeze-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 2px solid rgba(56, 189, 248, 0.9);
-  background: rgba(0, 0, 0, 0.5);
+  border: 4px solid rgba(56, 189, 248, 0.9);
+  background: var(--cyan-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
@@ -781,16 +777,16 @@ onMounted(() => {
 .devil-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 2px solid var(--neon-purple);
-  background: rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--neon-purple);
+  background: var(--purple-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
   padding: 8px;
   letter-spacing: 2px;
   cursor: pointer;
-  text-shadow: 0 0 10px var(--pruple-glow);
-  box-shadow: 0 0 12px var(--pruple-glow);
+  text-shadow: 0 0 10px var(--purple-glow);
+  box-shadow: 0 0 12px var(--purple-glow);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
@@ -798,7 +794,6 @@ onMounted(() => {
 }
 
 .devil-btn:hover:not(:disabled) {
-  background: var(--purple-bg);
   box-shadow: 0 0 22px var(--purple-glow);
   transform: translateY(-1px);
 }
@@ -817,8 +812,8 @@ onMounted(() => {
 .fart-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 2px solid var(--neon-yellow);
-  background: rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--neon-yellow);
+  background: var(--yellow-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
@@ -834,7 +829,6 @@ onMounted(() => {
 }
 
 .fart-btn:hover:not(:disabled) {
-  background: var(--yellow-bg);
   box-shadow: 0 0 22px var(--yellow-glow);
   transform: translateY(-1px);
 }
@@ -853,8 +847,8 @@ onMounted(() => {
 .upsidedown-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 2px solid var(--neon-cyan);
-  background: rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--neon-cyan);
+  background: var(--cyan-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
@@ -870,7 +864,6 @@ onMounted(() => {
 }
 
 .upsidedown-btn:hover:not(:disabled) {
-  background: var(--cyan-bg);
   box-shadow: 0 0 22px var(--cyan-glow);
   transform: translateY(-1px);
 }

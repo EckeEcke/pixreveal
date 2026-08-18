@@ -44,7 +44,7 @@ export const useBonusRounds = (opts: UseBonusRoundsOptions) => {
   });
 
   const canvasEffectsStyle = computed(() => {
-    if (!bonusRoundType.value) return { filter: "none" };
+    if (!bonusRoundType.value || opts.gameState.value === 'feedback') return { filter: "none" };
 
     // Only keep effects while the round is actively being revealed/answered.
     // After answering (feedback/revealed), the UI should fade back to normal.
@@ -58,11 +58,11 @@ export const useBonusRounds = (opts: UseBonusRoundsOptions) => {
       filters.push(`blur(${blurAmountPx.value}px)`);
     }
     if (bonusRoundType.value === "sepia") {
-      filters.push("sepia(0.7)");
+      filters.push("invert(0.7)");
       filters.push("saturate(1.2)");
     }
     if (bonusRoundType.value === "bw") {
-      filters.push("grayscale(0.7)");
+      filters.push("hue-rotate(45deg)");
       filters.push("contrast(1.15)");
     }
     return { filter: filters.join(" ") || "none" };

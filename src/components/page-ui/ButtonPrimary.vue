@@ -1,10 +1,18 @@
 <template>
-  <button class="btn-primary" @click="$emit('clicked')">
+  <button
+    class="btn-primary"
+    :disabled="disabled"
+    @click="$emit('clicked')"
+  >
     <slot></slot>
   </button>
 </template>
 
 <script setup lang="ts">
+defineProps<{
+  disabled?: boolean;
+}>();
+
 defineEmits(["clicked"]);
 </script>
 
@@ -34,5 +42,16 @@ defineEmits(["clicked"]);
 .btn-primary:hover {
   filter: brightness(1.1);
   transform: translateY(-4px) scale(1.05);
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+  filter: grayscale(0.1);
+}
+
+.btn-primary:disabled:hover {
+  filter: none;
+  transform: none;
 }
 </style>
