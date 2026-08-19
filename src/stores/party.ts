@@ -627,6 +627,7 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent("client-party-game-started", (data: any) => {
       heartbeat.markHostActivity()
       channelStore.setGameRunning(true)
+      powerups.powerupInventory.value = []
       gameStore.prepareGame(data.revealTime, data.rounds)
       allowReplayNavigationWindow()
       router.push("/party-player")

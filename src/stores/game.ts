@@ -13,6 +13,18 @@ function hashCode(str: string): string {
   return hash.toString();
 }
 
+function dedupeByName(arr: Drawing[]): Drawing[] {
+  const seen = new Set<string>();
+  const result: Drawing[] = [];
+  for (const item of arr) {
+    if (!seen.has(item.name)) {
+      seen.add(item.name);
+      result.push(item);
+    }
+  }
+  return result;
+}
+
 export const useGameStore = defineStore("game", () => {
   const gameState = ref<GameState>("starting");
   const rounds = ref<Round[]>([]);
@@ -60,6 +72,9 @@ export const useGameStore = defineStore("game", () => {
 
   const maxRounds = computed(() => configStore.maxRounds);
   const filteredDrawings = computed(() => configStore.filteredDrawings);
+  const uniqueFilteredDrawings = computed(() =>
+    dedupeByName(filteredDrawings.value),
+  );
 
   const currentRound = computed<Round | null>(
     () => rounds.value[currentRoundIndex.value] ?? null,
@@ -114,7 +129,7 @@ export const useGameStore = defineStore("game", () => {
 
   function buildRounds(drawings: Drawing[], playedHashes: string[]): Round[] {
     return drawings.map((drawing) =>
-      createRound(drawing, filteredDrawings.value, playedHashes),
+      createRound(drawing, uniqueFilteredDrawings.value, playedHashes),
     );
   }
 
@@ -126,14 +141,14 @@ export const useGameStore = defineStore("game", () => {
     const sessionData = sessionStorage.getItem("pixreveal_played_hashes");
     let playedHashes: string[] = sessionData ? JSON.parse(sessionData) : [];
 
-    let availableDrawings = filteredDrawings.value.filter(
+    let availableDrawings = uniqueFilteredDrawings.value.filter(
       (d) => !playedHashes.includes(hashCode(d.name)),
     );
 
     const minRequired = maxRounds + 3;
     while (availableDrawings.length < minRequired && playedHashes.length > 0) {
       playedHashes.shift();
-      availableDrawings = filteredDrawings.value.filter(
+      availableDrawings = uniqueFilteredDrawings.value.filter(
         (d) => !playedHashes.includes(hashCode(d.name)),
       );
     }
@@ -186,10 +201,10 @@ export const useGameStore = defineStore("game", () => {
 
   const addSuddenDeathRound = () => {
     const usedAnswers = new Set(rounds.value.map((r) => r.answer));
-    const unused = filteredDrawings.value.filter(
+    const unused = uniqueFilteredDrawings.value.filter(
       (d) => !usedAnswers.has(d.name),
     );
-    const pool = unused.length > 0 ? unused : filteredDrawings.value;
+    const pool = unused.length > 0 ? unused : uniqueFilteredDrawings.value;
     const nextDrawing = shuffle([...pool])[0] as Drawing;
 
     const sessionData = sessionStorage.getItem("pixreveal_played_names");
@@ -197,7 +212,7 @@ export const useGameStore = defineStore("game", () => {
 
     const newRound = createRound(
       nextDrawing,
-      filteredDrawings.value,
+      uniqueFilteredDrawings.value,
       playedNames,
     );
 

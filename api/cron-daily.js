@@ -1,6 +1,18 @@
 import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
 
+function dedupeByName(arr) {
+  const seen = new Set();
+  const result = [];
+  for (const item of arr) {
+    if (!seen.has(item.name)) {
+      seen.add(item.name);
+      result.push(item);
+    }
+  }
+  return result;
+}
+
 function generateOptions(currentDrawing, allDrawings) {
   const correct = currentDrawing.name;
   const otherNames = allDrawings
@@ -57,13 +69,14 @@ export default async function handler(req, res) {
     }
 
     const shuffled = [...drawings].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 5);
+    const uniqueDrawings = dedupeByName(shuffled);
+    const selected = uniqueDrawings.slice(0, 5);
 
     const dailyRounds = selected.map((drawing) => {
       return {
         answer: drawing.name,
         data: drawing.data,
-        options: generateOptions(drawing, drawings),
+        options: generateOptions(drawing, uniqueDrawings),
       };
     });
 

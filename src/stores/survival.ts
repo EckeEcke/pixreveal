@@ -11,8 +11,21 @@ import {
   workerSetInterval,
 } from "@/services/workerTimers";
 
+function dedupeByName(arr: Drawing[]): Drawing[] {
+  const seen = new Set<string>();
+  const result: Drawing[] = [];
+  for (const item of arr) {
+    if (!seen.has(item.name)) {
+      seen.add(item.name);
+      result.push(item);
+    }
+  }
+  return result;
+}
+
 export const useSurvivalStore = defineStore("survival", () => {
   const drawings: Ref<Drawing[]> = ref([]);
+  const uniqueDrawings: Ref<Drawing[]> = ref([]);
   const currentDrawing: Ref<Drawing | undefined> = ref(undefined);
   const highscore = ref(
     Number(localStorage.getItem("survival_highscore") || "0"),
@@ -36,10 +49,12 @@ export const useSurvivalStore = defineStore("survival", () => {
     const configStore = useConfigStore();
     newHighscore.value = false;
 
-    const preferred = (allDrawings as Drawing[]).filter((d) =>
+    uniqueDrawings.value = dedupeByName(allDrawings as Drawing[]);
+
+    const preferred = uniqueDrawings.value.filter((d) =>
       configStore.selectedCategories.includes(d.category),
     );
-    const remaining = (allDrawings as Drawing[]).filter(
+    const remaining = uniqueDrawings.value.filter(
       (d) => !configStore.selectedCategories.includes(d.category),
     );
 
@@ -71,7 +86,7 @@ export const useSurvivalStore = defineStore("survival", () => {
   };
 
   const generateOptions = (correctDrawing: Drawing): RoundOption[] => {
-    const selectedDistractors = (allDrawings as Drawing[])
+    const selectedDistractors = uniqueDrawings.value
       .filter((d) => d.name !== correctDrawing.name)
       .sort(() => Math.random() - 0.5)
       .slice(0, 3)
