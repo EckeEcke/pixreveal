@@ -10,9 +10,9 @@ export const getRankData = (
 ): RankData => {
   const safeScore = typeof score === "number" ? score : 0;
   const maxRounds = Math.max(1, Number(opts.maxRounds) || 1);
-  const revealTime = Math.max(1, Number(opts.revealTime) || 15);
+  const revealTime = Math.max(1, Number(opts.revealTime) || 10);
 
-  const adjustedScore = (safeScore / maxRounds) * (15 / revealTime) * 10;
+  const adjustedScore = (safeScore / maxRounds) * (15 / revealTime) * 10; // 15 refers to old default revealtime of 15s
 
   if (adjustedScore > 120) {
     return {

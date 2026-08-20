@@ -29,7 +29,7 @@ export const allCategoryNames = CATEGORIES.map((c) => c.name);
 export const minimumCategories = 4;
 
 export const useConfigStore = defineStore("config", () => {
-  const revealTime = ref(15);
+  const revealTime = ref(10);
   const selectedCategories = ref([...allCategoryNames]);
   const minimumDrawings = computed(() => maxRounds.value * 4);
   const includeUgc = ref(false);
