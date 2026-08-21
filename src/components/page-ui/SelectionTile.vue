@@ -188,7 +188,7 @@ const handleClick = (event: MouseEvent) => {
 
 .neon-btn:hover {
   box-shadow: 0 0 20px var(--btn-color);
-  animation: 1.5s floating infinite ease-in-out;
+  animation: 0.3s light-float forwards ease-in-out;
 }
 
 .neon-btn:hover .glow-layer {

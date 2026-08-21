@@ -436,3 +436,12 @@
     box-shadow: 0 0 40px rgba(236, 72, 153, 0.8);
   }
 }
+
+@keyframes light-float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-3px);
+  }
+}
