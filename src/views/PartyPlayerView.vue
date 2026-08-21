@@ -482,13 +482,13 @@ const emojis = [
   "😆",
   "😭",
   "👏🏻",
-  "👍🏻",
-  "👎🏻",
-  "💩",
+  "😯",
+  "☠️",
   "♥️",
+  "💩",
   "⏱️",
-  "✅",
-  "❌",
+  "😇",
+  "😈",
 ];
 const emojiCooldown = ref(false);
 const EMOJI_COOLDOWN_MS = 1000;

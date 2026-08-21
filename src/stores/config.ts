@@ -10,18 +10,18 @@ import { useSoundStore } from "./sound";
 export const CATEGORIES = [
   {
     name: "Animals & Nature",
-    color: "#4ade80",
+    color: "var(--neon-success)",
     icon: "🌿",
   },
-  { name: "Anime & Cartoons", color: "#fbbf24", icon: "📺" },
-  { name: "Food", color: "#fb7185", icon: "🍕" },
-  { name: "Gaming", color: "#f472b6", icon: "🎮" },
+  { name: "Objects & People", color: "var(--neon-blue)", icon: "📦" },
+  { name: "Food", color: "var(--primary)", icon: "🍕" },
+  { name: "Gaming", color: "var(--neon-pink)", icon: "🎮" },
+    { name: "Anime & Cartoons", color: "var(--neon-yellow)", icon: "📺" },
   {
     name: "Movies & TV",
-    color: "#a78bfa",
+    color: "var(--neon-purple)",
     icon: "🎬",
   },
-  { name: "Objects & People", color: "#60a5fa", icon: "📦" },
 ];
 
 export const allCategoryNames = CATEGORIES.map((c) => c.name);

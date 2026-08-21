@@ -366,7 +366,7 @@ const joinGame = () => {
 }
 
 .selection-label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--primary);
   text-transform: uppercase;
   text-align: left;

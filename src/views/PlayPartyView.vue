@@ -83,7 +83,7 @@
                   <Icon icon="pixel:pencil" class="edit-badge" />
                 </div>
                 <div class="player-name" @click="showAvatarModal = true">
-                  <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
+                  <span>{{ playerStore.playerName || "SET YOUR NAME" }}</span>
                   <span class="info-text">Tap to change</span>
                 </div>
               </div>
@@ -297,7 +297,7 @@ h2 {
 }
 
 .selection-label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--primary);
   text-transform: uppercase;
   text-align: left;

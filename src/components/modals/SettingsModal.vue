@@ -208,7 +208,7 @@ h2 {
 }
 
 .selection-label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--primary);
   text-transform: uppercase;
   text-align: left;
@@ -318,7 +318,7 @@ h2 {
 .filter-container {
   display: flex;
   overflow-x: auto;
-  gap: 16px;
+  gap: 12px;
   padding: 5px 32px 5px 0;
   margin: 0 -32px 0 0;
   -webkit-overflow-scrolling: touch;
@@ -338,7 +338,7 @@ h2 {
   height: 130px;
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.08);
   box-shadow: 
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
