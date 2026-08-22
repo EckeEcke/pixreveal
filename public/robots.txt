@@ -5,6 +5,9 @@ Allow: /free-jackbox-alternative
 Allow: /free-skribbl-and-gartic-alternative
 Allow: /free-pixel-guessr-alternative
 Allow: /pixel-reveal-game
+Allow: /picture-reveal-game
+Allow: /phone-controller-party-game
+Allow: /friday-afterwork-game
 Allow: /hall-of-fame
 Allow: /blog
 Allow: /about
@@ -12,6 +15,7 @@ Allow: /play-online
 Allow: /play-party
 Allow: /singleplayer
 Allow: /faq
+Allow: /partners
 Disallow: /classic
 Disallow: /online
 Disallow: /gameover
