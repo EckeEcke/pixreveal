@@ -9,6 +9,22 @@ type DrawingLike = {
 };
 
 const CANVAS_SIZE = 256;
+const BG_COLOR = "#120f1f";
+const DOT_COLOR = "rgba(128, 0, 128, 0.4)";
+const DOT_SPACING = 8;
+
+const drawDotGridBackground = (ctx: any, size: number) => {
+  ctx.fillStyle = BG_COLOR;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.fillStyle = DOT_COLOR;
+  const dotSize = 1.5;
+  for (let y = 0; y <= size; y += DOT_SPACING) {
+    for (let x = 0; x <= size; x += DOT_SPACING) {
+      ctx.fillRect(x - dotSize / 2, y - dotSize / 2, dotSize, dotSize);
+    }
+  }
+};
 
 const renderMatrixToBlob = async (matrix: PixelMatrix): Promise<Blob | null> => {
   if (!Array.isArray(matrix) || matrix.length === 0) return null;
@@ -34,8 +50,7 @@ const renderMatrixToBlob = async (matrix: PixelMatrix): Promise<Blob | null> => 
 
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-  ctx.fillStyle = "#0a0b10";
-  ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  drawDotGridBackground(ctx, CANVAS_SIZE);
 
   for (let y = 0; y < res; y++) {
     const row = matrix[y];
@@ -93,7 +108,6 @@ export const useDrawingImageUrls = (drawings: Ref<DrawingLike[]>) => {
           const blob = await renderMatrixToBlob(drawing.data);
           if (!blob) continue;
           urls[i] = URL.createObjectURL(blob);
-          // Yield to keep UI responsive for big lists
           await new Promise((r) => setTimeout(r, 0));
         }
         imageUrls.value = urls;
