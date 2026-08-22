@@ -30,7 +30,12 @@
             </div>
 
             <div v-if="selectedRole === 'host'" class="host-settings">
-              <div class="rounds-selection">
+              <div v-if="isScreenTooSmallForHost" class="screen-warning">
+                <Icon icon="pixel:exclamation-triangle" />
+                <span>For hosting Party Mode, a bigger screen is required — try a TV or laptop instead. You can still join a party match or host an online game with this device.</span>
+              </div>
+
+              <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
                 <label class="selection-label">HOW MANY ROUNDS</label>
                 <div class="radio-group">
                   <label
@@ -51,7 +56,7 @@
                 </div>
               </div>
 
-              <div class="rounds-selection">
+              <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
                 <label class="selection-label">SET ROUND LENGTH</label>
                 <div class="radio-group">
                   <label
@@ -89,14 +94,15 @@
               </div>
             </div>
 
-            <button
+            <ButtonPrimary
               v-if="selectedRole === 'host'"
+              :disabled="isScreenTooSmallForHost"
               class="start-btn"
               data-sfx="click"
               @click="hostGame"
             >
               CREATE ROOM
-            </button>
+            </ButtonPrimary>
 
             <div v-else class="join-container">
               <h3>ENTER ROOM ID TO JOIN A GAME</h3>
@@ -134,7 +140,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { Icon } from "@iconify/vue";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
@@ -147,6 +153,11 @@ import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
 import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+
+// Below this viewport width, hosting Party Mode is impractical (needs a big shared screen).
+// Joining stays available on any screen size.
+const HOST_MIN_WIDTH = 1400;
 
 const showAvatarModal = ref(false);
 
@@ -159,6 +170,15 @@ const route = useRoute();
 
 const joinRoomId = ref("");
 const selectedRole = ref("host");
+const viewportWidth = ref(window.innerWidth);
+
+const isScreenTooSmallForHost = computed(
+  () => selectedRole.value === "host" && viewportWidth.value < HOST_MIN_WIDTH,
+);
+
+const updateViewportWidth = () => {
+  viewportWidth.value = window.innerWidth;
+};
 
 const setRole = (role) => {
   selectedRole.value = role;
@@ -167,6 +187,15 @@ const setRole = (role) => {
 
 onMounted(() => {
   channelStore.setMode("party");
+  window.addEventListener("resize", updateViewportWidth);
+
+  if (!route.query.role && viewportWidth.value < HOST_MIN_WIDTH) {
+    setRole("join");
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateViewportWidth);
 });
 
 watch(
@@ -287,6 +316,24 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.screen-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid #e8b339;
+  border-radius: 4px;
+  background: rgba(232, 179, 57, 0.1);
+  color: #e8b339;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.screen-warning svg {
+  flex-shrink: 0;
+  font-size: 20px;
 }
 
 .rounds-selection {
