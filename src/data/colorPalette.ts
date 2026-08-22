@@ -24,6 +24,7 @@ const colorPalette = {
   22: "#FE0190",
   23: "#ffc106",
   24: "#CF2D5A",
+  25: "#3e925d",
 };
 
 export default colorPalette;
