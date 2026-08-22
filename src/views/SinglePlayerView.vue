@@ -63,7 +63,7 @@
                     ? 'Check today\'s results'
                     : 'Play today\'s challenge, climb the leaderboard'
                 "
-                btn-color="var(--neon-social)"
+                btn-color="var(--neon-success)"
                 :loading="dailyStore.isLoading"
                 :is-shiny="
                   true && !dailyStore.isLoading && !dailyStore.hasPlayedToday

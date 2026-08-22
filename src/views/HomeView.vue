@@ -26,7 +26,7 @@
                 :icon-name="
                   dailyStore.hasPlayedToday
                     ? 'pixel:numbered-list-solid'
-                    : 'pixel:trophy-solid'
+                    : 'pixel:star-solid'
                 "
                 :max-players="!dailyStore.hasPlayedToday ? 1 : undefined"
                 :btn-function="startDaily"
@@ -36,7 +36,7 @@
                     ? 'Check today\'s leaderboard'
                     : 'Compete for the top position on the global leaderboard'
                 "
-                btn-color="var(--neon-social)"
+                btn-color="var(--neon-success)"
                 :loading="dailyStore.isLoading"
                 :corner-text="timeLeft"
                 :is-new="!dailyStore.hasPlayedToday"
@@ -50,7 +50,6 @@
                   btn-color="var(--neon-yellow)"
                   :is-shiny="true"
                   :max-players="10"
-                  :is-new="true"
                 />
               </router-link>
 
