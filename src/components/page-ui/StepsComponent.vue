@@ -94,11 +94,6 @@
     border-color 0.2s ease;
 }
 
-.step-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--neon-pink);
-}
-
 .video-container {
   width: 100%;
   max-width: 280px;
