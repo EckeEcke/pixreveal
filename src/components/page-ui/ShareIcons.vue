@@ -114,6 +114,8 @@ const shareNative = async () => {
   border: none;
   color: var(--white);
   opacity: 0.8;
+  backdrop-filter: none;
+  border-radius: 4px;
 }
 
 .social-bar .btn-outline:hover {
