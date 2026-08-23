@@ -2,7 +2,7 @@ import { ref, type Ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
-import { generateRoomId } from "@/utils/crypto";
+import { generatePlayerId } from "@/utils/crypto";
 
 const STORAGE_KEY = "pixreveal:playerProfile";
 const CONTROLLER_ID_KEY = "pixreveal:controllerId";
@@ -20,7 +20,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   const playerId: Ref<string> = ref(savedProfile.id || "");
   if (!playerId.value) {
-    playerId.value = generateRoomId();
+    playerId.value = generatePlayerId();
   }
 
   const playerName: Ref<string> = ref(savedProfile.name || "");

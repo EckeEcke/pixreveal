@@ -7,17 +7,22 @@ const CLUSTER_PREFIXES: Record<ApinatorCluster, string> = {
   eu: "E",
 };
 
-export const generateRoomId = (cluster: ApinatorCluster) => {
-  const alphabet = "ABCDEFGHJKLMNPQRTVWXY346789";
+const ALPHABET = "ABCDEFGHJKLMNPQRTVWXY346789";
+
+const generateRandomCode = (length: number) => {
   let result = "";
-
-  for (let i = 0; i < ROOM_ID_LENGTH - 1; i++) {
-    result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  for (let i = 0; i < length; i++) {
+    result += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
   }
+  return result;
+};
 
-  return `${CLUSTER_PREFIXES[cluster]}${result}`;
+export const generateRoomId = (cluster: ApinatorCluster) => {
+  return `${CLUSTER_PREFIXES[cluster]}${generateRandomCode(ROOM_ID_LENGTH - 1)}`;
 };
 
 export const parseClusterFromRoomId = (roomId: string): ApinatorCluster => {
   return roomId.startsWith(CLUSTER_PREFIXES.us) ? "us" : "eu";
 };
+
+export const generatePlayerId = () => generateRandomCode(ROOM_ID_LENGTH);
