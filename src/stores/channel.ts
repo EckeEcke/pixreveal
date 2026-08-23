@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, shallowRef, watch } from "vue";
-import { generateRoomId } from "@/utils/crypto";
+import { generateRoomId, parseClusterFromRoomId  } from "@/utils/crypto";
 import { createApinatorClient } from "@/services/apinator";
 import { useRouter } from "vue-router";
 import { useConfigStore } from "./config";
@@ -296,14 +296,18 @@ export const useChannelStore = defineStore("channel", () => {
     return handler;
   };
 
-  const hostSession = (userData: UserData) => {
-    const clientInstance = createApinatorClient(userData);
+  const hostSession = async (userData: UserData) => {
+    const { cluster } = await fetch("/api/geo-cluster")
+      .then((r) => r.json())
+      .catch(() => ({ cluster: "eu" as const }));
+
+    const clientInstance = createApinatorClient(userData, cluster);
     client.value = clientInstance;
     const handler = createClientAndBind();
     clientInstance.bind("state_change", handler as any);
     clientInstance.connect();
 
-    const roomId = generateRoomId();
+    const roomId = generateRoomId(cluster);
     const channelInstance = clientInstance.subscribe(
       `presence-pixreveal-${roomId}`,
     );
@@ -330,7 +334,8 @@ export const useChannelStore = defineStore("channel", () => {
     roomId: string,
     role: "host" | "player" = "player",
   ) => {
-    const clientInstance = createApinatorClient(userData);
+    const cluster = parseClusterFromRoomId(roomId);
+    const clientInstance = createApinatorClient(userData, cluster);
     client.value = clientInstance;
     const handler = createClientAndBind();
     clientInstance.bind("state_change", handler as any);

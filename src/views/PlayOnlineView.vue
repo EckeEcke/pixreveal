@@ -303,7 +303,10 @@ const joinGame = () => {
 
 .join-terminal {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 1fr;
+  @media (min-width: 400px) {
+    grid-template-columns: 120px 1fr;
+  }
   gap: 8px;
 }
 
@@ -329,6 +332,7 @@ const joinGame = () => {
   transition: all 0.2s;
   font-weight: 900;
   animation: pulse 3s infinite;
+  min-height: 52px;
 }
 
 .terminal-btn:disabled {

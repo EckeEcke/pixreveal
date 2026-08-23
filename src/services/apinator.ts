@@ -1,6 +1,10 @@
 import { Apinator } from "@apinator/client";
+import type { ApinatorCluster } from "@/utils/crypto";
 
-export const createApinatorClient = (userData: any) => {
+export const createApinatorClient = (
+  userData: any,
+  cluster: ApinatorCluster,
+) => {
   const headers: Record<string, string> = {
     "x-player-username": encodeURIComponent(String(userData.username ?? "")),
     "x-player-avatar": String(userData.avatarIndex ?? 0),
@@ -17,7 +21,7 @@ export const createApinatorClient = (userData: any) => {
 
   const clientInstance = new Apinator({
     appKey: import.meta.env.VITE_APINATOR_KEY,
-    cluster: "eu",
+    cluster,
     authEndpoint: "/api/apinator-auth",
     authHeaders: headers,
   });

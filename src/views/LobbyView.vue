@@ -257,6 +257,7 @@ onMounted(() => {
 
 .loading-animation {
   margin-top: 16px;
+  width: 100%;
 }
 
 .start-btn {
