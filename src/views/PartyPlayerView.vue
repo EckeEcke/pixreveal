@@ -114,6 +114,7 @@
         v-for="emoji in emojis"
         :key="emoji"
         class="emoji-btn"
+        data-sfx="pop"
         :disabled="
           emojiCooldown || partyStore.isFrozen || partyStore.connectionStale
         "
