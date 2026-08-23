@@ -112,14 +112,7 @@
         replaces the oldest one in your inventory. Use them to sabotage your
         friends:
       </p>
-      <ul>
-        <li><strong>Freeze</strong> – locks a rival's screen for a moment</li>
-        <li><strong>Lights Off</strong> – plunges the screen into darkness</li>
-        <li><strong>Scramble</strong> – shuffles a rival's answer options</li>
-        <li><strong>Devil</strong> – unleashes a chaotic effect on your opponents</li>
-        <li><strong>Upside Down</strong> – flips a rival's canvas upside down</li>
-        <li><strong>Fart</strong> – for pure chaos</li>
-      </ul>
+      <PowerUpInfo />
       <p>
         Send emotes from your phone to the host screen to react to the current
         game (or distract other players). Bonus rounds with special effects mix
@@ -177,6 +170,7 @@ import { Icon } from "@iconify/vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import RankOverview from "@/components/game-ui/RankOverview.vue";
 import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
+import PowerUpInfo from "../game-ui/PowerUpInfo.vue";
 </script>
 
 <style scoped>

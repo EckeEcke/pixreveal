@@ -1,46 +1,46 @@
 <template>
   <section class="powerup-info" aria-label="Party powerups info">
-    <h3 class="title">PARTY POWERUPS</h3>
+    <h3 class="title">Party Powerups</h3>
     <ul class="grid">
       <li class="item">
         <span class="emoji">&#x1F526;</span>
         <div>
-          <div class="name">lights out</div>
+          <div class="name">Lights out</div>
           <div class="desc">Darken the drawing</div>
         </div>
       </li>
       <li class="item">
         <span class="emoji">&#x1F500;</span>
         <div>
-          <div class="name">scramble</div>
+          <div class="name">Scramble</div>
           <div class="desc">Mix up the letters of the answers</div>
         </div>
       </li>
       <li class="item">
         <span class="emoji">&#x2744;&#xFE0F;</span>
         <div>
-          <div class="name">freeze</div>
+          <div class="name">Freeze</div>
           <div class="desc">Block friends from buzzing or acting</div>
         </div>
       </li>
       <li class="item">
         <span class="emoji">&#x1F608;</span>
         <div>
-          <div class="name">devil</div>
+          <div class="name">Devil</div>
           <div class="desc">Haunts the answer buttons in the next buzz</div>
         </div>
       </li>
       <li class="item">
         <span class="emoji">&#x1F643;</span>
         <div>
-          <div class="name">upside down</div>
+          <div class="name">Upside down</div>
           <div class="desc">Turns the image upside down</div>
         </div>
       </li>
       <li class="item">
         <span class="emoji">&#x1F4A8;</span>
         <div>
-          <div class="name">fart</div>
+          <div class="name">Fart</div>
           <div class="desc">Just try it out</div>
         </div>
       </li>
@@ -54,12 +54,9 @@
 }
 
 .title {
-  margin: 0 0 12px;
+  margin: 32px 0 24px;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 18px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
 }
 
 .grid {
@@ -92,6 +89,7 @@
   font-size: 18px;
   line-height: 1;
   filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.6));
+  margin-top: 2px;
 }
 
 .name {
@@ -99,7 +97,6 @@
   font-size: 14px;
   letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.95);
-  text-transform: uppercase;
 }
 
 .desc {
