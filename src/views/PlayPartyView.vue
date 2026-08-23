@@ -569,8 +569,11 @@ h2 {
 .pre-headline {
   display: block;
   color: var(--primary);
-  text-align: center;
   margin-bottom: 64px;
+  text-align: left;
+  @media (min-width: 1024px) {
+    text-align: center;
+  }
 }
 
 .setup-card h1 {
@@ -578,6 +581,9 @@ h2 {
   font-weight: 900;
   font-size: 32px;
   margin-bottom: 4px;
-  text-align: center;
+  text-align: left;
+  @media (min-width: 1024px) {
+    text-align: center;
+  }
 }
 </style>
