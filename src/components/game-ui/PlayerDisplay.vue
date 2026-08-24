@@ -8,6 +8,7 @@
         active: isActive,
         first: position === 1 || shiny,
         rounded: rounded,
+        'emoji-pulse': showEmojiBurst,
       },
     ]"
   >
@@ -18,9 +19,14 @@
       :style="avatarStyle"
     ></div>
     <div>
-      <div class="hud-username" :class="{ first: position === 1 || shiny }">
-        {{ name }}<span v-if="showYouIndicator" class="you-indicator"> (YOU)</span>
-      </div>
+      <Transition name="emoji-swap" mode="out-in">
+        <div v-if="showEmojiBurst" key="emoji" class="hud-username hud-emoji-burst">
+          {{ displayedEmoji }}
+        </div>
+        <div v-else key="name" class="hud-username" :class="{ first: position === 1 || shiny }">
+          {{ name }}<span v-if="showYouIndicator" class="you-indicator"> (YOU)</span>
+        </div>
+      </Transition>
       <div v-if="subline" class="hud-subline">{{ subline }}</div>
       <div v-if="sublineSmall" class="hud-subline-small">
         {{ sublineSmall }}
@@ -107,9 +113,28 @@ const props = withDefaults(
     shiny?: boolean;
     size?: "medium" | "small";
     answerHistory?: boolean[];
+    emoji?: string;
   }>(),
   { size: "medium" },
 );
+
+const showEmojiBurst = ref(false);
+const displayedEmoji = ref("");
+let emojiBurstTimeout: ReturnType<typeof setTimeout> | null = null;
+
+watch(
+  () => props.emoji,
+  (newEmoji) => {
+    if (!newEmoji) return;
+    if (emojiBurstTimeout) clearTimeout(emojiBurstTimeout);
+    displayedEmoji.value = newEmoji;
+    showEmojiBurst.value = true;
+    emojiBurstTimeout = setTimeout(() => {
+      showEmojiBurst.value = false;
+    }, 900);
+  },
+);
+
 const showBonus = ref(false);
 const lastBonus = ref(0);
 const showMalus = ref(false);
@@ -306,6 +331,38 @@ const avatarStyle = computed<CSSProperties>(() => {
   border: 2px solid var(--neon-pink);
   box-shadow: 0 0 10px var(--neon-pink);
   animation: floating 1s ease-in-out infinite;
+}
+.player-hud.emoji-pulse {
+  animation: emoji-pulse-bg 0.7s ease-out;
+}
+@keyframes emoji-pulse-bg {
+  0% {
+    background-color: rgba(10, 4, 20, 0.92);
+  }
+  30% {
+    background-color: rgba(217, 70, 239, 0.35);
+  }
+  100% {
+    background-color: rgba(10, 4, 20, 0.92);
+  }
+}
+.hud-emoji-burst {
+  font-size: 32px!important;
+  line-height: 1.2;
+}
+.emoji-swap-enter-active,
+.emoji-swap-leave-active {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.emoji-swap-enter-from {
+  opacity: 0;
+  transform: scale(0.7);
+}
+.emoji-swap-leave-to {
+  opacity: 0;
+  transform: scale(1.2);
 }
 .hud-info {
   display: flex;

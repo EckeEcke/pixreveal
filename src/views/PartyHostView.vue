@@ -99,6 +99,8 @@
         :active-player-id="partyStore.activePlayerId"
         :freeze-until-at="partyStore.freezeUntilAt"
         :freeze-by-player-id="partyStore.freezeByPlayerId"
+        :last-emoji="lastEmoji"
+        :emoji-by-player-id="lastEmojiPlayerId"
       />
     </div>
 
@@ -384,17 +386,26 @@ const setupDrawing = () => {
   partyStore.openBuzzer();
 };
 
-const lastEmoji = ref("");
 const freezeBurstTrigger = ref(0);
 const fartTrigger = ref(0);
 const devilTrigger = ref(0);
 
-const handleIncomingEmoji = (emojiChar: string) => {
+
+const lastEmoji = ref("");
+const lastEmojiPlayerId = ref<string | null>(null);
+
+const handleIncomingEmoji = (emojiChar: string, playerId?: string) => {
   lastEmoji.value = emojiChar;
+  lastEmojiPlayerId.value = playerId ?? null;
 
   nextTick(() => {
     lastEmoji.value = "";
+    lastEmojiPlayerId.value = null;
   });
+};
+
+const emojiListener = (event: any) => {
+  handleIncomingEmoji(event.detail?.emoji, event.detail?.playerId);
 };
 
 watch(
@@ -523,10 +534,6 @@ watch(
     }
   },
 );
-
-const emojiListener = (event: any) => {
-  handleIncomingEmoji(event.detail);
-};
 
 onMounted(() => {
   window.addEventListener("emoji-received", emojiListener);

@@ -974,7 +974,7 @@ export const usePartyStore = defineStore("party", () => {
           if (data?.emoji) emojiStatistics.value.push(data.emoji)
         }
         window.dispatchEvent(
-          new CustomEvent("emoji-received", { detail: data.emoji })
+          new CustomEvent("emoji-received", { detail: data })
         )
       }
     )

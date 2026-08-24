@@ -16,6 +16,7 @@
           :points="player.points"
           :size="partyPlayersSorted.length > 5 ? 'small' : 'medium'"
           :is-active="activePlayerId === player.playerId"
+          :emoji="emojiByPlayerId === player.playerId ? lastEmoji : ''"
         />
       </div>
     </TransitionGroup>
@@ -38,6 +39,8 @@ const props = defineProps<{
   activePlayerId: string | null;
   freezeByPlayerId?: string | null;
   freezeUntilAt?: number | null;
+  lastEmoji?: string;
+  emojiByPlayerId?: string | null;
 }>();
 
 const isFreezeActive = computed(
