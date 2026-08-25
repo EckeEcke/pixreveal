@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.pixreveal.com/</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -38,15 +39,20 @@
   </url>
   <url>
     <loc>https://www.pixreveal.com/hall-of-fame</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pixreveal.com/play-party</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.pixreveal.com/assets/images/image-partymode.webp</image:loc>
+      <image:title>Party Mode – PixReveal</image:title>
+      <image:caption>Jackbox-style local party mode for guessing pixel art together</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.pixreveal.com/play-online</loc>
@@ -56,39 +62,64 @@
   </url>
   <url>
     <loc>https://www.pixreveal.com/free-jackbox-alternative</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.pixreveal.com/assets/images/image-partymode.webp</image:loc>
+      <image:title>Party Mode – PixReveal</image:title>
+      <image:caption>Free Jackbox alternative playable in party mode</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.pixreveal.com/free-skribbl-and-gartic-alternative</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.pixreveal.com/assets/images/image-partymode.webp</image:loc>
+      <image:title>Party Mode – PixReveal</image:title>
+      <image:caption>Free Skribbl and Gartic alternative with a local party mode</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.pixreveal.com/free-pixel-guessr-alternative</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.pixreveal.com/assets/images/image-partymode.webp</image:loc>
+      <image:title>Party Mode – PixReveal</image:title>
+      <image:caption>Free Pixel Guessr alternative with a party mode</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.pixreveal.com/phone-controller-party-game</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.pixreveal.com/assets/images/image-partymode.webp</image:loc>
+      <image:title>Party Mode – PixReveal</image:title>
+      <image:caption>Party game played using your phone as a controller</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.pixreveal.com/picture-reveal-game</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.pixreveal.com/friday-afterwork-game</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.pixreveal.com/assets/images/image-officegame.webp</image:loc>
+      <image:title>Friday Afterwork Game – PixReveal</image:title>
+      <image:caption>Pixel guessing game for a fun Friday afterwork activity with your team</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.pixreveal.com/partners</loc>

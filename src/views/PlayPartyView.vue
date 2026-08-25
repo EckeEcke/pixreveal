@@ -126,6 +126,7 @@
             </div>
           </section>
           <section>
+            <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
             <PartyModeInfo />
           </section>
         </div>
@@ -585,5 +586,11 @@ h2 {
   @media (min-width: 1024px) {
     text-align: center;
   }
+}
+
+.party-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 16px;
 }
 </style>

@@ -5,7 +5,9 @@
         <span class="pre-headline">PIXEL GUESSING PARTY GAME</span> <br />
         FREE BROWSER MULTIPLAYER FOR 2–10 PLAYERS
       </h1>
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+
+      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+
       <p class="hero-desc">
         PixReveal is a <strong>free Jackbox-style browser party game</strong> for game
         nights, team events, and chaotic fun with friends.
@@ -27,6 +29,7 @@
         <span class="badge">No login</span> <span class="badge">Phone controllers</span>
       </div>
       <PartyHowTo />
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
       <PowerUpInfo class="powerups" />
       <section class="seo-section">
         <h2>What is PixReveal?</h2>
@@ -154,5 +157,11 @@ h2 {
   text-align: center;
   margin-top: 16px;
   color: var(--color-secondary);
+}
+
+.party-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 </style>

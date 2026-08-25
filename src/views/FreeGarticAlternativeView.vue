@@ -6,7 +6,9 @@
         <br />
         FREE MULTIPLAYER PIXEL GUESSING QUIZ
       </h1>
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+            
+      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+
       <p class="hero-desc">
         PixReveal is the <strong>free alternative to Skribbl.io and Gartic Phone</strong>
         for players who want to focus purely on guessing, not drawing.
@@ -28,6 +30,9 @@
         <span class="badge">No login</span> <span class="badge">Phone controllers</span>
       </div>
       <PartyHowTo />
+
+      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+
       <PowerUpInfo class="powerups" />
       <section class="seo-section">
         <h2>How is PixReveal different from Skribbl & Gartic?</h2>
@@ -161,5 +166,11 @@ h2 {
   text-align: center;
   margin-top: 16px;
   color: var(--color-secondary);
+}
+
+.party-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 </style>

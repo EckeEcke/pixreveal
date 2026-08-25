@@ -6,7 +6,9 @@
         <br />
         PIXREVEAL: SAFE FOR WORK PICTURE REVEAL QUIZ FOR YOUR TEAM
       </h1>
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+      
+      <img class="demo-image" src="/assets/images/image-officegame.webp" alt="group of colleagues playing PixReveal">
+
       <p class="hero-desc">
         Looking for <strong>fun games in the office on fridays</strong> that require
         zero setup? PixReveal is a free, <strong>100% safe for work (SFW)</strong>
@@ -26,6 +28,9 @@
         <span class="badge">No download</span> <span class="badge">No login</span>
       </div>
       <PartyHowTo />
+
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+
       <PowerUpInfo class="powerups" />
       <section class="seo-section">
         <h2>Why PixReveal for your team?</h2>
@@ -146,5 +151,11 @@ h2 {
   text-align: center;
   margin-top: 16px;
   color: var(--color-secondary);
+}
+
+.demo-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 </style>

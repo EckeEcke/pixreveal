@@ -7,7 +7,7 @@
         PLAY ON A TV, USE YOUR PHONES AS CONTROLLERS
       </h1>
 
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
 
       <p class="hero-desc">
         PixReveal is a <strong>free browser party game with phone controllers</strong>
@@ -36,6 +36,8 @@
       </div>
 
       <PartyHowTo />
+
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
 
       <PowerUpInfo class="powerups" />
       
@@ -215,5 +217,11 @@ h2 {
   text-align: center;
   margin-top: 16px;
   color: var(--color-secondary);
+}
+
+.party-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 </style>

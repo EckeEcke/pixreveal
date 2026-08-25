@@ -6,7 +6,9 @@
         <br />
         FAST-PACED MULTIPLAYER PIXEL ART QUIZ
       </h1>
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+            
+      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+
       <p class="hero-desc">
         PixReveal is the ultimate <strong>multiplayer pixel guesser</strong> game for
         quick-witted players who love a fast-paced <strong>pixel art quiz</strong>.
@@ -28,6 +30,9 @@
         <span class="badge">No login</span> <span class="badge">Phone controllers</span>
       </div>
       <PartyHowTo />
+      
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+
       <PowerUpInfo class="powerups" />
       <section class="seo-section">
         <h2>How does Pixel Guessr work?</h2>
@@ -156,5 +161,11 @@ h2 {
   text-align: center;
   margin-top: 16px;
   color: var(--color-secondary);
+}
+
+.party-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 </style>
