@@ -31,7 +31,7 @@
       </div>
       <PartyHowTo />
 
-      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+      <YoutubeEmbed video-id="YQl5jOqm2n0" />
 
       <PowerUpInfo class="powerups" />
       <section class="seo-section">
