@@ -536,7 +536,7 @@ watch(
 );
 
 function resizeGame() {
-  const main = document.querySelector('.host-layout');
+  const main = document.querySelector('.host-layout') as HTMLElement;
 
   if (!main) return
   
