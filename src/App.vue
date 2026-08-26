@@ -5,7 +5,7 @@
     :mode="isProd ? 'production' : 'development'"
   />
   <div>
-    <div v-if="showBackground" class="pixelCon">
+    <div class="pixelCon">
       <div
         v-for="n in 80"
         :key="n"
@@ -49,7 +49,6 @@ const dailyStore = useDailyStore()
 const gameStore = useGameStore()
 
 const audio = ref(null)
-const showBackground = ref(false)
 
 const MUSIC_ROUTES = new Set([
   "classic",
@@ -153,10 +152,6 @@ const handleVisibilityChange = () => {
 }
 
 onMounted(() => {
-  requestAnimationFrame(() => {
-    showBackground.value = true
-  })
-
   dailyStore.fetchDailyData()
   configStore.fetchUgcDrawings()
   gameStore.fetchScores()
