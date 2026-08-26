@@ -711,8 +711,8 @@ onMounted(() => {
 .xlz-btn {
   grid-column: 1 / -1;
   border-radius: 10px;
-  border: 4px solid var(--neon-purple);
-  background: var(--purple-glow);
+  border: 4px solid var(--neon-orange);
+  background: var(--orange-glow);
   backdrop-filter: blur(4px);
   color: #fff;
   font-weight: 900;
