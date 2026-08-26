@@ -93,7 +93,7 @@
         aria-label="Buy Me a Coffee at ko-fi.com"
       >
         <img
-          src="/assets/images/kofi.png"
+          src="/assets/images/kofi.webp"
           alt="Buy Me a Coffee at ko-fi.com"
           width="139"
           height="36"
