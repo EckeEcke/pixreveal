@@ -538,7 +538,7 @@ watch(
 function resizeGame() {
   const main = document.querySelector('.host-layout');
 
-  if (!main)
+  if (!main) return
   
   const baseWidth = 1440;
   const baseHeight = 672;
