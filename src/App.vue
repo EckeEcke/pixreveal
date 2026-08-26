@@ -5,7 +5,7 @@
     :mode="isProd ? 'production' : 'development'"
   />
   <div>
-    <div class="pixelCon">
+    <div v-if="showBackground" class="pixelCon">
       <div
         v-for="n in 80"
         :key="n"
@@ -28,25 +28,26 @@
 </template>
 
 <script setup>
-import { watch, ref, onMounted, onBeforeUnmount } from "vue";
-import { useSoundStore } from "./stores/sound";
-import { usePlayerStore } from "./stores/player";
-import { Analytics } from "@vercel/analytics/vue";
-import { useRoute } from "vue-router";
-import { useConfigStore } from "./stores/config";
-import SettingsModal from "./components/modals/SettingsModal.vue";
-import { useDailyStore } from "./stores/daily";
+import { watch, ref, onMounted, onBeforeUnmount } from "vue"
+import { useSoundStore } from "./stores/sound"
+import { usePlayerStore } from "./stores/player"
+import { Analytics } from "@vercel/analytics/vue"
+import { useRoute } from "vue-router"
+import { useConfigStore } from "./stores/config"
+import SettingsModal from "./components/modals/SettingsModal.vue"
+import { useDailyStore } from "./stores/daily"
 
-const route = useRoute();
+const route = useRoute()
 
-const isProd = import.meta.env.PROD;
+const isProd = import.meta.env.PROD
 
-const playerStore = usePlayerStore();
-const configStore = useConfigStore();
-const soundStore = useSoundStore();
-const dailyStore = useDailyStore();
+const playerStore = usePlayerStore()
+const configStore = useConfigStore()
+const soundStore = useSoundStore()
+const dailyStore = useDailyStore()
 
-const audio = ref(null);
+const audio = ref(null)
+const showBackground = ref(false)
 
 const MUSIC_ROUTES = new Set([
   "classic",
@@ -57,48 +58,48 @@ const MUSIC_ROUTES = new Set([
   "online",
   "survival",
   "daily",
-]);
+])
 
 const tracklist = [
   "/assets/audio/music10.mp3",
   "/assets/audio/music11.mp3",
   "/assets/audio/music12.mp3",
   "/assets/audio/music13.mp3",
-];
+]
 
-const randomIndex = Math.floor(Math.random() * tracklist.length);
+const randomIndex = Math.floor(Math.random() * tracklist.length)
 
 const ensureMusicSrc = () => {
-  if (!audio.value) return;
-  if (audio.value.src) return;
-  audio.value.src = tracklist[randomIndex];
-  audio.value.load?.();
-};
+  if (!audio.value) return
+  if (audio.value.src) return
+  audio.value.src = tracklist[randomIndex]
+  audio.value.load?.()
+}
 
 const shouldPlayMusic = () => {
-  const routeName = String(route.name ?? "");
+  const routeName = String(route.name ?? "")
   return (
     !!audio.value &&
     !playerStore.isCreatorMode &&
     soundStore.isAudioEnabled &&
     MUSIC_ROUTES.has(routeName)
-  );
-};
+  )
+}
 
 const syncMusicPlayback = async () => {
-  if (!audio.value) return;
+  if (!audio.value) return
 
   if (!shouldPlayMusic()) {
-    audio.value.pause();
-    audio.value.currentTime = 0;
-    return;
+    audio.value.pause()
+    audio.value.currentTime = 0
+    return
   }
 
-  ensureMusicSrc();
+  ensureMusicSrc()
   try {
-    await audio.value.play();
+    await audio.value.play()
   } catch {}
-};
+}
 
 watch(
   [
@@ -108,92 +109,96 @@ watch(
   ],
   () => syncMusicPlayback(),
   { immediate: true },
-);
+)
 
-let wakeLock = null;
+let wakeLock = null
 
 const requestWakeLock = async () => {
-  if (!("wakeLock" in navigator)) return;
-  if (wakeLock) return;
+  if (!("wakeLock" in navigator)) return
+  if (wakeLock) return
 
   try {
-    wakeLock = await navigator.wakeLock.request("screen");
+    wakeLock = await navigator.wakeLock.request("screen")
     wakeLock.addEventListener("release", () => {
-      console.log("WakeLock released");
+      console.log("WakeLock released")
       if (document.visibilityState === "visible") {
-        wakeLock = null;
+        wakeLock = null
         setTimeout(() => {
-          requestWakeLock();
-        }, 250);
+          requestWakeLock()
+        }, 250)
       }
-    });
+    })
   } catch (err) {
-    console.warn(`WakeLock failed: ${err.name}`);
+    console.warn(`WakeLock failed: ${err.name}`)
   }
-};
+}
 
 const releaseWakeLock = async () => {
-  if (!wakeLock) return;
+  if (!wakeLock) return
   try {
-    await wakeLock.release();
+    await wakeLock.release()
   } finally {
-    wakeLock = null;
+    wakeLock = null
   }
-};
+}
 
 const handleVisibilityChange = () => {
   if (document.visibilityState === "visible") {
-    requestWakeLock();
+    requestWakeLock()
   } else {
-    releaseWakeLock();
+    releaseWakeLock()
   }
-};
+}
 
-dailyStore.fetchDailyData();
+dailyStore.fetchDailyData()
 
 onMounted(() => {
-  requestWakeLock();
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-  const urlParams = new URLSearchParams(window.location.search);
+  requestAnimationFrame(() => {
+    showBackground.value = true
+  })
+
+  requestWakeLock()
+  document.addEventListener("visibilitychange", handleVisibilityChange)
+  const urlParams = new URLSearchParams(window.location.search)
   if (urlParams.get("creator") === "true") {
-    playerStore.isCreatorMode = true;
+    playerStore.isCreatorMode = true
   }
 
-  syncMusicPlayback();
+  syncMusicPlayback()
 
   const startAudioOnFirstInteraction = async () => {
-    if (!shouldPlayMusic()) return;
+    if (!shouldPlayMusic()) return
 
-    await syncMusicPlayback();
+    await syncMusicPlayback()
 
     if (!audio.value?.paused) {
-      document.removeEventListener("click", startAudioOnFirstInteraction);
-      document.removeEventListener("pointerdown", startAudioOnFirstInteraction);
-      document.removeEventListener("keydown", onKeydownUnlock);
+      document.removeEventListener("click", startAudioOnFirstInteraction)
+      document.removeEventListener("pointerdown", startAudioOnFirstInteraction)
+      document.removeEventListener("keydown", onKeydownUnlock)
     }
-  };
+  }
 
   const onKeydownUnlock = (e) => {
-    if (e.key === "Enter" || e.keyCode === 13) startAudioOnFirstInteraction();
-  };
+    if (e.key === "Enter" || e.keyCode === 13) startAudioOnFirstInteraction()
+  }
 
-  document.addEventListener("click", startAudioOnFirstInteraction);
-  document.addEventListener("pointerdown", startAudioOnFirstInteraction);
-  document.addEventListener("keydown", onKeydownUnlock);
-});
+  document.addEventListener("click", startAudioOnFirstInteraction)
+  document.addEventListener("pointerdown", startAudioOnFirstInteraction)
+  document.addEventListener("keydown", onKeydownUnlock)
+})
 
 watch(
   () => route.name,
   (name) => {
-    if (document.visibilityState === "visible") requestWakeLock();
+    if (document.visibilityState === "visible") requestWakeLock()
   },
   { immediate: true },
-);
+)
 
 onBeforeUnmount(() => {
-  document.removeEventListener("visibilitychange", handleVisibilityChange);
-  releaseWakeLock();
-});
+  document.removeEventListener("visibilitychange", handleVisibilityChange)
+  releaseWakeLock()
+})
 </script>
 
 <style>
@@ -236,7 +241,6 @@ onBeforeUnmount(() => {
 
 .pixel {
   background: var(--purple-glow);
-  /* Desktop: 10 Spalten */
   width: 10%;
   aspect-ratio: 1;
   opacity: 0;

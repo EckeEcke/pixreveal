@@ -64,7 +64,7 @@
               </router-link>
             </div>
             <DailyWinner v-if="dailyStore.isYesterdayWinner" />
-            <YoutubeEmbed video-id="YQl5jOqm2n0" />
+            <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
             <div class="classic-mode-buttons">
               <router-link
                 to="/singleplayer"

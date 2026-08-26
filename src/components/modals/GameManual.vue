@@ -23,7 +23,7 @@
         on the keyboard. But be careful: you only get one try per drawing.
       </p>
 
-      <YoutubeEmbed video-id="Prz-jTEg7fU" />
+      <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" />
 
       <h3>The Game Modes</h3>
 

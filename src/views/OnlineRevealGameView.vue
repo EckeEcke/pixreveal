@@ -6,7 +6,7 @@
         <br />
         FAST-PACED PROGRESSIVE IMAGE REVEAL QUIZ
       </h1>
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
       <p class="hero-desc">
         PixReveal is a free <strong>picture reveal game</strong> where images
         progressively unfold pixel by pixel, testing your reflexes and brainpower.

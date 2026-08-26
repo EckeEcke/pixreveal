@@ -1,12 +1,18 @@
 <template>
   <div class="video-wrapper" @click="isLoaded = true">
-    <div v-html="jsonLdScript"></div>
+    <component :is="'script'" type="application/ld+json">
+      {{ JSON.stringify(schemaData) }}
+    </component>
 
     <div v-if="!isLoaded" class="video-placeholder">
       <img
-        :src="`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`"
+        :src="effectiveThumbnail"
         alt="PixReveal Gameplay Video"
+        width="640"
+        height="360"
         loading="lazy"
+        decoding="async"
+        fetchpriority="high"
       />
       
       <noscript>
@@ -47,28 +53,35 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  thumbnailUrl: {
+    type: String,
+    default: "",
+  },
 })
 
 const isLoaded = ref(false)
 
-const jsonLdScript = computed(() => {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": "PixReveal Gameplay Trailer",
-    "description": "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
-    "thumbnailUrl": [
-      `https://img.youtube.com/vi/${props.videoId}/maxresdefault.jpg`
-    ],
-    "uploadDate": "2026-03-01T08:00:00+01:00",
-    "duration": "PT48S",
-    "expires": "2040-01-01T00:00:00+01:00",
-    "contentUrl": `https://www.youtube.com/watch?v=${props.videoId}`,
-    "embedUrl": `https://www.youtube.com/embed/${props.videoId}`
+const effectiveThumbnail = computed(() => {
+  if (props.thumbnailUrl) {
+    return props.thumbnailUrl
   }
-  
-  return `<script type="application/ld+json">${JSON.stringify(schema)}<\/script>`
+  return `https://img.youtube.com/vi/${props.videoId}/sddefault.jpg`
 })
+
+const schemaData = computed(() => ({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "PixReveal Gameplay Trailer",
+  "description": "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
+  "thumbnailUrl": [
+    props.thumbnailUrl || `https://img.youtube.com/vi/${props.videoId}/hqdefault.jpg`
+  ],
+  "uploadDate": "2026-03-01T08:00:00+01:00",
+  "duration": "PT48S",
+  "expires": "2040-01-01T00:00:00+01:00",
+  "contentUrl": `https://www.youtube.com/watch?v=${props.videoId}`,
+  "embedUrl": `https://www.youtube.com/embed/${props.videoId}`
+}))
 </script>
 
 <style scoped>
@@ -87,9 +100,8 @@ const jsonLdScript = computed(() => {
 .video-placeholder img {
   width: 100%;
   height: 100%;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
 }
 
 noscript a {

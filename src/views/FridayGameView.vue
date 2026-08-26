@@ -29,7 +29,7 @@
       </div>
       <PartyHowTo />
 
-      <YoutubeEmbed video-id="YQl5jOqm2n0" />
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
 
       <PowerUpInfo class="powerups" />
       <section class="seo-section">

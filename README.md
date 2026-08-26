@@ -5,7 +5,7 @@ Watch the image reveal pixel by pixel on the big screen, use your phones as cont
 Play live at: https://www.pixreveal.com
 
 <a href="https://www.youtube.com/watch?v=YQl5jOqm2n0">
-  <img src="https://img.youtube.com/vi/YQl5jOqm2n0/maxresdefault.jpg" alt="PixReveal Trailer" width="450">
+  <img src="https://img.youtube.com/vi/YQl5jOqm2n0/hqdefault.jpg" alt="PixReveal Trailer" width="450">
 </a>
 
 ## Party Multiplayer
