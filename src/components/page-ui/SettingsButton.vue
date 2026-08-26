@@ -1,7 +1,7 @@
 <template>
   <div class="settings-wrapper">
     <div class="settings-btn-wrapper">
-      <button @click="openSettings">
+      <button @click="openSettings" aria-label="Settings">
         <Icon icon="pixel:cog-solid" class="settings-btn" data-sfx="click" />
       </button>
       <span

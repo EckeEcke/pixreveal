@@ -10,7 +10,6 @@
         alt="PixReveal Gameplay Video"
         width="640"
         height="360"
-        loading="lazy"
         decoding="async"
         fetchpriority="high"
       />

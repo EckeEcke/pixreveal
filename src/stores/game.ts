@@ -55,8 +55,6 @@ export const useGameStore = defineStore("game", () => {
     }
   };
 
-  fetchScores();
-
   const getPercentile = (playerScore: number): number | null => {
     if (!scores.value.length) return null;
 

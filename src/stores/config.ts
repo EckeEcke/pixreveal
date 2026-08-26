@@ -44,14 +44,16 @@ export const useConfigStore = defineStore("config", () => {
     showKeyHints.value = !showKeyHints.value;
   };
 
-  fetch(
-    "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      ugcDrawings.value = data;
-    })
-    .catch((err) => console.error("UGC fetch fehlgeschlagen:", err));
+  const fetchUgcDrawings = async () => {
+    fetch(
+        "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          ugcDrawings.value = data;
+        })
+        .catch((err) => console.error("UGC fetch fehlgeschlagen:", err));
+  }
 
   const filteredDrawings: Ref<Drawing[]> = computed(() => {
     const base = includeUgc.value
@@ -163,5 +165,6 @@ export const useConfigStore = defineStore("config", () => {
     closeSettings,
     showKeyHints,
     toggleKeyHints,
+    fetchUgcDrawings,
   };
 });

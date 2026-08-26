@@ -45,6 +45,7 @@ const playerStore = usePlayerStore()
 const configStore = useConfigStore()
 const soundStore = useSoundStore()
 const dailyStore = useDailyStore()
+const gameStore = useGameStore()
 
 const audio = ref(null)
 const showBackground = ref(false)
@@ -150,12 +151,14 @@ const handleVisibilityChange = () => {
   }
 }
 
-dailyStore.fetchDailyData()
-
 onMounted(() => {
   requestAnimationFrame(() => {
     showBackground.value = true
   })
+
+  dailyStore.fetchDailyData()
+  configStore.fetchUgcDrawings()
+  gameStore.fetchScores()
 
   requestWakeLock()
   document.addEventListener("visibilitychange", handleVisibilityChange)
