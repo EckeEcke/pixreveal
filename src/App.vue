@@ -31,6 +31,7 @@
 import { watch, ref, onMounted, onBeforeUnmount } from "vue"
 import { useSoundStore } from "./stores/sound"
 import { usePlayerStore } from "./stores/player"
+import { useGameStore } from "./stores/game"
 import { Analytics } from "@vercel/analytics/vue"
 import { useRoute } from "vue-router"
 import { useConfigStore } from "./stores/config"
