@@ -86,15 +86,23 @@
       >
     </div>
     <div class="kofi-link">
-      <a href="https://ko-fi.com/V4R823QKXZ" target="_blank"
-        ><img
-          height="36"
-          style="border: 2px solid black; border-radius: 16px; height: 36px"
-          src="https://storage.ko-fi.com/cdn/kofi4.png?v=6"
-          border="0"
+      <a 
+        href="https://ko-fi.com/V4R823QKXZ" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        aria-label="Buy Me a Coffee at ko-fi.com"
+      >
+        <img
+          src="/assets/images/kofi.png"
           alt="Buy Me a Coffee at ko-fi.com"
-      /></a>
-      Help keep PixReveal free
+          width="139"
+          height="36"
+          loading="lazy"
+          decoding="async"
+          class="kofi-img"
+        />
+      </a>
+      <span>Help keep PixReveal free</span>
     </div>
     <div>
       © 2026 PixReveal | Code & Design by

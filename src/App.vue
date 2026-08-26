@@ -10,7 +10,6 @@
         v-for="n in 80"
         :key="n"
         class="pixel"
-        :style="{ animationDelay: Math.random() * 5000 + 'ms' }"
       ></div>
     </div>
     <div class="app-container">
@@ -198,6 +197,17 @@ onBeforeUnmount(() => {
 </script>
 
 <style>
+@keyframes new-blink {
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.4;
+  }
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -211,25 +221,48 @@ onBeforeUnmount(() => {
 
 .pixelCon {
   position: fixed;
+  inset: -10%;
   width: 120%;
   height: 120%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   overflow: hidden;
   opacity: 0.9;
   background: radial-gradient(circle, #4a1d63 0%, #0a0510 100%);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  filter: blur(1px);
+  pointer-events: none;
 }
 
 .pixel {
   background: var(--purple-glow);
+  /* Desktop: 10 Spalten */
   width: 10%;
-  padding-top: 10%;
-  float: left;
+  aspect-ratio: 1;
   opacity: 0;
-  animation: blink 10s infinite;
-  filter: blur(1px);
+  will-change: opacity;
+  animation: new-blink 10s infinite;
 }
+
+@media (max-width: 768px) {
+  .pixel {
+    width: 12.5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pixel {
+    width: 20%;
+  }
+}
+
+.pixel:nth-child(2n) { animation-delay: 1.2s; }
+.pixel:nth-child(3n) { animation-delay: 3.7s; }
+.pixel:nth-child(4n) { animation-delay: 0.5s; }
+.pixel:nth-child(5n) { animation-delay: 4.1s; }
+.pixel:nth-child(7n) { animation-delay: 2.3s; }
+.pixel:nth-child(11n) { animation-delay: 1.8s; }
+.pixel:nth-child(13n) { animation-delay: 4.8s; }
 
 .fade-enter-from,
 .fade-leave-to {

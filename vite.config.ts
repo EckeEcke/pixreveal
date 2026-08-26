@@ -13,6 +13,7 @@ export default defineConfig({
     vueDevTools(),
     visualizer(),
     Unfonts({
+      inlineFontFace: true,
       google: {
         families: [
           {
