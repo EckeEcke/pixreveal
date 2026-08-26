@@ -1,95 +1,96 @@
 <template>
 <div>
+  <div ref="lobbyWrapperRef" class="lobby-wrapper">
   <div class="back-btn-wrapper">
     <button class="back-btn" @click="$router.back()" data-sfx="back">
       <Icon icon="pixel:angle-left-solid" />
     </button>
-  </div>
-  <div class="lobby-card">
-    <h1>{{ isParty ? "PARTY LOBBY" : "ONLINE LOBBY" }}</h1>
-    <span class="pre-headline">{{ configStore.maxRounds }} Rounds · {{ configStore.revealTime }}s per round</span>
-    <h1></h1>
-    <div class="lobby-layout">
-      <!-- Linke Spalte: Hosting & Beitritt -->
-      <div class="lobby-left-column">
-        <h2>INVITE PLAYERS</h2>
-        <div class="qr-code">
-          <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
-        </div>
-        <div class="share-room-buttons">
-          <button
-            @click="copyLinkToClipboard"
-            class="btn-outline"
+  </div>   
+   <div class="lobby-card">
+      <h1>{{ isParty ? "PARTY LOBBY" : "ONLINE LOBBY" }}</h1>
+      <span class="pre-headline">{{ configStore.maxRounds }} Rounds · {{ configStore.revealTime }}s per round</span>
+      <h1></h1>
+      <div class="lobby-layout">
+        <!-- Linke Spalte: Hosting & Beitritt -->
+        <div class="lobby-left-column">
+          <h2>INVITE PLAYERS</h2>
+          <div class="qr-code">
+            <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
+          </div>
+          <div class="share-room-buttons">
+            <button
+              @click="copyLinkToClipboard"
+              class="btn-outline"
+              data-sfx="click"
+            >
+              <Icon icon="pixel:link-solid" />
+              COPY INVITE LINK
+            </button>
+            <button
+              v-if="canNativeShare"
+              class="btn-outline"
+              @click="shareNative"
+              data-sfx="click"
+            >
+              <Icon icon="pixel:share" />
+              SHARE
+            </button>
+          </div>
+          <div class="room-id">
+            ROOM ID:
+            <span @click="copyToClipboard" data-sfx="click">
+              {{ channelStore.currentRoomId }}
+              <Icon icon="pixel:copy" />
+            </span>
+          </div>
+          <ButtonPrimary
+            v-if="channelStore.isHost"
             data-sfx="click"
+            class="start-btn"
+            :class="players.length > (isParty ? 2 : 1) ? 'pulse-btn' : ''"
+            @clicked="startGame"
+            :disabled="channelStore.isHost && players.length < (isParty ? 3 : 2) && !isStarting"
           >
-            <Icon icon="pixel:link-solid" />
-            COPY INVITE LINK
-          </button>
-          <button
-            v-if="canNativeShare"
-            class="btn-outline"
-            @click="shareNative"
-            data-sfx="click"
-          >
-            <Icon icon="pixel:share" />
-            SHARE
-          </button>
-        </div>
-        <div class="room-id">
-          ROOM ID:
-          <span @click="copyToClipboard" data-sfx="click">
-            {{ channelStore.currentRoomId }}
-            <Icon icon="pixel:copy" />
-          </span>
-        </div>
-        <ButtonPrimary
-          v-if="channelStore.isHost"
-          data-sfx="click"
-          class="start-btn"
-          :class="players.length > (isParty ? 2 : 1) ? 'pulse-btn' : ''"
-          @clicked="startGame"
-          :disabled="channelStore.isHost && players.length < (isParty ? 3 : 2) && !isStarting"
-        >
-        {{ isParty ? "START PARTY" : "START GAME" }}
-        </ButtonPrimary>
-        <LoadingAnimation
-          v-if="
-            ((channelStore.isHost && players.length <= 2) || !channelStore.isHost) || isStarting
-          "
-          :text="isStarting ? 'STARTING GAME' : (channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST')"
-          class="loading-animation"
-        />
-      </div>
-
-      <!-- Rechte Spalte: Spielerliste & Chat -->
-      <div class="lobby-right-column">
-        <h2 v-if="isParty">PLAYERS IN LOBBY ({{ players.length - 1 }})</h2>
-        <h2 v-else>PLAYERS IN LOBBY ({{ players.length }})</h2>
-        <div class="players-grid">
-          <PlayerDisplay
-            v-for="player in players"
-            size="small"
-            :key="player.playerId"
-            :name="isParty && player.isHost ? 'HOST' : player.username"
-            :avatar-index="
-              isParty && player.isHost ? undefined : player.avatarIndex
+          {{ isParty ? "START PARTY" : "START GAME" }}
+          </ButtonPrimary>
+          <LoadingAnimation
+            v-if="
+              ((channelStore.isHost && players.length <= 2) || !channelStore.isHost) || isStarting
             "
-            :class="isParty && player.isHost ? 'hidden' : ''"
-            :is-host="player.isHost"
-            :show-you-indicator="isMe(player.playerId)"
+            :text="isStarting ? 'STARTING GAME' : (channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST')"
+            class="loading-animation"
           />
-          <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>
         </div>
-        <LobbyChat />
+
+        <!-- Rechte Spalte: Spielerliste & Chat -->
+        <div class="lobby-right-column">
+          <h2 v-if="isParty">PLAYERS IN LOBBY ({{ players.length - 1 }})</h2>
+          <h2 v-else>PLAYERS IN LOBBY ({{ players.length }})</h2>
+          <div class="players-grid">
+            <PlayerDisplay
+              v-for="player in players"
+              size="small"
+              :key="player.playerId"
+              :name="isParty && player.isHost ? 'HOST' : player.username"
+              :avatar-index="
+                isParty && player.isHost ? undefined : player.avatarIndex
+              "
+              :class="isParty && player.isHost ? 'hidden' : ''"
+              :is-host="player.isHost"
+              :show-you-indicator="isMe(player.playerId)"
+            />
+            <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>
+          </div>
+          <LobbyChat />
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import { useOnlineStore } from "@/stores/online";
@@ -126,6 +127,47 @@ const players = computed(() =>
 const isMe = (id) => id === channelStore.playerId;
 
 const isStarting = ref(false);
+const lobbyWrapperRef = ref(null);
+
+const resizeGame = () => {
+  if (!lobbyWrapperRef.value) return;
+
+  // Nur im Party-Modus skalieren
+  if (!isParty.value) {
+    lobbyWrapperRef.value.style.transform = 'none';
+    return;
+  }
+
+  const baseWidth = 750;
+  const baseHeight = 900;
+
+  // Nicht skalieren, wenn der Screen kleiner ist als die Basis
+  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+    lobbyWrapperRef.value.style.transform = 'none';
+    return;
+  }
+
+  const scaleX = window.innerWidth / baseWidth;
+  const scaleY = window.innerHeight / baseHeight;
+  const scale = Math.min(scaleX, scaleY);
+
+  lobbyWrapperRef.value.style.transform = `scale(${scale})`;
+};
+
+// Bei Modus-Wechsel oder Resize neu berechnen
+watch(isParty, () => {
+  resizeGame();
+});
+
+onMounted(() => {
+  canNativeShare.value = !!navigator.share;
+  resizeGame();
+  window.addEventListener('resize', resizeGame);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeGame);
+});
 
 const startGame = () => {
   if (isStarting.value) return;
@@ -161,13 +203,15 @@ const shareNative = async () => {
     });
   } catch {}
 };
-
-onMounted(() => {
-  canNativeShare.value = !!navigator.share;
-});
 </script>
 
 <style scoped>
+.lobby-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .lobby-card {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
@@ -178,7 +222,7 @@ onMounted(() => {
   padding: 2rem;
   border-radius: 8px;
   width: 100%;
-  max-width: 800px;
+  max-width: 850px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
   margin: 0 auto;
@@ -293,8 +337,8 @@ h2 {
 
 .back-btn-wrapper {
   width: 100%;
-  max-width: 800px;
-  margin-bottom: 16px;
+  max-width: 850px;
+  margin: 0 auto 16px;
 }
 
 .pre-headline {

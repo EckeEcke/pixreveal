@@ -1,5 +1,5 @@
 <template>
-<div>
+<div ref="wrapperRef" class="scale-wrapper">
   <div class="back-btn-wrapper">
       <button class="back-btn" @click="$router.push('/')" data-sfx="back">
         <Icon icon="pixel:angle-left-solid" />
@@ -141,101 +141,121 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import { Icon } from "@iconify/vue";
-import { usePlayerStore } from "@/stores/player";
-import { useSoundStore } from "@/stores/sound";
-import { useGameStore } from "@/stores/game";
-import { useConfigStore } from "@/stores/config";
-import { useChannelStore } from "@/stores/channel";
-import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
-import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
-import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
-import { ROOM_ID_LENGTH } from "@/utils/crypto";
-import { useRoute } from "vue-router";
-import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue";
-import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
+import { Icon } from "@iconify/vue"
+import { usePlayerStore } from "@/stores/player"
+import { useSoundStore } from "@/stores/sound"
+import { useGameStore } from "@/stores/game"
+import { useConfigStore } from "@/stores/config"
+import { useChannelStore } from "@/stores/channel"
+import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue"
+import avatarSpriteSheet from "@/assets/avatars/avatars.webp"
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue"
+import { ROOM_ID_LENGTH } from "@/utils/crypto"
+import { useRoute } from "vue-router"
+import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue"
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
 
-// Below this viewport width, hosting Party Mode is impractical (needs a big shared screen).
-// Joining stays available on any screen size.
-const HOST_MIN_WIDTH = 1400;
+const wrapperRef = ref(null)
 
-const showAvatarModal = ref(false);
+const resizeGame = () => {
+  if (!wrapperRef.value) return
+  const baseWidth = 1000
+  const baseHeight = 800
 
-const playerStore = usePlayerStore();
-const configStore = useConfigStore();
-const soundStore = useSoundStore();
-const channelStore = useChannelStore();
-const { prepareGame } = useGameStore();
-const route = useRoute();
+  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+    wrapperRef.value.style.transform = "none"
+    return
+  }
 
-const joinRoomId = ref("");
-const selectedRole = ref("host");
-const viewportWidth = ref(window.innerWidth);
+  const scaleX = window.innerWidth / baseWidth
+  const scaleY = window.innerHeight / baseHeight
+  const scale = Math.min(scaleX, scaleY)
+
+  wrapperRef.value.style.transform = `scale(${scale})`
+}
+
+const HOST_MIN_WIDTH = 1400
+
+const showAvatarModal = ref(false)
+
+const playerStore = usePlayerStore()
+const configStore = useConfigStore()
+const soundStore = useSoundStore()
+const channelStore = useChannelStore()
+const { prepareGame } = useGameStore()
+const route = useRoute()
+
+const joinRoomId = ref("")
+const selectedRole = ref("host")
+const viewportWidth = ref(window.innerWidth)
 
 const isScreenTooSmallForHost = computed(
   () => selectedRole.value === "host" && viewportWidth.value < HOST_MIN_WIDTH,
-);
+)
 
 const updateViewportWidth = () => {
-  viewportWidth.value = window.innerWidth;
-};
+  viewportWidth.value = window.innerWidth
+}
 
 const setRole = (role) => {
-  selectedRole.value = role;
-  channelStore.isHost = role === "host";
-};
+  selectedRole.value = role
+  channelStore.isHost = role === "host"
+}
 
 onMounted(() => {
-  channelStore.setMode("party");
-  window.addEventListener("resize", updateViewportWidth);
+  channelStore.setMode("party")
+  window.addEventListener("resize", updateViewportWidth)
+  window.addEventListener("resize", resizeGame)
+  resizeGame()
 
   if (!route.query.role && viewportWidth.value < HOST_MIN_WIDTH) {
-    setRole("join");
+    setRole("join")
   }
-});
+})
 
 onUnmounted(() => {
-  window.removeEventListener("resize", updateViewportWidth);
-});
+  window.removeEventListener("resize", updateViewportWidth)
+  window.removeEventListener("resize", resizeGame)
+})
 
 watch(
   () => route.query.id,
   (value) => {
-    if (typeof value === "string") joinRoomId.value = value;
+    if (typeof value === "string") joinRoomId.value = value
   },
   { immediate: true },
-);
+)
 
 watch(
   () => route.query.role,
   (value) => {
-    if (value === "host" || value === "join") setRole(value);
+    if (value === "host" || value === "join") setRole(value)
   },
   { immediate: true },
-);
+)
 
 const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
+  const index = playerStore.avatarIndex || 0
+  const col = index % 6
+  const row = Math.floor(index / 6)
   return {
     backgroundImage: `url(${avatarSpriteSheet})`,
     backgroundPosition: `${col * 20}% ${row * 20}%`,
     backgroundSize: "600%",
     imageRendering: "pixelated",
-  };
-});
+  }
+})
 
 const hostGame = () => {
-  channelStore.setMode("party");
-  soundStore.playSound("click");
-  const playerId = playerStore.controllerId;
-  channelStore.playerId = playerId;
-  channelStore.isLoading = true;
+  channelStore.setMode("party")
+  soundStore.playSound("click")
+  const playerId = playerStore.controllerId
+  channelStore.playerId = playerId
+  channelStore.isLoading = true
 
-  prepareGame(configStore.revealTime);
-  channelStore.loadingText = "CREATING PARTY...";
+  prepareGame(configStore.revealTime)
+  channelStore.loadingText = "CREATING PARTY..."
   channelStore.hostSession({
     playerId,
     username: playerStore.playerName,
@@ -243,17 +263,17 @@ const hostGame = () => {
     isHost: true,
     rounds: configStore.maxRounds,
     revealTime: configStore.revealTime,
-  });
-};
+  })
+}
 
 const joinGame = () => {
-  if (!joinRoomId.value) return;
-  channelStore.setMode("party");
-  soundStore.playSound("click");
-  const playerId = playerStore.controllerId;
-  channelStore.playerId = playerId;
-  channelStore.isLoading = true;
-  channelStore.loadingText = "JOINING...";
+  if (!joinRoomId.value) return
+  channelStore.setMode("party")
+  soundStore.playSound("click")
+  const playerId = playerStore.controllerId
+  channelStore.playerId = playerId
+  channelStore.isLoading = true
+  channelStore.loadingText = "JOINING..."
   channelStore.joinSession(
     {
       playerId,
@@ -262,11 +282,17 @@ const joinGame = () => {
       isHost: false,
     },
     joinRoomId.value.toUpperCase().trim(),
-  );
-};
+  )
+}
 </script>
 
 <style scoped>
+.scale-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .page {
   width: 100%;
   display: flex;

@@ -8,10 +8,10 @@
         @done="handleIntroDone"
       />
     </Transition>
-    <div class="party-wrapper">
+    <div ref="partyWrapperRef" class="party-wrapper">
       <div class="results-card party-results-card">
         <h1 class="logo">PARTY <span>OVER</span></h1>
-                <TopPlayerDisplay v-if="!channelStore.isHost" :avatar-index="ownPlayer.avatarIndex" :name="ownPlayer.username" :score="ownPlayer.points" class="top-player" />
+        <TopPlayerDisplay v-if="!channelStore.isHost" :avatar-index="ownPlayer.avatarIndex" :name="ownPlayer.username" :score="ownPlayer.points" class="top-player" />
         <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
         <div v-if="channelStore.isHost" class="final-rankings">
           <h2>Final Rankings</h2>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -83,8 +83,33 @@ const router = useRouter();
 const showIntro = ref(true);
 const partySoundPlayed = ref(false);
 const showWinnerAnimation = ref(false);
+const partyWrapperRef = ref(null);
 
 let partySoundTimer = null;
+
+const resizeGame = () => {
+  if (!partyWrapperRef.value) return;
+  
+  const baseWidth = 800;
+  const baseHeight = 738;
+  
+  // Wenn der Screen kleiner ist als die Basis, greift kein Scale (bleibt normal responsiv)
+  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+    partyWrapperRef.value.style.transform = 'none';
+    return;
+  }
+  
+  const scaleX = window.innerWidth / baseWidth;
+  const scaleY = window.innerHeight / baseHeight;
+  const scale = Math.min(scaleX, scaleY);
+  
+  partyWrapperRef.value.style.transform = `scale(${scale})`;
+};
+
+onMounted(() => {
+  resizeGame();
+  window.addEventListener('resize', resizeGame);
+});
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
@@ -178,18 +203,16 @@ onUnmounted(() => {
     partySoundTimer = null;
   }
   soundStore.stopSound("party");
+  window.removeEventListener('resize', resizeGame);
 });
 
 const playAgain = () => {
-  // Keep the same roomId and stay subscribed; go back to the party lobby.
-  // Host stays host, players stay joined (or can rejoin with the same room id).
   partyStore?.reset?.({ keepEvents: true });
   gameStore.reset?.();
   router.push("/party-lobby");
 };
 
 const goBack = () => {
-  // Leave the room and go back home. If host leaves, notify all players so they disconnect too.
   if (
     channelStore.isHost &&
     channelStore.activeChannel &&
@@ -221,7 +244,6 @@ const ownPlayer = computed(() => {
 watch(
   () => activeMembersCount.value,
   (count) => {
-    // If host is alone in the room, auto-leave and close the room.
     if (!channelStore.isHost) return;
     if (!channelStore.activeChannel) return;
     if (count > 1) return;
@@ -235,6 +257,15 @@ main {
   width: 800px;
   max-width: 100%;
 }
+
+.party-wrapper {
+  width: 800px;
+  max-width: 100%;
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
 }
@@ -306,11 +337,6 @@ main {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
   animation: shine 4s infinite;
-}
-
-.party-wrapper {
-  width: 800px;
-  max-width: 100%;
 }
 
 .logo {
