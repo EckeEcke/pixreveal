@@ -54,7 +54,7 @@
                 :icon-name="
                   dailyStore.hasPlayedToday
                     ? 'pixel:numbered-list-solid'
-                    : 'pixel:trophy-solid'
+                    : 'pixel:star-solid'
                 "
                 :btn-function="startDaily"
                 btn-text="DAILY CHALLENGE"
@@ -63,7 +63,7 @@
                     ? 'Check today\'s results'
                     : 'Play today\'s challenge, climb the leaderboard'
                 "
-                btn-color="var(--neon-success)"
+                btn-color="var(--neon-orange)"
                 :loading="dailyStore.isLoading"
                 :is-shiny="
                   true && !dailyStore.isLoading && !dailyStore.hasPlayedToday

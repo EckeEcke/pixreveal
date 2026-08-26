@@ -35,6 +35,10 @@
   --purple-glow: rgba(157, 80, 187, 0.4);
   --purple-bg: rgba(157, 80, 187, 0.05);
 
+  --neon-orange: #ff6600;
+  --orange-glow: rgba(255, 102, 0, 0.4);
+  --orange-bg: rgba(255, 102, 0, 0.05);
+
   --neon-yellow: #ffb000;
   --yellow-glow: rgba(255, 176, 0, 0.4);
   --yellow-bg: rgba(255, 176, 0, 0.05);

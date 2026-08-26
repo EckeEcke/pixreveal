@@ -30,7 +30,7 @@
 
     <DailyCountdown />
 
-    <Icon icon="pixel:calender" class="background-icon" />
+    <Icon icon="pixel:star-solid" class="background-icon" />
   </div>
 </template>
 

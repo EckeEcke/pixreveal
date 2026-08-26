@@ -36,7 +36,7 @@
                     ? 'Check today\'s leaderboard'
                     : 'Compete for the top position on the global leaderboard'
                 "
-                btn-color="var(--neon-success)"
+                btn-color="var(--neon-orange)"
                 :loading="dailyStore.isLoading"
                 :corner-text="timeLeft"
                 :is-new="!dailyStore.hasPlayedToday"
