@@ -535,12 +535,28 @@ watch(
   },
 );
 
+function resizeGame() {
+  const main = document.querySelector('.host-layout');
+  
+  const baseWidth = 1440;
+  const baseHeight = 672;
+  
+  const scaleX = window.innerWidth / baseWidth;
+  const scaleY = window.innerHeight / baseHeight;
+  const scale = Math.min(scaleX, scaleY);
+  
+  main.style.transform = `scale(${scale})`;
+}
+
 onMounted(() => {
   window.addEventListener("emoji-received", emojiListener);
+  resizeGame();
+  window.addEventListener('resize', resizeGame);
 });
 
 onUnmounted(() => {
   window.removeEventListener("emoji-received", emojiListener);
+  window.removeEventListener('resize', resizeGame);
   clearAllTimers();
 });
 </script>
@@ -552,9 +568,11 @@ onUnmounted(() => {
   gap: 8px;
   align-items: stretch;
   max-width: 1440px;
-  width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 .layout-card {
