@@ -318,6 +318,7 @@ main {
     width: 800px;
   }
   max-width: 100%;
+  margin: 0 auto;
 }
 
 .btn-primary {
