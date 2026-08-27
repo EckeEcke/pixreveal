@@ -1,142 +1,144 @@
 <template>
-<div ref="wrapperRef" class="scale-wrapper">
-  <div class="back-btn-wrapper">
-      <button class="back-btn" @click="$router.push('/')" data-sfx="back">
-        <Icon icon="pixel:angle-left-solid" />
-      </button>
-    </div>
-    <main class="page">
-      <LoadingOverlay :show="channelStore.isLoading" />
-      <div class="setup-card card">
-            <h1>PARTY MULTIPLAYER</h1>
-          <span class="pre-headline">CREATE OR JOIN A GAME</span>
-        <div class="card-grid">
-          <section class="panel panel-left" aria-label="Party setup">
-            <div class="role-toggle">
-              <button
-                :class="{ active: selectedRole === 'host' }"
-                @click="setRole('host')"
-                data-sfx="click"
-              >
-                HOST
-              </button>
-              <button
-                :class="{ active: selectedRole === 'join' }"
-                @click="setRole('join')"
-                data-sfx="click"
-              >
-                JOIN
-              </button>
-            </div>
-
-            <div v-if="selectedRole === 'host'" class="host-settings">
-              <div v-if="isScreenTooSmallForHost" class="screen-warning">
-                <Icon icon="pixel:exclamation-triangle" />
-                <span>For hosting Party Mode, a bigger screen is required — try a TV or laptop instead. You can still join a party match or host an online game with this device.</span>
-              </div>
-
-              <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
-                <label class="selection-label">HOW MANY ROUNDS</label>
-                <div class="radio-group">
-                  <label
-                    v-for="amount in [5, 10, 15, 20]"
-                    :key="amount"
-                    class="radio-item"
-                  >
-                    <input
-                      type="radio"
-                      name="rounds"
-                      :value="amount"
-                      v-model="configStore.maxRounds"
-                      :disabled="configStore.filteredDrawings.length < amount * 4"
-                      @change="soundStore.playSound('click')"
-                    />
-                    <span class="radio-button">{{ amount }}</span>
-                  </label>
-                </div>
-              </div>
-
-              <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
-                <label class="selection-label">SET ROUND LENGTH</label>
-                <div class="radio-group">
-                  <label
-                    v-for="duration in [5, 10, 15, 20]"
-                    :key="duration"
-                    class="radio-item"
-                  >
-                    <input
-                      type="radio"
-                      name="duration"
-                      :value="duration"
-                      v-model="configStore.revealTime"
-                      @change="soundStore.playSound('click')"
-                    />
-                    <span class="radio-button">{{ duration }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div v-if="selectedRole !== 'host'" class="setup-section">
-              <h3>SET YOUR NAME AND AVATAR</h3>
-              <div class="player-info-wrapper">
-                <div
-                  class="player-avatar"
-                  :style="avatarStyle"
-                  @click="showAvatarModal = true"
-                >
-                  <Icon icon="pixel:pencil" class="edit-badge" />
-                </div>
-                <div class="player-name" @click="showAvatarModal = true">
-                  <span>{{ playerStore.playerName || "SET YOUR NAME" }}</span>
-                  <span class="info-text">Tap to change</span>
-                </div>
-              </div>
-            </div>
-
-            <ButtonPrimary
-              v-if="selectedRole === 'host'"
-              :disabled="isScreenTooSmallForHost"
-              class="start-btn"
-              data-sfx="click"
-              @click="hostGame"
-            >
-              CREATE ROOM
-            </ButtonPrimary>
-
-            <div v-else class="join-container">
-              <h3>ENTER ROOM ID TO JOIN A GAME</h3>
-              <div class="join-terminal">
-                <input
-                  v-model="joinRoomId"
-                  placeholder="Enter ID"
-                  :maxlength="ROOM_ID_LENGTH"
-                  autocapitalize="on"
-                  class="terminal-input"
-                />
+<div>
+  <LoadingOverlay :show="channelStore.isLoading" />
+  <div ref="wrapperRef" class="scale-wrapper">
+    <div class="back-btn-wrapper">
+        <button class="back-btn" @click="$router.push('/')" data-sfx="back">
+          <Icon icon="pixel:angle-left-solid" />
+        </button>
+      </div>
+      <main class="page">
+        <div class="setup-card card">
+              <h1>PARTY MULTIPLAYER</h1>
+            <span class="pre-headline">CREATE OR JOIN A GAME</span>
+          <div class="card-grid">
+            <section class="panel panel-left" aria-label="Party setup">
+              <div class="role-toggle">
                 <button
-                  class="terminal-btn"
-                  :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
+                  :class="{ active: selectedRole === 'host' }"
+                  @click="setRole('host')"
                   data-sfx="click"
-                  @click="joinGame"
                 >
-                  JOIN ROOM
+                  HOST
+                </button>
+                <button
+                  :class="{ active: selectedRole === 'join' }"
+                  @click="setRole('join')"
+                  data-sfx="click"
+                >
+                  JOIN
                 </button>
               </div>
-            </div>
-          </section>
-          <section>
-            <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
-            <PartyModeInfo />
-          </section>
+
+              <div v-if="selectedRole === 'host'" class="host-settings">
+                <div v-if="isScreenTooSmallForHost" class="screen-warning">
+                  <Icon icon="pixel:exclamation-triangle" />
+                  <span>For hosting Party Mode, a bigger screen is required — try a TV or laptop instead. You can still join a party match or host an online game with this device.</span>
+                </div>
+
+                <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
+                  <label class="selection-label">HOW MANY ROUNDS</label>
+                  <div class="radio-group">
+                    <label
+                      v-for="amount in [5, 10, 15, 20]"
+                      :key="amount"
+                      class="radio-item"
+                    >
+                      <input
+                        type="radio"
+                        name="rounds"
+                        :value="amount"
+                        v-model="configStore.maxRounds"
+                        :disabled="configStore.filteredDrawings.length < amount * 4"
+                        @change="soundStore.playSound('click')"
+                      />
+                      <span class="radio-button">{{ amount }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
+                  <label class="selection-label">SET ROUND LENGTH</label>
+                  <div class="radio-group">
+                    <label
+                      v-for="duration in [5, 10, 15, 20]"
+                      :key="duration"
+                      class="radio-item"
+                    >
+                      <input
+                        type="radio"
+                        name="duration"
+                        :value="duration"
+                        v-model="configStore.revealTime"
+                        @change="soundStore.playSound('click')"
+                      />
+                      <span class="radio-button">{{ duration }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="selectedRole !== 'host'" class="setup-section">
+                <h3>SET YOUR NAME AND AVATAR</h3>
+                <div class="player-info-wrapper">
+                  <div
+                    class="player-avatar"
+                    :style="avatarStyle"
+                    @click="showAvatarModal = true"
+                  >
+                    <Icon icon="pixel:pencil" class="edit-badge" />
+                  </div>
+                  <div class="player-name" @click="showAvatarModal = true">
+                    <span>{{ playerStore.playerName || "SET YOUR NAME" }}</span>
+                    <span class="info-text">Tap to change</span>
+                  </div>
+                </div>
+              </div>
+
+              <ButtonPrimary
+                v-if="selectedRole === 'host'"
+                :disabled="isScreenTooSmallForHost"
+                class="start-btn"
+                data-sfx="click"
+                @click="hostGame"
+              >
+                CREATE ROOM
+              </ButtonPrimary>
+
+              <div v-else class="join-container">
+                <h3>ENTER ROOM ID TO JOIN A GAME</h3>
+                <div class="join-terminal">
+                  <input
+                    v-model="joinRoomId"
+                    placeholder="Enter ID"
+                    :maxlength="ROOM_ID_LENGTH"
+                    autocapitalize="on"
+                    class="terminal-input"
+                  />
+                  <button
+                    class="terminal-btn"
+                    :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
+                    data-sfx="click"
+                    @click="joinGame"
+                  >
+                    JOIN ROOM
+                  </button>
+                </div>
+              </div>
+            </section>
+            <section>
+              <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+              <PartyModeInfo />
+            </section>
+          </div>
         </div>
-      </div>
-      <PlayerEditModal
-        v-if="showAvatarModal"
-        @btn-click="showAvatarModal = false"
-        @close="showAvatarModal = false"
-      />
-    </main>
+        <PlayerEditModal
+          v-if="showAvatarModal"
+          @btn-click="showAvatarModal = false"
+          @close="showAvatarModal = false"
+        />
+      </main>
+    </div>
   </div>
 </template>
 

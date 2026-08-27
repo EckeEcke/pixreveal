@@ -1,11 +1,11 @@
 <template>
 <div>
   <div ref="lobbyWrapperRef" class="lobby-wrapper">
-  <div class="back-btn-wrapper">
-    <button class="back-btn" @click="$router.back()" data-sfx="back">
-      <Icon icon="pixel:angle-left-solid" />
-    </button>
-  </div>   
+    <div class="back-btn-wrapper">
+      <button class="back-btn" @click="$router.back()" data-sfx="back">
+        <Icon icon="pixel:angle-left-solid" />
+      </button>
+    </div>   
    <div class="lobby-card">
       <h1>{{ isParty ? "PARTY LOBBY" : "ONLINE LOBBY" }}</h1>
       <span class="pre-headline">{{ configStore.maxRounds }} Rounds · {{ configStore.revealTime }}s per round</span>

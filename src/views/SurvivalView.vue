@@ -1,4 +1,5 @@
 <template>
+<div ref="wrapperRef" class="scale-wrapper">
   <main class="game-layout">
     <transition name="fade" mode="out-in">
       <CountdownTransition
@@ -38,10 +39,11 @@
       />
     </section>
   </main>
+</div>
 </template>
 
 <script setup>
-import { ref, onUnmounted, watch } from "vue"
+import { ref, onUnmounted, watch, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { useSurvivalStore } from "@/stores/survival"
 import { useGameStore } from "@/stores/game"
@@ -53,6 +55,25 @@ import GameHeader from "@/components/game-ui/GameHeader.vue"
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue"
 import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers"
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue"
+
+const wrapperRef = ref(null)
+
+const resizeGame = () => {
+  if (!wrapperRef.value) return
+  const baseWidth = 1100
+  const baseHeight = 750
+
+  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+    wrapperRef.value.style.transform = "none"
+    return
+  }
+
+  const scaleX = window.innerWidth / baseWidth
+  const scaleY = window.innerHeight / baseHeight
+  const scale = Math.min(scaleX, scaleY)
+
+  wrapperRef.value.style.transform = `scale(${scale})`
+}
 
 const router = useRouter()
 const survivalStore = useSurvivalStore()
@@ -147,12 +168,26 @@ watch(
   }
 )
 
+onMounted(() => {
+  window.addEventListener("resize", resizeGame)
+  resizeGame()
+})
+
 onUnmounted(() => {
   clearAllLocalTimers()
+  window.removeEventListener("resize", resizeGame)
 })
 </script>
 
 <style scoped>
+.scale-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: flex;
+  justify-content: center;
+}
+
 .game-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -167,6 +202,7 @@ onUnmounted(() => {
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
+    align-items: center;
   }
 }
 

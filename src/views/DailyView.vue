@@ -1,4 +1,5 @@
 <template>
+<div ref="wrapperRef" class="scale-wrapper">
   <main class="game-layout">
     <transition name="fade" mode="out-in">
       <CountdownTransition
@@ -52,10 +53,11 @@
       />
     </section>
   </main>
+</div>
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from "vue"
+import { computed, ref, onUnmounted, onMounted } from "vue"
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue"
 import PixelCanvasGravity from "@/components/canvas/PixelCanvasGravity.vue"
 import { useGameStore } from "@/stores/game"
@@ -74,6 +76,25 @@ import {
   workerSetInterval,
   workerSetTimeout,
 } from "@/services/workerTimers"
+
+const wrapperRef = ref(null)
+
+const resizeGame = () => {
+  if (!wrapperRef.value) return
+  const baseWidth = 1100
+  const baseHeight = 750
+
+  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+    wrapperRef.value.style.transform = "none"
+    return
+  }
+
+  const scaleX = window.innerWidth / baseWidth
+  const scaleY = window.innerHeight / baseHeight
+  const scale = Math.min(scaleX, scaleY)
+
+  wrapperRef.value.style.transform = `scale(${scale})`
+}
 
 const playerStore = usePlayerStore()
 const configStore = useConfigStore()
@@ -212,12 +233,26 @@ const start = () => {
 
 dailyStore.markAsPlayed()
 
+onMounted(() => {
+  window.addEventListener("resize", resizeGame)
+  resizeGame()
+})
+
 onUnmounted(() => {
   clearAllLocalTimers()
+  window.removeEventListener("resize", resizeGame)
 })
 </script>
 
 <style scoped>
+.scale-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: flex;
+  justify-content: center;
+}
+
 .game-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -232,6 +267,7 @@ onUnmounted(() => {
     grid-template-columns: 1fr 400px;
     gap: 64px;
     max-width: calc(950px + 2rem);
+    align-items: center;
   }
 }
 

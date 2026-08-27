@@ -3,15 +3,21 @@
     <Transition name="winner-fade" @after-leave="emit('done')">
       <div v-if="visible" class="winner-overlay" role="dialog" aria-live="polite">
         <div class="winner-backdrop" />
-        <div class="winner-card">
-          <div class="winner-glow" />
-          <div
-            class="winner-avatar"
-            :style="avatarStyle"
-            aria-hidden="true"
-          />
-          <div class="winner-name">{{ displayName }}</div>
-          <div class="winner-sub">is the winner</div>
+        <div
+          class="winner-scale-wrapper"
+          ref="wrapperRef"
+          :style="{ transform: `scale(${scale})` }"
+        >
+          <div class="winner-card" ref="contentRef">
+            <div class="winner-glow" />
+            <div
+              class="winner-avatar"
+              :style="avatarStyle"
+              aria-hidden="true"
+            />
+            <div class="winner-name">{{ displayName }}</div>
+            <div class="winner-sub">is the winner</div>
+          </div>
         </div>
       </div>
     </Transition>
@@ -19,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers";
@@ -87,6 +93,89 @@ const avatarStyle = computed<CSSProperties>(() => {
     imageRendering: "pixelated" as CSSProperties["imageRendering"],
   };
 });
+
+const wrapperRef = ref<HTMLElement | null>(null);
+const contentRef = ref<HTMLElement | null>(null);
+const scale = ref(1);
+
+const VIEWPORT_MARGIN = 24;
+const HEIGHT_RATIO = 0.5;
+const MIN_SCALE = 0.6;
+const MAX_SCALE = 1.6;
+
+let resizeObserver: ResizeObserver | null = null;
+let rafId: number | null = null;
+
+const getViewportSize = () => {
+  const vv = window.visualViewport;
+  return {
+    width: vv ? vv.width : window.innerWidth,
+    height: vv ? vv.height : window.innerHeight,
+  };
+};
+
+const recomputeScale = () => {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(() => {
+    if (!contentRef.value) return;
+
+    const naturalWidth = contentRef.value.offsetWidth;
+    const naturalHeight = contentRef.value.offsetHeight;
+    if (!naturalWidth || !naturalHeight) return;
+
+    const { width: viewportWidth, height: viewportHeight } = getViewportSize();
+    const availableWidth = viewportWidth - VIEWPORT_MARGIN * 2;
+
+    const availableHeight = viewportHeight * HEIGHT_RATIO - VIEWPORT_MARGIN;
+
+    const nextScale = Math.min(
+      availableWidth / naturalWidth,
+      availableHeight / naturalHeight,
+    );
+
+    scale.value = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
+  });
+};
+
+let mediaObserverAttached = false;
+
+const attachObservers = async () => {
+  await nextTick();
+  recomputeScale();
+
+  if (!contentRef.value) return;
+  resizeObserver = new ResizeObserver(recomputeScale);
+  resizeObserver.observe(contentRef.value);
+
+  window.addEventListener("resize", recomputeScale);
+  window.visualViewport?.addEventListener("resize", recomputeScale);
+  mediaObserverAttached = true;
+};
+
+const detachObservers = () => {
+  if (rafId) cancelAnimationFrame(rafId);
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+  window.removeEventListener("resize", recomputeScale);
+  window.visualViewport?.removeEventListener("resize", recomputeScale);
+  mediaObserverAttached = false;
+};
+
+watch(visible, (isVisible) => {
+  if (isVisible) {
+    attachObservers();
+  } else if (mediaObserverAttached) {
+    detachObservers();
+  }
+});
+
+onMounted(() => {
+  if (visible.value) attachObservers();
+});
+
+onUnmounted(() => {
+  detachObservers();
+});
 </script>
 
 <style scoped>
@@ -96,6 +185,7 @@ const avatarStyle = computed<CSSProperties>(() => {
   z-index: 9999;
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
 .winner-backdrop {
@@ -105,9 +195,14 @@ const avatarStyle = computed<CSSProperties>(() => {
   backdrop-filter: blur(4px);
 }
 
-.winner-card {
+.winner-scale-wrapper {
   position: relative;
   z-index: 1;
+  transform-origin: center center;
+}
+
+.winner-card {
+  position: relative;
   width: min(520px, calc(100vw - 64px));
   box-sizing: border-box;
   border-radius: 12px;
@@ -192,4 +287,3 @@ const avatarStyle = computed<CSSProperties>(() => {
   opacity: 0;
 }
 </style>
-

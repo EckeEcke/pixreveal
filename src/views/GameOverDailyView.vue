@@ -13,36 +13,42 @@
         "
       />
     </Transition>
-    <div class="ranking-card">
-      <h1 class="logo">GAME <span>OVER</span></h1>
-      <GameOverStar :points="playerStore.points" />
+    <div class="scale-wrapper" ref="wrapperRef" :style="{ transform: `scale(${scale})` }">
+      <div class="ranking-wrapper" ref="contentRef">
+        <div class="ranking-card">
+          <h1 class="logo">GAME <span>OVER</span></h1>
+          <GameOverStar :points="playerStore.points" />
 
-      <div v-if="!dailyStore.hasSubmitted">
-        <p>
-          See where you rank today and lock in your score on the global leaderboard!
-        </p>
-        <ButtonPrimary
-          v-if="!isPosting"
-          data-sfx="click"
-          class="btn-primary"
-          @click="showAvatarModal = true"
-        >
-          <Icon icon="pixel:arrow-circle-up-solid" /> POST SCORE TO LEADERBOARD
-        </ButtonPrimary>
-        <LoadingAnimation v-else :text="'POSTING...'" />
+          <div v-if="!dailyStore.hasSubmitted">
+            <p>
+              See where you rank today and lock in your score on the global leaderboard!
+            </p>
+            <ButtonPrimary
+              v-if="!isPosting"
+              data-sfx="click"
+              class="btn-primary"
+              @click="showAvatarModal = true"
+            >
+              <Icon icon="pixel:arrow-circle-up-solid" /> POST SCORE TO LEADERBOARD
+            </ButtonPrimary>
+
+            <LoadingAnimation v-else :text="'POSTING...'" />
+
+            <ButtonSecondary
+              data-sfx="click"
+              class="btn-secondary"
+              @clicked="$router.push('/')"
+            >
+            <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
+          </ButtonSecondary>
+          </div>
+          <div>
+            <h2>Challenge your friends!</h2>
+            <ShareIcons :msg="shareMessage" />
+          </div>
+          <DailyCountdown />
+        </div>
       </div>
-      <ButtonSecondary
-        data-sfx="click"
-        class="btn-secondary"
-        @clicked="$router.push('/')"
-      >
-        <Icon icon="pixel:arrow-circle-left-solid" /> BACK TO HOME
-      </ButtonSecondary>
-      <div>
-        <h2>Challenge your friends!</h2>
-        <ShareIcons :msg="shareMessage" />
-      </div>
-      <DailyCountdown />
     </div>
     <PlayerEditModal
       v-if="showAvatarModal"
@@ -55,53 +61,117 @@
 </template>
 
 <script setup>
-import { usePlayerStore } from "@/stores/player";
-import { useSoundStore } from "@/stores/sound";
-import { useDailyStore } from "@/stores/daily";
-import { computed, ref } from "vue";
-import { Icon } from "@iconify/vue";
-import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
-import GameOverStar from "@/components/game-ui/GameOverStar.vue";
-import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
-import GameTransition from "@/components/game-ui/GameTransition.vue";
-import ShareIcons from "@/components/page-ui/ShareIcons.vue";
-import { toast } from "vue3-toastify";
-import { useRouter } from "vue-router";
-import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
-import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
-import DailyCountdown from "@/components/page-ui/DailyCountdown.vue";
+import { usePlayerStore } from "@/stores/player"
+import { useSoundStore } from "@/stores/sound"
+import { useDailyStore } from "@/stores/daily"
+import { computed, ref, onMounted, onUnmounted, nextTick } from "vue"
+import { Icon } from "@iconify/vue"
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue"
+import GameOverStar from "@/components/game-ui/GameOverStar.vue"
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue"
+import GameTransition from "@/components/game-ui/GameTransition.vue"
+import ShareIcons from "@/components/page-ui/ShareIcons.vue"
+import { toast } from "vue3-toastify"
+import { useRouter } from "vue-router"
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
+import DailyCountdown from "@/components/page-ui/DailyCountdown.vue"
 
-const router = useRouter();
+const router = useRouter()
 
-const playerStore = usePlayerStore();
-const soundStore = useSoundStore();
-const dailyStore = useDailyStore();
+const playerStore = usePlayerStore()
+const soundStore = useSoundStore()
+const dailyStore = useDailyStore()
 
-const isPosting = ref(false);
-const showIntro = ref(true);
+const isPosting = ref(false)
+const showIntro = ref(true)
+const wrapperRef = ref(null)
+const contentRef = ref(null)
+const scale = ref(1)
 
-const showAvatarModal = ref(false);
+const VIEWPORT_MARGIN = 24
+const MIN_SCALE = 0.5
+const MAX_SCALE = 1.8
+const SCALE_BREAKPOINT = 1000
+
+let resizeObserver = null
+let rafId = null
+
+const showAvatarModal = ref(false)
+
+const getViewportSize = () => {
+  const vv = window.visualViewport
+  return {
+    width: vv ? vv.width : window.innerWidth,
+    height: vv ? vv.height : window.innerHeight,
+  }
+}
+
+const recomputeScale = () => {
+  if (rafId) cancelAnimationFrame(rafId)
+  rafId = requestAnimationFrame(() => {
+    if (!contentRef.value) return
+
+    const { width: viewportWidth, height: viewportHeight } = getViewportSize()
+
+    if (viewportWidth < SCALE_BREAKPOINT) {
+      scale.value = 1
+      return
+    }
+
+    const naturalWidth = contentRef.value.offsetWidth
+    const naturalHeight = contentRef.value.offsetHeight
+    if (!naturalWidth || !naturalHeight) return
+
+    const availableWidth = viewportWidth - VIEWPORT_MARGIN * 2
+    const availableHeight = viewportHeight - VIEWPORT_MARGIN * 2
+
+    const nextScale = Math.min(
+      availableWidth / naturalWidth,
+      availableHeight / naturalHeight,
+    )
+
+    scale.value = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale))
+  })
+}
+
+onMounted(async () => {
+  await nextTick()
+  recomputeScale()
+  resizeObserver = new ResizeObserver(recomputeScale)
+  if (contentRef.value) resizeObserver.observe(contentRef.value)
+
+  window.addEventListener("resize", recomputeScale)
+  window.visualViewport?.addEventListener("resize", recomputeScale)
+})
+
+onUnmounted(() => {
+  if (rafId) cancelAnimationFrame(rafId)
+  resizeObserver?.disconnect()
+  window.removeEventListener("resize", recomputeScale)
+  window.visualViewport?.removeEventListener("resize", recomputeScale)
+})
 
 const shareMessage = computed(
   () =>
     `I reached ${playerStore.points}⭐ in PixReveal Daily Challenge! Can you beat my score?`,
-);
+)
 
 const post = () => {
-  showAvatarModal.value = false;
+  showAvatarModal.value = false
   if (!playerStore.playerName) {
-    showAvatarModal.value = true;
-    return;
+    showAvatarModal.value = true
+    return
   }
   
-  const userId = `${playerStore.playerName}-${playerStore.playerId}`;
+  const userId = `${playerStore.playerName}-${playerStore.playerId}`
   
   dailyStore.dailyRankings.push({
     name: playerStore.playerName,
     userId,
     score: playerStore.points,
     avatarIndex: playerStore.avatarIndex,
-  });
+  })
 
   dailyStore.postRanking(
     playerStore.playerName,
@@ -109,17 +179,40 @@ const post = () => {
     playerStore.avatarIndex,
     dailyStore.date,
     userId,
-  );
+  )
 
   toast.success(
     "Score submitted. Check your position on the daily leaderboard!",
-  );
-  soundStore.playSound("confirm");
-  router.push("/rankings-daily");
-};
+  )
+  soundStore.playSound("confirm")
+  router.push("/rankings-daily")
+}
 </script>
 
 <style scoped>
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100dvw - 16px);
+  height: calc(100dvh - 32px);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.scale-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.ranking-wrapper {
+  @media (min-width: 800px) {
+    width: 800px;
+  }
+  max-width: 100%;
+}
+
 h2 {
   font-size: 18px;
   text-align: center;
@@ -151,8 +244,6 @@ p {
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
-  max-width: 400px;
-  margin-bottom: 64px;
 }
 
 .ranking-card::after {
@@ -176,6 +267,7 @@ p {
 }
 
 .btn-secondary {
+  margin-top: 16px;
   width: 100%;
 }
 </style>

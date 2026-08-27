@@ -8,43 +8,44 @@
         @done="handleIntroDone"
       />
     </Transition>
-    <div ref="partyWrapperRef" class="party-wrapper">
-      <div class="results-card party-results-card">
-        <h1 class="logo">PARTY <span>OVER</span></h1>
-        <TopPlayerDisplay v-if="!channelStore.isHost" :avatar-index="ownPlayer.avatarIndex" :name="ownPlayer.username" :score="ownPlayer.points" class="top-player" />
-        <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
-        <div v-if="channelStore.isHost" class="final-rankings">
-          <h2>Final Rankings</h2>
-          <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
-            <PlayerDisplay
-              :position="index + 1"
-              :name="player.username"
-              :subline="getPartyTitleEmojis(player, index)"
-              :avatar-index="player.avatarIndex"
-              :points="player.points"
-            />
+    <div class="scale-wrapper" ref="wrapperRef" :style="{ transform: `scale(${scale})` }">
+      <div class="party-wrapper" ref="contentRef">
+        <div class="results-card party-results-card">
+          <h1 class="logo">PARTY <span>OVER</span></h1>
+          <TopPlayerDisplay v-if="!channelStore.isHost" :avatar-index="ownPlayer.avatarIndex" :name="ownPlayer.username" :score="ownPlayer.points" class="top-player" />
+          <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
+          <div v-if="channelStore.isHost" class="final-rankings">
+            <h2>Final Rankings</h2>
+            <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
+              <PlayerDisplay
+                :position="index + 1"
+                :name="player.username"
+                :subline="getPartyTitleEmojis(player, index)"
+                :avatar-index="player.avatarIndex"
+                :points="player.points"
+              />
+            </div>
+          </div>
+          <div class="party-actions">
+            <ButtonPrimary
+              class="btn-primary pulse-btn"
+              data-sfx="click"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="playAgain"
+            >
+              <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
+            >
+            <ButtonSecondary
+              class="btn-secondary"
+              data-sfx="back"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="goBack"
+            >
+              <Icon icon="pixel:arrow-left" /> Go back
+            </ButtonSecondary>
           </div>
         </div>
-        <div class="party-actions">
-          <ButtonPrimary
-            class="btn-primary pulse-btn"
-            data-sfx="click"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="playAgain"
-          >
-            <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
-          >
-          <ButtonSecondary
-            class="btn-secondary"
-            data-sfx="back"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="goBack"
-          >
-            <Icon icon="pixel:arrow-left" /> Go back
-          </ButtonSecondary>
-        </div>
       </div>
-      
     </div>
     <WinnerAnimation
       v-if="winnerPlayer"
@@ -58,7 +59,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -83,33 +84,73 @@ const router = useRouter();
 const showIntro = ref(true);
 const partySoundPlayed = ref(false);
 const showWinnerAnimation = ref(false);
-const partyWrapperRef = ref(null);
 
-let partySoundTimer = null;
+const wrapperRef = ref(null);
+const contentRef = ref(null);
+const scale = ref(1);
 
-const resizeGame = () => {
-  if (!partyWrapperRef.value) return;
-  
-  const baseWidth = 800;
-  const baseHeight = 738;
-  
-  // Wenn der Screen kleiner ist als die Basis, greift kein Scale (bleibt normal responsiv)
-  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
-    partyWrapperRef.value.style.transform = 'none';
-    return;
-  }
-  
-  const scaleX = window.innerWidth / baseWidth;
-  const scaleY = window.innerHeight / baseHeight;
-  const scale = Math.min(scaleX, scaleY);
-  
-  partyWrapperRef.value.style.transform = `scale(${scale})`;
+const VIEWPORT_MARGIN = 24;
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 1.8;
+const SCALE_BREAKPOINT = 1000;
+
+let resizeObserver = null;
+let rafId = null;
+
+const getViewportSize = () => {
+  const vv = window.visualViewport;
+  return {
+    width: vv ? vv.width : window.innerWidth,
+    height: vv ? vv.height : window.innerHeight,
+  };
 };
 
-onMounted(() => {
-  resizeGame();
-  window.addEventListener('resize', resizeGame);
+const recomputeScale = () => {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(() => {
+    if (!contentRef.value) return;
+
+    const { width: viewportWidth, height: viewportHeight } = getViewportSize();
+
+    if (viewportWidth < SCALE_BREAKPOINT) {
+      scale.value = 1;
+      return;
+    }
+
+    const naturalWidth = contentRef.value.offsetWidth;
+    const naturalHeight = contentRef.value.offsetHeight;
+    if (!naturalWidth || !naturalHeight) return;
+
+    const availableWidth = viewportWidth - VIEWPORT_MARGIN * 2;
+    const availableHeight = viewportHeight - VIEWPORT_MARGIN * 2;
+
+    const nextScale = Math.min(
+      availableWidth / naturalWidth,
+      availableHeight / naturalHeight,
+    );
+
+    scale.value = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale));
+  });
+};
+
+onMounted(async () => {
+  await nextTick();
+  recomputeScale();
+  resizeObserver = new ResizeObserver(recomputeScale);
+  if (contentRef.value) resizeObserver.observe(contentRef.value);
+
+  window.addEventListener("resize", recomputeScale);
+  window.visualViewport?.addEventListener("resize", recomputeScale);
 });
+
+onUnmounted(() => {
+  if (rafId) cancelAnimationFrame(rafId);
+  resizeObserver?.disconnect();
+  window.removeEventListener("resize", recomputeScale);
+  window.visualViewport?.removeEventListener("resize", recomputeScale);
+});
+
+let partySoundTimer = null;
 
 const partyPlayersSorted = computed(() =>
   [...partyStore.players].sort((a, b) => b.points - a.points),
@@ -203,7 +244,6 @@ onUnmounted(() => {
     partySoundTimer = null;
   }
   soundStore.stopSound("party");
-  window.removeEventListener('resize', resizeGame);
 });
 
 const playAgain = () => {
@@ -254,16 +294,28 @@ watch(
 
 <style scoped>
 main {
-  width: 800px;
-  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100dvw - 16px);
+  height: calc(100dvh - 32px);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.party-wrapper {
-  width: 800px;
-  max-width: 100%;
+.scale-wrapper {
   transform-origin: center center;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  /* Kein transform-transition -> vermeidet Nachziehen/Ruckeln bei jedem
+     ResizeObserver-Tick; scale wird ohnehin per rAF gedrosselt */
+}
+
+.party-wrapper {
+  @media (min-width: 800px) {
+    width: 800px;
+  }
+  max-width: 100%;
 }
 
 .btn-primary {
@@ -285,13 +337,11 @@ main {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 32px;
   text-align: center;
-  margin-bottom: 32px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   .rank-prophet {
     margin: 0 auto 16px;
   }
@@ -348,6 +398,10 @@ main {
   padding: 0 16px 16px;
   border-radius: 8px;
   margin: 32px 0;
+  /* Fällt nur noch als echtes Sicherheitsnetz für extrem viele Spieler an,
+     nicht als Symptom eines falsch berechneten Scale-Faktors */
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .top-player {

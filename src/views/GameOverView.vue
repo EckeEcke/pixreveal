@@ -9,74 +9,78 @@
       />
     </Transition>
 
-    <div class="results-card">
-      <h1 class="logo">GAME <span>OVER</span></h1>
-      <GameOverStar
-        class="game-over-star"
-        :points="
-          playerStore.gameMode === 'survival'
-            ? survivalStore.solvedCount
-            : playerStore.points
-        "
-      />
-      <GameOverCrown
-        v-if="
-          playerStore.gameMode === 'survival' && !survivalStore.newHighscore
-        "
-        class="game-over-crown"
-        :highscore="survivalStore.highscore"
-      />
-      <div v-if="showSingleplayerRank">
-        <SingleplayerRanks :points="playerStore.points" />
-      </div>
+    <div class="scale-wrapper" ref="wrapperRef">
+      <div class="gameover-wrapper">
+        <div class="results-card">
+          <h1 class="logo">GAME <span>OVER</span></h1>
+          <GameOverStar
+            class="game-over-star"
+            :points="
+              playerStore.gameMode === 'survival'
+                ? survivalStore.solvedCount
+                : playerStore.points
+            "
+          />
+          <GameOverCrown
+            v-if="
+              playerStore.gameMode === 'survival' && !survivalStore.newHighscore
+            "
+            class="game-over-crown"
+            :highscore="survivalStore.highscore"
+          />
+          <div v-if="showSingleplayerRank">
+            <SingleplayerRanks :points="playerStore.points" />
+          </div>
 
-      <div
-        v-if="showSingleplayerRank && percentile !== null"
-        class="percentile-tag"
-      >
-        <Icon icon="pixel:chart-up" />
-        Better than <span>{{ percentile }}%</span> of players
-      </div>
+          <div
+            v-if="showSingleplayerRank && percentile !== null"
+            class="percentile-tag"
+          >
+            <Icon icon="pixel:chart-up" />
+            Better than <span>{{ percentile }}%</span> of players
+          </div>
 
-      <div
-        v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
-        class="rank-prophet highscore-message"
-      >
-        <Icon icon="pixel:sparkles" />
-        NEW HIGHSCORE!
-        <Icon icon="pixel:sparkles" />
-      </div>
+          <div
+            v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
+            class="rank-prophet highscore-message"
+          >
+            <Icon icon="pixel:sparkles" />
+            NEW HIGHSCORE!
+            <Icon icon="pixel:sparkles" />
+          </div>
 
-      <div class="gameover-actions">
-        <ButtonPrimary
-          class="btn-primary pulse-btn"
-          data-sfx="click"
-          @mouseenter="soundStore.handleHoverSound"
-          @clicked="playAgainSingleplayer"
-        >
-          <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
-        >
-        <ButtonSecondary
-          data-sfx="back"
-          @mouseenter="soundStore.handleHoverSound"
-          @clicked="goBackSingleplayer"
-        >
-          <Icon icon="pixel:arrow-left" /> Go back
-        </ButtonSecondary>
-      </div>
+          <div class="gameover-actions">
+            <ButtonPrimary
+              class="btn-primary pulse-btn"
+              data-sfx="click"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="playAgainSingleplayer"
+            >
+              <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
+            >
+            <ButtonSecondary
+              data-sfx="back"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="goBackSingleplayer"
+            >
+              <Icon icon="pixel:arrow-left" /> Go back
+            </ButtonSecondary>
+          </div>
 
-      <div class="share-section">
-        <h2>Challenge your friends!</h2>
-        <ShareIcons
-          :msg="getShareMessage(playerStore.points, playerStore.gameMode)"
-        />
+          <div class="share-section">
+            <h2>Challenge your friends!</h2>
+            <ShareIcons
+              :msg="getShareMessage(playerStore.points, playerStore.gameMode)"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </main>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
@@ -101,8 +105,36 @@ const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const router = useRouter();
 const showIntro = ref(true);
+const wrapperRef = ref(null);
 
 const { fireConfetti } = useConfetti();
+
+const resizeGame = () => {
+  if (!wrapperRef.value) return;
+  const baseWidth = 800;
+  const baseHeight = 738;
+
+  wrapperRef.value.style.transform = "none";
+
+  const scaleX = window.innerWidth / baseWidth;
+  const scaleY = window.innerHeight / baseHeight;
+  const scale = Math.max(Math.min(scaleX, scaleY), 1);
+
+  wrapperRef.value.style.transform = `scale(${scale})`;
+};
+
+onMounted(() => {
+  resizeGame();
+  window.addEventListener('resize', resizeGame);
+  submitSingleplayerScore();
+  if (playerStore.gameMode === "survival" && survivalStore.newHighscore) {
+    fireConfetti();
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeGame);
+});
 
 const showSingleplayerRank = computed(() => {
   return (
@@ -173,20 +205,33 @@ const submitSingleplayerScore = () => {
     console.error("Failed to submit score", error);
   });
 };
-
-onMounted(() => {
-  submitSingleplayerScore();
-  if (playerStore.gameMode === "survival" && survivalStore.newHighscore) {
-    fireConfetti();
-  }
-});
 </script>
 
 <style scoped>
 main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100vw - 16px);
+  height: calc(100vh - 32px);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.scale-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: flex;
+  justify-content: center;
+  width: 800px;
+}
+
+.gameover-wrapper {
   width: 800px;
   max-width: 100%;
 }
+
 .gameover-actions {
   display: flex;
   justify-content: center;
@@ -194,6 +239,7 @@ main {
   flex-wrap: wrap;
   margin-top: 32px;
 }
+
 .btn-primary {
   animation: arcadeBlink 1.4s infinite;
   font-size: 18px;
@@ -203,7 +249,7 @@ main {
 
 .btn-secondary,
 .btn-primary {
-  width: 200%;
+  width: 100%;
 }
 
 @media (min-width: 500px) {
@@ -225,7 +271,6 @@ main {
     0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 32px;
   text-align: center;
-  margin-bottom: 32px;
   .rank-prophet {
     margin: 0 auto 16px;
   }

@@ -1,140 +1,157 @@
+```vue
 <template>
   <div>
-    <div class="back-btn-wrapper">
-      <button class="back-btn" @click="$router.push('/')" data-sfx="back">
-        <Icon icon="pixel:angle-left-solid" />
-      </button>
-    </div>
-    <main class="page">
-      <LoadingOverlay :show="channelStore.isLoading" />
-      <div class="setup-card card">
-        <h1>ONLINE MULTIPLAYER</h1>
-        <span class="pre-headline">CREATE OR JOIN A GAME</span>
-        <div class="card-grid">
-          <section class="panel panel-left" aria-label="Online game setup">
-            <div class="role-toggle">
-              <button
-                :class="{ active: selectedRole === 'host' }"
-                @click="setRole('host')"
-                data-sfx="click"
-              >
-                HOST
-              </button>
-              <button
-                :class="{ active: selectedRole === 'join' }"
-                @click="setRole('join')"
-                data-sfx="click"
-              >
-                JOIN
-              </button>
-            </div>
+    <LoadingOverlay :show="channelStore.isLoading" />
+    <div ref="wrapperRef" class="scale-wrapper">
+      <div class="back-btn-wrapper">
+        <button class="back-btn" @click="$router.push('/')" data-sfx="back">
+          <Icon icon="pixel:angle-left-solid" />
+        </button>
+      </div>
 
-            <div v-if="selectedRole === 'host'" class="host-settings">
-              <div class="rounds-selection">
-                <label class="selection-label">HOW MANY ROUNDS</label>
-                <div class="radio-group">
-                  <label
-                    v-for="amount in [5, 10, 15, 20]"
-                    :key="amount"
-                    class="radio-item"
-                  >
-                    <input
-                      type="radio"
-                      name="rounds"
-                      :value="amount"
-                      v-model="configStore.maxRounds"
-                      :disabled="configStore.filteredDrawings.length < amount * 4"
-                      @change="soundStore.playSound('click')"
-                    />
-                    <span class="radio-button">{{ amount }}</span>
-                  </label>
-                </div>
-              </div>
+      <main class="page">
 
-              <div class="rounds-selection">
-                <label class="selection-label">SET ROUND LENGTH</label>
-                <div class="radio-group">
-                  <label
-                    v-for="duration in [5, 10, 15, 20]"
-                    :key="duration"
-                    class="radio-item"
-                  >
-                    <input
-                      type="radio"
-                      name="duration"
-                      :value="duration"
-                      v-model="configStore.revealTime"
-                      @change="soundStore.playSound('click')"
-                    />
-                    <span class="radio-button">{{ duration }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
+        <div class="setup-card card">
+          <h1>ONLINE MULTIPLAYER</h1>
+          <span class="pre-headline">CREATE OR JOIN A GAME</span>
 
-            <div class="setup-section">
-              <h3>SET YOUR NAME AND AVATAR</h3>
-              <div class="player-info-wrapper">
-                <div
-                  class="player-avatar"
-                  :style="avatarStyle"
-                  @click="showAvatarModal = true"
-                >
-                  <Icon icon="pixel:pencil" class="edit-badge" />
-                </div>
-                <div class="player-name" @click="showAvatarModal = true">
-                  <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
-                  <span class="info-text">Tap to change</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              v-if="selectedRole === 'host'"
-              class="start-btn"
-              data-sfx="click"
-              @click="hostGame"
-            >
-              CREATE ROOM
-            </button>
-
-            <div v-else class="join-container">
-              <h3>ENTER ROOM ID TO JOIN A GAME</h3>
-              <div class="join-terminal">
-                <input
-                  v-model="joinRoomId"
-                  placeholder="Enter ID"
-                  :maxlength="ROOM_ID_LENGTH"
-                  autocapitalize="on"
-                  class="terminal-input"
-                />
+          <div class="card-grid">
+            <section class="panel panel-left" aria-label="Online game setup">
+              <div class="role-toggle">
                 <button
-                  class="terminal-btn"
-                  :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
+                  :class="{ active: selectedRole === 'host' }"
+                  @click="setRole('host')"
                   data-sfx="click"
-                  @click="joinGame"
                 >
-                  JOIN ROOM
+                  HOST
+                </button>
+
+                <button
+                  :class="{ active: selectedRole === 'join' }"
+                  @click="setRole('join')"
+                  data-sfx="click"
+                >
+                  JOIN
                 </button>
               </div>
-            </div>
-          </section>
-          <section>
-            <OnlineModeInfo class="online-info" />
-          </section>
+
+              <div v-if="selectedRole === 'host'" class="host-settings">
+                <div class="rounds-selection">
+                  <label class="selection-label">HOW MANY ROUNDS</label>
+
+                  <div class="radio-group">
+                    <label
+                      v-for="amount in [5, 10, 15, 20]"
+                      :key="amount"
+                      class="radio-item"
+                    >
+                      <input
+                        type="radio"
+                        name="rounds"
+                        :value="amount"
+                        v-model="configStore.maxRounds"
+                        :disabled="configStore.filteredDrawings.length < amount * 4"
+                        @change="soundStore.playSound('click')"
+                      />
+
+                      <span class="radio-button">{{ amount }}</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="rounds-selection">
+                  <label class="selection-label">SET ROUND LENGTH</label>
+
+                  <div class="radio-group">
+                    <label
+                      v-for="duration in [5, 10, 15, 20]"
+                      :key="duration"
+                      class="radio-item"
+                    >
+                      <input
+                        type="radio"
+                        name="duration"
+                        :value="duration"
+                        v-model="configStore.revealTime"
+                        @change="soundStore.playSound('click')"
+                      />
+
+                      <span class="radio-button">{{ duration }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setup-section">
+                <h3>SET YOUR NAME AND AVATAR</h3>
+
+                <div class="player-info-wrapper">
+                  <div
+                    class="player-avatar"
+                    :style="avatarStyle"
+                    @click="showAvatarModal = true"
+                  >
+                    <Icon icon="pixel:pencil" class="edit-badge" />
+                  </div>
+
+                  <div class="player-name" @click="showAvatarModal = true">
+                    <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
+                    <span class="info-text">Tap to change</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                v-if="selectedRole === 'host'"
+                class="start-btn"
+                data-sfx="click"
+                @click="hostGame"
+              >
+                CREATE ROOM
+              </button>
+
+              <div v-else class="join-container">
+                <h3>ENTER ROOM ID TO JOIN A GAME</h3>
+
+                <div class="join-terminal">
+                  <input
+                    v-model="joinRoomId"
+                    placeholder="Enter ID"
+                    :maxlength="ROOM_ID_LENGTH"
+                    autocapitalize="on"
+                    class="terminal-input"
+                  />
+
+                  <button
+                    class="terminal-btn"
+                    :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
+                    data-sfx="click"
+                    @click="joinGame"
+                  >
+                    JOIN ROOM
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <OnlineModeInfo class="online-info" />
+            </section>
+          </div>
         </div>
-      </div>
-      <PlayerEditModal
-        v-if="showAvatarModal"
-        @btn-click="showAvatarModal = false"
-        @close="showAvatarModal = false"
-      />
-    </main>
+
+        <PlayerEditModal
+          v-if="showAvatarModal"
+          @btn-click="showAvatarModal = false"
+          @close="showAvatarModal = false"
+        />
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { Icon } from "@iconify/vue";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
@@ -147,6 +164,26 @@ import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
 import OnlineModeInfo from "@/components/page-ui/OnlineModeInfo.vue";
+
+const wrapperRef = ref(null);
+
+const resizeGame = () => {
+  if (!wrapperRef.value) return;
+
+  const baseWidth = 1000;
+  const baseHeight = 850;
+
+  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+    wrapperRef.value.style.transform = "none";
+    return;
+  }
+
+  const scaleX = window.innerWidth / baseWidth;
+  const scaleY = window.innerHeight / baseHeight;
+  const scale = Math.min(scaleX, scaleY);
+
+  wrapperRef.value.style.transform = `scale(${scale})`;
+};
 
 const showAvatarModal = ref(false);
 
@@ -167,6 +204,13 @@ const setRole = (role) => {
 
 onMounted(() => {
   channelStore.setMode("regular");
+
+  window.addEventListener("resize", resizeGame);
+  resizeGame();
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", resizeGame);
 });
 
 watch(
@@ -189,6 +233,7 @@ const avatarStyle = computed(() => {
   const index = playerStore.avatarIndex || 0;
   const col = index % 6;
   const row = Math.floor(index / 6);
+
   return {
     backgroundImage: `url(${avatarSpriteSheet})`,
     backgroundPosition: `${col * 20}% ${row * 20}%`,
@@ -200,12 +245,14 @@ const avatarStyle = computed(() => {
 const hostGame = () => {
   channelStore.setMode("regular");
   soundStore.playSound("click");
+
   const playerId = playerStore.controllerId;
   channelStore.playerId = playerId;
   channelStore.isLoading = true;
 
   channelStore.loadingText = "CREATING ONLINE GAME...";
   prepareGame(configStore.revealTime);
+
   channelStore.hostSession({
     playerId,
     username: playerStore.playerName,
@@ -218,12 +265,15 @@ const hostGame = () => {
 
 const joinGame = () => {
   if (!joinRoomId.value) return;
+
   channelStore.setMode("regular");
   soundStore.playSound("click");
+
   const playerId = playerStore.controllerId;
   channelStore.playerId = playerId;
   channelStore.isLoading = true;
   channelStore.loadingText = "JOINING...";
+
   channelStore.joinSession(
     {
       playerId,
@@ -237,6 +287,12 @@ const joinGame = () => {
 </script>
 
 <style scoped>
+.scale-wrapper {
+  transform-origin: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .page {
   width: 100%;
   display: flex;
@@ -253,7 +309,7 @@ const joinGame = () => {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 32px;
@@ -265,6 +321,7 @@ const joinGame = () => {
   color: var(--primary);
   margin-bottom: 64px;
   text-align: left;
+
   @media (min-width: 1024px) {
     text-align: center;
   }
@@ -276,6 +333,7 @@ const joinGame = () => {
   font-size: 32px;
   margin-bottom: 4px;
   text-align: left;
+
   @media (min-width: 1024px) {
     text-align: center;
   }
@@ -300,6 +358,7 @@ const joinGame = () => {
   .card {
     max-width: 1000px;
   }
+
   .card-grid {
     grid-template-columns: 1fr 1fr;
     gap: 64px;
@@ -310,9 +369,11 @@ const joinGame = () => {
 .join-terminal {
   display: grid;
   grid-template-columns: 1fr;
+
   @media (min-width: 400px) {
     grid-template-columns: 120px 1fr;
   }
+
   gap: 8px;
 }
 
@@ -476,6 +537,7 @@ const joinGame = () => {
   font-size: 18px;
   font-weight: 700;
   color: #fff;
+
   .info-text {
     font-size: 14px;
     font-weight: 400;
@@ -529,3 +591,6 @@ const joinGame = () => {
   max-width: 1000px;
 }
 </style>
+```
+
+Die eigentliche Änderung ist damit bewusst klein: **Wrapper + `wrapperRef` + `resizeGame()` + Resize-Listener**. Die vorhandene Online-UI und Logik aus deiner Datei bleiben ansonsten erhalten.
