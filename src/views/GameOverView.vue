@@ -212,6 +212,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   @media (min-width: 1000px) {
     width: calc(100dvw - 16px);
     height: calc(100dvh - 32px);
@@ -226,7 +227,7 @@ main {
   image-rendering: crisp-edges;
   display: flex;
   justify-content: center;
-  width: 800px;
+  width: 100%;
 }
 
 .gameover-wrapper {

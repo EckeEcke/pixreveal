@@ -297,6 +297,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   @media (min-width: 1000px) {
     width: calc(100dvw - 16px);
     height: calc(100dvh - 32px);
@@ -309,8 +310,7 @@ main {
   transform-origin: center center;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  /* Kein transform-transition -> vermeidet Nachziehen/Ruckeln bei jedem
-     ResizeObserver-Tick; scale wird ohnehin per rAF gedrosselt */
+  width: 100%;
 }
 
 .party-wrapper {

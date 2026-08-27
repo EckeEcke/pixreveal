@@ -194,6 +194,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   @media (min-width: 1000px) {
     width: calc(100dvw - 16px);
     height: calc(100dvh - 32px);
@@ -206,6 +207,7 @@ main {
   transform-origin: center center;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  width: 100%;
 }
 
 .ranking-wrapper {
