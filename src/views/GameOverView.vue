@@ -212,8 +212,10 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(100vw - 16px);
-  height: calc(100vh - 32px);
+  @media (min-width: 1000px) {
+    width: calc(100dvw - 16px);
+    height: calc(100dvh - 32px);
+  }
   overflow: hidden;
   box-sizing: border-box;
 }
