@@ -73,6 +73,25 @@ const popState = ref(null)
 
 const animatedPixels = ref([])
 
+// --- Delta-time tracking (fixes ProMotion/120Hz displays running the
+// physics drop effect ~2x too fast, since requestAnimationFrame fires
+// once per refresh rather than at a fixed 60Hz) ---
+let lastFrameTime = null
+const REFERENCE_FRAME_MS = 1000 / 60 // physics constants below (gravity, vx/vy/vRot) were tuned assuming 60fps
+const MAX_DT = 3 // clamp so a tab switch / stall doesn't cause a huge jump
+
+const getDeltaTime = () => {
+  const now = performance.now()
+  if (lastFrameTime === null) {
+    lastFrameTime = now
+    return 1
+  }
+  const elapsed = now - lastFrameTime
+  lastFrameTime = now
+  const dt = elapsed / REFERENCE_FRAME_MS
+  return Math.min(Math.max(dt, 0), MAX_DT)
+}
+
 const updateFlatPixelList = () => {
   const list = []
   if (!props.pixelArray) return
@@ -101,6 +120,7 @@ const startReveal = () => {
   animatedPixels.value = []
   updateFlatPixelList()
   displayedPixels.value = []
+  lastFrameTime = null
 
   if (!props.pixelArray || !props.pixelArray[0]) return
 
@@ -211,14 +231,14 @@ const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
   })
 }
 
-const updateAndDrawPhysicsPixels = (ctx, baseSize) => {
+const updateAndDrawPhysicsPixels = (ctx, baseSize, dt) => {
   for (let i = animatedPixels.value.length - 1; i >= 0; i--) {
     const p = animatedPixels.value[i]
 
-    p.xPos += p.vx
-    p.yPos += p.vy
-    p.vy += p.gravity
-    p.rot += p.vRot
+    p.xPos += p.vx * dt
+    p.yPos += p.vy * dt
+    p.vy += p.gravity * dt
+    p.rot += p.vRot * dt
 
     if (p.yPos > internalSize + 80 || p.yPos < -150) {
       animatedPixels.value.splice(i, 1)
@@ -263,11 +283,16 @@ const drawShine = (ctx, size, progress) => {
 
 const render = () => {
   if (props.pauseReveal) {
+    // Don't advance the timing baseline while paused, so the next
+    // unpaused frame doesn't see a huge elapsed-time jump.
+    lastFrameTime = null
     setAnimationFrameId(requestAnimationFrame(render))
     return
   }
   const ctx = getContext()
   if (!ctx) return
+
+  const dt = getDeltaTime()
 
   const resolution = props.pixelArray?.length || 16
   const { cellSize, gap, baseSize } = calculateGrid(resolution)
@@ -337,7 +362,7 @@ const render = () => {
   }
 
   if (animatedPixels.value.length > 0) {
-    updateAndDrawPhysicsPixels(ctx, baseSize)
+    updateAndDrawPhysicsPixels(ctx, baseSize, dt)
   }
 
   if (shineState.value) {
