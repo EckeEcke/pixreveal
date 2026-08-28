@@ -33,7 +33,7 @@ const {
 } = useCanvasBase(internalSize);
 
 const configStore = useConfigStore();
-const soundStore = useSoundStore();
+const { playSound} = useSoundStore();
 
 const addCRT = computed(() => useConfigStore().addCRTFilter);
 
@@ -51,6 +51,22 @@ const shakeState = ref(null);
 
 const POP_DURATION = 350;
 const popState = ref(null);
+
+let lastFrameTime = null;
+const REFERENCE_FRAME_MS = 1000 / 60;
+const MAX_DT = 3;
+
+const getDeltaTime = () => {
+  const now = performance.now();
+  if (lastFrameTime === null) {
+    lastFrameTime = now;
+    return 1;
+  }
+  const elapsed = now - lastFrameTime;
+  lastFrameTime = now;
+  const dt = elapsed / REFERENCE_FRAME_MS;
+  return Math.min(Math.max(dt, 0), MAX_DT);
+};
 
 const initGravityEffect = () => {
   if (!props.pixelArray || !props.pixelArray.length) return;
@@ -103,6 +119,7 @@ const initGravityEffect = () => {
   }
 
   activePixels.value = newList;
+  lastFrameTime = null;
 };
 
 const preparePhysicsPixels = () => {
@@ -189,14 +206,14 @@ const drawShine = (ctx, size, progress) => {
   ctx.restore();
 };
 
-const updateAndDrawPhysicsPixels = (ctx, baseSize) => {
+const updateAndDrawPhysicsPixels = (ctx, baseSize, dt) => {
   for (let i = animatedPhysicsPixels.value.length - 1; i >= 0; i--) {
     const p = animatedPhysicsPixels.value[i];
 
-    p.xPos += p.vx;
-    p.yPos += p.vy;
-    p.vy += p.gravity;
-    p.rot += p.vRot;
+    p.xPos += p.vx * dt;
+    p.yPos += p.vy * dt;
+    p.vy += p.gravity * dt;
+    p.rot += p.vRot * dt;
 
     if (p.yPos > internalSize + 80 || p.yPos < -150) {
       animatedPhysicsPixels.value.splice(i, 1);
@@ -219,12 +236,15 @@ const updateAndDrawPhysicsPixels = (ctx, baseSize) => {
 const render = () => {
   const canvas = canvasRef.value;
   if (!canvas || props.pauseReveal) {
+    lastFrameTime = null;
     setAnimationFrameId(requestAnimationFrame(render));
     return;
   }
 
   const ctx = getContext();
   if (!ctx) return;
+
+  const dt = getDeltaTime();
 
   const resolution = props.pixelArray?.length || 16;
   const { cellSize, gap, baseSize } = calculateGrid(resolution);
@@ -265,7 +285,7 @@ const render = () => {
 
   activePixels.value.forEach((p) => {
     if (props.isRevealing && !props.isStatusIcon && p.delay > 0) {
-      p.delay--;
+      p.delay -= dt;
       return;
     }
 
@@ -279,13 +299,13 @@ const render = () => {
       drawY = p.targetY;
       scale = 1;
     } else if (!p.landed) {
-      p.velocity += gravity;
-      p.currentY += p.velocity;
+      p.velocity += gravity * dt;
+      p.currentY += p.velocity * dt;
 
       if (p.currentY >= p.targetY) {
         p.currentY = p.targetY;
         if (Math.abs(p.velocity) > 2) {
-          soundStore.playSound("reveal");
+          playSound("reveal");
         }
         p.velocity *= bounce;
         if (Math.abs(p.velocity) < 0.5) p.landed = true;
@@ -321,7 +341,7 @@ const render = () => {
   });
 
   if (animatedPhysicsPixels.value.length > 0) {
-    updateAndDrawPhysicsPixels(ctx, baseSize);
+    updateAndDrawPhysicsPixels(ctx, baseSize, dt);
   }
 
   if (shineState.value) {
@@ -335,7 +355,7 @@ const render = () => {
   }
 
   ctx.restore();
-  
+
   setAnimationFrameId(requestAnimationFrame(render));
 };
 
