@@ -74,7 +74,7 @@
                 <SelectionTile
                   icon-name="pixel:user-solid"
                   btn-text="MORE MODES"
-                  sub-title="Play Blur, Gravity, Inspect or Survival"
+                  sub-title="Play Gravity, Inspect, Classic or Survival"
                   btn-color="var(--neon-blue)"
                   :max-players="1"
                 />

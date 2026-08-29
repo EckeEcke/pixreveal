@@ -29,7 +29,7 @@ export const usePlayerStore = defineStore("player", () => {
   const correctAnswers = ref(0);
   const answerHistory: Ref<boolean[]> = ref([]);
   const gameMode = ref<
-    "classic" | "inspect" | "gravity" | "survival" | "blur" | string
+    "classic" | "inspect" | "gravity" | "survival" | string
   >("classic");
   const isCreatorMode: Ref<boolean> = ref(false);
 

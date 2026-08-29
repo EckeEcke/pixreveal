@@ -16,60 +16,12 @@ export type UseBonusRoundsOptions = {
 };
 
 export const useBonusRounds = (opts: UseBonusRoundsOptions) => {
-  const blurActiveStates = computed(() =>
-    (opts.blurActiveStates?.length ? opts.blurActiveStates : ["revealing"]) as GameStateLike[],
-  );
-
   const bonusRoundType = computed<BonusRoundType | null>(() =>
     getBonusRoundType(opts.currentRoundIndex.value, opts.maxRounds.value),
   );
 
   const isFinalRound = computed(
     () => opts.currentRoundIndex.value === opts.maxRounds.value - 1,
-  );
-
-  const isBlurRoundActive = computed(() => {
-    if (bonusRoundType.value !== "blur") return false;
-    return blurActiveStates.value.includes(opts.gameState.value);
-  });
-
-  const blurAmountPx = computed(() => {
-    if (!isBlurRoundActive.value) return 0;
-    const duration = opts.timerDuration.value || 1;
-    const source = opts.blurTimeLeft ?? opts.timer;
-    const t = typeof source.value === "number" ? source.value : duration;
-    const ratio = Math.min(1, Math.max(0, t / duration));
-    const maxBlur = 80;
-    return maxBlur * ratio;
-  });
-
-  const canvasEffectsStyle = computed(() => {
-    if (!bonusRoundType.value || opts.gameState.value === 'feedback') return { filter: "none" };
-
-    // Only keep effects while the round is actively being revealed/answered.
-    // After answering (feedback/revealed), the UI should fade back to normal.
-    const effectsActive =
-      opts.baseRevealing.value ||
-      (bonusRoundType.value === "blur" && isBlurRoundActive.value);
-    if (!effectsActive) return { filter: "none" };
-
-    const filters: string[] = [];
-    if (bonusRoundType.value === "blur") {
-      filters.push(`blur(${blurAmountPx.value}px)`);
-    }
-    if (bonusRoundType.value === "sepia") {
-      filters.push("invert(0.7)");
-      filters.push("saturate(1.2)");
-    }
-    if (bonusRoundType.value === "bw") {
-      filters.push("hue-rotate(45deg)");
-      filters.push("contrast(1.15)");
-    }
-    return { filter: filters.join(" ") || "none" };
-  });
-
-  const canvasIsRevealing = computed(() =>
-    Boolean(opts.baseRevealing.value && bonusRoundType.value !== "blur"),
   );
 
   const showFinalRoundTransition = ref(false);
@@ -101,10 +53,6 @@ export const useBonusRounds = (opts: UseBonusRoundsOptions) => {
   return {
     bonusRoundType,
     isFinalRound,
-    isBlurRoundActive,
-    blurAmountPx,
-    canvasEffectsStyle,
-    canvasIsRevealing,
     showFinalRoundTransition,
     showBonusRoundTransition,
     handleFinalRoundDone,

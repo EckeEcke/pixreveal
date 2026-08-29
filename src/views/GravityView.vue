@@ -35,14 +35,13 @@
         :is-survival="false"
       />
 
-      <div class="canvas-effects" :style="canvasEffectsStyle">
+      <div class="canvas-effects">
         <PixelCanvasGravity
           ref="pixelCanvasRef"
           :pixel-array="pixelData"
-          :is-revealing="canvasIsRevealing"
+          :is-revealing="true"
           :pauseReveal="showFinalRoundTransition || showBonusRoundTransition"
         />
-        <div v-if="isBlurRoundActive" class="blur-overlay" />
       </div>
     </section>
 
@@ -134,9 +133,6 @@ const baseRevealing = computed(() => gameStore.gameState === "revealing")
 const {
   bonusRoundType,
   isFinalRound,
-  isBlurRoundActive,
-  canvasEffectsStyle: canvasEffectsStyleBase,
-  canvasIsRevealing,
   showFinalRoundTransition,
   showBonusRoundTransition,
   handleFinalRoundDone: markFinalRoundTransitionDone,
@@ -152,14 +148,6 @@ const {
 })
 
 const suppressFilterTransition = ref(false)
-
-const canvasEffectsStyle = computed(() => {
-  const style: Record<string, string> = { ...canvasEffectsStyleBase.value }
-  if (suppressFilterTransition.value) {
-    style.transition = "none"
-  }
-  return style
-})
 
 const handleFinalRoundDone = () => {
   markFinalRoundTransitionDone()
@@ -345,14 +333,5 @@ onUnmounted(() => {
   width: 100%;
   transition: filter 800ms ease-out;
   will-change: filter;
-}
-
-.blur-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 0px;
-  background: rgba(56, 189, 248, 0.12);
-  pointer-events: none;
-  mix-blend-mode: screen;
 }
 </style>

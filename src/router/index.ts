@@ -78,12 +78,6 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
-      path: "/blur",
-      name: "blur",
-      component: () => import("@/views/BlurView.vue"),
-      meta: { robots: "noindex" },
-    },
-    {
       path: "/inspect",
       name: "inspect",
       component: () => import("@/views/InspectView.vue"),
@@ -359,7 +353,6 @@ router.beforeEach((to, from) => {
     "/classic",
     "/online",
     "/survival",
-    "/blur",
     "/inspect",
     "/gravity",
     "/party-host",
@@ -369,7 +362,6 @@ router.beforeEach((to, from) => {
   const needRounds = [
     "/classic",
     "/online",
-    "/blur",
     "/inspect",
     "/gravity",
     "/party-host",

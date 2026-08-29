@@ -1,6 +1,6 @@
 import { createClient } from "redis";
 
-const ALLOWED_MODES = ["classic", "inspect", "gravity", "blur"];
+const ALLOWED_MODES = ["classic", "inspect", "gravity"];
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

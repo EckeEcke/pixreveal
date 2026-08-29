@@ -25,13 +25,6 @@
                 btn-color="var(--neon-cyan)"
               />
               <SelectionTile
-                icon-name="pixel:question"
-                :btn-function="startBlur"
-                btn-text="BLUR"
-                sub-title="Guess the image as it unblurs"
-                btn-color="var(--neon-pink)"
-              />
-              <SelectionTile
                 icon-name="pixel:hockey-mask-solid"
                 :btn-function="startSurvival"
                 btn-text="SURVIVAL"
@@ -39,42 +32,16 @@
                 btn-color="var(--neon-error)"
                 :high-score="survivalStore.highscore"
               />
-            </div>
-            <h2>Popular</h2>
-            <div class="mode-buttons">
-            <SelectionTile
+              <SelectionTile
                 icon-name="pixel:sparkles"
                 :btn-function="startClassic"
                 btn-text="CLASSIC REVEAL"
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
               />
-              <SelectionTile
-                data-sfx="click"
-                :icon-name="
-                  dailyStore.hasPlayedToday
-                    ? 'pixel:numbered-list-solid'
-                    : 'pixel:star-solid'
-                "
-                :btn-function="startDaily"
-                btn-text="DAILY CHALLENGE"
-                :sub-title="
-                  dailyStore.hasPlayedToday
-                    ? 'Check today\'s results'
-                    : 'Play today\'s challenge, climb the leaderboard'
-                "
-                btn-color="var(--neon-orange)"
-                :loading="dailyStore.isLoading"
-                :is-shiny="
-                  true && !dailyStore.isLoading && !dailyStore.hasPlayedToday
-                "
-                :corner-text="timeLeft"
-                :is-new="!dailyStore.hasPlayedToday"
-              />
             </div>
           </div>
         </div>
-        <TopPlayer />
       </section>
     </main>
     <FooterApp />
@@ -86,25 +53,18 @@ import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
-import { useDailyStore } from "@/stores/daily";
 import { getRandomUserName } from "@/utils/random";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
-import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import { useSurvivalStore } from "@/stores/survival";
-import { useDailyCountDown } from "@/composables/useDailyCountDown";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
-const dailyStore = useDailyStore();
 const survivalStore = useSurvivalStore();
 const { prepareGame } = useGameStore();
-
-const { timeLeft } = useDailyCountDown();
-
 
 const setUser = () =>
   playerStore.setUser({
@@ -126,12 +86,6 @@ const startGravity = () => {
   router.push("/gravity");
 };
 
-const startBlur = () => {
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "blur";
-  router.push("/blur");
-};
-
 const startInspect = () => {
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "inspect";
@@ -142,17 +96,6 @@ const startSurvival = () => {
   playerStore.gameMode = "survival";
   router.push("/survival");
 };
-
-const startDaily = () => {
-  prepareGame(10, dailyStore.dailyRounds);
-  playerStore.gameMode = dailyStore.mode;
-  if (dailyStore.hasPlayedToday) {
-    router.push("/rankings-daily");
-  } else {
-    router.push("/daily");
-  }
-};
-
 </script>
 
 <style scoped>

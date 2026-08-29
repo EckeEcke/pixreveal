@@ -48,13 +48,6 @@
         as possible to earn the most points.
       </p>
 
-      <h4>Blur</h4>
-      <p>
-        A true <strong>recognition test</strong>. The image is very
-        <strong>blurry</strong>. Step by step the image becomes less blurry. Can
-        you figure out what it is before the image gets clear?
-      </p>
-
       <h4>Survival</h4>
       <p>
         The ultimate <strong>highscore challenge</strong>. You start with 30

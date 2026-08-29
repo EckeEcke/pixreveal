@@ -26,7 +26,7 @@ const generalFaqs = [
   {
     question: "What game modes are available?",
     answer:
-      "You can play in Classic mode, where pixels pop up randomly across the canvas, or in Gravity mode, where pixels drop down from the top in a Tetris-style animation. Blur mode has a blurry image unblurring step by step. In Inspect mode the canvas is completely dark. Only through a lens you can inspect parts of the whole image. Move the lens to find out what it is.",
+      "You can play in Classic mode, where pixels pop up randomly across the canvas, or in Gravity mode, where pixels drop down from the top in a Tetris-style animation. In Inspect mode the canvas is completely dark. Only through a lens you can inspect parts of the whole image. Move the lens to find out what it is.",
   },
   {
     question: "Can I play solo or with friends?",

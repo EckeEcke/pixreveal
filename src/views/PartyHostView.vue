@@ -73,13 +73,13 @@
         :is-sudden-death="partyStore.isSuddenDeath"
       />
 
-      <div class="canvas-effects" :style="canvasEffectsStyle">
+      <div class="canvas-effects">
         <PixelCanvas
           ref="pixelCanvasRef"
           :class="{ dark: partyStore.isDarken, twisted: partyStore.isRotate }"
           :pixel-array="pixelData"
           :resolution="resolution"
-          :is-revealing="canvasIsRevealing"
+          :is-revealing="isRevealing"
           :is-status-icon="false"
           :timer-duration="Number(timerDuration)"
           :pause-reveal="
@@ -88,7 +88,6 @@
             showBonusRoundTransition
           "
         />
-        <div v-if="isBlurRoundActive" class="blur-overlay" />
       </div>
     </div>
 
@@ -187,9 +186,6 @@ const isRevealing = computed(
 const {
   bonusRoundType,
   isFinalRound,
-  isBlurRoundActive,
-  canvasEffectsStyle: canvasEffectsStyleBase,
-  canvasIsRevealing,
   showFinalRoundTransition,
   showBonusRoundTransition,
   handleFinalRoundDone: markFinalRoundTransitionDone,
@@ -205,14 +201,6 @@ const {
 });
 
 const suppressFilterTransition = ref(false);
-
-const canvasEffectsStyle = computed(() => {
-  const style: Record<string, string> = { ...canvasEffectsStyleBase.value };
-  if (suppressFilterTransition.value) {
-    style.transition = "none";
-  }
-  return style;
-});
 
 const handleFinalRoundDone = () => {
   markFinalRoundTransitionDone();
@@ -628,15 +616,6 @@ onUnmounted(() => {
   width: 100%;
   transition: filter 600ms ease;
   will-change: filter;
-}
-
-.blur-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 0px;
-  background: rgba(56, 189, 248, 0.12);
-  pointer-events: none;
-  mix-blend-mode: screen;
 }
 
 .dark {

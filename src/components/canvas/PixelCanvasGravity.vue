@@ -422,7 +422,7 @@ onUnmounted(() => {
   background: radial-gradient(
     ellipse at center,
     transparent 40%,
-    rgba(0, 0, 0, 0.35) 100%
+    rgba(0, 0, 0, 0.05) 100%
   );
 }
 

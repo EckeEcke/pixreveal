@@ -608,9 +608,9 @@ const joinGame = () => {
 
   top: 3px;
   bottom: 3px;
-  left: 3px;
+  left: 2px;
 
-  width: calc(50% - 4.5px);
+  width: calc(50% - 6px);
 
   background: #29282d;
 
