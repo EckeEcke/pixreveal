@@ -1,7 +1,7 @@
-```vue
 <template>
   <div>
     <LoadingOverlay :show="channelStore.isLoading" />
+
     <div ref="wrapperRef" class="scale-wrapper">
       <div class="back-btn-wrapper">
         <button class="back-btn" @click="$router.push('/')" data-sfx="back">
@@ -10,14 +10,20 @@
       </div>
 
       <main class="page">
-
         <div class="setup-card card">
           <h1>ONLINE MULTIPLAYER</h1>
           <span class="pre-headline">CREATE OR JOIN A GAME</span>
 
           <div class="card-grid">
-            <section class="panel panel-left" aria-label="Online game setup">
-              <div class="role-toggle">
+            <section
+              class="panel panel-left"
+              aria-label="Online game setup"
+            >
+              <!-- HOST / JOIN TOGGLE -->
+              <div
+                class="role-toggle"
+                :class="`role-${selectedRole}`"
+              >
                 <button
                   :class="{ active: selectedRole === 'host' }"
                   @click="setRole('host')"
@@ -35,9 +41,14 @@
                 </button>
               </div>
 
-              <div v-if="selectedRole === 'host'" class="host-settings">
+              <div
+                v-if="selectedRole === 'host'"
+                class="host-settings"
+              >
                 <div class="rounds-selection">
-                  <label class="selection-label">HOW MANY ROUNDS</label>
+                  <label class="selection-label">
+                    HOW MANY ROUNDS
+                  </label>
 
                   <div class="radio-group">
                     <label
@@ -50,17 +61,24 @@
                         name="rounds"
                         :value="amount"
                         v-model="configStore.maxRounds"
-                        :disabled="configStore.filteredDrawings.length < amount * 4"
+                        :disabled="
+                          configStore.filteredDrawings.length <
+                          amount * 4
+                        "
                         @change="soundStore.playSound('click')"
                       />
 
-                      <span class="radio-button">{{ amount }}</span>
+                      <span class="radio-button">
+                        {{ amount }}
+                      </span>
                     </label>
                   </div>
                 </div>
 
                 <div class="rounds-selection">
-                  <label class="selection-label">SET ROUND LENGTH</label>
+                  <label class="selection-label">
+                    SET ROUND LENGTH
+                  </label>
 
                   <div class="radio-group">
                     <label
@@ -76,7 +94,9 @@
                         @change="soundStore.playSound('click')"
                       />
 
-                      <span class="radio-button">{{ duration }}</span>
+                      <span class="radio-button">
+                        {{ duration }}
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -91,12 +111,22 @@
                     :style="avatarStyle"
                     @click="showAvatarModal = true"
                   >
-                    <Icon icon="pixel:pencil" class="edit-badge" />
+                    <Icon
+                      icon="pixel:pencil"
+                      class="edit-badge"
+                    />
                   </div>
 
-                  <div class="player-name" @click="showAvatarModal = true">
-                    <span>{{ playerStore.playerName || "SET PLAYER NAME" }}</span>
-                    <span class="info-text">Tap to change</span>
+                  <div
+                    class="player-name"
+                    @click="showAvatarModal = true"
+                  >
+                    <span>
+                      {{ playerStore.playerName || "SET PLAYER NAME" }}
+                    </span>
+                    <span class="info-text">
+                      Tap to change
+                    </span>
                   </div>
                 </div>
               </div>
@@ -110,7 +140,10 @@
                 CREATE ROOM
               </button>
 
-              <div v-else class="join-container">
+              <div
+                v-else
+                class="join-container"
+              >
                 <h3>ENTER ROOM ID TO JOIN A GAME</h3>
 
                 <div class="join-terminal">
@@ -124,7 +157,10 @@
 
                   <button
                     class="terminal-btn"
-                    :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
+                    :disabled="
+                      !joinRoomId ||
+                      joinRoomId.length !== ROOM_ID_LENGTH
+                    "
                     data-sfx="click"
                     @click="joinGame"
                   >
@@ -151,7 +187,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from "vue";
 import { Icon } from "@iconify/vue";
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
@@ -173,7 +215,10 @@ const resizeGame = () => {
   const baseWidth = 1000;
   const baseHeight = 850;
 
-  if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
+  if (
+    window.innerWidth < baseWidth ||
+    window.innerHeight < baseHeight
+  ) {
     wrapperRef.value.style.transform = "none";
     return;
   }
@@ -206,6 +251,7 @@ onMounted(() => {
   channelStore.setMode("regular");
 
   window.addEventListener("resize", resizeGame);
+
   resizeGame();
 });
 
@@ -216,7 +262,9 @@ onUnmounted(() => {
 watch(
   () => route.query.id,
   (value) => {
-    if (typeof value === "string") joinRoomId.value = value;
+    if (typeof value === "string") {
+      joinRoomId.value = value;
+    }
   },
   { immediate: true },
 );
@@ -224,7 +272,9 @@ watch(
 watch(
   () => route.query.role,
   (value) => {
-    if (value === "host" || value === "join") setRole(value);
+    if (value === "host" || value === "join") {
+      setRole(value);
+    }
   },
   { immediate: true },
 );
@@ -247,10 +297,12 @@ const hostGame = () => {
   soundStore.playSound("click");
 
   const playerId = playerStore.controllerId;
+
   channelStore.playerId = playerId;
   channelStore.isLoading = true;
 
   channelStore.loadingText = "CREATING ONLINE GAME...";
+
   prepareGame(configStore.revealTime);
 
   channelStore.hostSession({
@@ -270,6 +322,7 @@ const joinGame = () => {
   soundStore.playSound("click");
 
   const playerId = playerStore.controllerId;
+
   channelStore.playerId = playerId;
   channelStore.isLoading = true;
   channelStore.loadingText = "JOINING...";
@@ -321,10 +374,6 @@ const joinGame = () => {
   color: var(--primary);
   margin-bottom: 64px;
   text-align: left;
-
-  @media (min-width: 1024px) {
-    text-align: center;
-  }
 }
 
 .setup-card h1 {
@@ -333,10 +382,6 @@ const joinGame = () => {
   font-size: 32px;
   margin-bottom: 4px;
   text-align: left;
-
-  @media (min-width: 1024px) {
-    text-align: center;
-  }
 }
 
 .start-btn {
@@ -352,74 +397,6 @@ const joinGame = () => {
 
 .panel {
   min-width: 0;
-}
-
-@media (min-width: 1024px) {
-  .card {
-    max-width: 1000px;
-  }
-
-  .card-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: start;
-  }
-}
-
-.join-terminal {
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media (min-width: 400px) {
-    grid-template-columns: 120px 1fr;
-  }
-
-  gap: 8px;
-}
-
-.terminal-input {
-  background: transparent;
-  border: 2px solid var(--primary);
-  border-radius: 4px;
-  color: #fff;
-  padding: 12px;
-  font-family: inherit;
-  font-size: 20px;
-  outline: none;
-}
-
-.terminal-btn {
-  background: var(--primary);
-  color: #000;
-  border: none;
-  border-radius: 4px;
-  padding: 12px 20px;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 900;
-  animation: pulse 3s infinite;
-  min-height: 52px;
-}
-
-.terminal-btn:disabled {
-  background: #333;
-  color: #666;
-  cursor: not-allowed;
-  animation: none;
-}
-
-.terminal-btn:not(:disabled):hover {
-  background: #fff;
-  box-shadow: -5px 0 15px var(--primary);
-}
-
-.setup-section {
-  margin: 48px 0;
-}
-
-.host-info {
-  margin: 32px 0;
 }
 
 .host-settings {
@@ -493,6 +470,62 @@ const joinGame = () => {
   cursor: not-allowed;
 }
 
+.join-terminal {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 400px) {
+    grid-template-columns: 120px 1fr;
+  }
+
+  gap: 8px;
+}
+
+.terminal-input {
+  background: transparent;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  color: #fff;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 20px;
+  outline: none;
+}
+
+.terminal-btn {
+  background: var(--primary);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 900;
+  animation: pulse 3s infinite;
+  min-height: 52px;
+}
+
+.terminal-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.terminal-btn:not(:disabled):hover {
+  background: #fff;
+  box-shadow: -5px 0 15px var(--primary);
+}
+
+.setup-section {
+  margin: 48px 0;
+}
+
+.host-info {
+  margin: 32px 0;
+}
+
 .player-info-wrapper {
   display: flex;
   flex-direction: row;
@@ -546,32 +579,85 @@ const joinGame = () => {
   }
 }
 
+
+/* =========================================================
+   HOST / JOIN TOGGLE
+   ========================================================= */
+
 .role-toggle {
+  position: relative;
   display: flex;
+
   background: #111;
   border: 2px solid var(--border-color);
   border-radius: 4px;
+
   margin-bottom: 16px;
-  overflow: hidden;
   padding: 3px;
   gap: 3px;
+
+  overflow: hidden;
+}
+
+/* Sliding selection indicator */
+.role-toggle::before {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+
+  width: calc(50% - 4.5px);
+
+  background: #29282d;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s ease;
+}
+
+/* Move indicator to JOIN */
+.role-toggle.role-join::before {
+  transform: translateX(calc(100% + 3px));
 }
 
 .role-toggle button {
+  position: relative;
+  z-index: 1;
+
   flex: 1;
+
   text-align: center;
+
   padding: 10px 0;
+
   background: transparent;
   border: none;
   border-radius: 2px;
-  color: rgba(255, 255, 255, 0.4);
+
+  color: rgba(255, 255, 255, 0.38);
+
   font-size: 14px;
   font-family: inherit;
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition:
+    color 0.2s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .role-toggle button:hover {
@@ -579,18 +665,46 @@ const joinGame = () => {
 }
 
 .role-toggle button.active {
-  background: var(--primary);
-  color: #000;
-  font-size: 16px;
-  box-shadow: none;
-  transform: none;
+  color: #fff;
+  transform: scale(1.03);
 }
+
+.role-toggle button:active {
+  transform: scale(0.97);
+}
+
+.role-toggle button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
 
 .back-btn-wrapper {
   width: 100%;
   max-width: 1000px;
 }
-</style>
-```
 
-Die eigentliche Änderung ist damit bewusst klein: **Wrapper + `wrapperRef` + `resizeGame()` + Resize-Listener**. Die vorhandene Online-UI und Logik aus deiner Datei bleiben ansonsten erhalten.
+@media (min-width: 1024px) {
+  .card {
+    max-width: 1000px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .setup-card h1 {
+    text-align: center;
+  }
+
+  .pre-headline {
+    text-align: center;
+  }
+}
+</style>

@@ -1,19 +1,27 @@
 <template>
-<div>
-  <LoadingOverlay :show="channelStore.isLoading" />
-  <div ref="wrapperRef" class="scale-wrapper">
-    <div class="back-btn-wrapper">
+  <div>
+    <LoadingOverlay :show="channelStore.isLoading" />
+
+    <div ref="wrapperRef" class="scale-wrapper">
+      <div class="back-btn-wrapper">
         <button class="back-btn" @click="$router.push('/')" data-sfx="back">
           <Icon icon="pixel:angle-left-solid" />
         </button>
       </div>
+
       <main class="page">
         <div class="setup-card card">
-              <h1>PARTY MULTIPLAYER</h1>
-            <span class="pre-headline">CREATE OR JOIN A GAME</span>
+          <h1>PARTY MULTIPLAYER</h1>
+          <span class="pre-headline">CREATE OR JOIN A GAME</span>
+
           <div class="card-grid">
             <section class="panel panel-left" aria-label="Party setup">
-              <div class="role-toggle">
+
+              <!-- HOST / JOIN TOGGLE -->
+              <div
+                class="role-toggle"
+                :class="`role-${selectedRole}`"
+              >
                 <button
                   :class="{ active: selectedRole === 'host' }"
                   @click="setRole('host')"
@@ -21,6 +29,7 @@
                 >
                   HOST
                 </button>
+
                 <button
                   :class="{ active: selectedRole === 'join' }"
                   @click="setRole('join')"
@@ -33,11 +42,16 @@
               <div v-if="selectedRole === 'host'" class="host-settings">
                 <div v-if="isScreenTooSmallForHost" class="screen-warning">
                   <Icon icon="pixel:exclamation-triangle" />
-                  <span>For hosting Party Mode, a bigger screen is required — try a TV or laptop instead. You can still join a party match or host an online game with this device.</span>
+                  <span>
+                    For hosting Party Mode, a bigger screen is required — try a TV
+                    or laptop instead. You can still join a party match or host an
+                    online game with this device.
+                  </span>
                 </div>
 
                 <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
                   <label class="selection-label">HOW MANY ROUNDS</label>
+
                   <div class="radio-group">
                     <label
                       v-for="amount in [5, 10, 15, 20]"
@@ -52,6 +66,7 @@
                         :disabled="configStore.filteredDrawings.length < amount * 4"
                         @change="soundStore.playSound('click')"
                       />
+
                       <span class="radio-button">{{ amount }}</span>
                     </label>
                   </div>
@@ -59,6 +74,7 @@
 
                 <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
                   <label class="selection-label">SET ROUND LENGTH</label>
+
                   <div class="radio-group">
                     <label
                       v-for="duration in [5, 10, 15, 20]"
@@ -72,6 +88,7 @@
                         v-model="configStore.revealTime"
                         @change="soundStore.playSound('click')"
                       />
+
                       <span class="radio-button">{{ duration }}</span>
                     </label>
                   </div>
@@ -80,6 +97,7 @@
 
               <div v-if="selectedRole !== 'host'" class="setup-section">
                 <h3>SET YOUR NAME AND AVATAR</h3>
+
                 <div class="player-info-wrapper">
                   <div
                     class="player-avatar"
@@ -88,7 +106,11 @@
                   >
                     <Icon icon="pixel:pencil" class="edit-badge" />
                   </div>
-                  <div class="player-name" @click="showAvatarModal = true">
+
+                  <div
+                    class="player-name"
+                    @click="showAvatarModal = true"
+                  >
                     <span>{{ playerStore.playerName || "SET YOUR NAME" }}</span>
                     <span class="info-text">Tap to change</span>
                   </div>
@@ -107,6 +129,7 @@
 
               <div v-else class="join-container">
                 <h3>ENTER ROOM ID TO JOIN A GAME</h3>
+
                 <div class="join-terminal">
                   <input
                     v-model="joinRoomId"
@@ -115,6 +138,7 @@
                     autocapitalize="on"
                     class="terminal-input"
                   />
+
                   <button
                     class="terminal-btn"
                     :disabled="!joinRoomId || joinRoomId.length !== ROOM_ID_LENGTH"
@@ -126,12 +150,19 @@
                 </div>
               </div>
             </section>
+
             <section>
-              <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+              <img
+                class="party-image"
+                src="/assets/images/image-partymode.webp"
+                alt="group of people playing PixReveal"
+              />
+
               <PartyModeInfo />
             </section>
           </div>
         </div>
+
         <PlayerEditModal
           v-if="showAvatarModal"
           @btn-click="showAvatarModal = false"
@@ -162,6 +193,7 @@ const wrapperRef = ref(null)
 
 const resizeGame = () => {
   if (!wrapperRef.value) return
+
   const baseWidth = 1000
   const baseHeight = 800
 
@@ -193,7 +225,9 @@ const selectedRole = ref("host")
 const viewportWidth = ref(window.innerWidth)
 
 const isScreenTooSmallForHost = computed(
-  () => selectedRole.value === "host" && viewportWidth.value < HOST_MIN_WIDTH,
+  () =>
+    selectedRole.value === "host" &&
+    viewportWidth.value < HOST_MIN_WIDTH,
 )
 
 const updateViewportWidth = () => {
@@ -207,8 +241,10 @@ const setRole = (role) => {
 
 onMounted(() => {
   channelStore.setMode("party")
+
   window.addEventListener("resize", updateViewportWidth)
   window.addEventListener("resize", resizeGame)
+
   resizeGame()
 
   if (!route.query.role && viewportWidth.value < HOST_MIN_WIDTH) {
@@ -224,7 +260,9 @@ onUnmounted(() => {
 watch(
   () => route.query.id,
   (value) => {
-    if (typeof value === "string") joinRoomId.value = value
+    if (typeof value === "string") {
+      joinRoomId.value = value
+    }
   },
   { immediate: true },
 )
@@ -232,7 +270,9 @@ watch(
 watch(
   () => route.query.role,
   (value) => {
-    if (value === "host" || value === "join") setRole(value)
+    if (value === "host" || value === "join") {
+      setRole(value)
+    }
   },
   { immediate: true },
 )
@@ -241,6 +281,7 @@ const avatarStyle = computed(() => {
   const index = playerStore.avatarIndex || 0
   const col = index % 6
   const row = Math.floor(index / 6)
+
   return {
     backgroundImage: `url(${avatarSpriteSheet})`,
     backgroundPosition: `${col * 20}% ${row * 20}%`,
@@ -252,12 +293,16 @@ const avatarStyle = computed(() => {
 const hostGame = () => {
   channelStore.setMode("party")
   soundStore.playSound("click")
+
   const playerId = playerStore.controllerId
+
   channelStore.playerId = playerId
   channelStore.isLoading = true
 
   prepareGame(configStore.revealTime)
+
   channelStore.loadingText = "CREATING PARTY..."
+
   channelStore.hostSession({
     playerId,
     username: playerStore.playerName,
@@ -270,12 +315,16 @@ const hostGame = () => {
 
 const joinGame = () => {
   if (!joinRoomId.value) return
+
   channelStore.setMode("party")
   soundStore.playSound("click")
+
   const playerId = playerStore.controllerId
+
   channelStore.playerId = playerId
   channelStore.isLoading = true
   channelStore.loadingText = "JOINING..."
+
   channelStore.joinSession(
     {
       playerId,
@@ -311,7 +360,7 @@ const joinGame = () => {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 32px;
@@ -323,6 +372,7 @@ const joinGame = () => {
   text-align: center;
   color: var(--primary);
 }
+
 h2 {
   margin-top: 0;
   margin-bottom: 32px;
@@ -433,6 +483,7 @@ h2 {
   .card {
     max-width: 1000px;
   }
+
   .card-grid {
     grid-template-columns: 1fr 1fr;
     gap: 64px;
@@ -447,9 +498,11 @@ h2 {
 .join-terminal {
   display: grid;
   grid-template-columns: 1fr;
+
   @media (min-width: 400px) {
     grid-template-columns: 120px 1fr;
   }
+
   gap: 8px;
 }
 
@@ -532,50 +585,92 @@ h2 {
   animation: pulse 3s infinite;
 }
 
-.player-name {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  justify-content: center;
-  align-items: flex-start;
-  text-transform: uppercase;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  .info-text {
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: none;
-    opacity: 0.7;
-  }
-}
+
+/* =========================================================
+   HOST / JOIN TOGGLE
+   ========================================================= */
 
 .role-toggle {
+  position: relative;
   display: flex;
+
   background: #111;
   border: 2px solid var(--border-color);
   border-radius: 4px;
+
   margin-bottom: 16px;
-  overflow: hidden;
   padding: 3px;
   gap: 3px;
+
+  overflow: hidden;
+}
+
+/*
+ * Sliding selection indicator.
+ *
+ * The indicator stays dark and neutral so the toggle doesn't
+ * compete with the primary CTA.
+ */
+.role-toggle::before {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+
+  width: calc(50% - 4.5px);
+
+  background: #29282d;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s ease;
+}
+
+/*
+ * Move the indicator to JOIN.
+ */
+.role-toggle.role-join::before {
+  transform: translateX(calc(100% + 3px));
 }
 
 .role-toggle button {
+  position: relative;
+  z-index: 1;
+
   flex: 1;
+
   text-align: center;
+
   padding: 10px 0;
+
   background: transparent;
   border: none;
   border-radius: 2px;
-  color: rgba(255, 255, 255, 0.4);
+
+  color: rgba(255, 255, 255, 0.38);
+
   font-size: 14px;
   font-family: inherit;
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition:
+    color 0.2s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .role-toggle button:hover {
@@ -583,11 +678,17 @@ h2 {
 }
 
 .role-toggle button.active {
-  background: var(--primary);
-  color: #000;
-  font-size: 16px;
-  box-shadow: none;
-  transform: none;
+  color: #fff;
+  transform: scale(1.03);
+}
+
+.role-toggle button:active {
+  transform: scale(0.97);
+}
+
+.role-toggle button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 
 .back-btn-wrapper {
@@ -600,6 +701,7 @@ h2 {
   color: var(--primary);
   margin-bottom: 64px;
   text-align: left;
+
   @media (min-width: 1024px) {
     text-align: center;
   }
@@ -611,6 +713,7 @@ h2 {
   font-size: 32px;
   margin-bottom: 4px;
   text-align: left;
+
   @media (min-width: 1024px) {
     text-align: center;
   }
