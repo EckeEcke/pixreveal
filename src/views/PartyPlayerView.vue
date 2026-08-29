@@ -95,7 +95,9 @@
       </Transition>
     </div>
 
-    <div class="powerup-btns">
+    <p v-if="partyStore.powerupInventory.length <= 0" class="no-powerups">No Powerups</p>
+
+    <TransitionGroup v-else name="powerup" tag="div" class="powerup-btns">
       <button
         v-for="type in partyStore.powerupInventory"
         :key="type"
@@ -107,8 +109,7 @@
         <span class="powerup-icon">{{ POWERUP_ICON[type] }}</span>
         <span class="powerup-label">{{ POWERUP_LABEL[type] }}</span>
       </button>
-      <p v-if="partyStore.powerupInventory.length <= 0" class="no-powerups">No Powerups</p>
-    </div>
+    </TransitionGroup>
 
     <div class="emoji-btns">
       <button
@@ -670,14 +671,11 @@ onMounted(() => {
 }
 
 .powerup-btns {
+  position: relative;
   display: flex;
   gap: 16px;
   min-height: 44px;
   margin: 32px auto;
-  button {
-    animation: powerupPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    text-shadow: 2px 2px 4px black;
-  }
 }
 
 .powerup-btns button {
@@ -689,6 +687,7 @@ onMounted(() => {
   gap: 16px;
   width: 88px;
   height: 88px;
+  text-shadow: 2px 2px 4px black;
 }
 
 .powerup-icon {
@@ -701,6 +700,27 @@ onMounted(() => {
   font-weight: 900;
   letter-spacing: 0.5px;
   line-height: 1;
+}
+
+/* ─── Powerup Enter/Leave/Move Transitions ─────────────────────────────── */
+
+.powerup-enter-active {
+  animation: powerupPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.powerup-leave-active {
+  position: absolute;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.powerup-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.powerup-move {
+  transition: transform 0.25s ease;
+  transition-delay: 0.3s;
 }
 
 .lightsout-btn {
@@ -925,6 +945,10 @@ onMounted(() => {
 
 .no-powerups {
   opacity: 0.7;
+  height: 88px;
+  margin: 32px;
+  display: flex;
+  align-items: center;
 }
 
 .fade-enter-active,
