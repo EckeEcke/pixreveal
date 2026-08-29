@@ -104,7 +104,8 @@
         :disabled="isPowerupTypeDisabled(type)"
         @click="triggerFromInventory(type)"
       >
-        {{ POWERUP_ICON[type] }}
+        <span class="powerup-icon">{{ POWERUP_ICON[type] }}</span>
+        <span class="powerup-label">{{ POWERUP_LABEL[type] }}</span>
       </button>
       <p v-if="partyStore.powerupInventory.length <= 0" class="no-powerups">No Powerups</p>
     </div>
@@ -412,36 +413,45 @@ const handleTimeoutAnswer = () => {
 // ─── Powerup inventory (random award system) ─────────────────────────────────
 
 const POWERUP_ICON = {
-  lightsOut: "🔦",
+  darken: "🔦",
   freeze: "❄️",
   xlz: "🔀",
   devil: "😈",
-  upsideDown: "🙃",
+  rotate: "🙃",
   fart: "💨",
 };
 
+const POWERUP_LABEL = {
+  darken: "DARKEN",
+  freeze: "FREEZE",
+  xlz: "MIX UP",
+  devil: "DEVIL",
+  rotate: "ROTATE",
+  fart: "FART",
+};
+
 const POWERUP_BTN_CLASS = {
-  lightsOut: "lightsout-btn",
+  darken: "lightsout-btn",
   freeze: "freeze-btn",
   xlz: "xlz-btn",
   devil: "devil-btn",
-  upsideDown: "upsidedown-btn",
+  rotate: "upsidedown-btn",
   fart: "fart-btn",
 };
 
 const isPowerupTypeDisabled = (type) => {
   if (partyStore.isFrozen || partyStore.connectionStale) return true;
   switch (type) {
-    case "lightsOut":
-      return partyStore.isLightsOut;
+    case "darken":
+      return partyStore.isDarken;
     case "freeze":
       return false; // partyStore.freezeUsedByMe;
     case "xlz":
       return false;
     case "devil":
       return false; // partyStore.isDevilActive;
-    case "upsideDown":
-      return partyStore.isUpsideDown;
+    case "rotate":
+      return partyStore.isRotate;
     case "fart":
       return false; //partyStore.isFartActive;
     default:
@@ -453,8 +463,8 @@ const triggerFromInventory = (type) => {
   console.log(type)
   if (isPowerupTypeDisabled(type)) return;
   switch (type) {
-    case "lightsOut":
-      partyStore.triggerLightsOut();
+    case "darken":
+      partyStore.triggerDarken();
       break;
     case "freeze":
       partyStore.triggerFreeze();
@@ -465,8 +475,8 @@ const triggerFromInventory = (type) => {
     case "devil":
       partyStore.triggerDevil();
       break;
-    case "upsideDown":
-      partyStore.triggerUpsideDown();
+    case "rotate":
+      partyStore.triggerRotate();
       break;
     case "fart":
       partyStore.triggerFart();
@@ -671,8 +681,26 @@ onMounted(() => {
 }
 
 .powerup-btns button {
-  font-size: 32px;
   padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 88px;
+  height: 88px;
+}
+
+.powerup-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.powerup-label {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .lightsout-btn {

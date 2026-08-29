@@ -171,9 +171,9 @@ export const usePartyStore = defineStore("party", () => {
     activePlayerId: activePlayerId.value,
     answerDeadlineAt: answerDeadlineAt.value,
     buzzTransitionPending: buzzTransitionPending.value,
-    lightsOutUntilAt: powerups.lightsOutUntilAt?.value ?? null,
-    lightsOutByPlayerId: powerups.lightsOutByPlayerId?.value ?? null,
-    lightsOutUsedBy: powerups.lightsOutUsedBy?.value ?? {},
+    darkenUntilAt: powerups.darkenUntilAt?.value ?? null,
+    darkenByPlayerId: powerups.darkenByPlayerId?.value ?? null,
+    darkenUsedBy: powerups.darkenUsedBy?.value ?? {},
     xlzCharges: powerups.xlzCharges?.value ?? 0,
     xlzByPlayerId: powerups.xlzByPlayerId?.value ?? null,
     xlzUsedBy: powerups.xlzUsedBy?.value ?? {},
@@ -183,9 +183,9 @@ export const usePartyStore = defineStore("party", () => {
     freezeUntilAt: powerups.freezeUntilAt?.value ?? null,
     freezeByPlayerId: powerups.freezeByPlayerId?.value ?? null,
     freezeUsedBy: powerups.freezeUsedBy?.value ?? {},
-    upsideDownUntilAt: powerups.upsideDownUntilAt?.value ?? null,
-    upsideDownByPlayerId: powerups.upsideDownByPlayerId?.value ?? null,
-    upsideDownUsedBy: powerups.upsideDownUsedBy?.value ?? {},
+    rotateUntilAt: powerups.rotateUntilAt?.value ?? null,
+    rotateByPlayerId: powerups.rotateByPlayerId?.value ?? null,
+    rotateUsedBy: powerups.rotateUsedBy?.value ?? {},
     fartCharges: powerups.fartCharges?.value ?? 0,
     fartByPlayerId: powerups.fartByPlayerId?.value ?? null,
     fartUsedBy: powerups.fartUsedBy?.value ?? {},
@@ -754,26 +754,26 @@ export const usePartyStore = defineStore("party", () => {
             ? state.answerDeadlineAt
             : null
 
-        // Lights Out sync
-        if (typeof state.lightsOutUntilAt === "number") {
+        // Darken sync
+        if (typeof state.darkenUntilAt === "number") {
           const byId =
-            typeof state.lightsOutByPlayerId === "string"
-              ? state.lightsOutByPlayerId
+            typeof state.darkenByPlayerId === "string"
+              ? state.darkenByPlayerId
               : null
-          if (state.lightsOutUntilAt > Date.now()) {
-            powerups.setLightsOutUntil(state.lightsOutUntilAt, byId)
+          if (state.darkenUntilAt > Date.now()) {
+            powerups.setDarkenUntil(state.darkenUntilAt, byId)
           } else {
-            powerups.clearLightsOut()
+            powerups.clearDarken()
           }
-        } else if (state.lightsOutUntilAt === null) {
-          powerups.clearLightsOut()
+        } else if (state.darkenUntilAt === null) {
+          powerups.clearDarken()
         }
         if (
-          state.lightsOutUsedBy &&
-          typeof state.lightsOutUsedBy === "object" &&
-          powerups.lightsOutUsedBy
+          state.darkenUsedBy &&
+          typeof state.darkenUsedBy === "object" &&
+          powerups.darkenUsedBy
         ) {
-          powerups.lightsOutUsedBy.value = state.lightsOutUsedBy
+          powerups.darkenUsedBy.value = state.darkenUsedBy
         }
 
         // XLZ sync
@@ -832,26 +832,26 @@ export const usePartyStore = defineStore("party", () => {
           powerups.devilUsedBy.value = state.devilUsedBy
         }
 
-        // Upside Down sync
-        if (typeof state.upsideDownUntilAt === "number") {
+        // Rotate sync
+        if (typeof state.rotateUntilAt === "number") {
           const byId =
-            typeof state.upsideDownByPlayerId === "string"
-              ? state.upsideDownByPlayerId
+            typeof state.rotateByPlayerId === "string"
+              ? state.rotateByPlayerId
               : null
-          if (state.upsideDownUntilAt > Date.now()) {
-            powerups.setUpsideDownUntil?.(state.upsideDownUntilAt, byId)
+          if (state.rotateUntilAt > Date.now()) {
+            powerups.setRotateUntil?.(state.rotateUntilAt, byId)
           } else {
-            powerups.clearUpsideDown?.()
+            powerups.clearRotate?.()
           }
-        } else if (state.upsideDownUntilAt === null) {
-          powerups.clearUpsideDown?.()
+        } else if (state.rotateUntilAt === null) {
+          powerups.clearRotate?.()
         }
         if (
-          state.upsideDownUsedBy &&
-          typeof state.upsideDownUsedBy === "object" &&
-          powerups.upsideDownUsedBy
+          state.rotateUsedBy &&
+          typeof state.rotateUsedBy === "object" &&
+          powerups.rotateUsedBy
         ) {
-          powerups.upsideDownUsedBy.value = state.upsideDownUsedBy
+          powerups.rotateUsedBy.value = state.rotateUsedBy
         }
 
         // Fart sync
@@ -1030,7 +1030,7 @@ export const usePartyStore = defineStore("party", () => {
       bindEvent(
         "client-party-lightsout-request",
         (data?: { playerId?: string }) => {
-          powerups.handleLightsOutRequest?.(data)
+          powerups.handleDarkenRequest?.(data)
         }
       )
 
@@ -1076,7 +1076,7 @@ export const usePartyStore = defineStore("party", () => {
       bindEvent(
         "client-party-upsidedown-request",
         (data?: { playerId?: string }) => {
-          powerups.handleUpsideDownRequest?.(data)
+          powerups.handleRotateRequest?.(data)
         }
       )
 
@@ -1148,12 +1148,12 @@ export const usePartyStore = defineStore("party", () => {
     playerLastSeen: heartbeat.playerLastSeen,
 
     // Powerups
-    isLightsOut: powerups.isLightsOut,
-    lightsOutUntilAt: powerups.lightsOutUntilAt,
-    lightsOutByPlayerId: powerups.lightsOutByPlayerId,
-    lightsOutUsedBy: powerups.lightsOutUsedBy,
-    lightsOutUsedByMe: powerups.lightsOutUsedByMe,
-    triggerLightsOut: powerups.triggerLightsOut,
+    isDarken: powerups.isDarken,
+    darkenUntilAt: powerups.darkenUntilAt,
+    darkenByPlayerId: powerups.darkenByPlayerId,
+    darkenUsedBy: powerups.darkenUsedBy,
+    darkenUsedByMe: powerups.darkenUsedByMe,
+    triggerDarken: powerups.triggerDarken,
     xlzCharge: powerups.xlzCharges,
     xlzByPlayerId: powerups.xlzByPlayerId,
     xlzUsedBy: powerups.xlzUsedBy,
@@ -1170,13 +1170,13 @@ export const usePartyStore = defineStore("party", () => {
     fartCharges: powerups.fartCharges,
     triggerFart: powerups.triggerFart,
 
-    // Upside Down
-    isUpsideDown: powerups.isUpsideDown,
-    upsideDownUntilAt: powerups.upsideDownUntilAt,
-    upsideDownByPlayerId: powerups.upsideDownByPlayerId,
-    upsideDownUsedBy: powerups.upsideDownUsedBy,
-    upsideDownUsedByMe: powerups.upsideDownUsedByMe,
-    triggerUpsideDown: powerups.triggerUpsideDown,
+    // Rotate
+    isRotate: powerups.isRotate,
+    rotateUntilAt: powerups.rotateUntilAt,
+    rotateByPlayerId: powerups.rotateByPlayerId,
+    rotateUsedBy: powerups.rotateUsedBy,
+    rotateUsedByMe: powerups.rotateUsedByMe,
+    triggerRotate: powerups.triggerRotate,
 
     // Devil
     isDevilActive: powerups.isDevilActive,

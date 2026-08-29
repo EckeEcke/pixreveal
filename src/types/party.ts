@@ -35,9 +35,9 @@ export type PartyStatePayload = {
   buzzerState: BuzzerState;
   activePlayerId: string | null;
   answerDeadlineAt: number | null;
-  lightsOutUntilAt?: number | null;
-  lightsOutByPlayerId?: string | null;
-  lightsOutUsedBy?: Record<string, boolean>;
+  darkenUntilAt?: number | null;
+  darkenByPlayerId?: string | null;
+  darkenUsedBy?: Record<string, boolean>;
   xlzCharges?: number;
   xlzByPlayerId?: string | null;
   xlzUsedBy?: Record<string, boolean>;
@@ -47,9 +47,9 @@ export type PartyStatePayload = {
   freezeUntilAt?: number | null;
   freezeByPlayerId?: string | null;
   freezeUsedBy?: Record<string, boolean>;
-  upsideDownUntilAt?: number | null;
-  upsideDownByPlayerId?: string | null;
-  upsideDownUsedBy?: Record<string, boolean>;
+  rotateUntilAt?: number | null;
+  rotateByPlayerId?: string | null;
+  rotateUsedBy?: Record<string, boolean>;
   fartCharges?: number;
   fartByPlayerId?: string | null;
   fartUsedBy?: Record<string, boolean>;

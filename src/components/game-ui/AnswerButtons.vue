@@ -270,7 +270,7 @@ onUnmounted(() => {
   .answer-btn:not(:disabled):hover {
     background: var(--btn-color);
     color: black;
-    animation: 2s floating ease-in-out infinite;
+    transform: translateY(-4px);
   }
 
   .answer-btn:not(:disabled):hover ~ .key-hint {
@@ -323,7 +323,7 @@ onUnmounted(() => {
 .answer-btn.is-devil {
   border-color: #ff0000;
   color: #ff0000;
-  background: #ff0000;
+  background: #ff0000!important;
   box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
 }
 

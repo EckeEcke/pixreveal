@@ -15,11 +15,11 @@ export interface UsePowerupsOptions {
 }
 
 const POWERUP_TYPES = [
-  "lightsOut",
+  "darken",
   "freeze",
   "xlz",
   "devil",
-  "upsideDown",
+  "rotate",
   "fart",
 ] as const
 export type PowerupType = (typeof POWERUP_TYPES)[number]
@@ -36,53 +36,53 @@ export function usePowerups({
 }: UsePowerupsOptions) {
 
   const soundStore = useSoundStore()
-  // ── Lights Out ──────────────────────────────────────────────────────────────
+  // ── Darken ──────────────────────────────────────────────────────────────
 
-  const isLightsOut = ref(false)
-  const lightsOutUntilAt = ref<number | null>(null)
-  const lightsOutByPlayerId = ref<string | null>(null)
-  const lightsOutUsedBy = ref<Record<string, boolean>>({})
-  let lightsOutTimeoutId: number | null = null
+  const isDarken = ref(false)
+  const darkenUntilAt = ref<number | null>(null)
+  const darkenByPlayerId = ref<string | null>(null)
+  const darkenUsedBy = ref<Record<string, boolean>>({})
+  let darkenTimeoutId: number | null = null
 
-  const lightsOutUsedByMe = computed(() => {
+  const darkenUsedByMe = computed(() => {
     const me = getPlayerId()
-    return me ? Boolean(lightsOutUsedBy.value[me]) : false
+    return me ? Boolean(darkenUsedBy.value[me]) : false
   })
 
-  const clearLightsOutTimeout = () => {
-    if (!lightsOutTimeoutId) return
-    workerClearTimeout(lightsOutTimeoutId)
-    lightsOutTimeoutId = null
+  const clearDarkenTimeout = () => {
+    if (!darkenTimeoutId) return
+    workerClearTimeout(darkenTimeoutId)
+    darkenTimeoutId = null
   }
 
-  const setLightsOutUntil = (untilAt: number, byPlayerId: string | null) => {
+  const setDarkenUntil = (untilAt: number, byPlayerId: string | null) => {
     const normalizedUntilAt = Math.max(Date.now(), untilAt)
-    isLightsOut.value = true
-    lightsOutUntilAt.value = normalizedUntilAt
-    lightsOutByPlayerId.value = byPlayerId
+    isDarken.value = true
+    darkenUntilAt.value = normalizedUntilAt
+    darkenByPlayerId.value = byPlayerId
 
-    clearLightsOutTimeout()
+    clearDarkenTimeout()
     const delay = Math.max(0, normalizedUntilAt - Date.now())
-    lightsOutTimeoutId = workerSetTimeout(() => {
-      lightsOutTimeoutId = null
-      if (lightsOutUntilAt.value !== normalizedUntilAt) return
-      isLightsOut.value = false
-      lightsOutUntilAt.value = null
-      lightsOutByPlayerId.value = null
+    darkenTimeoutId = workerSetTimeout(() => {
+      darkenTimeoutId = null
+      if (darkenUntilAt.value !== normalizedUntilAt) return
+      isDarken.value = false
+      darkenUntilAt.value = null
+      darkenByPlayerId.value = null
     }, delay)
   }
 
-  const clearLightsOut = () => {
-    clearLightsOutTimeout()
-    isLightsOut.value = false
-    lightsOutUntilAt.value = null
-    lightsOutByPlayerId.value = null
+  const clearDarken = () => {
+    clearDarkenTimeout()
+    isDarken.value = false
+    darkenUntilAt.value = null
+    darkenByPlayerId.value = null
   }
 
-  const triggerLightsOut = () => {
+  const triggerDarken = () => {
     const channel = getChannel()
     if (!channel) return
-    if (isLightsOut.value) return
+    if (isDarken.value) return
 
     if (!getIsHost()) {
       channel.trigger("client-party-lightsout-request", {
@@ -93,24 +93,24 @@ export function usePowerups({
     }
 
     const hostId = String(getPlayerId() || "host")
-    lightsOutUsedBy.value = { ...lightsOutUsedBy.value, [hostId]: true }
+    darkenUsedBy.value = { ...darkenUsedBy.value, [hostId]: true }
     const untilAt = Date.now() + 4000
-    setLightsOutUntil(untilAt, hostId)
+    setDarkenUntil(untilAt, hostId)
     channel.trigger("client-party-lightsout", { untilAt, byPlayerId: hostId })
     onBroadcastPartyState("lightsout")
   }
 
-  const handleLightsOutRequest = (data?: { playerId?: string }) => {
+  const handleDarkenRequest = (data?: { playerId?: string }) => {
     if (!getIsHost()) return
     const playerId = data?.playerId
     if (!playerId) return
     if (!getOnlineGameRunning()) return
-    if (isLightsOut.value) return
+    if (isDarken.value) return
 
-    lightsOutUsedBy.value = { ...lightsOutUsedBy.value, [playerId]: true }
+    darkenUsedBy.value = { ...darkenUsedBy.value, [playerId]: true }
     onIncrementPowerupsUsed(playerId)
     const untilAt = Date.now() + 4000
-    setLightsOutUntil(untilAt, playerId)
+    setDarkenUntil(untilAt, playerId)
     getChannel()?.trigger("client-party-lightsout", {
       untilAt,
       byPlayerId: playerId,
@@ -334,53 +334,53 @@ export function usePowerups({
     onBroadcastPartyState("freeze")
   }
 
-  // ── Upside Down ──────────────────────────────────────────────────────────────
+  // ── Rotate ──────────────────────────────────────────────────────────────
 
-  const isUpsideDown = ref(false)
-  const upsideDownUntilAt = ref<number | null>(null)
-  const upsideDownByPlayerId = ref<string | null>(null)
-  const upsideDownUsedBy = ref<Record<string, boolean>>({})
-  let upsideDownTimeoutId: number | null = null
+  const isRotate = ref(false)
+  const rotateUntilAt = ref<number | null>(null)
+  const rotateByPlayerId = ref<string | null>(null)
+  const rotateUsedBy = ref<Record<string, boolean>>({})
+  let rotateTimeoutId: number | null = null
 
-  const upsideDownUsedByMe = computed(() => {
+  const rotateUsedByMe = computed(() => {
     const me = getPlayerId()
-    return me ? Boolean(upsideDownUsedBy.value[me]) : false
+    return me ? Boolean(rotateUsedBy.value[me]) : false
   })
 
-  const clearUpsideDownTimeout = () => {
-    if (!upsideDownTimeoutId) return
-    workerClearTimeout(upsideDownTimeoutId)
-    upsideDownTimeoutId = null
+  const clearRotateTimeout = () => {
+    if (!rotateTimeoutId) return
+    workerClearTimeout(rotateTimeoutId)
+    rotateTimeoutId = null
   }
 
-  const setUpsideDownUntil = (untilAt: number, byPlayerId: string | null) => {
+  const setRotateUntil = (untilAt: number, byPlayerId: string | null) => {
     const normalizedUntilAt = Math.max(Date.now(), untilAt)
-    isUpsideDown.value = true
-    upsideDownUntilAt.value = normalizedUntilAt
-    upsideDownByPlayerId.value = byPlayerId
+    isRotate.value = true
+    rotateUntilAt.value = normalizedUntilAt
+    rotateByPlayerId.value = byPlayerId
 
-    clearUpsideDownTimeout()
+    clearRotateTimeout()
     const delay = Math.max(0, normalizedUntilAt - Date.now())
-    upsideDownTimeoutId = workerSetTimeout(() => {
-      upsideDownTimeoutId = null
-      if (upsideDownUntilAt.value !== normalizedUntilAt) return
-      isUpsideDown.value = false
-      upsideDownUntilAt.value = null
-      upsideDownByPlayerId.value = null
+    rotateTimeoutId = workerSetTimeout(() => {
+      rotateTimeoutId = null
+      if (rotateUntilAt.value !== normalizedUntilAt) return
+      isRotate.value = false
+      rotateUntilAt.value = null
+      rotateByPlayerId.value = null
     }, delay)
   }
 
-  const clearUpsideDown = () => {
-    clearUpsideDownTimeout()
-    isUpsideDown.value = false
-    upsideDownUntilAt.value = null
-    upsideDownByPlayerId.value = null
+  const clearRotate = () => {
+    clearRotateTimeout()
+    isRotate.value = false
+    rotateUntilAt.value = null
+    rotateByPlayerId.value = null
   }
 
-  const triggerUpsideDown = () => {
+  const triggerRotate = () => {
     const channel = getChannel()
     if (!channel) return
-    if (isUpsideDown.value) return
+    if (isRotate.value) return
 
     if (!getIsHost()) {
       channel.trigger("client-party-upsidedown-request", {
@@ -391,9 +391,9 @@ export function usePowerups({
     }
 
     const hostId = String(getPlayerId() || "host")
-    upsideDownUsedBy.value = { ...upsideDownUsedBy.value, [hostId]: true }
+    rotateUsedBy.value = { ...rotateUsedBy.value, [hostId]: true }
     const untilAt = Date.now() + 5000
-    setUpsideDownUntil(untilAt, hostId)
+    setRotateUntil(untilAt, hostId)
     channel.trigger("client-party-upsidedown", {
       untilAt,
       byPlayerId: hostId,
@@ -401,17 +401,17 @@ export function usePowerups({
     onBroadcastPartyState("upsidedown")
   }
 
-  const handleUpsideDownRequest = (data?: { playerId?: string }) => {
+  const handleRotateRequest = (data?: { playerId?: string }) => {
     if (!getIsHost()) return
     const playerId = data?.playerId
     if (!playerId) return
     if (!getOnlineGameRunning()) return
-    if (isUpsideDown.value) return
+    if (isRotate.value) return
 
-    upsideDownUsedBy.value = { ...upsideDownUsedBy.value, [playerId]: true }
+    rotateUsedBy.value = { ...rotateUsedBy.value, [playerId]: true }
     onIncrementPowerupsUsed(playerId)
     const untilAt = Date.now() + 5000
-    setUpsideDownUntil(untilAt, playerId)
+    setRotateUntil(untilAt, playerId)
     getChannel()?.trigger("client-party-upsidedown", {
       untilAt,
       byPlayerId: playerId,
@@ -535,8 +535,8 @@ export function usePowerups({
   // ── Reset ────────────────────────────────────────────────────────────────────
 
   const reset = () => {
-    clearLightsOut()
-    lightsOutUsedBy.value = {}
+    clearDarken()
+    darkenUsedBy.value = {}
 
     clearXlz()
     xlzUsedBy.value = {}
@@ -547,8 +547,8 @@ export function usePowerups({
     clearFreeze()
     freezeUsedBy.value = {}
 
-    clearUpsideDown()
-    upsideDownUsedBy.value = {}
+    clearRotate()
+    rotateUsedBy.value = {}
 
     clearFart()
     fartUsedBy.value = {}
@@ -557,16 +557,16 @@ export function usePowerups({
   }
 
   return {
-    // Lights Out
-    isLightsOut,
-    lightsOutUntilAt,
-    lightsOutByPlayerId,
-    lightsOutUsedBy,
-    lightsOutUsedByMe,
-    setLightsOutUntil,
-    clearLightsOut,
-    triggerLightsOut,
-    handleLightsOutRequest,
+    // Darken
+    isDarken,
+    darkenUntilAt,
+    darkenByPlayerId,
+    darkenUsedBy,
+    darkenUsedByMe,
+    setDarkenUntil,
+    clearDarken,
+    triggerDarken,
+    handleDarkenRequest,
 
     // XLZ
     xlzCharges,
@@ -601,16 +601,16 @@ export function usePowerups({
     triggerFreeze,
     handleFreezeRequest,
 
-    // Upside Down
-    isUpsideDown,
-    upsideDownUntilAt,
-    upsideDownByPlayerId,
-    upsideDownUsedBy,
-    upsideDownUsedByMe,
-    setUpsideDownUntil,
-    clearUpsideDown,
-    triggerUpsideDown,
-    handleUpsideDownRequest,
+    // Rotate
+    isRotate,
+    rotateUntilAt,
+    rotateByPlayerId,
+    rotateUsedBy,
+    rotateUsedByMe,
+    setRotateUntil,
+    clearRotate,
+    triggerRotate,
+    handleRotateRequest,
 
     // Fart
     fartCharges,

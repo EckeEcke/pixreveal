@@ -102,15 +102,15 @@
             IS A <span class="red-text">SABOTEUR</span>! 💣
           </template>
 
-          <template v-else-if="currentActiveMessage.type === 'lightsOut'">
-            {{ lightsOutMessageBefore }}
+          <template v-else-if="currentActiveMessage.type === 'darken'">
+            {{ darkenMessageBefore }}
             <span class="player-highlight">
               <InlineAvatar
-                v-if="lightsOutAvatarIndex !== null"
-                :avatarIndex="lightsOutAvatarIndex"
-              />{{ lightsOutActorNameUpper }}
+                v-if="darkenAvatarIndex !== null"
+                :avatarIndex="darkenAvatarIndex"
+              />{{ darkenActorNameUpper }}
             </span>
-            {{ lightsOutMessageAfter }}
+            {{ darkenMessageAfter }}
           </template>
 
           <template v-else-if="currentActiveMessage.type === 'freeze'">
@@ -239,9 +239,9 @@ const {
   freezeMessageBefore,
   freezeMessageAfter,
   freezeActorNameUpper,
-  lightsOutMessageBefore,
-  lightsOutMessageAfter,
-  lightsOutActorNameUpper,
+  darkenMessageBefore,
+  darkenMessageAfter,
+  darkenActorNameUpper,
 } = usePowerupEvents(partyStore)
 
 // Empty when nobody has buzzed yet, instead of a "Player" placeholder,
@@ -269,8 +269,8 @@ const freezeAvatarIndex = computed(() => {
   return p ? p.avatarIndex : null
 })
 
-const lightsOutAvatarIndex = computed(() => {
-  const id = partyStore.lightsOutByPlayerId ?? null
+const darkenAvatarIndex = computed(() => {
+  const id = partyStore.darkenByPlayerId ?? null
   if (!id) return null
 
   const p = partyStore.players.find((pl: any) => pl.playerId === id)
@@ -502,10 +502,10 @@ const currentActiveMessage = computed(() => {
     }
   }
 
-  if (partyStore.isLightsOut) {
+  if (partyStore.isDarken) {
     return {
-      type: "lightsOut",
-      key: "lightsOut",
+      type: "darken",
+      key: "darken",
       class: "powerup-text",
     }
   }
@@ -616,7 +616,7 @@ const messageColor = computed(() => {
     case "saboteur":
       return "var(--neon-social)"
     case "fart":
-    case "lightsOut":
+    case "darken":
     case "freeze":
       return "rgba(56, 189, 248, 1)"
     case "answering":

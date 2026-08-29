@@ -17,6 +17,11 @@
         </p>
       </div>
 
+      <div class="step-divider" aria-hidden="true">
+        <Icon icon="pixel:arrow-down-solid" class="arrow-down" />
+        <Icon icon="pixel:arrow-right-solid" class="arrow-right" />
+      </div>
+
       <!-- Step 2 -->
       <div class="step-card">
         <div class="video-container">
@@ -29,6 +34,11 @@
         <p>
           Hit the buzzer and select the correct answer before time runs out!
         </p>
+      </div>
+
+      <div class="step-divider" aria-hidden="true">
+        <Icon icon="pixel:arrow-down-solid" class="arrow-down" />
+        <Icon icon="pixel:arrow-right-solid" class="arrow-right" />
       </div>
 
       <!-- Step 3 -->
@@ -45,6 +55,10 @@
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { Icon } from "@iconify/vue"
+</script>
 
 <style scoped>
 .how-it-works {
@@ -64,15 +78,17 @@
 }
 
 .steps-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
 @media (min-width: 768px) {
   .steps-grid {
-    grid-template-columns: repeat(3, 1fr);
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
   }
 }
 
@@ -92,6 +108,39 @@
   transition:
     transform 0.2s ease,
     border-color 0.2s ease;
+  width: 100%;
+  max-width: 320px;
+}
+
+.step-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 24px;
+  margin: 4px 0;
+}
+
+.arrow-down {
+  display: block;
+}
+
+.arrow-right {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .step-divider {
+    margin: 0 4px;
+  }
+  
+  .arrow-down {
+    display: none;
+  }
+
+  .arrow-right {
+    display: block;
+  }
 }
 
 .video-container {

@@ -76,7 +76,7 @@
       <div class="canvas-effects" :style="canvasEffectsStyle">
         <PixelCanvas
           ref="pixelCanvasRef"
-          :class="{ dark: partyStore.isLightsOut, twisted: partyStore.isUpsideDown }"
+          :class="{ dark: partyStore.isDarken, twisted: partyStore.isRotate }"
           :pixel-array="pixelData"
           :resolution="resolution"
           :is-revealing="canvasIsRevealing"
@@ -249,17 +249,17 @@ watch(
   },
 );
 
-let lastLightsOutUntilAt: number | null = null;
+let lastDarkenUntilAt: number | null = null;
 watch(
-  () => partyStore.lightsOutUntilAt,
+  () => partyStore.darkenUntilAt,
   (untilAt) => {
     if (typeof untilAt !== "number") {
-      lastLightsOutUntilAt = null;
+      lastDarkenUntilAt = null;
       return;
     }
     if (untilAt <= Date.now()) return;
-    if (lastLightsOutUntilAt === untilAt) return;
-    lastLightsOutUntilAt = untilAt;
+    if (lastDarkenUntilAt === untilAt) return;
+    lastDarkenUntilAt = untilAt;
     soundStore.playSound("electricity");
   },
 );

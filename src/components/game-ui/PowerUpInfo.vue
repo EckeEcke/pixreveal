@@ -5,14 +5,14 @@
       <li class="item">
         <span class="emoji">&#x1F526;</span>
         <div>
-          <div class="name">Lights out</div>
+          <div class="name">Darken</div>
           <div class="desc">Darken the drawing</div>
         </div>
       </li>
       <li class="item">
         <span class="emoji">&#x1F500;</span>
         <div>
-          <div class="name">Scramble</div>
+          <div class="name">Mix up</div>
           <div class="desc">Mix up the letters of the answers</div>
         </div>
       </li>
@@ -33,7 +33,7 @@
       <li class="item">
         <span class="emoji">&#x1F643;</span>
         <div>
-          <div class="name">Upside down</div>
+          <div class="name">Rotate</div>
           <div class="desc">Turns the image upside down</div>
         </div>
       </li>

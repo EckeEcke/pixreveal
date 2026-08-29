@@ -128,7 +128,7 @@ const phoneControllerFaqs = [
   {
     question: "What do players do on their phones?",
     answer:
-      "Players use their phones to buzz, select answers, send emoji reactions, and activate powerups such as Devil, Scramble, Freeze, Lights Out, Upside Down, and Fart.",
+      "Players use their phones to buzz, select answers, send emoji reactions, and activate powerups such as Devil, Mix Up, Freeze, Darken, Rotate, and Fart.",
   },
   {
     question: "Is PixReveal similar to Jackbox?",

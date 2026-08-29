@@ -7,7 +7,7 @@ const freezeTemplates = [
   "CHILL OUT! [Player] triggered freeze.",
 ] as const;
 
-const lightsOutTemplates = [
+const darkenTemplates = [
   "WHAT?! I CAN'T SEE! Oh.. [Player] turned the lights off",
   "BLACKOUT! [Player] just killed the lights",
   "DID THE LIGHTS JUST GO OUT? [Player] did that",
@@ -64,46 +64,46 @@ export function usePowerupEvents(partyStore: any) {
     (findUsernameById(partyStore.freezeByPlayerId) || "HOST").toUpperCase(),
   );
 
-  // Lights Out Logik
-  const lightsOutTemplateIndex = ref(0);
-  const lightsOutTemplate = ref<string | null>(null);
-  let lastLightsOutUntilAt: number | null = null;
+  // Darken logic
+  const darkenTemplateIndex = ref(0);
+  const darkenTemplate = ref<string | null>(null);
+  let lastDarkenUntilAt: number | null = null;
 
   watch(
-    () => partyStore.lightsOutUntilAt as number | null | undefined,
+    () => partyStore.darkenUntilAt as number | null | undefined,
     (untilAt) => {
       if (
         typeof untilAt !== "number" ||
         untilAt <= Date.now() ||
-        lastLightsOutUntilAt === untilAt
+        lastDarkenUntilAt === untilAt
       ) {
-        if (typeof untilAt !== "number") lastLightsOutUntilAt = null;
+        if (typeof untilAt !== "number") lastDarkenUntilAt = null;
         return;
       }
-      lastLightsOutUntilAt = untilAt;
+      lastDarkenUntilAt = untilAt;
       const template =
-        lightsOutTemplates[
-          lightsOutTemplateIndex.value % lightsOutTemplates.length
-        ] ?? lightsOutTemplates[0];
-      lightsOutTemplateIndex.value =
-        (lightsOutTemplateIndex.value + 1) % lightsOutTemplates.length;
-      lightsOutTemplate.value = template;
+        darkenTemplates[
+          darkenTemplateIndex.value % darkenTemplates.length
+        ] ?? darkenTemplates[0];
+      darkenTemplateIndex.value =
+        (darkenTemplateIndex.value + 1) % darkenTemplates.length;
+      darkenTemplate.value = template;
     },
   );
 
-  const lightsOutMessageBefore = computed(
+  const darkenMessageBefore = computed(
     () =>
-      (lightsOutTemplate.value || lightsOutTemplates[0]).split("[Player]")[0] ||
+      (darkenTemplate.value || darkenTemplates[0]).split("[Player]")[0] ||
       "",
   );
-  const lightsOutMessageAfter = computed(
+  const darkenMessageAfter = computed(
     () =>
-      (lightsOutTemplate.value || lightsOutTemplates[0]).split("[Player]")[1] ||
+      (darkenTemplate.value || darkenTemplates[0]).split("[Player]")[1] ||
       "",
   );
-  const lightsOutActorNameUpper = computed(() =>
+  const darkenActorNameUpper = computed(() =>
     (
-      findUsernameById(partyStore.lightsOutByPlayerId || null) || "HOST"
+      findUsernameById(partyStore.darkenByPlayerId || null) || "HOST"
     ).toUpperCase(),
   );
 
@@ -112,8 +112,8 @@ export function usePowerupEvents(partyStore: any) {
     freezeMessageBefore,
     freezeMessageAfter,
     freezeActorNameUpper,
-    lightsOutMessageBefore,
-    lightsOutMessageAfter,
-    lightsOutActorNameUpper,
+    darkenMessageBefore,
+    darkenMessageAfter,
+    darkenActorNameUpper,
   };
 }
