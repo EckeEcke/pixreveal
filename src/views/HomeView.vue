@@ -287,10 +287,10 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
-  padding: 20px;
+  padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
 }
