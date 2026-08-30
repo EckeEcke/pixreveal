@@ -17,14 +17,16 @@
                 btn-text="GRAVITY"
                 sub-title="Pixels dropping in from the top in Tetris style"
                 btn-color="var(--neon-yellow)"
+                :feature-badges="['Bottom to Top', 'Left to Right']"
               />
               <SelectionTile
                 size="lg"
                 icon-name="pixel:search"
                 :btn-function="startInspect"
                 btn-text="INSPECT"
-                sub-title="Use your lens to spot the hidden art"
+                sub-title="Use your lens to spot the art in the dark"
                 btn-color="var(--neon-cyan)"
+                :feature-badges="['Control the Lens', 'Touch or Mouse']"
               />
               <SelectionTile
                 size="lg"
@@ -34,6 +36,7 @@
                 sub-title="Answer correctly to gain more time"
                 btn-color="var(--neon-error)"
                 :high-score="survivalStore.highscore"
+                :feature-badges="['Local Highscore', 'Time based']"
               />
               <SelectionTile
                 size="lg"
@@ -42,6 +45,7 @@
                 btn-text="CLASSIC REVEAL"
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
+                :feature-badges="['Random reveal', 'Default mode']"
               />
             </div>
           </div>

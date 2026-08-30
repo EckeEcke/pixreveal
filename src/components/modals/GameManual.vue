@@ -26,65 +26,71 @@
       <StepsComponent class="content-container" />
 
       <h3>The Game Modes</h3>
+      <div class="modes-grid">
+        <div>
+          <h4>Classic</h4>
+          <p>
+            Identify the drawing as it reveals one pixel at a time. Time = Points.
+            The more time is left on the timer, the more stars ⭐ you earn. The more
+            stars you earn the higher your final rank.
+          </p>
+        </div>
 
-      <h4>Classic</h4>
-      <p>
-        Identify the drawing as it reveals one pixel at a time. Time = Points.
-        The more time is left on the timer, the more stars ⭐ you earn. The more
-        stars you earn the higher your final rank.
-      </p>
+        <div>
+          <h4>Daily Challenge</h4>
+          <p>
+            Every day a new set of drawings is available for you to solve! All
+            players play the same set. Compete for the top rank on the global
+            leaderboard!
+          </p>
+        </div>
+      
+        <div>
+          <h4>Gravity</h4>
+          <p>
+            Similar to Classic, but with a twist. Pixels drop in Tetris style.
+            Otherwise the same gameplay: correct answer out of four options as fast
+            as possible to earn the most points.
+          </p>
+        </div>
 
-      <h4>Daily Challenge</h4>
-      <p>
-        Every day a new set of drawings is available for you to solve! All
-        players play the same set. Compete for the top rank on the global
-        leaderboard!
-      </p>
+        <div>
+          <h4>Survival</h4>
+          <p>
+            The ultimate <strong>highscore challenge</strong>. You start with 30
+            seconds. Every correct guess adds 3 seconds to the clock. How many
+            drawings can you solve before the time runs out?
+          </p>
+        </div>
 
-      <h4>Gravity</h4>
-      <p>
-        Similar to Classic, but with a twist. Pixels drop in Tetris style.
-        Otherwise the same gameplay: correct answer out of four options as fast
-        as possible to earn the most points.
-      </p>
-
-      <h4>Survival</h4>
-      <p>
-        The ultimate <strong>highscore challenge</strong>. You start with 30
-        seconds. Every correct guess adds 3 seconds to the clock. How many
-        drawings can you solve before the time runs out?
-      </p>
-
-      <h4>Inspect</h4>
-      <p>
-        The drawing is fully complete but shrouded in darkness. Use your
-        <strong>magnifying glass</strong>
-        (search lens) to inspect sections and uncover the hidden pixelart.
-      </p>
-
-      <h4>Stars & Percentiles</h4>
-      <p>
-        You earn stars ⭐ in every game mode based on how much time is left when
-        you answer correctly — the faster you are, the more stars you get. In
-        singleplayer, every mode except Survival also shows you a
-        <strong>percentile ranking</strong> at the end of the round: see how
-        your score compares to other players, e.g. "you were better than 80% of
-        players."
-      </p>
-
+        <div>
+          <h4>Inspect</h4>
+          <p>
+            The drawing is fully complete but shrouded in darkness. Use your
+            <strong>magnifying glass</strong>
+            (search lens) to inspect sections and uncover the hidden pixelart.
+          </p>
+        </div>
+      </div>
+    
       <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" class="content-container" />
 
       <h3>Multiplayer and user generated content</h3>
-      <p>
-        To play PixReveal in multiplayer, you need to host a game or join a
-        hosted game. For sharing a hosted game you have four options:
-      </p>
-      <ul>
-        <li>enter room id manually</li>
-        <li>copying an invite link</li>
-        <li>sharing a link via native share</li>
-        <li>scan the QR code (very helpful for Party Mode)</li>
-      </ul>
+      <div class="two-columns">
+        <div>
+          <p>
+            To play PixReveal in multiplayer, you need to host a game or join a
+            hosted game. For sharing a hosted game you have four options:
+          </p>
+        </div>
+        <ul>
+          <li>enter room id manually</li>
+          <li>copying an invite link</li>
+          <li>sharing a link via native share</li>
+          <li>scan the QR code (very helpful for Party Mode)</li>
+        </ul>
+      </div>
+
       <h4>Free Online Multiplayer</h4>
       <p>
         Play with others in the <strong>real-time multiplayer mode</strong>.
@@ -197,11 +203,6 @@ h1 {
   text-align: left;
 }
 
-h3,
-h4 {
-  margin-top: 32px;
-}
-
 a {
   color: var(--primary);
   font-weight: 700;
@@ -209,5 +210,23 @@ a {
 
 .content-container {
   margin: 32px auto;
+}
+
+.modes-grid {
+  display: grid;
+  gap: 16px;
+  row-gap: 0;
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.two-columns {
+  margin: 32px 0;
+  display: grid;
+  gap: 16px;
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 </style>

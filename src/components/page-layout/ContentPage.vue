@@ -55,6 +55,9 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  @media (min-width: 1024px) {
+    max-width: 1000px;
+  }
 }
 
 .content-wrapper {

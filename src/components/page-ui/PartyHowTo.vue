@@ -51,7 +51,7 @@ import PowerUpInfo from '../game-ui/PowerUpInfo.vue';
 
 <style scoped>
 .howto-list {
-  margin: 32px 0;
+  margin: 0;
   padding-left: 0;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 700;

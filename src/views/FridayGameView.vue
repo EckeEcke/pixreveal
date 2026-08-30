@@ -2,64 +2,71 @@
   <main class="page">
     <ContentPage>
       <h1>
-        <span class="pre-headline">FUN FRIDAY ONLINE TEAM GAMES FOR FREE</span>
-        <br />
+        <span class="pre-headline">FUN FRIDAY ONLINE TEAM GAMES FOR FREE</span> <br />
         PIXREVEAL: SAFE FOR WORK PICTURE REVEAL QUIZ FOR YOUR TEAM
       </h1>
-      
-      <img class="demo-image" src="/assets/images/image-officegame.webp" alt="group of colleagues playing PixReveal">
+      <div class="hero">
+        <img class="demo-image" src="/assets/images/image-officegame.webp" alt="group of colleagues playing PixReveal">
 
-      <p class="hero-desc">
-        Looking for <strong>fun games in the office on fridays</strong> that require
-        zero setup? PixReveal is a free, <strong>100% safe for work (SFW)</strong>
-        image reveal quiz your whole team can jump into instantly.
-      </p>
-      <p class="hero-desc">
-        No registration, no downloads, no login. Just invite your coworkers and see
-        who guesses the picture first.
-      </p>
-      <div class="cta-container">
-        <ButtonLinkPrimary link="/play-party?role=host">
-          HOST A TEAM GAME
-        </ButtonLinkPrimary>
+        <div>
+         <p class="hero-desc">
+          Looking for <strong>fun games in the office on fridays</strong> that require
+          zero setup? PixReveal is a free, <strong>100% safe for work (SFW)</strong>
+          image reveal quiz your whole team can jump into instantly.
+        </p>
+        <p class="hero-desc">
+          No registration, no downloads, no login. Just invite your coworkers and see
+          who guesses the picture first.
+        </p>
+        <div class="cta-container">
+          <ButtonLinkPrimary link="/play-party?role=host">
+            HOST A TEAM GAME
+          </ButtonLinkPrimary>
+        </div>
+        <div class="feature-badges">
+          <span class="badge">Up to 10 players</span> <span class="badge">100% SFW</span>
+          <span class="badge">No download</span> <span class="badge">No login</span>
+        </div>
+        </div>
       </div>
-      <div class="feature-badges">
-        <span class="badge">Up to 10 players</span> <span class="badge">100% SFW</span>
-        <span class="badge">No download</span> <span class="badge">No login</span>
-      </div>
-      <PartyHowTo />
 
-      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+      <div class="two-columns">
+        <PartyHowTo />
+        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+      </div>
 
       <PowerUpInfo class="powerups" />
-      <section class="seo-section">
-        <h2>Why PixReveal for your team?</h2>
-        <p class="party-desc">
-          PixReveal features handcrafted, family-friendly pixel art that reveals
-          itself piece by piece — anyone can understand the gameplay instantly, no
-          explanation needed. It supports up to 10 players, covering the group size
-          of an average agile team.
-        </p>
-        <p class="party-desc">
-          PixReveal supports both local party play on a shared screen with phones as
-          controllers, and online multiplayer for remote teams. Simply invite your
-          coworkers to join, follow the progressive reveal of the drawing, and see
-          who can guess the correct answer first!
-        </p>
-      </section>
-      <FAQComponent :items="officeFridayFaqs" />
+      <div class="two-columns">
+        <section class="seo-section">
+          <h2>Why PixReveal for your team?</h2>
+          <p class="party-desc">
+            PixReveal features handcrafted, family-friendly pixel art that reveals
+            itself piece by piece — anyone can understand the gameplay instantly, no
+            explanation needed. It supports up to 10 players, covering the group size
+            of an average agile team.
+          </p>
+          <p class="party-desc">
+            PixReveal supports both local party play on a shared screen with phones as
+            controllers, and online multiplayer for remote teams. Simply invite your
+            coworkers to join, follow the progressive reveal of the drawing, and see
+            who can guess the correct answer first!
+          </p>
+        </section>
+        <FAQComponent :items="officeFridayFaqs" />
+      </div>
+
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
   </main>
 </template>
 
 <script setup lang="ts">
-import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue"
-import ContentPage from "@/components/page-layout/ContentPage.vue"
-import PartyHowTo from "@/components/page-ui/PartyHowTo.vue"
+import ContentPage from "@/components/page-layout/ContentPage.vue";
+import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
-import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue"
-import FAQComponent from "@/components/page-ui/FAQComponent.vue"
+import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
+import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
+import FAQComponent from "@/components/page-ui/FAQComponent.vue";
 
 const officeFridayFaqs = [
   {
@@ -74,7 +81,7 @@ const officeFridayFaqs = [
     question: "Do team members need to create an account?",
     answer: "No. There is no registration, login, or account creation required for anyone. You can host rooms, join games, and play instantly directly in your browser."
   }
-]
+];
 </script>
 
 <style scoped>
@@ -83,55 +90,40 @@ h1 {
   text-align: left;
   line-height: 1.1;
 }
-
 .page {
   width: 100%;
   display: flex;
   justify-content: center;
   padding: 16px;
 }
-
 .pre-headline {
   font-size: 14px;
   color: var(--primary);
   letter-spacing: 0.08em;
 }
-
 .hero-desc {
-  margin: 18px 0;
+  margin: 0 0 16px;
   line-height: 1.5;
   font-size: 1.02rem;
 }
-
-.seo-section {
-  margin-top: 40px;
-}
-
 h2 {
-  margin-top: 0;
   margin-bottom: 20px;
 }
-
 .cta-container {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
   margin: 24px 0 16px;
-}
-
-@media (min-width: 576px) {
-  .cta-container {
+  @media (min-width: 576px) {
     grid-template-columns: 1fr 1fr;
   }
 }
-
 .feature-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   margin: 24px 0 32px;
 }
-
 .badge {
   padding: 8px 12px;
   border-radius: 999px;
@@ -140,12 +132,10 @@ h2 {
   font-size: 0.85rem;
   color: var(--white);
 }
-
 .party-desc {
-  margin: 18px 0;
+  margin: 16px 0;
   line-height: 1.6;
 }
-
 .link {
   display: block;
   text-align: center;
@@ -156,6 +146,18 @@ h2 {
 .demo-image {
   width: 100%;
   border-radius: 8px;
-  margin-top: 16px;
+}
+
+.hero, .two-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.two-columns {
+    margin: 32px 0;
 }
 </style>

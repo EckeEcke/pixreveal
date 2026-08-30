@@ -54,7 +54,7 @@
 }
 
 .title {
-  margin: 32px 0 24px;
+  margin: 0 0 24px;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
 }

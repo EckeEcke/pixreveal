@@ -5,57 +5,67 @@
         <span class="pre-headline">PIXEL GUESSING PARTY GAME</span> <br />
         FREE BROWSER MULTIPLAYER FOR 2–10 PLAYERS
       </h1>
+      <div class="hero">
+        <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
 
-      <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+        <div>
+         <p class="hero-desc">
+          PixReveal is a <strong>free Jackbox-style browser party game</strong> for game
+          nights, team events, and chaotic fun with friends.
+        </p>
+        <p class="hero-desc">
+          Host on a TV, join with your phones, buzz to answer, and sabotage your friends
+          with ridiculous powerups.
+        </p>
+        <div class="cta-container">
+          <ButtonLinkPrimary link="/play-party?role=host">
+            HOST A FREE GAME
+          </ButtonLinkPrimary>
+          <ButtonLinkSecondary link="/play-party?role=join">
+            JOIN WITH ROOM ID
+          </ButtonLinkSecondary>
+        </div>
+        <div class="feature-badges">
+          <span class="badge">2–10 players</span> <span class="badge">No download</span>
+          <span class="badge">No login</span> <span class="badge">Phone controllers</span>
+        </div>
+        </div>
+      </div>
 
-      <p class="hero-desc">
-        PixReveal is a <strong>free Jackbox-style browser party game</strong> for game
-        nights, team events, and chaotic fun with friends.
-      </p>
-      <p class="hero-desc">
-        Host on a TV, join with your phones, buzz to answer, and sabotage your friends
-        with ridiculous powerups.
-      </p>
-      <div class="cta-container">
-        <ButtonLinkPrimary link="/play-party?role=host">
-          HOST A FREE GAME
-        </ButtonLinkPrimary>
-        <ButtonLinkSecondary link="/play-party?role=join">
-          JOIN WITH ROOM ID
-        </ButtonLinkSecondary>
+      <div class="two-columns">
+        <PartyHowTo />
+        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
       </div>
-      <div class="feature-badges">
-        <span class="badge">2–10 players</span> <span class="badge">No download</span>
-        <span class="badge">No login</span> <span class="badge">Phone controllers</span>
-      </div>
-      <PartyHowTo />
-      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+
       <PowerUpInfo class="powerups" />
-      <section class="seo-section">
-        <h2>What is PixReveal?</h2>
-        <p class="party-desc">
-          PixReveal is a <strong>Jackbox-style browser party game</strong> where players
-          guess pixel art as it is revealed piece by piece. One player hosts the game on a
-          TV, laptop, or tablet, while everyone else joins instantly using a phone, QR
-          code, room ID, or invite link.
-        </p>
-        <p class="party-desc">
-          The game combines
-          <strong
-            >buzzing, bonus rounds, hidden powerups, local party mode, online multiplayer,
-            and daily challenges</strong
-          >. Because everything runs directly in the browser, there is no app to install
-          and no registration required.
-        </p>
-        <p class="party-desc">
-          If you are looking for a <strong>free Jackbox alternative</strong>, a
-          <strong>browser party game</strong>, a
-          <strong>phone controller party game</strong>, or a
-          <strong>multiplayer pixel quiz</strong>, PixReveal is designed to be playable
-          within seconds and 100% SFW (safe for work).
-        </p>
-      </section>
-      <FAQComponent :items="jackboxFaqs" />
+      <div class="two-columns">
+        <section class="seo-section">
+          <h2>What is PixReveal?</h2>
+          <p class="party-desc">
+            PixReveal is a <strong>Jackbox-style browser party game</strong> where players
+            guess pixel art as it is revealed piece by piece. One player hosts the game on a
+            TV, laptop, or tablet, while everyone else joins instantly using a phone, QR
+            code, room ID, or invite link.
+          </p>
+          <p class="party-desc">
+            The game combines
+            <strong
+              >buzzing, bonus rounds, hidden powerups, local party mode, online multiplayer,
+              and daily challenges</strong
+            >. Because everything runs directly in the browser, there is no app to install
+            and no registration required.
+          </p>
+          <p class="party-desc">
+            If you are looking for a <strong>free Jackbox alternative</strong>, a
+            <strong>browser party game</strong>, a
+            <strong>phone controller party game</strong>, or a
+            <strong>multiplayer pixel quiz</strong>, PixReveal is designed to be playable
+            within seconds and 100% SFW (safe for work).
+          </p>
+        </section>
+        <FAQComponent :items="jackboxFaqs" />
+      </div>
+      
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
   </main>
@@ -114,15 +124,11 @@ h1 {
   letter-spacing: 0.08em;
 }
 .hero-desc {
-  margin: 18px 0;
+  margin: 0 0 16px;
   line-height: 1.5;
   font-size: 1.02rem;
 }
-.seo-section {
-  margin-top: 40px;
-}
 h2 {
-  margin-top: 0;
   margin-bottom: 20px;
 }
 .cta-container {
@@ -137,7 +143,7 @@ h2 {
 .feature-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   margin: 24px 0 32px;
 }
 .badge {
@@ -149,7 +155,7 @@ h2 {
   color: var(--white);
 }
 .party-desc {
-  margin: 18px 0;
+  margin: 16px 0;
   line-height: 1.6;
 }
 .link {
@@ -162,6 +168,18 @@ h2 {
 .party-image {
   width: 100%;
   border-radius: 8px;
-  margin-top: 16px;
+}
+
+.hero, .two-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.two-columns {
+    margin: 32px 0;
 }
 </style>

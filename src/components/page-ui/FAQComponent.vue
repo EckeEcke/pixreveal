@@ -28,7 +28,6 @@ defineProps<{
 
 <style scoped>
 .faq-section {
-  margin-top: 48px;
   text-align: left;
 }
 
