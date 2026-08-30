@@ -72,7 +72,6 @@
                           </router-link>
             </div>
               </div>
-            <DailyWinner v-if="dailyStore.isYesterdayWinner" />
             <div class="trailer-bento">
             <div class="bento-card">
                         <TopPlayer />
@@ -129,7 +128,6 @@ import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
-import DailyWinner from "@/components/game-ui/DailyWinner.vue";
 import StepsComponent from "@/components/page-ui/StepsComponent.vue";
 import QuickLinks from "@/components/page-ui/QuickLinks.vue";
 import { useDailyStore } from "@/stores/daily";
