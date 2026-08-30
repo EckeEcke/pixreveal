@@ -36,6 +36,10 @@ const openSettings = () => {
   button {
     padding: 0;
   }
+  @media (min-width: 1024px) {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 button {
@@ -49,6 +53,9 @@ button {
   transition: all 0.3s;
   filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.7));
   padding-right: 0;
+  @media (min-width: 1024px) {
+    font-size: 44px;
+  }
 }
 
 .settings-btn:hover {

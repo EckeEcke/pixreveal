@@ -1,7 +1,7 @@
 <template>
   <button
     class="neon-btn"
-    :class="{ shiny: isShiny }"
+    :class="{ shiny: isShiny, 'neon-btn--lg': size === 'lg' }"
     :style="{ '--btn-color': btnColor }"
     @click="handleClick"
     @mouseenter="soundStore.handleHoverSound"
@@ -14,11 +14,20 @@
 
     <div class="btn-content">
       <Icon :icon="iconName || ''" class="btn-icon" />
-      <div class="text-wrapper">
-        <span class="btn-text">{{ btnText }}</span>
-        <span class="sub-title">{{ subTitle }}</span>
+      <div class="content-column">
+        <div class="text-wrapper">
+          <span class="btn-text">{{ btnText }}</span>
+          <span class="sub-title">{{ subTitle }}</span>
+        </div>
+
+        <div v-if="featureBadges && featureBadges.length" class="feature-badges">
+          <span v-for="(badge, index) in featureBadges" :key="index" class="feature-badge">
+            {{ badge }}
+          </span>
+        </div>
       </div>
     </div>
+
     <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
       ><Icon icon="pixel:users-solid" /> 2-10</span
     >
@@ -52,6 +61,8 @@ const props = defineProps<{
   highScore?: number;
   isNew?: boolean;
   cornerText?: string;
+  size?: "default" | "lg";
+  featureBadges?: string[];
 }>();
 
 const soundStore = useSoundStore();
@@ -160,6 +171,14 @@ const handleClick = (event: MouseEvent) => {
   padding: 8px;
   border: 1px solid var(--btn-color);
   border-radius: 25%;
+}
+
+.content-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .text-wrapper {
@@ -295,6 +314,82 @@ const handleClick = (event: MouseEvent) => {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+.feature-badges {
+  display: none;
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+  gap: 8px;
+  @media (min-width: 1024px) {
+    display: flex;
+  }
+}
+
+.feature-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 1;
+  color: #ffffffaa;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 5px 9px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .neon-btn--lg {
+    min-height: 220px;
+    padding: 32px 24px;
+    padding-left: calc(24px + var(--left-block-width));
+  }
+
+  .neon-btn--lg .btn-icon {
+    font-size: 48px;
+    padding: 12px;
+  }
+
+  .neon-btn--lg .btn-text {
+    font-size: 24px;
+  }
+
+  .neon-btn--lg .sub-title {
+    font-size: 16px;
+  }
+
+  .neon-btn--lg .background-icon {
+    font-size: 160px;
+  }
+
+  .neon-btn--lg .player-info {
+    font-size: 14px;
+    padding: 6px 10px;
+    top: 16px;
+    right: 16px;
+  }
+
+  .neon-btn--lg .corner-info {
+    font-size: 14px;
+    padding: 6px 10px;
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .neon-btn--lg .new-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .neon-btn--lg .content-column {
+    gap: 16px;
+  }
+
+  .neon-btn--lg .feature-badge {
+    font-size: 13px;
+    padding: 6px 12px;
   }
 }
 </style>

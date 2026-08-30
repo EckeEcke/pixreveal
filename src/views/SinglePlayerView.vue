@@ -11,6 +11,7 @@
           <div class="mode-section">
             <div class="mode-buttons">
               <SelectionTile
+                size="lg"
                 icon-name="pixelarticons:blocks"
                 :btn-function="startGravity"
                 btn-text="GRAVITY"
@@ -18,6 +19,7 @@
                 btn-color="var(--neon-yellow)"
               />
               <SelectionTile
+                size="lg"
                 icon-name="pixel:search"
                 :btn-function="startInspect"
                 btn-text="INSPECT"
@@ -25,6 +27,7 @@
                 btn-color="var(--neon-cyan)"
               />
               <SelectionTile
+                size="lg"
                 icon-name="pixel:hockey-mask-solid"
                 :btn-function="startSurvival"
                 btn-text="SURVIVAL"
@@ -33,6 +36,7 @@
                 :high-score="survivalStore.highscore"
               />
               <SelectionTile
+                size="lg"
                 icon-name="pixel:sparkles"
                 :btn-function="startClassic"
                 btn-text="CLASSIC REVEAL"
@@ -134,6 +138,9 @@ h2 {
   position: relative;
   width: 100%;
   max-width: 700px;
+  @media (min-width: 1024px) {
+    max-width: 1000px;
+  }
   h2 {
     color: var(--white);
   }

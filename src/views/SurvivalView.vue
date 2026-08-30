@@ -60,8 +60,8 @@ const wrapperRef = ref(null)
 
 const resizeGame = () => {
   if (!wrapperRef.value) return
-  const baseWidth = 1100
-  const baseHeight = 750
+  const baseWidth = 1200
+  const baseHeight = 800
 
   if (window.innerWidth < baseWidth || window.innerHeight < baseHeight) {
     wrapperRef.value.style.transform = "none"

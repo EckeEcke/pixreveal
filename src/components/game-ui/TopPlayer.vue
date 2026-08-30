@@ -1,36 +1,31 @@
 <template>
-  <div v-if="topRanking" class="top-player-card setup-card">
-    <div class="card-header">
-      <div class="top-player">
-        <h2 class="logo">TOP<span> PLAYER</span></h2>
-      </div>
-
-      <p>Current leader in today's daily challenge</p>
+  <div v-if="topRanking" class="top-player-block">
+    <div class="block-heading">
+      <Icon icon="pixel:star-solid" class="daily-icon" />
+      Daily Challenge leader
     </div>
 
-    <div class="player-wrapper">
-      <router-link to="/rankings-daily">
-        <TopPlayerDisplay
-          :name="topRanking.name"
-          :avatar-index="topRanking.avatarIndex"
-          :score="topRanking.score"
-        />
+    <div class="top-player-row">
+      <router-link to="/rankings-daily" class="row-link">
+        <div class="hud-avatar" :style="avatarStyle"></div>
+
+        <div class="row-info">
+          <span class="row-name">{{ topRanking.name }}</span>
+        </div>
+
+        <div class="row-divider"></div>
+
+        <div class="row-score">
+          <Icon icon="pixel:star-solid" class="star-icon" />
+          <span>{{ topRanking.score }}</span>
+        </div>
       </router-link>
+
+      <button class="row-cta" data-sfx="click" @click="startDaily">
+        <span>Beat them</span>
+        <Icon icon="pixel:arrow-right-solid" />
+      </button>
     </div>
-
-    <ButtonPrimary
-      v-if="!dailyStore.hasPlayedToday"
-      data-sfx="click"
-      class="btn-primary"
-      @clicked="startDaily"
-    >
-      <Icon icon="pixel:play-solid" />
-      Play Daily Challenge
-    </ButtonPrimary>
-
-    <DailyCountdown />
-
-    <Icon icon="pixel:star-solid" class="background-icon" />
   </div>
 </template>
 
@@ -38,17 +33,15 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
+import avatarSheet from "@/assets/avatars/avatars.webp";
+import type { CSSProperties } from "vue";
 import { useDailyStore } from "@/stores/daily";
 import { useGameStore } from "@/stores/game";
-import DailyCountdown from "../page-ui/DailyCountdown.vue";
 import { usePlayerStore } from "@/stores/player";
-import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
 
 const router = useRouter();
 const dailyStore = useDailyStore();
 const playerStore = usePlayerStore();
-
 const { prepareGame } = useGameStore();
 
 type DailyRanking = {
@@ -65,6 +58,20 @@ const topRanking = computed<DailyRanking | null>(() => {
   return [...list].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0] ?? null;
 });
 
+const avatarStyle = computed<CSSProperties>(() => {
+  const index = topRanking.value?.avatarIndex || 0;
+  const col = index % 6;
+  const row = Math.floor(index / 6);
+  const x = col * 20;
+  const y = row * 20;
+  return {
+    backgroundImage: `url(${avatarSheet})`,
+    backgroundPosition: `${x}% ${y}%`,
+    backgroundSize: "600%",
+    imageRendering: "pixelated" as CSSProperties["imageRendering"],
+  };
+});
+
 const startDaily = () => {
   prepareGame(10, dailyStore.dailyRounds);
   playerStore.gameMode = dailyStore.mode;
@@ -77,89 +84,187 @@ const startDaily = () => {
 </script>
 
 <style scoped>
-.top-player-card {
-  position: relative;
-  overflow: hidden;
+.top-player-block {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  padding: 32px;
-  max-width: 850px;
-  background: rgba(15, 12, 29, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15),
-    0 8px 32px rgba(0, 0, 0, 0.4);
+  gap: 8px;
 }
 
-a {
+.block-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 4px;
+}
+
+.daily-icon {
+  color: var(--neon-yellow, #ffb020);
+  font-size: 15px;
+  flex: 0 0 auto;
+}
+
+.top-player-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.row-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
   text-decoration: none;
 }
 
-.card-header {
-  text-align: center;
+.hud-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  flex: 0 0 auto;
+  background-color: #2d3748;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 }
 
-.crown {
-  font-size: 24px;
-  color: var(--neon-yellow);
+.row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  text-align: left;
 }
 
-.background-icon {
-  position: absolute;
-  font-size: 190px;
-  right: -50px;
-  bottom: -30px;
-  color: var(--neon-yellow);
-  opacity: 0.08;
-  pointer-events: none;
+.row-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
 }
 
-h2 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: 2px;
+.row-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.1);
+  flex: 0 0 auto;
 }
 
-p {
-  line-height: 1.6;
-  font-size: 16px;
-  margin: 0;
-}
-
-.player-wrapper {
-  width: 400px;
-  max-width: 100%;
-  margin: 16px auto;
-}
-
-.btn-primary {
-  margin: 0 auto;
-}
-
-.top-player {
+.row-score {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-
-  width: 100%;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
-.logo {
-  font-family: "8bit";
-  letter-spacing: 1px;
-  margin-bottom: 16px;
-  margin-top: 16px;
+.star-icon {
+  color: var(--neon-yellow);
+  filter: drop-shadow(0 0 4px var(--neon-yellow));
   font-size: 16px;
-  @media (min-width: 450px) {
+}
+
+.row-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-display);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s all;
+  white-space: nowrap;
+}
+
+.row-cta:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Unter ~360px: Divider raus, CTA wird eigene volle Zeile
+   statt sich mit Avatar/Name/Score in eine Reihe zu quetschen */
+@container (max-width: 360px) {
+  .top-player-row {
+    flex-wrap: wrap;
+  }
+
+  .row-divider {
+    display: none;
+  }
+
+  .row-cta {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+/* Ab ~480px Container-Breite: Zeile hat sichtbar Platz (breite
+   Bento-Kachel/Desktop), also Avatar/Schrift/Badges hochskalieren
+   statt bei den kompakten Mobile-Maßen zu bleiben */
+@container (min-width: 480px) {
+  .top-player-row {
+    gap: 18px;
+    padding: 16px 22px;
+  }
+
+  .row-link {
+    gap: 18px;
+  }
+
+  .hud-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+  }
+
+  .block-heading {
+    font-size: 15px;
+  }
+
+  .daily-icon {
+    font-size: 17px;
+  }
+
+  .row-name {
+    font-size: 20px;
+  }
+
+  .row-score {
+    font-size: 20px;
+    gap: 6px;
+  }
+
+  .star-icon {
     font-size: 22px;
+  }
+
+  .row-cta {
+    font-size: 15px;
+    padding: 10px 16px;
+    gap: 8px;
   }
 }
 </style>

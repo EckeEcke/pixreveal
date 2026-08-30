@@ -80,6 +80,9 @@ header {
   width: 100%;
   max-width: 700px;
   box-sizing: border-box;
+  @media (min-width: 1024px) {
+    max-width: 1000px;
+  }
 }
 
 .header-actions {
@@ -119,6 +122,10 @@ header {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.15);
+  @media (min-width: 1024px) {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .hook {
@@ -131,6 +138,9 @@ header {
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
   @media (max-width: 575px) {
     font-size: 13px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 20px;
   }
 }
 
@@ -150,6 +160,9 @@ h2 {
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
+  @media (min-width: 1024px) {
+    max-width: 1000px;
+  }
 }
 
 .logo-link {

@@ -1,7 +1,5 @@
 <template>
   <section class="how-it-works">
-    <h2 class="section-title">How It Works</h2>
-
     <div class="steps-grid">
       <!-- Step 1 -->
       <div class="step-card">
@@ -64,7 +62,6 @@ import { Icon } from "@iconify/vue"
 .how-it-works {
   width: 100%;
   max-width: 1100px;
-  margin: 0 auto;
   text-align: center;
 }
 

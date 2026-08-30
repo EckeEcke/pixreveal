@@ -12,16 +12,34 @@
           <div class="mode-section">
             <div class="classic-mode-buttons">
               <SelectionTile
+                size="lg"
                 :btn-function="startClassic"
                 data-sfx="click"
                 icon-name="pixel:play-solid"
                 btn-text="PLAY NOW"
-                sub-title="Classic mode: guess what it is as the drawing is revealed"
+                sub-title="Guess what it is as the drawing is revealed"
                 btn-color="var(--primary)"
                 :max-players="1"
+                :feature-badges="['~1 min per round', '5 random drawings']"
               />
-
-              <SelectionTile
+                          <router-link to="/play-party" data-sfx="click" class="tile-link">
+                            <SelectionTile
+                              size="lg"
+                              icon-name="pixel:users-solid"
+                              btn-text="PARTY MULTIPLAYER"
+                              sub-title="Jackbox style party game for your group"
+                              btn-color="var(--neon-yellow)"
+                              :is-shiny="true"
+                              :max-players="10"
+                              :feature-badges="['No app needed', 'Phones as controllers']"
+                            />
+                          </router-link>
+              
+            </div>
+                          <div class="trailer-bento">
+            <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+            <div class="tiles-column">
+            <SelectionTile
                 data-sfx="click"
                 :icon-name="
                   dailyStore.hasPlayedToday
@@ -42,31 +60,27 @@
                 :is-new="!dailyStore.hasPlayedToday"
               />
 
-              <router-link to="/play-party" data-sfx="click" class="tile-link">
-                <SelectionTile
-                  icon-name="pixel:users-solid"
-                  btn-text="PARTY MULTIPLAYER"
-                  sub-title="Jackbox style, phones as controlers, powerups and social chaos"
-                  btn-color="var(--neon-yellow)"
-                  :is-shiny="true"
-                  :max-players="10"
-                />
-              </router-link>
 
-              <router-link to="/play-online" data-sfx="click" class="tile-link">
-                <SelectionTile
-                  icon-name="pixel:globe-solid"
-                  btn-text="ONLINE MULTIPLAYER"
-                  sub-title="Play online together from anywhere"
-                  btn-color="var(--neon-cyan)"
-                  :max-players="10"
-                />
-              </router-link>
+                          <router-link to="/play-online" data-sfx="click" class="tile-link">
+                            <SelectionTile
+                              icon-name="pixel:globe-solid"
+                              btn-text="ONLINE MULTIPLAYER"
+                              sub-title="Play online together from anywhere"
+                              btn-color="var(--neon-cyan)"
+                              :max-players="10"
+                            />
+                          </router-link>
             </div>
+              </div>
             <DailyWinner v-if="dailyStore.isYesterdayWinner" />
-            <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
-            <div class="classic-mode-buttons">
-              <router-link
+            <div class="trailer-bento">
+            <div class="bento-card">
+                        <TopPlayer />
+                        <QuickLinks />
+            </div>
+
+                        <div class="tiles-column">
+<router-link
                 to="/singleplayer"
                 data-sfx="click"
                 class="tile-link"
@@ -74,7 +88,7 @@
                 <SelectionTile
                   icon-name="pixel:user-solid"
                   btn-text="MORE MODES"
-                  sub-title="Play Gravity, Inspect, Classic or Survival"
+                  sub-title="More ways to reveal. Gravity, Inspect, Classic & Survival"
                   btn-color="var(--neon-blue)"
                   :max-players="1"
                 />
@@ -87,9 +101,12 @@
                   btn-color="var(--neon-pink)"
                 />
               </router-link>
+                        </div>
             </div>
-            <StepsComponent />
-            <TopPlayer />
+            <div class="classic-mode-buttons">
+              
+            </div>
+
           </div>
         </div>
       </section>
@@ -114,6 +131,7 @@ import TopPlayer from "@/components/game-ui/TopPlayer.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import DailyWinner from "@/components/game-ui/DailyWinner.vue";
 import StepsComponent from "@/components/page-ui/StepsComponent.vue";
+import QuickLinks from "@/components/page-ui/QuickLinks.vue";
 import { useDailyStore } from "@/stores/daily";
 import { useRouter } from "vue-router";
 import { useDailyCountDown } from "@/composables/useDailyCountDown";
@@ -211,6 +229,9 @@ h2 {
     color: var(--white);
   }
   box-sizing: border-box;
+  @media (min-width: 1024px) {
+    max-width: 1000px;
+  }
 }
 
 .tile-link {
@@ -236,7 +257,7 @@ h2 {
 .mode-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px;
+  gap: 16px;
   padding: 16px 0;
 }
 
@@ -249,9 +270,42 @@ h2 {
   }
 }
 
-@media (min-width: 575px) {
+@media (min-width: 800px) {
   .classic-mode-buttons {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+.trailer-bento {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  @media (min-width: 1024px) {
+    grid-template-columns: 600px 1fr;
+  }
+}
+
+.bento-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  background: rgba(15, 12, 29, 0.75);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.tiles-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+   @media (min-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
   }
 }
 </style>

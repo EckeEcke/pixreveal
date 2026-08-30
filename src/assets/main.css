@@ -82,6 +82,9 @@ button {
   color: #fff;
   margin-bottom: 32px;
   margin-right: -8px;
+  @media (min-width: 1024px) {
+    font-size: 27px;
+  }
 }
 
 .logo span {

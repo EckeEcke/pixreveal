@@ -23,7 +23,7 @@
         on the keyboard. But be careful: you only get one try per drawing.
       </p>
 
-      <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" />
+      <StepsComponent class="content-container" />
 
       <h3>The Game Modes</h3>
 
@@ -71,6 +71,8 @@
         your score compares to other players, e.g. "you were better than 80% of
         players."
       </p>
+
+      <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" class="content-container" />
 
       <h3>Multiplayer and user generated content</h3>
       <p>
@@ -164,6 +166,7 @@ import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import RankOverview from "@/components/game-ui/RankOverview.vue";
 import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
 import PowerUpInfo from "../game-ui/PowerUpInfo.vue";
+import StepsComponent from "../page-ui/StepsComponent.vue";
 </script>
 
 <style scoped>
@@ -202,5 +205,9 @@ h4 {
 a {
   color: var(--primary);
   font-weight: 700;
+}
+
+.content-container {
+  margin: 32px auto;
 }
 </style>
