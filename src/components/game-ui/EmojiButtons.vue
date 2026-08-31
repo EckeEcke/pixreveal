@@ -41,7 +41,7 @@ const emojis = [
 ];
 
 const emojisReduced = [
-  "👏🏻",
+  "👏",
   "😭",
   "😎",
   "💩",
