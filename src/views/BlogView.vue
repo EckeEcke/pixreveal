@@ -3,14 +3,23 @@
     <h1 class="logo">PIXREVEAL <span>UPDATES</span> & <span>BLOG</span></h1>
     <div class="log-grid">
     <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-16-26</span>
-        </div>
-        <h3 class="log-title">Join party game in progress possible now!</h3>
-        <p>
-          Partymode supports up to 10 players. If you wanted to join a running game, you had to wait until the end of the round. Now you can see the QR code/room id right on the host screen, join the game and start playing immidiately!
-        </p>
+      <div class="log-info">
+        <span class="date">08-31-26</span>
       </div>
+      <h3 class="log-title">Screen Scaling and Party Game Over emotes available now!</h3>
+      <p>
+        Since Partymode is best hosted on a TV, I added scaling to PixReveal. The game will now scale to fit your screen, so you can enjoy the game on any device. Additionally I added emotes to the Game Over screen in Partymode. You can now react to the game's outcome with emojis.
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
+        <span class="date">08-16-26</span>
+      </div>
+      <h3 class="log-title">Join party game in progress possible now!</h3>
+      <p>
+        Partymode supports up to 10 players. If you wanted to join a running game, you had to wait until the end of the round. Now you can see the QR code/room id right on the host screen, join the game and start playing immidiately!
+      </p>
+    </div>
     <div class="log-card">
         <div class="log-info">
           <span class="date">08-15-26</span>
