@@ -12,9 +12,8 @@
       <div class="party-wrapper" ref="contentRef">
         <div class="results-card party-results-card">
           <h1 class="logo">PARTY <span>OVER</span></h1>
-          <TopPlayerDisplay v-if="!channelStore.isHost" :avatar-index="ownPlayer.avatarIndex" :name="ownPlayer.username" :score="ownPlayer.points" class="top-player" />
-          <PartyTitles v-if="channelStore.isHost" :players="partyPlayersSorted" />
-          <div v-if="channelStore.isHost" class="final-rankings">
+          <PartyTitles :players="partyPlayersSorted" />
+          <div class="final-rankings">
             <h2>Final Rankings</h2>
             <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
               <PlayerDisplay
@@ -52,9 +51,10 @@
       :show="showWinnerAnimation"
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
-      :is-winner="isWinner || channelStore.isHost"
+      :is-winner="true"
       @done="showWinnerAnimation = false"
     />
+    <EmojiOverlay :new-emoji="lastEmoji" />
   </main>
 </template>
 
@@ -63,7 +63,6 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
-import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
 import PartyTitles from "@/components/game-ui/PartyTitles.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
@@ -74,6 +73,7 @@ import { useGameStore } from "@/stores/game";
 import { usePartyStore } from "@/stores/party";
 import { useSoundStore } from "@/stores/sound";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
+import EmojiOverlay from "@/components/game-ui/EmojiOverlay.vue";
 
 const channelStore = useChannelStore();
 const partyStore = usePartyStore();
@@ -158,10 +158,6 @@ const partyPlayersSorted = computed(() =>
 
 const winnerPlayer = computed(() => partyPlayersSorted.value[0] ?? null);
 
-const isWinner = computed(
-  () => winnerPlayer.value?.playerId === channelStore.playerId,
-);
-
 const maxPartyPowerupsUsed = computed(() =>
   Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0)),
 );
@@ -223,7 +219,6 @@ const getPartyTitleEmojis = (player, index) => {
 
 const playPartySoundOnce = () => {
   if (partySoundPlayed.value) return;
-  if (!channelStore.isHost) return;
   partySoundPlayed.value = true;
   soundStore.playSound("party");
 };
@@ -253,11 +248,7 @@ const playAgain = () => {
 };
 
 const goBack = () => {
-  if (
-    channelStore.isHost &&
-    channelStore.activeChannel &&
-    channelStore.playerId
-  ) {
+  if (channelStore.activeChannel && channelStore.playerId) {
     channelStore.activeChannel.trigger("client-host-inactive", {
       playerId: channelStore.playerId,
     });
@@ -271,25 +262,39 @@ const activeMembersCount = computed(
   () => channelStore.playersOnline.filter((p) => p.isOnline).length,
 );
 
-const ownPlayer = computed(() => {
-  return (
-    partyStore.players.find((p) => p.playerId === channelStore.playerId) || {
-      username: "Unknown",
-      avatarIndex: 0,
-      points: 0,
-    }
-  );
-});
-
 watch(
   () => activeMembersCount.value,
   (count) => {
-    if (!channelStore.isHost) return;
     if (!channelStore.activeChannel) return;
     if (count > 1) return;
     goBack();
   },
 );
+
+const lastEmoji = ref("");
+const lastEmojiPlayerId = ref(null);
+
+const handleIncomingEmoji = (emojiChar, playerId) => {
+  lastEmoji.value = emojiChar;
+  lastEmojiPlayerId.value = playerId ?? null;
+
+  nextTick(() => {
+    lastEmoji.value = "";
+    lastEmojiPlayerId.value = null;
+  });
+};
+
+const emojiListener = (event) => {
+  handleIncomingEmoji(event.detail?.emoji, event.detail?.playerId);
+};
+
+onMounted(() => {
+  window.addEventListener("emoji-received", emojiListener);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("emoji-received", emojiListener);
+});
 </script>
 
 <style scoped>
@@ -354,6 +359,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin: 8px 8px 16px;
 }
 
 .party-subtitle {
@@ -408,6 +414,6 @@ main {
 }
 
 .top-player {
-  margin: 16px auto;
+  margin: 0px auto;
 }
 </style>

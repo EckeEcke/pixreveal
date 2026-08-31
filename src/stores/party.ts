@@ -543,7 +543,7 @@ export const usePartyStore = defineStore("party", () => {
       players: players.value,
     })
     broadcastPartyState("game-over")
-    router.push("/gameover-party")
+    router.push("/gameover-party-host")
   }
 
   const sendEmoji = (emoji: string) => {
@@ -984,7 +984,7 @@ export const usePartyStore = defineStore("party", () => {
       players.value = data.players
       gameStore.isGameOver = true
       channelStore.setGameRunning(false)
-      router.push("/gameover-party")
+      router.push("/gameover-party-player")
     })
 
     // ── Host-Only Events ───────────────────────────────────────────────────────

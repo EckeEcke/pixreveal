@@ -111,20 +111,12 @@
       </button>
     </TransitionGroup>
 
-    <div class="emoji-btns">
-      <button
-        v-for="emoji in emojis"
-        :key="emoji"
-        class="emoji-btn"
-        data-sfx="pop"
-        :disabled="
-          emojiCooldown || partyStore.isFrozen || partyStore.connectionStale
-        "
-        @click="sendEmoji(emoji)"
-      >
-        {{ emoji }}
-      </button>
-    </div>
+    <EmojiButtons 
+      :emoji-cooldown="emojiCooldown"
+      :is-frozen="partyStore.isFrozen"
+      :connection-stale="partyStore.connectionStale"
+      @clicked="sendEmoji"
+    />
   </main>
 </template>
 
@@ -138,6 +130,7 @@ import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import EmojiButtons from "@/components/game-ui/EmojiButtons.vue";
 import { vibrateBuzz } from "@/utils/vibration";
 import { useSoundStore } from "@/stores/sound";
 import {
@@ -488,20 +481,6 @@ const triggerFromInventory = (type) => {
   partyStore.removePowerupFromInventory(type);
 };
 
-const emojis = [
-  "🤔",
-  "😠",
-  "😆",
-  "😭",
-  "👏🏻",
-  "😯",
-  "☠️",
-  "♥️",
-  "💩",
-  "⏱️",
-  "😇",
-  "😈",
-];
 const emojiCooldown = ref(false);
 const EMOJI_COOLDOWN_MS = 1000;
 
@@ -653,21 +632,6 @@ onMounted(() => {
 
 .placeholder {
   opacity: 0.5;
-}
-
-.emoji-btns {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 8px;
-  margin: 0 auto 64px;
-  width: 95%;
-  box-sizing: border-box;
-  border: 2px solid var(--neon-pink);
-  box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
-  border-radius: 8px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
 }
 
 .powerup-btns {
@@ -926,21 +890,6 @@ onMounted(() => {
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
-}
-
-.emoji-btn {
-  font-size: 32px;
-  transition: all 0.3s ease-in-out;
-}
-
-.emoji-btn:hover {
-  text-shadow: 0 0 8px var(--neon-pink);
-  transform: scale(1.2);
-  filter: contrast(1.5);
-}
-
-.emoji-btn:disabled {
-  opacity: 0.7;
 }
 
 .no-powerups {

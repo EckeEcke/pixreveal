@@ -217,7 +217,7 @@ gameStore.reset();
 onMounted(() => {
   fetchJoke();
   if (channelStore.mode === "party" && channelStore.onlineGameRunning) {
-    router.replace("/gameover-party");
+    router.replace("/gameover-party-player");
     return;
   }
   const winnerId = playersSortedByPoints.value[0]?.playerId;

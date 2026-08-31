@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import GameOverView from "../views/GameOverView.vue";
 import GameOverOnlineView from "../views/GameOverOnlineView.vue";
-import GameOverPartyView from "../views/GameOverPartyView.vue";
+import GameOverPartyHostView from "../views/GameOverPartyHostView.vue";
+import GameOverPartyPlayerView from "../views/GameOverPartyPlayerView.vue";
 import GameOverDailyView from "../views/GameOverDailyView.vue";
 import { useGameStore } from "@/stores/game";
 import { useDailyStore } from "@/stores/daily";
@@ -126,9 +127,15 @@ const router = createRouter({
       meta: { robots: "noindex" },
     },
     {
-      path: "/gameover-party",
-      name: "gameover-party",
-      component: GameOverPartyView,
+      path: "/gameover-party-host",
+      name: "gameover-party-host",
+      component: GameOverPartyHostView,
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/gameover-party-player",
+      name: "gameover-party-player",
+      component: GameOverPartyPlayerView,
       meta: { robots: "noindex" },
     },
     {
@@ -390,7 +397,8 @@ router.beforeEach((to, from) => {
   if (
     (to.path === "/gameover" ||
       to.path === "/gameover-online" ||
-      to.path === "/gameover-party") &&
+      to.path === "/gameover-party-player" ||
+      to.path === "/gameover-party-host") &&
     !validPathsForGameOver.includes(from.path)
   ) {
     return "/";
@@ -400,11 +408,12 @@ router.beforeEach((to, from) => {
     (from.path === "/gameover" ||
       from.path === "/gameover-online" ||
       from.path === "/gameover-daily" ||
-      from.path === "/gameover-party") &&
+      from.path === "/gameover-party-player" ||
+      from.path === "/gameover-party-host") &&
     (validPathsForGameOver.includes(to.path) || to.path === "/daily")
   ) {
     const isPartyReplayNavigation =
-      from.path === "/gameover-party" &&
+      (from.path === "/gameover-party-host" || from.path === "/gameover-party-player") &&
       (to.path === "/party-player" || to.path === "/party-host") &&
       channelStore.mode === "party" &&
       channelStore.onlineGameRunning &&
