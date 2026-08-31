@@ -29,7 +29,7 @@
             :highscore="survivalStore.highscore"
           />
           <div v-if="showSingleplayerRank">
-            <SingleplayerRanks :points="playerStore.points" />
+            <SingleplayerRanks :percentile="percentile" />
           </div>
 
           <div
@@ -70,7 +70,7 @@
           <div class="share-section">
             <h2>Challenge your friends!</h2>
             <ShareIcons
-              :msg="getShareMessage(playerStore.points, playerStore.gameMode)"
+              :msg="getShareMessage(percentile, playerStore.gameMode)"
             />
           </div>
         </div>
@@ -164,15 +164,14 @@ const percentile = computed(() => {
 });
 
 const getShareMessage = (score, mode) => {
-  if (mode === "classic") {
-    const rankTitle = getRankDataForShare(score).title;
-    return `I earned the title ${rankTitle} in PIX REVEAL! Think you can beat that?`;
+  if (mode === "survival")
+    return `I scored ${survivalStore.solvedCount} in Survival mode on PIX REVEAL! Think you can beat my highscore?`;
+
+  if (percentile.value !== null) {
+    return `I am in the top ${percentile.value}% of PixReveal players! 🏆 Think you can beat that?`;
   }
 
-  if (mode === "survival")
-    return `I scored ${survivalStore.solvedCount} in Survival mode on PIX REVEAL! Think you can beat that?`;
-
-  return "Play PIX REVEAL!";
+  return "Check out PixReveal!";
 };
 
 const playAgainSingleplayer = () => {

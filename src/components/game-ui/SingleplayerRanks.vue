@@ -15,17 +15,14 @@ import { getRankData } from "@/utils/ranks";
 import { useGameStore } from "@/stores/game";
 
 const props = defineProps<{
-  points: number;
+  percentile: number;
 }>();
 
 const configStore = useConfigStore();
 const gameStore = useGameStore();
 
 const rankData = computed(() => {
-  return getRankData(props.points, {
-    maxRounds: gameStore.rounds.length,
-    revealTime: configStore.revealTime,
-  });
+  return getRankData(props.percentile);
 });
 </script>
 
