@@ -152,25 +152,29 @@ onUnmounted(() => {
 
 let partySoundTimer = null;
 
-const partyPlayersSorted = computed(() =>
-  [...partyStore.players].sort((a, b) => b.points - a.points),
+const partyPlayersSorted = JSON.parse(
+  JSON.stringify(
+    [...partyStore.players].sort((a, b) => b.points - a.points),
+  ),
 );
 
-const winnerPlayer = computed(() => partyPlayersSorted.value[0] ?? null);
+const winnerPlayer = partyPlayersSorted[0] ?? null;
 
-const maxPartyPowerupsUsed = computed(() =>
-  Math.max(0, ...partyPlayersSorted.value.map((p) => p.powerupsUsed ?? 0)),
+const maxPartyPowerupsUsed = Math.max(
+  0,
+  ...partyPlayersSorted.map((p) => p.powerupsUsed ?? 0),
 );
-const maxPartyEmojisSent = computed(() =>
-  Math.max(0, ...partyPlayersSorted.value.map((p) => p.emojisSent ?? 0)),
+const maxPartyEmojisSent = Math.max(
+  0,
+  ...partyPlayersSorted.map((p) => p.emojisSent ?? 0),
 );
-const minPartyQuickestAnswer = computed(() => {
-  const values = partyPlayersSorted.value
+const minPartyQuickestAnswer = (() => {
+  const values = partyPlayersSorted
     .map((p) => p.quickestAnswer)
     .filter((v) => typeof v === "number");
   if (!values.length) return null;
   return Math.min(...values);
-});
+})();
 
 const getPartyTitleEmojis = (player, index) => {
   if (!player) return undefined;
@@ -182,7 +186,7 @@ const getPartyTitleEmojis = (player, index) => {
   if (player.devilVictim) badges.push("😈");
   if (player.devilSurvivor) badges.push("👼");
 
-  const minQuick = minPartyQuickestAnswer.value;
+  const minQuick = minPartyQuickestAnswer;
   if (typeof minQuick === "number" && player.quickestAnswer === minQuick) {
     badges.push("⚡");
   }
@@ -191,12 +195,12 @@ const getPartyTitleEmojis = (player, index) => {
     badges.push("🎯");
   }
 
-  const maxPowerups = maxPartyPowerupsUsed.value;
+  const maxPowerups = maxPartyPowerupsUsed;
   if (maxPowerups > 0 && (player.powerupsUsed ?? 0) === maxPowerups) {
     badges.push("💣");
   }
 
-  const maxEmojis = maxPartyEmojisSent.value;
+  const maxEmojis = maxPartyEmojisSent;
   if (maxEmojis >= 10 && (player.emojisSent ?? 0) === maxEmojis) {
     badges.push("💬");
   }
@@ -230,7 +234,7 @@ const handleIntroDone = () => {
     partySoundTimer = null;
     playPartySoundOnce();
   }, 2000);
-  if (winnerPlayer.value) showWinnerAnimation.value = true;
+  if (winnerPlayer) showWinnerAnimation.value = true;
 };
 
 onUnmounted(() => {
@@ -407,8 +411,6 @@ main {
   padding: 0 16px 16px;
   border-radius: 8px;
   margin: 32px 0;
-  /* Fällt nur noch als echtes Sicherheitsnetz für extrem viele Spieler an,
-     nicht als Symptom eines falsch berechneten Scale-Faktors */
   max-height: 250px;
   overflow-y: auto;
 }

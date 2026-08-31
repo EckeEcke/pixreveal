@@ -655,7 +655,7 @@ const messageColor = computed(() => {
 .message-container {
   position: relative;
   width: 100%;
-  min-height: 150px;
+  min-height: 166px;
 }
 
 .status-pill,

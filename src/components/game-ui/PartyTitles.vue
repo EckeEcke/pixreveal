@@ -47,23 +47,27 @@ const partyStore = usePartyStore();
 
 const SLIDE_INTERVAL = 5000;
 
-const maxPowerupsUsed = computed(() => {
+// Alle folgenden Werte werden EINMALIG beim Setup aus den Props gelesen
+// und danach nicht mehr aktualisiert, auch wenn sich props.players oder
+// partyStore.emojiStatistics später noch ändern.
+
+const maxPowerupsUsed = (() => {
   let max = 0;
   for (const p of props.players || []) {
     max = Math.max(max, p?.powerupsUsed ?? 0);
   }
   return max;
-});
+})();
 
-const maxEmojisSent = computed(() => {
+const maxEmojisSent = (() => {
   let max = 0;
   for (const p of props.players || []) {
     max = Math.max(max, p?.emojisSent ?? 0);
   }
   return max;
-});
+})();
 
-const minQuickestAnswer = computed(() => {
+const minQuickestAnswer = (() => {
   let min: number | null = null;
   for (const p of props.players || []) {
     const v = p?.quickestAnswer;
@@ -71,7 +75,7 @@ const minQuickestAnswer = computed(() => {
     if (min === null || v < min) min = v;
   }
   return min;
-});
+})();
 
 type SlidePlayer = {
   playerId: string;
@@ -88,7 +92,7 @@ type Slide = {
   playerNamesUpper: string;
 };
 
-const slides = computed<Slide[]>(() => {
+const slides: Slide[] = (() => {
   const raw: Array<{
     emoji: string;
     title: string;
@@ -99,9 +103,9 @@ const slides = computed<Slide[]>(() => {
   }> = [];
 
   const players = props.players || [];
-  const maxPowerups = maxPowerupsUsed.value;
-  const maxEmojis = maxEmojisSent.value;
-  const minQuick = minQuickestAnswer.value;
+  const maxPowerups = maxPowerupsUsed;
+  const maxEmojis = maxEmojisSent;
+  const minQuick = minQuickestAnswer;
 
   for (const [index, p] of players.entries()) {
     const nameUpper = String(p.username || "Player").toUpperCase();
@@ -273,8 +277,9 @@ const slides = computed<Slide[]>(() => {
   }
 
   return result;
-});
-const emojiStatsSlide = computed<Slide | null>(() => {
+})();
+
+const emojiStatsSlide: Slide | null = (() => {
   const emojis = partyStore.emojiStatistics || [];
   const total = emojis.length;
   if (total < 10) return null;
@@ -302,28 +307,27 @@ const emojiStatsSlide = computed<Slide | null>(() => {
     players: [],
     playerNamesUpper: "",
   };
-});
+})();
 
-const allSlides = computed<Slide[]>(() => {
-  const base = slides.value;
-  const stats = emojiStatsSlide.value;
-  return stats ? [...base, stats] : base;
-});
+const allSlides: Slide[] = emojiStatsSlide
+  ? [...slides, emojiStatsSlide]
+  : slides;
 
 const activeIndex = ref(0);
 let intervalId: number | null = null;
 
+// currentSlide bleibt computed, weil sich NUR der Index (activeIndex)
+// noch ändern soll — allSlides selbst ist fix.
 const currentSlide = computed(() => {
-  const list = allSlides.value;
-  if (!list.length) return null;
-  return list[activeIndex.value] ?? list[0] ?? null;
+  if (!allSlides.length) return null;
+  return allSlides[activeIndex.value] ?? allSlides[0] ?? null;
 });
 
 const start = () => {
   if (intervalId) return;
-  if (!allSlides.value.length) return;
+  if (!allSlides.length) return;
   intervalId = workerSetInterval(() => {
-    const len = allSlides.value.length;
+    const len = allSlides.length;
     if (!len) return;
     activeIndex.value = (activeIndex.value + 1) % len;
   }, SLIDE_INTERVAL);
