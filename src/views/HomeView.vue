@@ -102,10 +102,6 @@
               </router-link>
                         </div>
             </div>
-            <div class="classic-mode-buttons">
-              
-            </div>
-
           </div>
         </div>
       </section>
@@ -214,9 +210,6 @@ h2 {
   place-items: center;
   width: 100%;
   padding: 0 16px;
-  @media (min-width: 575px) {
-    margin-top: 16px;
-  }
 }
 
 .setup-card {
