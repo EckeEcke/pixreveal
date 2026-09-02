@@ -79,24 +79,38 @@ export const useGameStore = defineStore("game", () => {
   );
 
   function getDistractors(drawing: Drawing, pool: Drawing[]): Drawing[] {
-    const colorMatches: Drawing[] = [];
-    const categoryMatches: Drawing[] = [];
-    const fallbackMatches: Drawing[] = [];
+    const sameCategoryAndColor: Drawing[] = [];
+    const sameColor: Drawing[] = [];
+    const sameCategory: Drawing[] = [];
+    const fallback: Drawing[] = [];
 
     for (const d of pool) {
-      if (d.primaryColor === drawing.primaryColor) {
-        colorMatches.push(d);
+      if (d.name === drawing.name) {
+        continue;
+      }
+
+      if (
+        d.category === drawing.category &&
+        d.primaryColor === drawing.primaryColor
+      ) {
+        sameCategoryAndColor.push(d);
+      } else if (d.primaryColor === drawing.primaryColor) {
+        sameColor.push(d);
       } else if (d.category === drawing.category) {
-        categoryMatches.push(d);
+        sameCategory.push(d);
       } else {
-        fallbackMatches.push(d);
+        fallback.push(d);
       }
     }
 
-    return [...colorMatches, ...categoryMatches, ...fallbackMatches].slice(
-      0,
-      3,
-    );
+    const candidates = [
+      ...shuffle(sameCategoryAndColor),
+      ...shuffle(sameColor),
+      ...shuffle(sameCategory),
+      ...shuffle(fallback),
+    ];
+
+    return candidates.slice(0, 3);
   }
 
   function createRound(
