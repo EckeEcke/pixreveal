@@ -1,24 +1,30 @@
 <template>
-  <div class="quick-links-grid">
-    <button class="quick-link" data-sfx="click" @click="openManual">
-      <Icon icon="pixel:book" class="quick-link-icon icon-blue" />
-      <span>How to Play</span>
-    </button>
+  <div>
+    <div class="block-heading">
+      <Icon icon="pixel:link-solid" class="link-icon" />
+      Quick Links
+    </div>
+    <div class="quick-links-grid">
+      <button class="quick-link" data-sfx="click" @click="openManual">
+        <Icon icon="pixel:book" class="quick-link-icon icon-blue" />
+        <span>How to Play</span>
+      </button>
 
-    <router-link class="quick-link" data-sfx="click" to="/hall-of-fame">
-      <Icon icon="pixel:crown-solid" class="quick-link-icon icon-gold" />
-      <span>Hall of Fame</span>
-    </router-link>
+      <router-link class="quick-link" data-sfx="click" to="/hall-of-fame">
+        <Icon icon="pixel:crown-solid" class="quick-link-icon icon-gold" />
+        <span>Hall of Fame</span>
+      </router-link>
 
-    <router-link class="quick-link" data-sfx="click" to="/user-gallery">
-      <Icon icon="pixel:image-solid" class="quick-link-icon icon-pink" />
-      <span>User Art Gallery</span>
-    </router-link>
+      <router-link class="quick-link" data-sfx="click" to="/user-gallery">
+        <Icon icon="pixel:image-solid" class="quick-link-icon icon-pink" />
+        <span>User Art Gallery</span>
+      </router-link>
 
-    <router-link class="quick-link" data-sfx="click" to="/faq">
-      <Icon icon="pixel:question" class="quick-link-icon icon-teal" />
-      <span>FAQ</span>
-    </router-link>
+      <router-link class="quick-link" data-sfx="click" to="/faq">
+        <Icon icon="pixel:question" class="quick-link-icon icon-teal" />
+        <span>FAQ</span>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -39,6 +45,21 @@ const openManual = () => {
 </script>
 
 <style scoped>
+.block-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 12px;
+  .link-icon {
+    color: var(--neon-blue, #38bdf8);
+  }
+}
 .bento-card {
   display: flex;
   flex-direction: column;
