@@ -105,7 +105,6 @@ const partners = [
   justify-content: center;
   padding: 16px;
   max-width: 700px;
-  margin: 0 auto;
 }
 
 .pre-headline {
