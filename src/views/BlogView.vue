@@ -1,5 +1,5 @@
 <template>
-  <ContentPage>
+  <ContentPage class="page">
     <h1 class="logo">BLOG</h1>
     <div class="subline">PixReveal Updates</div>
     <div class="log-grid">
@@ -450,6 +450,9 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 </script>
 
 <style scoped>
+.page {
+  max-width: 700px;
+}
 .log-grid {
   display: grid;
   grid-template-columns: 1fr;

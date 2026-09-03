@@ -1,5 +1,5 @@
 <template>
-  <ContentPage>
+  <ContentPage class="page">
     <h1 class="logo">ABOUT</h1>
     <div class="subline">PIXREVEAL</div>
 
@@ -116,6 +116,9 @@ import ContentPage from "@/components/page-layout/ContentPage.vue";
 </script>
 
 <style scoped>
+.page {
+  max-width: 700px;
+}
 .logo {
   font-family: inherit;
   text-align: start;
