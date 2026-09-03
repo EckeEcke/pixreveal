@@ -6,8 +6,8 @@
       </button>
     </div>
     <article>
-      <h2 class="logo">HOW TO <span>PLAY</span></h2>
-      <h3>How to play PixReveal</h3>
+      <h2 class="logo">HOW TO PLAY</h2>
+      <h3 class="subline">PixReveal Manual</h3>
       <p>
         PixReveal is a <strong>free browser party game</strong> about guessing
         <strong>pixelart</strong> within a time limit. The faster you answer
@@ -228,5 +228,21 @@ a {
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+.logo {
+  font-family: inherit;
+  text-align: start;
+  margin-bottom: 4px;
+  font-weight: 900;
+  font-size: 32px;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.subline {
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 32px;
 }
 </style>

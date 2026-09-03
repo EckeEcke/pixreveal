@@ -1,6 +1,7 @@
 <template>
   <ContentPage>
-    <h1 class="logo">PIXREVEAL <span>UPDATES</span> & <span>BLOG</span></h1>
+    <h1 class="logo">BLOG</h1>
+    <div class="subline">PixReveal Updates</div>
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
@@ -472,6 +473,15 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 .logo {
   font-family: inherit;
   text-align: start;
+  margin-bottom: 4px;
+  font-weight: 900;
+  font-size: 32px;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.subline {
+  color: var(--primary);
+  text-transform: uppercase;
 }
 
 .log-info {

@@ -1,6 +1,7 @@
 <template>
   <ContentPage>
-    <h1 class="logo">ABOUT PIX<span>REVEAL</span></h1>
+    <h1 class="logo">ABOUT</h1>
+    <div class="subline">PIXREVEAL</div>
 
     <section class="about-section">
       <p>
@@ -153,5 +154,20 @@ a {
 
 .white-icon {
   filter: invert(1);
+}
+
+.logo {
+  font-family: inherit;
+  text-align: start;
+  margin-bottom: 4px;
+  font-weight: 900;
+  font-size: 32px;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.subline {
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-bottom: 32px;
 }
 </style>

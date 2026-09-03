@@ -1,11 +1,10 @@
 <template>
   <main class="page">
     <ContentPage>
-      <h1>
-        <span class="pre-headline">RECOMMENDED PLATFORMS</span>
-        <br />
-        FEATURED GAMING PARTNERS
+      <h1 class="logo">
+        FEATURED PARTNERS
       </h1>
+      <div class="subline">RECOMMENDED GAMING PLATFORMS</div>
 
       <p class="party-desc">
         Gaming is always better together. As a solo developer, I love teaming up
@@ -86,9 +85,18 @@ const partners = [
 </script>
 
 <style scoped>
-h1 {
+.logo {
   font-family: inherit;
-  text-align: left;
+  text-align: start;
+  margin-bottom: 4px;
+  font-weight: 900;
+  font-size: 32px;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.subline {
+  color: var(--primary);
+  text-transform: uppercase;
 }
 
 .page {
@@ -96,6 +104,8 @@ h1 {
   display: flex;
   justify-content: center;
   padding: 16px;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .pre-headline {
@@ -125,17 +135,20 @@ h2 {
 }
 
 .partner-card {
-  background: rgba(15, 12, 29, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15),
-    0 8px 32px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px 0;
   display: flex;
   flex-direction: column;
+  @media (min-width: 600px) {
+    box-shadow: 
+      inset 0 1px 1px rgba(255, 255, 255, 0.15),
+      0 8px 32px rgba(0, 0, 0, 0.4);
+    background: rgba(15, 12, 29, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 24px;
+  }
 }
 
 .partner-card h3 {

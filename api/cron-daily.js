@@ -2,8 +2,6 @@ import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
 import colorPalette from "../src/data/colorPalette.js";
 
-// Fix im Code hinterlegt, 1:1 aus dem Frontend übernommen (Namen sind das, was zählt —
-// color/icon werden hier nicht gebraucht, aber der Vollständigkeit halber mitgeführt).
 const CATEGORIES = [
   {
     name: "Animals & Nature",
@@ -21,10 +19,8 @@ const CATEGORIES = [
   },
 ];
 
-const RECENT_DAYS_TO_TRACK = 13; // + heute = 14 Tage Historie, um Wiederholungen zu vermeiden
+const RECENT_DAYS_TO_TRACK = 13;
 
-// 0 = Sonntag ... 6 = Samstag. Kein "random"/"theme" mehr, nur noch Farbe und
-// Kategorie im Wechsel.
 const DAY_THEMES = {
   0: "color", // Sonntag
   1: "category", // Montag
@@ -46,15 +42,6 @@ function dedupeByName(arr) {
   }
   return result;
 }
-
-// --- Farbgruppen ------------------------------------------------------
-//
-// Statt exakter Hex-Gleichheit (die bei 26 Paletten-Farben oft nur 1-2 Motive
-// pro Farbe liefern würde) werden ähnliche Farbtöne zu groben, intuitiven
-// Gruppen zusammengefasst (Rot, Orange, Braun, Gelb, Grün, Cyan, Blau, Lila,
-// Pink, Schwarz, Weiß, Grau). Basis ist eine simple HSL-Bucket-Heuristik,
-// kein Anspruch auf exakte Farbwissenschaft — bei Bedarf lassen sich einzelne
-// Paletten-Indizes unten in COLOR_GROUP_OVERRIDES manuell umsortieren.
 
 function hexToHsl(hex) {
   const clean = hex.replace("#", "");
@@ -110,8 +97,6 @@ function getColorGroup(hex) {
   return "Pink";
 }
 
-// Manuelle Korrekturen für Paletten-Indizes, bei denen die automatische
-// Heuristik danebenliegt (Index aus colorPalette.ts -> Gruppenname).
 const COLOR_GROUP_OVERRIDES = {
   // 20: "Brown", // Beispiel: falls "#CA895D" lieber als Braun statt Orange gelten soll
 };
@@ -128,26 +113,12 @@ function colorGroupOf(primaryColorIndex) {
   return COLOR_GROUP_BY_INDEX[primaryColorIndex] ?? null;
 }
 
-// Stabile Liste aller vorkommenden Farbgruppen — bewusst aus dem unveränderten
-// `drawings`-Import gebaut (nicht aus der pro Request geshuffelten `uniqueDrawings`-
-// Liste), damit die Rotation über Cron-Läufe hinweg wirklich der Reihe nach
-// durchzählt statt bei jedem Lauf in zufälliger Reihenfolge zu landen. `null`
-// (z.B. durch primaryColor "transparent") wird ausgeschlossen — ein echtes Motiv
-// sollte ohnehin nie eine transparente Primärfarbe haben.
 const ALL_COLOR_GROUPS = [
   ...new Set(drawings.map((d) => colorGroupOf(d.primaryColor)).filter(Boolean)),
 ].sort();
 
-// Kategorien sind fix im Code definiert (nicht aus den Motiven abgeleitet) — die
-// Rotation läuft also über die vollständige, feste Kategorienliste, auch wenn
-// gerade nicht zu jeder Kategorie Motive vorhanden sind (dann greift weiter unten
-// der Pool-zu-klein-Fallback auf "Random").
 const ALL_CATEGORIES = CATEGORIES.map((c) => c.name);
 
-// --- Distraktoren -------------------------------------------------------
-
-// Wählt 3 Falsch-Antworten, die möglichst nah am richtigen Motiv liegen (gleiche
-// Kategorie + gleiche Farbgruppe > gleiche Kategorie > gleiche Farbgruppe > Rest).
 function generateOptions(currentDrawing, allDrawings) {
   const correct = currentDrawing.name;
   const others = allDrawings.filter((d) => d.name !== correct);
@@ -183,11 +154,6 @@ function generateOptions(currentDrawing, allDrawings) {
   ].sort(() => Math.random() - 0.5);
 }
 
-// --- Tages-Set-Auswahl ----------------------------------------------------
-
-// Rotiert deterministisch, aber persistent über Cron-Läufe hinweg, durch eine
-// Werteliste, damit nicht jeden zweiten Tag dieselbe Farbgruppe / Kategorie
-// drankommt.
 async function getRotatingValue(client, key, values) {
   if (values.length === 0) return null;
   const idx = await client.incr(key);
@@ -213,9 +179,6 @@ async function rememberUsedNames(client, today, names) {
   await client.lTrim("daily:recent-sets", 0, RECENT_DAYS_TO_TRACK);
 }
 
-// Wählt 5 Motive aus dem (bereits nach Farbe/Kategorie gefilterten) Pool,
-// bevorzugt Motive, die nicht in den letzten RECENT_DAYS_TO_TRACK Tagen schon
-// dran waren, und füllt bei Bedarf aus dem restlichen Pool auf.
 function pickDailySet(pool, recentNames) {
   const recentSet = new Set(recentNames);
   const fresh = pool.filter((d) => !recentSet.has(d.name));

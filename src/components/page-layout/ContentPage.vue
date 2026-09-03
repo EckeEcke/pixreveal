@@ -51,6 +51,7 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 32px;
+  padding-top: 48px;
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
@@ -68,7 +69,7 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  top: -32px;
+  top: -48px;
   right: -32px;
   z-index: 1;
 }

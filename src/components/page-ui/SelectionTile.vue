@@ -91,6 +91,10 @@ const handleClick = (event: MouseEvent) => {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.35);   
   &::before {
     content: "";
     position: absolute;
