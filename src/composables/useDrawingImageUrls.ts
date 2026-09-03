@@ -1,5 +1,6 @@
 import { onBeforeUnmount, ref, watch } from "vue";
 import type { Ref } from "vue";
+// @ts-ignore
 import colorPalette from "@/data/colorPalette";
 
 type PixelMatrix = number[][];
