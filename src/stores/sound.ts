@@ -99,7 +99,7 @@ export const useSoundStore = defineStore("sound", () => {
   });
 
   window.addEventListener(
-    "pointerdown",
+    "click",
     (event: PointerEvent) => {
       const target = (event.target as Element).closest<HTMLElement>(
         "[data-sfx]",
