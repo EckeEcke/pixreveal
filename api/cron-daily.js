@@ -1,6 +1,6 @@
 import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
-import colorPalette from "../src/data/colorPalette";
+import colorPalette from "../src/data/colorPalette.js";
 
 // Fix im Code hinterlegt, 1:1 aus dem Frontend übernommen (Namen sind das, was zählt —
 // color/icon werden hier nicht gebraucht, aber der Vollständigkeit halber mitgeführt).
