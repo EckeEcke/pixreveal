@@ -21,7 +21,7 @@
         </div>
       </router-link>
 
-      <button class="row-cta" data-sfx="click" @click="startDaily">
+      <button v-if="!dailyStore.hasPlayedToday" class="row-cta" data-sfx="click" @click="startDaily">
         <span>Beat them</span>
         <Icon icon="pixel:arrow-right-solid" />
       </button>

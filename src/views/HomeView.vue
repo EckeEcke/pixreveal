@@ -36,71 +36,70 @@
                           </router-link>
               
             </div>
-                          <div class="trailer-bento">
-            <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
-            <div class="tiles-column">
-            <SelectionTile
-                data-sfx="click"
-                :icon-name="
-                  dailyStore.hasPlayedToday
-                    ? 'pixel:numbered-list-solid'
-                    : 'pixel:star-solid'
-                "
-                :max-players="!dailyStore.hasPlayedToday ? 1 : undefined"
-                :btn-function="startDaily"
-                btn-text="DAILY CHALLENGE"
-                :sub-title="
-                  dailyStore.hasPlayedToday
-                    ? 'Check today\'s leaderboard'
-                    : 'Compete for the top position on the global leaderboard'
-                "
-                btn-color="var(--neon-orange)"
-                :loading="dailyStore.isLoading"
-                :corner-text="timeLeft"
-                :is-new="!dailyStore.hasPlayedToday"
-              />
-
-
-                          <router-link to="/play-online" data-sfx="click" class="tile-link">
-                            <SelectionTile
-                              icon-name="pixel:globe-solid"
-                              btn-text="ONLINE MULTIPLAYER"
-                              sub-title="Play online together from anywhere"
-                              btn-color="var(--neon-cyan)"
-                              :max-players="10"
-                            />
-                          </router-link>
-            </div>
-              </div>
             <div class="trailer-bento">
-            <div class="bento-card">
-                        <TopPlayer />
-                        <QuickLinks />
-            </div>
+              <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+              <div class="tiles-column">
+                <SelectionTile
+                    data-sfx="click"
+                    :icon-name="
+                      dailyStore.hasPlayedToday
+                        ? 'pixel:numbered-list-solid'
+                        : 'pixel:star-solid'
+                    "
+                    :max-players="!dailyStore.hasPlayedToday ? 1 : undefined"
+                    :btn-function="startDaily"
+                    btn-text="DAILY CHALLENGE"
+                    :sub-title="
+                      dailyStore.hasPlayedToday
+                        ? 'Check today\'s leaderboard'
+                        : 'Compete for the top position on the global leaderboard'
+                    "
+                    btn-color="var(--neon-orange)"
+                    :loading="dailyStore.isLoading"
+                    :corner-text="timeLeft"
+                    :is-new="!dailyStore.hasPlayedToday"
+                  />
 
-                        <div class="tiles-column">
-<router-link
-                to="/singleplayer"
-                data-sfx="click"
-                class="tile-link"
-              >
-                <SelectionTile
-                  icon-name="pixel:user-solid"
-                  btn-text="MORE MODES"
-                  sub-title="More ways to reveal. Gravity, Inspect, Classic & Survival"
-                  btn-color="var(--neon-blue)"
-                  :max-players="1"
-                />
-              </router-link>
-              <router-link to="/editor" data-sfx="click" class="tile-link">
-                <SelectionTile
-                  icon-name="pixel:image-solid"
-                  btn-text="PIXEL ART EDITOR"
-                  sub-title="Create your own drawing and submit it to PixReveal"
-                  btn-color="var(--neon-pink)"
-                />
-              </router-link>
-                        </div>
+                  <router-link to="/play-online" data-sfx="click" class="tile-link">
+                    <SelectionTile
+                      icon-name="pixel:globe-solid"
+                      btn-text="ONLINE MULTIPLAYER"
+                      sub-title="Play online together from anywhere"
+                      btn-color="var(--neon-cyan)"
+                      :max-players="10"
+                    />
+                  </router-link>
+              </div>
+            </div>
+            <div class="trailer-bento">
+              <div class="bento-card">
+                <TopPlayer />
+                <QuickLinks />
+              </div>
+
+              <div class="tiles-column">
+                <router-link
+                  to="/singleplayer"
+                  data-sfx="click"
+                  class="tile-link"
+                >
+                  <SelectionTile
+                    icon-name="pixel:user-solid"
+                    btn-text="MORE MODES"
+                    sub-title="More ways to reveal. Gravity, Inspect, Classic & Survival"
+                    btn-color="var(--neon-blue)"
+                    :max-players="1"
+                  />
+                </router-link>
+                <router-link to="/editor" data-sfx="click" class="tile-link">
+                  <SelectionTile
+                    icon-name="pixel:image-solid"
+                    btn-text="PIXEL ART EDITOR"
+                    sub-title="Create your own drawing and submit it to PixReveal"
+                    btn-color="var(--neon-pink)"
+                  />
+                </router-link>
+              </div>
             </div>
           </div>
         </div>

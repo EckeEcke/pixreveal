@@ -32,14 +32,14 @@
       </ButtonPrimary>
       <div class="player-grid">
       <TopPlayerDisplay
-      v-for="player in paginatedWinners"
-          :key="player.date"
-          :name="player.winner.name"
-          :avatar-index="player.winner.avatarIndex"
-          :score="player.winner.score"
-          :subline="player.date"
-          class="player-card"
-      />
+        v-for="player in paginatedWinners"
+            :key="player.date"
+            :name="player.winner.name"
+            :avatar-index="player.winner.avatarIndex"
+            :score="player.winner.score"
+            :subline="player.date"
+            class="player-card"
+        />
     </div>
     <div v-if="totalPages > 1" class="pagination">
       <button 
