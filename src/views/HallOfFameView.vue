@@ -116,7 +116,7 @@ main {
 .back-btn-wrapper {
   min-width: 32px;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin-bottom: 16px;
 }
 
@@ -163,7 +163,7 @@ h1 {
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   box-sizing: border-box;
 }
 
