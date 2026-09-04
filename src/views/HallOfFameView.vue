@@ -116,14 +116,14 @@ main {
 .back-btn-wrapper {
   min-width: 32px;
   width: 100%;
-  max-width: 700px;
+  max-width: 1200px;
   margin-bottom: 16px;
 }
 
 .player-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
   margin: 64px auto;
 }
@@ -163,7 +163,7 @@ h1 {
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   width: 100%;
-  max-width: 700px;
+  max-width: 1200px;
   box-sizing: border-box;
 }
 
