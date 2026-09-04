@@ -54,6 +54,7 @@ export default async function handler(req, res) {
       date: targetDate,
       rounds: parsedData.dailyRounds,
       mode: parsedData.mode,
+      title: parsedData.curation?.heading,
       rankings: parsedRankings,
       winners: parsedWinners,
       yesterdayRankings: parsedYesterdayRankings,

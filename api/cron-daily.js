@@ -2,6 +2,8 @@ import { createClient } from "redis";
 import drawings from "../src/data/drawings.json" with { type: "json" };
 import colorPalette from "../src/data/colorPalette.js";
 
+// Fix im Code hinterlegt, 1:1 aus dem Frontend übernommen (Namen sind das, was zählt —
+// color/icon werden hier nicht gebraucht, aber der Vollständigkeit halber mitgeführt).
 const CATEGORIES = [
   {
     name: "Animals & Nature",
@@ -19,8 +21,10 @@ const CATEGORIES = [
   },
 ];
 
-const RECENT_DAYS_TO_TRACK = 13;
+const RECENT_DAYS_TO_TRACK = 13; // + heute = 14 Tage Historie, um Wiederholungen zu vermeiden
 
+// 0 = Sonntag ... 6 = Samstag. Kein "random"/"theme" mehr, nur noch Farbe und
+// Kategorie im Wechsel.
 const DAY_THEMES = {
   0: "color", // Sonntag
   1: "category", // Montag
@@ -30,6 +34,9 @@ const DAY_THEMES = {
   5: "category", // Freitag
   6: "color", // Samstag
 };
+
+// Kombi zuletzt dran war.
+const MODES = ["classic", "inspect", "gravity"];
 
 function dedupeByName(arr) {
   const seen = new Set();
@@ -76,7 +83,7 @@ function hexToHsl(hex) {
 }
 
 function getColorGroup(hex) {
-  if (!hex || !hex.startsWith("#")) return null; // z.B. "transparent"
+  if (!hex || !hex.startsWith("#")) return null;
 
   const { h, s, l } = hexToHsl(hex);
 
@@ -84,7 +91,6 @@ function getColorGroup(hex) {
   if (l >= 92 && s <= 10) return "White";
   if (s <= 12) return "Gray";
 
-  // Dunkle/gedeckte warme Töne wirken eher "braun" als "rot/orange".
   if ((h < 50 || h >= 345) && l < 45 && s > 20) return "Brown";
 
   if (h < 15 || h >= 345) return "Red";
@@ -101,7 +107,6 @@ const COLOR_GROUP_OVERRIDES = {
   // 20: "Brown", // Beispiel: falls "#CA895D" lieber als Braun statt Orange gelten soll
 };
 
-// Paletten-Index -> Gruppenname, einmal beim Modul-Load berechnet.
 const COLOR_GROUP_BY_INDEX = Object.fromEntries(
   Object.entries(colorPalette).map(([index, hex]) => [
     index,
@@ -272,8 +277,7 @@ export default async function handler(req, res) {
       options: generateOptions(drawing, uniqueDrawings),
     }));
 
-    const modes = ["classic", "inspect", "gravity"];
-    const mode = modes[Math.floor(Math.random() * modes.length)];
+    const mode = await getRotatingValue(client, "rotation:mode", MODES);
 
     const curation = { type: effectiveType, target: targetLabel, heading };
 
