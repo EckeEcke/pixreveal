@@ -6,7 +6,7 @@
         <br />
         PIXREVEAL
       </h1>
-      <FAQComponent :items="generalFaqs" />
+      <FAQComponent class="faq-section" :items="generalFaqs" />
 
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
@@ -82,83 +82,8 @@ h1 {
   color: var(--primary);
 }
 
-h2 {
-  margin-top: 40px;
-  margin-bottom: 24px;
-}
-
-.cta-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-}
-
-@media (min-width: 576px) {
-  .cta-container {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.btn-cta {
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 0.5px;
-  font-size: 0.9rem;
-  transition: transform 0.1s;
-}
-
-.btn-cta:active {
-  transform: scale(0.98);
-}
-
-.btn-cta.host {
-  background: var(--primary);
-  color: #fff;
-}
-
-.btn-cta.join {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.party-desc {
-  margin: 32px 0;
-  line-height: 1.5;
-}
-
 .faq-section {
-  margin-top: 48px;
-  text-align: left;
-}
-
-.faq-item {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 16px;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.faq-item summary {
-  font-weight: 700;
-  cursor: pointer;
-  outline: none;
-  user-select: none;
-}
-
-.faq-answer {
-  margin-top: 12px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.faq-answer p {
-  margin: 0;
+  max-width: 600px;
 }
 
 .link {
