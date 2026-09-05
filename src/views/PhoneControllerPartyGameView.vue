@@ -10,7 +10,7 @@
 
         <div>
          <p class="hero-desc">
-          PixReveal is a <strong>free browser party game with phone controllers</strong>
+          PixReveal is a <strong>free browser party game</strong>
           designed for game nights, parties, and team events.
         </p>
         <p class="hero-desc">
@@ -21,25 +21,24 @@
           <ButtonLinkPrimary link="/play-party?role=host">
             HOST A FREE GAME
           </ButtonLinkPrimary>
-          <ButtonLinkSecondary link="/play-party?role=join">
-            JOIN WITH ROOM ID
+          <ButtonLinkSecondary link="/">
+            DISCOVER MORE
           </ButtonLinkSecondary>
         </div>
         <div class="feature-badges">
           <span class="badge">2–10 players</span>
           <span class="badge">Phone controllers</span>
           <span class="badge">No app required</span>
-          <span class="badge">Free in browser</span>
         </div>
         </div>
       </div>
+
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
 
       <div class="two-columns">
         <PartyHowTo />
-        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+        <PowerUpInfo class="powerups" />
       </div>
-
-      <PowerUpInfo class="powerups" />
 
       <div class="two-columns">
         <section class="seo-section">

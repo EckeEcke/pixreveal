@@ -2,45 +2,45 @@
   <main class="page">
     <ContentPage>
       <h1>
-        <span class="pre-headline">THE ULTIMATE PIXEL GUESSR</span> <br />
+        <span class="pre-headline">THE ULTIMATE PIXEL GUESSING GAME</span> <br />
         FAST-PACED MULTIPLAYER PIXEL ART QUIZ
       </h1>
       <div class="hero">
         <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
 
         <div>
-         <p class="hero-desc">
-          PixReveal is the ultimate <strong>multiplayer pixel guesser</strong> game for
-          quick-witted players who love a fast-paced <strong>pixel art quiz</strong>.
-        </p>
-        <p class="hero-desc">
-          Hit the buzzer on your phone to lock in your answer, score points for a
-          correct guess, and drop chaotic powerups to block your rivals' screens.
-        </p>
-        <div class="cta-container">
-          <ButtonLinkPrimary link="/play-party?role=host">
-            HOST A FREE GAME
-          </ButtonLinkPrimary>
-          <ButtonLinkSecondary link="/play-party?role=join">
-            JOIN WITH ROOM ID
-          </ButtonLinkSecondary>
-        </div>
-        <div class="feature-badges">
-          <span class="badge">2–10 players</span> <span class="badge">No download</span>
-          <span class="badge">No login</span> <span class="badge">Phone controllers</span>
-        </div>
+          <p class="hero-desc">
+            PixReveal is the ultimate free <strong>pixel guess</strong> game for
+            quick-witted players who love a fast-paced <strong>pixel art quiz</strong>.
+          </p>
+          <p class="hero-desc">
+            Hit the buzzer on your phone to answer and drop chaotic powerups to sabotage your friends.
+          </p>
+          <div class="cta-container">
+            <ButtonLinkPrimary link="/play-party?role=host">
+              HOST A FREE GAME
+            </ButtonLinkPrimary>
+            <ButtonLinkSecondary link="/">
+              DISCOVER MORE
+            </ButtonLinkSecondary>
+          </div>
+          <div class="feature-badges">
+            <span class="badge">2–10 players</span> <span class="badge">No download</span>
+            <span class="badge">No login</span> <span class="badge">Phone controllers</span>
+          </div>
         </div>
       </div>
+
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
 
       <div class="two-columns">
         <PartyHowTo />
-        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+        <PowerUpInfo class="powerups" />
       </div>
 
-      <PowerUpInfo class="powerups" />
       <div class="two-columns">
         <section class="seo-section">
-          <h2>How does Pixel Guessr work?</h2>
+          <h2>How does this Pixel Guess Game work?</h2>
           <p class="party-desc">
             How fast can you spot the hidden picture? As the blocks appear pixel by
             pixel, the rush is on. Challenge your friends or coworkers in a competitive
@@ -50,10 +50,10 @@
           <p class="party-desc">
             Score points for a correct guess, but watch out: wrong answers will cost
             you. Outsmart your rivals and secure your title as the ultimate
-            <strong>Pixel Guessr</strong> Champion.
+            <strong>Pixel Guess</strong> Champion.
           </p>
         </section>
-        <FAQComponent :items="pixelGuessrFaqs" />
+        <FAQComponent :items="pixelGuessFaqs" />
       </div>
 
       <router-link to="/" class="link">GO TO HOME</router-link>
@@ -70,7 +70,7 @@ import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 import FAQComponent from "@/components/page-ui/FAQComponent.vue";
 
-const pixelGuessrFaqs = [
+const pixelGuessFaqs = [
   {
     question: "How does the pixel reveal mechanic work?",
     answer:
@@ -82,7 +82,7 @@ const pixelGuessrFaqs = [
       "The goal is to recognize the drawing as quickly as possible and guess the correct answer before the timer runs out. Your score depends entirely on your speed—the faster you submit the correct answer, the more points you get.",
   },
   {
-    question: "Can I play Pixel Guessr solo or with other players?",
+    question: "Can I play this pixel guess game solo or with friends?",
     answer:
       "You can play solo in singleplayer mode to chase high scores, or play with friends. There is no random matchmaking with strangers. For multiplayer, you can either host a local party game Jackbox-style using smartphones as controllers, or invite friends to a private online lobby where everyone plays on their own screen.",
   },

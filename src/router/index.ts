@@ -182,7 +182,7 @@ const router = createRouter({
         robots: "index, follow",
         title: "Online Pixel Art Multiplayer Game | PixReveal",
         description:
-          "Host or join private online lobbies, compete with friends worldwide, and guess pixel art in real time from any device.",
+          "Play a free online pixel art multiplayer game. Host or join private lobbies, compete with friends worldwide, and guess pixel art in real time from any device.",
         canonical: "https://www.pixreveal.com/play-online",
       },
     },
@@ -217,9 +217,9 @@ const router = createRouter({
       component: () => import("@/views/FreePixelGuessrView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Pixel Guessr Alternative – Guess Pixel Art | PixReveal",
+        title: "Free Pixel Guessing Game Online | PixReveal",
         description:
-          "Love Pixel Guessr? Play PixReveal, the free pixel drawing quiz with singleplayer modes, daily challenges, and online multiplayer.",
+          "Looking for a free online pixel guessing game? Play PixReveal to guess pixel art pictures with daily challenges, singleplayer modes, and live multiplayer.",
         canonical: "https://www.pixreveal.com/free-pixel-guessr-alternative",
       },
     },
@@ -241,7 +241,7 @@ const router = createRouter({
       component: () => import("@/views/PhoneControllerPartyGameView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Phone Controller Party Game for TV and Friends | PixReveal",
+        title: "Free Party Game with Phone Controllers | PixReveal",
         description:
           "Play on a TV and use your phones as controllers in this free browser party game. No app, no login, and no download required – buzz, guess pixel art, and enjoy chaotic multiplayer fun with friends.",
         canonical: "https://www.pixreveal.com/phone-controller-party-game",
@@ -253,7 +253,7 @@ const router = createRouter({
       component: () => import("@/views/FridayGameView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Friday Afterwork Game for Teams and coworkers | PixReveal",
+        title: "Free Friday Afterwork Game for Teams & Coworkers | PixReveal",
         description:
           "The perfect free, safe-for-work team bonding game! No login or registration required – jump straight into a quick picture reveal quiz in your browser.",
         canonical: "https://www.pixreveal.com/friday-afterwork-game",
@@ -265,9 +265,9 @@ const router = createRouter({
       component: () => import("@/views/AboutView.vue"),
       meta: {
         robots: "index, follow",
-        title: "About PixReveal",
+        title: "About PixReveal – The Pixel Art Guessing Game",
         description:
-          "Learn more about the development, the roadmap, and the features behind PixReveal.",
+          "Learn more about PixReveal, the free pixel art guessing game, its development, roadmap, and upcoming features.",
         canonical: "https://www.pixreveal.com/about",
       },
     },
@@ -277,8 +277,8 @@ const router = createRouter({
       component: () => import("@/views/FAQView.vue"),
       meta: {
         robots: "index, follow",
-        title: "FAQ PixReveal",
-        description: "Frequently Asked Questions about PixReveal.",
+        title: "PixReveal FAQ – Frequently Asked Questions",
+        description: "Find answers to common questions about PixReveal, including gameplay, multiplayer, scoring, accounts, and how to play.",
         canonical: "https://www.pixreveal.com/faq",
       },
     },

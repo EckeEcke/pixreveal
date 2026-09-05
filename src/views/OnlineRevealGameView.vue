@@ -10,8 +10,8 @@
 
         <div>
          <p class="hero-desc">
-          PixReveal is a free <strong>picture reveal game</strong> where images
-          progressively unfold pixel by pixel, testing your reflexes and brainpower.
+          PixReveal is a free <strong>picture reveal game</strong> where  you guess images
+          progressively unfolding pixel by pixel.
         </p>
         <p class="hero-desc">
           Play a quick solo round or host a game night with up to 10 friends — no
@@ -21,13 +21,12 @@
           <ButtonLinkPrimary link="/singleplayer">
             Play Singleplayer
           </ButtonLinkPrimary>
-          <ButtonLinkSecondary link="/play-party?role=host">
-            HOST A PARTY
+          <ButtonLinkSecondary link="/">
+            Discover more
           </ButtonLinkSecondary>
         </div>
         <div class="feature-badges">
           <span class="badge">Solo or up to 10 players</span>
-          <span class="badge">6 game modes</span>
           <span class="badge">No download</span> <span class="badge">No login</span>
         </div>
         </div>

@@ -15,13 +15,15 @@
           image reveal quiz your whole team can jump into instantly.
         </p>
         <p class="hero-desc">
-          No registration, no downloads, no login. Just invite your coworkers and see
-          who guesses the picture first.
+          No registration, no downloads, no login. Just play.
         </p>
         <div class="cta-container">
           <ButtonLinkPrimary link="/play-party?role=host">
             HOST A TEAM GAME
           </ButtonLinkPrimary>
+          <ButtonLinkSecondary link="/">
+            DISCOVER MORE
+          </ButtonLinkSecondary>
         </div>
         <div class="feature-badges">
           <span class="badge">Up to 10 players</span> <span class="badge">100% SFW</span>
@@ -30,12 +32,13 @@
         </div>
       </div>
 
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+
       <div class="two-columns">
         <PartyHowTo />
-        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+        <PowerUpInfo class="powerups" />
       </div>
 
-      <PowerUpInfo class="powerups" />
       <div class="two-columns">
         <section class="seo-section">
           <h2>Why PixReveal for your team?</h2>
@@ -66,6 +69,7 @@ import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
 import PowerUpInfo from "@/components/game-ui/PowerUpInfo.vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
+import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 import FAQComponent from "@/components/page-ui/FAQComponent.vue";
 
 const officeFridayFaqs = [

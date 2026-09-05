@@ -116,8 +116,7 @@
       <PowerUpInfo />
       <p>
         Send emotes from your phone to the host screen to react to the current
-        game (or distract other players). Bonus rounds with special effects mix
-        up the challenge. Bonus rounds and the final round allow you to gain
+        game (or distract other players). Bonus rounds and the final round allow you to gain
         twice as much points, but also lose twice as much! Risk versus reward.
       </p>
       <p>

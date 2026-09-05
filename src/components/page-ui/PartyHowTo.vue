@@ -1,5 +1,7 @@
 <template>
-<ul class="howto-list">
+  <div>
+    <h3 class="title">How does Party Mode Work?</h3>
+    <ul class="howto-list">
         <li>
           <Icon
             icon="streamline-pixel:video-movies-vintage-tv-1"
@@ -27,21 +29,13 @@
         </li>
         <li>
           <Icon
-            icon="streamline-pixel:business-products-magic-rabbit"
-            class="icon"
-          />
-          Bonus rounds with special rulesets.
-        </li>
-        <li>
-          <Icon
             icon="streamline-pixel:entertainment-events-hobbies-bomb"
             class="icon"
           />
           Use powerups to sabotage your friends.
         </li>
-      </ul>
-
-      
+      </ul> 
+    </div> 
 </template>
 
 <script setup lang="ts">
@@ -50,6 +44,10 @@ import PowerUpInfo from '../game-ui/PowerUpInfo.vue';
 </script>
 
 <style scoped>
+h3 {
+  margin: 0 0 24px;
+}
+
 .howto-list {
   margin: 0;
   padding-left: 0;

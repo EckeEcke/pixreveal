@@ -21,8 +21,8 @@
           <ButtonLinkPrimary link="/play-party?role=host">
             HOST A FREE GAME
           </ButtonLinkPrimary>
-          <ButtonLinkSecondary link="/play-party?role=join">
-            JOIN WITH ROOM ID
+          <ButtonLinkSecondary link="/">
+            DISCOVER MORE
           </ButtonLinkSecondary>
         </div>
         <div class="feature-badges">
@@ -32,12 +32,13 @@
         </div>
       </div>
 
+              <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+
       <div class="two-columns">
         <PartyHowTo />
-        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+        <PowerUpInfo class="powerups" />
       </div>
 
-      <PowerUpInfo class="powerups" />
       <div class="two-columns">
         <section class="seo-section">
           <h2>What is PixReveal?</h2>

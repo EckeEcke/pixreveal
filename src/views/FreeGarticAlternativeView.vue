@@ -11,7 +11,7 @@
         <div>
          <p class="hero-desc">
           PixReveal is the <strong>free alternative to Skribbl.io and Gartic Phone</strong>
-          for players who want to focus purely on guessing, not drawing.
+          for players who want to guess, not to draw.
         </p>
         <p class="hero-desc">
           Host on a TV, join with your phones, buzz to answer, and sabotage your friends
@@ -21,8 +21,8 @@
           <ButtonLinkPrimary link="/play-party?role=host">
             HOST A FREE GAME
           </ButtonLinkPrimary>
-          <ButtonLinkSecondary link="/play-party?role=join">
-            JOIN WITH ROOM ID
+          <ButtonLinkSecondary link="/">
+            DISCOVER MORE
           </ButtonLinkSecondary>
         </div>
         <div class="feature-badges">
@@ -32,12 +32,13 @@
         </div>
       </div>
 
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+
       <div class="two-columns">
         <PartyHowTo />
-        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+        <PowerUpInfo class="powerups" />
       </div>
 
-      <PowerUpInfo class="powerups" />
       <div class="two-columns">
         <section class="seo-section">
           <h2>How is PixReveal different from Skribbl & Gartic?</h2>
