@@ -17,9 +17,20 @@
           placeholder="Optional OAuth Client Secret"
         />
 
-        <ButtonPrimary @clicked="signIn" :disabled="authInProgress"
-          >Sign in (PKCE)</ButtonPrimary
+        <router-link class="privacy-link" to="/privacy">
+          Read how YouTube OAuth and chat messages are processed.
+        </router-link>
+
+        <ButtonPrimary
+          class="auth-action"
+          @clicked="signIn"
+          :disabled="authInProgress"
         >
+          Sign in (PKCE)
+        </ButtonPrimary>
+        <ButtonLinkSecondary class="auth-action" link="/stream">
+          BACK
+        </ButtonLinkSecondary>
       </div>
     </ModalWrapper>
 
@@ -163,6 +174,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import GameHeader from "@/components/game-ui/GameHeader.vue";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
@@ -686,6 +698,23 @@ onMounted(async () => {
 .streaming-mode {
   padding: 16px;
 }
+
+.privacy-link {
+  display: block;
+  margin: 12px 0 16px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+  line-height: 1.4;
+  text-decoration: underline;
+}
+
+.auth-action {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
 .stream-content {
   display: flex;
   gap: 16px;

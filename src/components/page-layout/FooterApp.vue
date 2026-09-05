@@ -12,6 +12,12 @@
       <router-link class="internal-link" data-sfx="click" to="/about">
         <Icon icon="pixel:info-circle" /> ABOUT
       </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/faq">
+        <Icon icon="pixel:question" /> FAQ
+      </router-link>
+      <router-link class="internal-link" data-sfx="click" to="/privacy">
+        <Icon icon="pixel:cybersecurity" /> PRIVACY
+      </router-link>
     </div>
 
     <div class="link-wrapper">

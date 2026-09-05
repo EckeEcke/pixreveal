@@ -7,6 +7,21 @@
       <div class="log-info">
         <span class="date">09-05-26</span>
       </div>
+      <h3 class="log-title">New Stream Mode for YouTube and Twitch!</h3>
+      <p>
+        PixReveal now has a dedicated Stream Mode for YouTube and Twitch! Let
+        your viewers play along directly through the chat: they can answer with
+        the full word or simply type 1, 2, 3 or 4. Each stream round runs for
+        15 minutes, with live scoring and a leaderboard for everyone taking
+        part. The setup is simple: choose your platform, connect your chat and
+        start playing. <router-link to="/stream">Try Stream Mode</router-link>
+        now!
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
+        <span class="date">09-05-26</span>
+      </div>
       <h3 class="log-title">Edit avatar on lobby screen</h3>
       <p>
         Finally added a feature that I had on my list for quite a while: enabling you to edit your avatar on the lobby screen! Before you could only edit your avatar before joining. Now you can change your avatar and player name while waiting for the game to start. Just click on your player card and the edit modal will open. This QOL feature is available for both party and online mode.

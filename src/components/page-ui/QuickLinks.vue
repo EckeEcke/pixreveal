@@ -20,9 +20,12 @@
         <span>User Art Gallery</span>
       </router-link>
 
-      <router-link class="quick-link" data-sfx="click" to="/faq">
-        <Icon icon="pixel:question" class="quick-link-icon icon-teal" />
-        <span>FAQ</span>
+      <router-link class="quick-link" data-sfx="click" to="/stream">
+        <Icon
+          icon="pixel:twitch"
+          class="quick-link-icon icon-social"
+        />
+        <span>Streamer Mode</span>
       </router-link>
     </div>
   </div>
@@ -131,6 +134,10 @@ const openManual = () => {
 
 .icon-teal {
   color: var(--neon-cyan, #2dd4bf);
+}
+
+.icon-social {
+  color: var(--neon-social, #cc00ff);
 }
 
 @container (max-width: 320px) {

@@ -42,6 +42,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/privacy",
+      name: "privacy",
+      component: () => import("@/views/PrivacyView.vue"),
+      meta: {
+        robots: "index, follow",
+        title: "Privacy Policy | PixReveal",
+        description:
+          "Privacy information for PixReveal, including YouTube OAuth and Stream Mode chat processing.",
+        canonical: "https://www.pixreveal.com/privacy",
+      },
+    },
+    {
       path: "/singleplayer",
       name: "singleplayer",
       component: () => import("@/views/SinglePlayerView.vue"),
