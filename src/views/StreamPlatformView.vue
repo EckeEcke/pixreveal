@@ -40,7 +40,7 @@
               PixReveal Stream Mode lets content creators host interactive pixel-guessing games directly with their live audience. Viewers don't need to join external lobbies or scan QR codes—they simply type their guesses straight into your stream chat.
             </p>
             <p class="party-desc">
-              Our automated bot tracks chat messages in real time, registers the fastest correct guesses, and updates the live stream leaderboard instantly. Whether you broadcast on Twitch or YouTube Live, setting up takes less than 60 seconds.
+              The automated bot tracks chat messages in real time, registers the fastest correct guesses, and updates the live stream leaderboard instantly. Whether you broadcast on Twitch or YouTube Live, setting up takes less than 60 seconds.
             </p>
           </section>
 
