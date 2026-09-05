@@ -2,37 +2,37 @@
   <main class="page">
     <ContentPage>
       <h1>
-        <span class="pre-headline">PIXEL GUESSING PARTY GAME</span> <br />
-        FREE BROWSER MULTIPLAYER FOR 2–10 PLAYERS
+        <span class="pre-headline">FREE JACKBOX ALTERNATIVE</span> <br />
+        PHONE CONTROLLER PARTY GAME FOR TV & FRIENDS
       </h1>
       <div class="hero">
-        <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal">
+        <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal" />
 
         <div>
-         <p class="hero-desc">
-          PixReveal is a <strong>free Jackbox-style browser party game</strong> for game
-          nights, team events, and chaotic fun with friends.
-        </p>
-        <p class="hero-desc">
-          Host on a TV, join with your phones, buzz to answer, and sabotage your friends
-          with ridiculous powerups.
-        </p>
-        <div class="cta-container">
-          <ButtonLinkPrimary link="/play-party?role=host">
-            HOST A FREE GAME
-          </ButtonLinkPrimary>
-          <ButtonLinkSecondary link="/">
-            DISCOVER MORE
-          </ButtonLinkSecondary>
-        </div>
-        <div class="feature-badges">
-          <span class="badge">2–10 players</span> <span class="badge">No download</span>
-          <span class="badge">No login</span> <span class="badge">Phone controllers</span>
-        </div>
+          <p class="hero-desc">
+            Looking for a free game like Jackbox? PixReveal turns your smartphones into controllers and your TV or laptop into a shared party screen.
+          </p>
+          <p class="hero-desc">
+            No paid Party Packs, no app downloads, and no signup.
+          </p>
+          <div class="cta-container">
+            <ButtonLinkPrimary link="/play-party?role=host">
+              HOST A FREE GAME
+            </ButtonLinkPrimary>
+            <ButtonLinkSecondary link="/">
+              DISCOVER MORE
+            </ButtonLinkSecondary>
+          </div>
+          <div class="feature-badges">
+            <span class="badge">2–10 players</span>
+            <span class="badge">No download</span>
+            <span class="badge">No login</span>
+            <span class="badge">Phone controllers</span>
+          </div>
         </div>
       </div>
 
-              <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
 
       <div class="two-columns">
         <PartyHowTo />
@@ -41,36 +41,25 @@
 
       <div class="two-columns">
         <section class="seo-section">
-          <h2>What is PixReveal?</h2>
+          <h2>Why PixReveal is the Perfect Free Jackbox Alternative</h2>
           <p class="party-desc">
-            PixReveal is a <strong>Jackbox-style browser party game</strong> where players
-            guess pixel art as it is revealed piece by piece. One player hosts the game on a
-            TV, laptop, or tablet, while everyone else joins instantly using a phone, QR
-            code, room ID, or invite link.
+            If you love games like Jackbox Games or Kahoot but don't want to buy expensive game packs or force everyone to register, PixReveal is built for you. It brings the iconic couch co-op experience directly into your web browser. One main display shows the evolving pixel art, while players use their mobile devices to buzz in and select the correct answer.
           </p>
           <p class="party-desc">
-            The game combines
-            <strong
-              >buzzing, bonus rounds, hidden powerups, local party mode, online multiplayer,
-              and daily challenges</strong
-            >. Because everything runs directly in the browser, there is no app to install
-            and no registration required.
+            Unlike drawing party games where players struggle to sketch with a mouse or touchscreen, PixReveal serves high-quality pixel art that builds up automatically piece by piece. The game features local party mode, live online multiplayer, chaotic powerups to sabotage opponents, and special double-point bonus rounds.
           </p>
           <p class="party-desc">
-            If you are looking for a <strong>free Jackbox alternative</strong>, a
-            <strong>browser party game</strong>, a
-            <strong>phone controller party game</strong>, or a
-            <strong>multiplayer pixel quiz</strong>, PixReveal is designed to be playable
-            within seconds and 100% SFW (safe for work).
+            Whether you are organizing a Friday afterwork team event, hosting a house party, or looking for a fast-paced game night with family, PixReveal is 100% SFW (safe for work), browser-based, and playable within seconds.
           </p>
         </section>
         <FAQComponent :items="jackboxFaqs" />
       </div>
-      
+
       <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
   </main>
 </template>
+
 <script setup lang="ts">
 import ContentPage from "@/components/page-layout/ContentPage.vue";
 import PartyHowTo from "@/components/page-ui/PartyHowTo.vue";
@@ -79,34 +68,36 @@ import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import ButtonLinkSecondary from "@/components/page-ui/ButtonLinkSecondary.vue";
 import FAQComponent from "@/components/page-ui/FAQComponent.vue";
+
 const jackboxFaqs = [
   {
-    question: 'What does "Jackbox style" mean for PixReveal?',
+    question: "Why is PixReveal a great free alternative to Jackbox Games?",
     answer:
-      "It means you only need one central screen to host the game—like a PC, tablet, or TV. Everyone else connects instantly using their own smartphones as controllers to hit the buzzer and select their answers.",
+      "Unlike Jackbox, PixReveal is completely free and requires zero downloads or purchases. You don't need a Steam account or console—just open your web browser on a TV or PC, let everyone join with their phones, and start playing immediately.",
   },
   {
-    question: "How do friends connect and join the room?",
+    question: "How do smartphones work as controllers?",
     answer:
-      "PixReveal is built exclusively for playing with friends. Joining is instant and seamless: players can either type in the room ID on their devices, click a shared invite link, or simply scan a QR code from the host screen to jump straight into the action.",
+      "The host screen displays a QR code and a room ID. Players scan the QR code with their mobile cameras, which instantly opens a custom phone controller in their browser. From there, players can buzz in, use powerups, and pick answers directly from their phone screens.",
   },
   {
-    question: "What is the goal of the game and how do you score?",
+    question: "Is PixReveal safe for work and family team events?",
     answer:
-      "The goal is to recognize the drawing before your friends do as the pixels pop up randomly across the canvas. When you think you know it, hit the buzzer and choose from 4 answer options on your phone. Getting a correct answer awards 1 point, but guessing incorrectly penalizes you with -2 points.",
+      "Yes, 100%. All drawings and prompts in PixReveal are curated to be completely safe for work (SFW). It is ideal for office team-building, remote afterwork sessions, and family game nights.",
   },
   {
-    question: "What are bonus rounds?",
+    question: "How many players can join a party game?",
     answer:
-      "Every 5 rounds, a bonus round with special effects triggers. In these bonus rounds, as well as in the final round of the game, the stakes are doubled: you get double points for a correct guess, but you also lose double the points for a wrong answer.",
+      "PixReveal supports local and online party lobbies for 2 to 10 players. Everyone can join using their own smartphone or tablet without needing to register an account.",
   },
   {
-    question: "Do players need an app or registration?",
+    question: "Do players need to be on the same Wi-Fi network?",
     answer:
-      "No, players can just join the game directly via browser. You can set an avatar image and a player name. Or just use a default random name.",
+      "No! While it works amazingly as a local couch game on a shared TV, players can also join remotely via video call (Zoom, Teams, Discord) or from anywhere using their mobile network.",
   },
 ];
 </script>
+
 <style scoped>
 h1 {
   font-family: inherit;
@@ -137,6 +128,7 @@ h2 {
   grid-template-columns: 1fr;
   gap: 12px;
   margin: 24px 0 16px;
+
   @media (min-width: 576px) {
     grid-template-columns: 1fr 1fr;
   }
@@ -175,12 +167,13 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 .two-columns {
-    margin: 32px 0;
+  margin: 32px 0;
 }
 </style>
