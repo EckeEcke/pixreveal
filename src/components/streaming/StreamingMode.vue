@@ -118,7 +118,14 @@
         <div class="right">
           <div class="info-text">
             <h3>💬 PLAY IN CHAT</h3>
-            <p>Make your guess! Type 1, 2, 3, 4 or the full word!</p>
+            <p>
+              Make your guess! Type
+              <span class="answer-key answer-key--pink">1</span>,
+              <span class="answer-key answer-key--blue">2</span>,
+              <span class="answer-key answer-key--purple">3</span>,
+              <span class="answer-key answer-key--yellow">4</span>
+              or the full word!
+            </p>
           </div>
           <div class="answers">
             <AnswerButtons
@@ -831,13 +838,27 @@ button {
 }
 
 .info-text {
-  background: #333;
+  background: var(--primary);
   width: 100%;
   padding: 16px;
   margin-bottom: 32px;
   box-sizing: border-box;
   border-radius: 8px;
-  border: 2px solid var(--primary);
+  border: 3px solid #fff;
+  border-top-color: rgba(255, 255, 255, 0.5);
+  border-left-color: rgba(255, 255, 255, 0.5);
+  border-right-color: rgba(0, 0, 0, 0.65);
+  border-bottom-color: rgba(0, 0, 0, 0.65);
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.1),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.2),
+    4px 5px 0 rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-shadow:
+    2px 2px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000;
   h3 {
     margin-top: 0;
     margin-bottom: 0;
@@ -845,6 +866,35 @@ button {
   p {
     margin-top: 8px;
     margin-bottom: 0;
+    text-shadow: 1px 1px 0 #000;
   }
+}
+
+.answer-key {
+  display: inline-block;
+  margin: 0 2px;
+  font-weight: 900;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    2px 2px 0 #000;
+}
+
+.answer-key--pink {
+  color: var(--neon-pink);
+}
+
+.answer-key--blue {
+  color: var(--neon-blue);
+}
+
+.answer-key--purple {
+  color: var(--neon-purple);
+}
+
+.answer-key--yellow {
+  color: var(--neon-yellow);
 }
 </style>
