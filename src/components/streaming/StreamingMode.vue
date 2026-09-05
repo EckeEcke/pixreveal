@@ -760,10 +760,10 @@ onMounted(async () => {
   transform: translate(-50%, -50%);
   border: 2px solid var(--primary);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(5, 4, 12, 0.96);
   box-shadow:
     0 0 24px rgba(255, 255, 255, 0.2),
-    0 16px 60px rgba(0, 0, 0, 0.75);
+    0 16px 60px rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(8px);
 }
 
