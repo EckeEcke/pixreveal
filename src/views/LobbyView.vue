@@ -75,9 +75,13 @@
               :avatar-index="
                 isParty && player.isHost ? undefined : player.avatarIndex
               "
-              :class="isParty && player.isHost ? 'hidden' : ''"
+              :class="[
+                isParty && player.isHost ? 'hidden' : '',
+                { 'editable-player': isMe(player.playerId) },
+              ]"
               :is-host="player.isHost"
               :show-you-indicator="isMe(player.playerId)"
+              @click="isMe(player.playerId) && (showPlayerEditModal = true)"
             />
             <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>
           </div>
@@ -85,6 +89,11 @@
         </div>
       </div>
     </div>
+    <PlayerEditModal
+      v-if="showPlayerEditModal"
+      @btn-click="confirmPlayerEdit"
+      @close="showPlayerEditModal = false"
+    />
   </div>
 </div>
 </template>
@@ -101,6 +110,7 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import LobbyChat from "@/components/game-ui/LobbyChat.vue";
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { Icon } from "@iconify/vue";
 import { toast } from "vue3-toastify";
 import QrcodeVue from "qrcode.vue";
@@ -125,6 +135,12 @@ const players = computed(() =>
   channelStore.playersOnline.filter((p) => p.isOnline),
 );
 const isMe = (id) => id === channelStore.playerId;
+const showPlayerEditModal = ref(false);
+
+const confirmPlayerEdit = () => {
+  channelStore.updatePlayerProfile();
+  showPlayerEditModal.value = false;
+};
 
 const isStarting = ref(false);
 const lobbyWrapperRef = ref(null);
@@ -210,6 +226,14 @@ const shareNative = async () => {
   transform-origin: center center;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+.editable-player {
+  cursor: pointer;
+}
+
+.editable-player:hover {
+  filter: brightness(1.15);
 }
 
 .lobby-card {

@@ -270,8 +270,14 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  .video-wrapper {
+    order: 3;
+  }
   @media (min-width: 1024px) {
     grid-template-columns: 600px 1fr;
+    .video-wrapper {
+      order: 0;
+    }
   }
 }
 

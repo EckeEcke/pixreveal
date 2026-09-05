@@ -412,6 +412,17 @@ export const useChannelStore = defineStore("channel", () => {
     });
   };
 
+  const updatePlayerProfile = () => {
+    const profile = {
+      playerId: playerId.value,
+      username: playerStore.playerName,
+      avatarIndex: playerStore.avatarIndex,
+    };
+
+    playerMgmt.updatePlayer(profile.playerId, profile);
+    activeChannel.value?.trigger("client-avatar-updated", profile);
+  };
+
   return {
     // State
     playersOnline: playerMgmt.playersOnline,
@@ -432,6 +443,7 @@ export const useChannelStore = defineStore("channel", () => {
     joinSession,
     tryReconnect,
     sendChatMessage,
+    updatePlayerProfile,
     removePlayer: playerMgmt.removePlayer,
     reset,
     resetConnection,

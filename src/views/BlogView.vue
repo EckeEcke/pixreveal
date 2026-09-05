@@ -5,6 +5,15 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">09-05-26</span>
+      </div>
+      <h3 class="log-title">Edit avatar on lobby screen</h3>
+      <p>
+        Finally added a feature that I had on my list for quite a while: enabling you to edit your avatar on the lobby screen! Before you could only edit your avatar before joining. Now you can change your avatar and player name while waiting for the game to start. Just click on your player card and the edit modal will open. This QOL feature is available for both party and online mode.
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">08-31-26</span>
       </div>
       <h3 class="log-title">Screen Scaling and Party Game Over emotes available now!</h3>

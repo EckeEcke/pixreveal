@@ -28,6 +28,7 @@ interface ChatMessage {
 interface PlayerManagement {
   playersOnline: Ref<Player[]>;
   addPlayer(player: Player): void;
+  updatePlayer(playerId: string, updates: Partial<Player>): void;
   removePlayer(playerId: string): void;
   allowRejoinDuringRunningGame(playerId: string): void;
   allowedIdsDuringGame: Ref<Set<string> | null>;
@@ -139,6 +140,24 @@ export function useMemberEvents({
     const id: string = member.user_id ?? member.id;
     playerMgmt.removePlayer(id);
   });
+
+  channel.bind(
+    "client-avatar-updated",
+    (data: {
+      playerId?: string;
+      username?: string;
+      avatarIndex?: number;
+    }) => {
+      if (!data?.playerId) return;
+
+      playerMgmt.updatePlayer(data.playerId, {
+        ...(data.username !== undefined ? { username: data.username } : {}),
+        ...(data.avatarIndex !== undefined
+          ? { avatarIndex: data.avatarIndex }
+          : {}),
+      });
+    },
+  );
 
   channel.bind("client-join-blocked", (data: { targetId?: string }) => {
     if (!data?.targetId || String(data.targetId) !== playerId.value) return;

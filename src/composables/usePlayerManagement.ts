@@ -24,6 +24,11 @@ export function usePlayerManagement({
     }
   };
 
+  const updatePlayer = (playerId: string, updates: Partial<Player>) => {
+    const player = playersOnline.value.find((p) => p.playerId === playerId);
+    if (player) Object.assign(player, updates);
+  };
+
   const removePlayer = (id: string) => {
     playersOnline.value = playersOnline.value.filter((p: Player) => p.playerId !== id);
   };
@@ -75,6 +80,7 @@ export function usePlayerManagement({
     playersOnline,
     allowedIdsDuringGame,
     addPlayer,
+    updatePlayer,
     removePlayer,
     lockAllowedIdsForRunningGame,
     allowRejoinDuringRunningGame,
