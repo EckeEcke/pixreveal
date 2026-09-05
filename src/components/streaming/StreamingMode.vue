@@ -61,28 +61,13 @@
                 Start {{ chatPlatform === 'twitch' ? "Twitch" : "YouTube" }} Stream
               </ButtonPrimary>
             </div>
-            <div v-if="running" class="stream-clock">
-              STREAM TIME
+            <div
+              v-if="running"
+              class="stream-clock"
+              :class="{ critical: isStreamTimeCritical }"
+            >
+              TIME LEFT
               <strong>{{ streamTimeDisplay }}</strong>
-            </div>
-            <div v-if="streamFinished" class="stream-result">
-              <h2>STREAM OVER</h2>
-              <template v-if="winner">
-                <p>WINNER</p>
-                <PlayerDisplay
-                  :position="1"
-                  :name="winner.username"
-                  :points="winner.points"
-                  size="small"
-                />
-                <ButtonPrimary
-                  class="next-round-btn"
-                  :disabled="authInProgress"
-                  @clicked="startNextStream"
-                >
-                  START NEXT ROUND
-                </ButtonPrimary>
-              </template>
             </div>
             <div>
               <h2>LEADERBOARD</h2>
@@ -145,6 +130,23 @@
           </div>
         </div>
       </div>
+      <div v-if="streamFinished && winner" class="stream-result">
+        <h2>STREAM OVER</h2>
+        <p>WINNER</p>
+        <PlayerDisplay
+          :position="1"
+          :name="winner.username"
+          :points="winner.points"
+          size="small"
+        />
+        <ButtonPrimary
+          class="next-round-btn"
+          :disabled="authInProgress"
+          @clicked="startNextStream"
+        >
+          START NEXT ROUND
+        </ButtonPrimary>
+      </div>
     </div>
   </div>
 </template>
@@ -162,6 +164,7 @@ import useYouTubeChat from "@/composables/useYouTubeChat";
 import useTwitchChat from "@/composables/useTwitchChat";
 import { useStreamStore } from "@/stores/stream";
 import { useChannelStore } from "@/stores/channel";
+import { useConfetti } from "@/composables/useConfetti";
 import drawings from "@/data/drawings.json";
 
 const ytChat = useYouTubeChat();
@@ -208,6 +211,9 @@ const streamTimeDisplay = computed(() => {
   const seconds = totalSeconds % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 });
+const isStreamTimeCritical = computed(
+  () => streamTimeLeft.value > 0 && streamTimeLeft.value <= 60_000,
+);
 
 const acceptedAnswers = ref<
   {
@@ -222,6 +228,7 @@ const pixelCanvas = ref<any | null>(null);
 
 const streamStore = useStreamStore();
 const channelStore = useChannelStore();
+const { fireConfetti, fireSideCannons } = useConfetti();
 const route = useRoute();
 const chatPlatform = ref<"youtube" | "twitch">(
   route.meta.chatPlatform === "twitch" ? "twitch" : "youtube",
@@ -628,6 +635,10 @@ function finishStream() {
   }
   stopPolling();
   twitchChat.stop();
+  if (winner.value) {
+    fireConfetti();
+    fireSideCannons();
+  }
 }
 
 async function startNextStream() {
@@ -724,16 +735,36 @@ onMounted(async () => {
 }
 
 .stream-clock strong {
+  display: inline-block;
   font-size: 32px;
   letter-spacing: 1px;
 }
 
+.stream-clock.critical,
+.stream-clock.critical strong {
+  color: var(--neon-error);
+}
+
+.stream-clock.critical strong {
+  animation: stream-time-pulse 1s ease-in-out infinite;
+}
+
 .stream-result {
-  margin: 20px 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  width: min(420px, calc(100vw - 32px));
+  margin: 0;
   padding: 16px;
+  transform: translate(-50%, -50%);
   border: 2px solid var(--primary);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 0 24px rgba(255, 255, 255, 0.2),
+    0 16px 60px rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
 }
 
 .stream-result h2,
@@ -751,6 +782,18 @@ onMounted(async () => {
 .next-round-btn {
   width: 100%;
   margin-top: 16px;
+}
+
+@keyframes stream-time-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.04);
+  }
 }
 
 input {
