@@ -76,7 +76,13 @@ const router = createRouter({
       path: "/stream",
       name: "stream",
       component: () => import("@/views/StreamPlatformView.vue"),
-      meta: { robots: "noindex" },
+      meta: {
+        robots: "index, follow",
+        title: "Interactive Stream Games for Twitch & YouTube | PixReveal",
+        description:
+          "Let your Twitch or YouTube Live viewers play PixReveal directly through stream chat with interactive pixel-guessing games. Free and easy to set up.",
+        canonical: "https://www.pixreveal.com/stream",
+      },
     },
     {
       path: "/stream/youtube",
