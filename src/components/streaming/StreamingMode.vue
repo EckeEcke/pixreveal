@@ -1,6 +1,6 @@
 <template>
   <div class="streaming-mode">
-    <ModalWrapper v-if="!isSignedIn">
+    <ModalWrapper v-if="chatPlatform === 'youtube' && !isSignedIn">
       <div class="stream-auth-modal">
         <h2>Sign in for Stream Mode</h2>
         <label>Google Client ID</label>
@@ -32,9 +32,57 @@
               Play the game on <span>pixreveal.com</span>
             </h3>
             <div class="chat-setup" v-if="!running">
-              <ButtonPrimary @clicked="startStreamMode"
-                >Start Stream Mode</ButtonPrimary
+              <div class="platform-picker">
+                <button
+                  type="button"
+                  :class="{ active: chatPlatform === 'youtube' }"
+                  @click="chatPlatform = 'youtube'"
+                >
+                  YouTube
+                </button>
+                <button
+                  type="button"
+                  :class="{ active: chatPlatform === 'twitch' }"
+                  @click="chatPlatform = 'twitch'"
+                >
+                  Twitch
+                </button>
+              </div>
+              <input
+                v-if="chatPlatform === 'twitch'"
+                v-model="twitchChannel"
+                placeholder="Twitch channel"
+                aria-label="Twitch channel"
+              />
+              <ButtonPrimary
+                @clicked="startStreamMode"
+                :disabled="chatPlatform === 'twitch' && !twitchChannel.trim()"
               >
+                Start {{ chatPlatform === 'twitch' ? "Twitch" : "YouTube" }} Stream
+              </ButtonPrimary>
+            </div>
+            <div v-if="running" class="stream-clock">
+              STREAM TIME
+              <strong>{{ streamTimeDisplay }}</strong>
+            </div>
+            <div v-if="streamFinished" class="stream-result">
+              <h2>STREAM OVER</h2>
+              <template v-if="winner">
+                <p>WINNER</p>
+                <PlayerDisplay
+                  :position="1"
+                  :name="winner.username"
+                  :points="winner.points"
+                  size="small"
+                />
+                <ButtonPrimary
+                  class="next-round-btn"
+                  :disabled="authInProgress"
+                  @clicked="startNextStream"
+                >
+                  START NEXT ROUND
+                </ButtonPrimary>
+              </template>
             </div>
             <div>
               <h2>LEADERBOARD</h2>
@@ -103,6 +151,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
@@ -110,11 +159,13 @@ import GameHeader from "@/components/game-ui/GameHeader.vue";
 import AnswerButtons from "@/components/game-ui/AnswerButtons.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import useYouTubeChat from "@/composables/useYouTubeChat";
+import useTwitchChat from "@/composables/useTwitchChat";
 import { useStreamStore } from "@/stores/stream";
 import { useChannelStore } from "@/stores/channel";
 import drawings from "@/data/drawings.json";
 
 const ytChat = useYouTubeChat();
+const twitchChat = useTwitchChat();
 const {
   initPKCE,
   handleRedirect,
@@ -129,6 +180,7 @@ const isSignedIn = computed(() => signedIn.value || !!accessToken?.value);
 const clientId = ref("");
 const clientSecret = ref("");
 const authInProgress = ref(false);
+const twitchChannel = ref("");
 
 const running = ref(false);
 const roundEnded = ref(false);
@@ -138,6 +190,10 @@ const currentDrawing = ref<any | null>(null);
 const roundDuration = ref(15_000); // 15s default
 const timeLeft = ref(0);
 const timerHandle: { value: number | null } = reactive({ value: null });
+const STREAM_DURATION_MS = 15 * 60 * 1000;
+const streamTimeLeft = ref(0);
+const streamTimerHandle: { value: number | null } = reactive({ value: null });
+const streamFinished = ref(false);
 const currentRoundStart = ref<number | null>(null);
 
 const timerSeconds = computed(() =>
@@ -146,6 +202,12 @@ const timerSeconds = computed(() =>
 const roundSeconds = computed(() =>
   Math.max(0, Math.ceil(roundDuration.value / 1000)),
 );
+const streamTimeDisplay = computed(() => {
+  const totalSeconds = Math.ceil(streamTimeLeft.value / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+});
 
 const acceptedAnswers = ref<
   {
@@ -160,6 +222,10 @@ const pixelCanvas = ref<any | null>(null);
 
 const streamStore = useStreamStore();
 const channelStore = useChannelStore();
+const route = useRoute();
+const chatPlatform = ref<"youtube" | "twitch">(
+  route.meta.chatPlatform === "twitch" ? "twitch" : "youtube",
+);
 
 // ---------------------------------------------------------------------
 // Scoring: rank-based points (1st correct = 5, 2nd = 3, 3rd = 2, rest = 1)
@@ -287,22 +353,12 @@ function buildOptionsForDrawing(drawing: any, all: any[]) {
   return opts;
 }
 
-/**
- * Handles one incoming YouTube chat message: figures out which round it
- * actually belongs to (via publishedAt, not "whatever is on screen now"),
- * enforces one attempt per user per round, matches numeric (1-4) or
- * free-text guesses, and awards rank-based points on a correct answer.
- */
-function onChatMessage(item: any) {
-  const author =
-    item.authorDetails?.displayName || item.authorDetails?.channelId || "anon";
-  const text =
-    item.snippet?.displayMessage ||
-    (item.snippet?.textMessageDetails &&
-      item.snippet.textMessageDetails.messageText) ||
-    "";
-  const publishedAt: string | undefined = item.snippet?.publishedAt;
-
+/** Handles a normalized answer from either YouTube or Twitch chat. */
+function processChatAnswer(
+  author: string,
+  text: string,
+  publishedAt: string | undefined,
+) {
   if (!text || !publishedAt) return;
 
   const messageTimeMs = new Date(publishedAt).getTime();
@@ -331,6 +387,7 @@ function onChatMessage(item: any) {
 
   if (round.guessed.has(usernameKey)) return; // one attempt per user per round
   round.guessed.add(usernameKey);
+  streamStore.ensurePlayer(author);
 
   const isCorrect = matchedOption.isCorrect;
 
@@ -360,6 +417,24 @@ function onChatMessage(item: any) {
   if (round.id === currentRoundRecordId.value) {
     acceptedAnswers.value.push(entry);
   }
+}
+
+function onYouTubeChatMessage(item: any) {
+  processChatAnswer(
+    item.authorDetails?.displayName || item.authorDetails?.channelId || "anon",
+    item.snippet?.displayMessage ||
+      item.snippet?.textMessageDetails?.messageText ||
+      "",
+    item.snippet?.publishedAt,
+  );
+}
+
+function onTwitchChatMessage(message: {
+  author: string;
+  text: string;
+  publishedAt: string;
+}) {
+  processChatAnswer(message.author, message.text, message.publishedAt);
 }
 
 /**
@@ -418,6 +493,7 @@ const topPlayers = computed(() => {
     points: p.points,
   }));
 });
+const winner = computed(() => topPlayers.value[0] ?? null);
 
 async function signIn() {
   if (!clientId.value) return alert("Provide client id");
@@ -430,42 +506,58 @@ async function signIn() {
 }
 
 async function startStreamMode() {
-  if (!isSignedIn.value) {
+  if (chatPlatform.value === "youtube" && !isSignedIn.value) {
     await handleRedirect(clientId.value, clientSecret.value || undefined);
   }
 
   stopPolling();
+  twitchChat.stop();
   streamStore.resetAll();
   acceptedAnswers.value = [];
   rounds.value = [];
-  console.log("Starting stream mode and initializing YouTube chat polling");
+  streamFinished.value = false;
+  streamTimeLeft.value = STREAM_DURATION_MS;
+  if (streamTimerHandle.value) window.clearInterval(streamTimerHandle.value);
+  const streamStartedAt = Date.now();
+  streamTimerHandle.value = window.setInterval(() => {
+    streamTimeLeft.value = Math.max(
+      0,
+      STREAM_DURATION_MS - (Date.now() - streamStartedAt),
+    );
+    if (streamTimeLeft.value <= 0) finishStream();
+  }, 250);
+  console.log(`Starting stream mode with ${chatPlatform.value} chat`);
 
   allDrawings.value = shuffle(drawings as any[]);
   currentIndex.value = 0;
   running.value = true;
 
-  // Chat polling is started ONCE here and runs continuously for the whole
-  // stream session — it deliberately does NOT stop/restart between
-  // rounds. Stopping it during the pause would mean late answers (sent
-  // during the pause + stream delay) never arrive at all, which defeats
-  // the round-history/grace-window attribution below.
-  const liveChatId = await fetchLiveChatIdForChannel();
-  if (!liveChatId) {
-    console.warn("No liveChatId found; streaming chat will not be polled.");
-  } else {
-    console.log("Starting YouTube chat polling for", liveChatId);
-    startPolling(liveChatId, onChatMessage, (message: string) => {
-      if (message) console.log("YouTube chat status:", message);
+  if (chatPlatform.value === "twitch") {
+    twitchChat.start(twitchChannel.value, onTwitchChatMessage, (message) => {
+      console.log("Twitch chat status:", message);
     });
+  } else {
+    // Keep the YouTube poller running across round pauses so delayed answers
+    // can still be attributed to the round they belong to.
+    const liveChatId = await fetchLiveChatIdForChannel();
+    if (streamFinished.value) return;
+    if (!liveChatId) {
+      console.warn("No liveChatId found; streaming chat will not be polled.");
+    } else {
+      console.log("Starting YouTube chat polling for", liveChatId);
+      startPolling(liveChatId, onYouTubeChatMessage, (message: string) => {
+        if (message) console.log("YouTube chat status:", message);
+      });
+    }
   }
 
   nextRound();
 }
 
 function nextRound() {
+  if (streamFinished.value) return;
   if (currentIndex.value >= allDrawings.value.length) {
-    running.value = false;
-    stopPolling();
+    finishStream();
     return;
   }
   currentDrawing.value = allDrawings.value[currentIndex.value];
@@ -513,11 +605,34 @@ function nextRound() {
 
       if (timerHandle.value) window.clearInterval(timerHandle.value);
       currentIndex.value++;
+      if (streamFinished.value) return;
       // Fixed pause between rounds. Chat polling keeps running throughout
       // this pause (see startStreamMode) so late answers still arrive.
       setTimeout(nextRound, 5000);
     }
   }, 250);
+}
+
+function finishStream() {
+  if (streamFinished.value) return;
+  streamFinished.value = true;
+  running.value = false;
+  streamTimeLeft.value = 0;
+  if (streamTimerHandle.value) {
+    window.clearInterval(streamTimerHandle.value);
+    streamTimerHandle.value = null;
+  }
+  if (timerHandle.value) {
+    window.clearInterval(timerHandle.value);
+    timerHandle.value = null;
+  }
+  stopPolling();
+  twitchChat.stop();
+}
+
+async function startNextStream() {
+  finishStream();
+  await startStreamMode();
 }
 
 function resetStream() {
@@ -534,7 +649,9 @@ function resetStream() {
 
 onBeforeUnmount(() => {
   if (timerHandle.value) window.clearInterval(timerHandle.value);
+  if (streamTimerHandle.value) window.clearInterval(streamTimerHandle.value);
   stopPolling();
+  twitchChat.stop();
 });
 
 onMounted(async () => {
@@ -594,6 +711,48 @@ onMounted(async () => {
 .chat-setup {
   margin-bottom: 12px;
 }
+
+.stream-clock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 20px 0;
+  color: var(--neon-yellow);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.stream-clock strong {
+  font-size: 32px;
+  letter-spacing: 1px;
+}
+
+.stream-result {
+  margin: 20px 0;
+  padding: 16px;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.stream-result h2,
+.stream-result p {
+  margin: 0 0 8px;
+}
+
+.stream-result p {
+  color: var(--neon-yellow);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.next-round-btn {
+  width: 100%;
+  margin-top: 16px;
+}
+
 input {
   width: 100%;
   padding: 6px;

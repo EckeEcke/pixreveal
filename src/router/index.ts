@@ -63,8 +63,20 @@ const router = createRouter({
     {
       path: "/stream",
       name: "stream",
-      component: () => import("@/components/streaming/StreamingMode.vue"),
+      component: () => import("@/views/StreamPlatformView.vue"),
       meta: { robots: "noindex" },
+    },
+    {
+      path: "/stream/youtube",
+      name: "stream-youtube",
+      component: () => import("@/components/streaming/StreamingMode.vue"),
+      meta: { robots: "noindex", chatPlatform: "youtube" },
+    },
+    {
+      path: "/stream/twitch",
+      name: "stream-twitch",
+      component: () => import("@/components/streaming/StreamingMode.vue"),
+      meta: { robots: "noindex", chatPlatform: "twitch" },
     },
     {
       path: "/online",

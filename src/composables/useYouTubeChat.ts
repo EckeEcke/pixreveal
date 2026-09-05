@@ -284,6 +284,7 @@ export function useYouTubeChat() {
   }
 
   let pollHandle: number | null = null;
+  let stopCurrentPolling: (() => void) | null = null;
 
   async function startPolling(
     liveChatId: string,
@@ -291,10 +292,13 @@ export function useYouTubeChat() {
     onStatus?: (message: string) => void,
   ) {
     if (!liveChatId) throw new Error("liveChatId required");
+    stopPolling();
+
     let pageToken: string | undefined;
     let interval = 5000;
     let retryDelay = 5000;
     let isActive = true;
+    const abortController = new AbortController();
     // Cap consecutive auth failures so we don't spin forever hammering
     // Google's endpoint if the refresh token itself is dead/revoked.
     let consecutiveAuthFailures = 0;
@@ -333,8 +337,12 @@ export function useYouTubeChat() {
 
       let resp: Response;
       try {
-        resp = await fetch(url, { headers });
+        resp = await fetch(url, {
+          headers,
+          signal: abortController.signal,
+        });
       } catch (e) {
+        if (!isActive || abortController.signal.aborted) return;
         console.warn("YouTube chat poll network error", e);
         onStatus?.("YouTube chat network error; retrying.");
         scheduleRetry();
@@ -377,6 +385,7 @@ export function useYouTubeChat() {
       retryDelay = 5000;
 
       const data = await resp.json().catch(() => null);
+      if (!isActive) return;
       if (data && data.items) {
         data.items.forEach((item: any) => onMessage(item));
       }
@@ -391,16 +400,20 @@ export function useYouTubeChat() {
 
     pollHandle = window.setTimeout(poll, 0);
 
-    return () => {
+    stopCurrentPolling = () => {
       isActive = false;
+      abortController.abort();
       if (pollHandle) window.clearTimeout(pollHandle);
       pollHandle = null;
+      if (stopCurrentPolling === cleanup) stopCurrentPolling = null;
     };
+
+    const cleanup = stopCurrentPolling;
+    return cleanup;
   }
 
   function stopPolling() {
-    if (pollHandle) window.clearTimeout(pollHandle);
-    pollHandle = null;
+    stopCurrentPolling?.();
   }
 
   return {

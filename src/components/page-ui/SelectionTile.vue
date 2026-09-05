@@ -198,6 +198,7 @@ const handleClick = (event: MouseEvent) => {
   font-weight: 700;
   color: #fff;
   letter-spacing: 1px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
   @media (min-width: 576px) {
     font-size: 18px;
   }
