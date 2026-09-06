@@ -65,6 +65,18 @@
                 placeholder="Twitch channel"
                 aria-label="Twitch channel"
               />
+              <label class="stream-setting">
+                <input v-model="autoStartNextRound" type="checkbox" />
+                <span>Start next round automatically</span>
+              </label>
+              <label class="stream-setting">
+                <span>Round duration</span>
+                <select v-model="selectedStreamDurationMinutes">
+                  <option :value="5">5 minutes</option>
+                  <option :value="10">10 minutes</option>
+                  <option :value="15">15 minutes</option>
+                </select>
+              </label>
               <ButtonPrimary
                 @clicked="startStreamMode"
                 :disabled="chatPlatform === 'twitch' && !twitchChannel.trim()"
@@ -157,6 +169,9 @@
           :points="winner.points"
           size="small"
         />
+        <p v-if="autoStartNextRound" class="next-round-countdown">
+          NEXT ROUND IN {{ nextRoundCountdown }}S
+        </p>
         <ButtonPrimary
           class="next-round-btn"
           :disabled="authInProgress"
@@ -203,6 +218,8 @@ const clientId = ref("");
 const clientSecret = ref("");
 const authInProgress = ref(false);
 const twitchChannel = ref("");
+const autoStartNextRound = ref(false);
+const selectedStreamDurationMinutes = ref<5 | 10 | 15>(15);
 
 const running = ref(false);
 const roundEnded = ref(false);
@@ -212,7 +229,10 @@ const currentDrawing = ref<any | null>(null);
 const roundDuration = ref(15_000); // 15s default
 const timeLeft = ref(0);
 const timerHandle: { value: number | null } = reactive({ value: null });
-const STREAM_DURATION_MS = 15 * 60 * 1000;
+const nextRoundCountdown = ref(30);
+const nextRoundCountdownHandle: { value: number | null } = reactive({
+  value: null,
+});
 const streamTimeLeft = ref(0);
 const streamTimerHandle: { value: number | null } = reactive({ value: null });
 const streamFinished = ref(false);
@@ -538,17 +558,22 @@ async function startStreamMode() {
 
   stopPolling();
   twitchChat.stop();
+  if (nextRoundCountdownHandle.value) {
+    window.clearInterval(nextRoundCountdownHandle.value);
+    nextRoundCountdownHandle.value = null;
+  }
   streamStore.resetAll();
   acceptedAnswers.value = [];
   rounds.value = [];
   streamFinished.value = false;
-  streamTimeLeft.value = STREAM_DURATION_MS;
+  const streamDurationMs = selectedStreamDurationMinutes.value * 60 * 1000;
+  streamTimeLeft.value = streamDurationMs;
   if (streamTimerHandle.value) window.clearInterval(streamTimerHandle.value);
   const streamStartedAt = Date.now();
   streamTimerHandle.value = window.setInterval(() => {
     streamTimeLeft.value = Math.max(
       0,
-      STREAM_DURATION_MS - (Date.now() - streamStartedAt),
+      streamDurationMs - (Date.now() - streamStartedAt),
     );
     if (streamTimeLeft.value <= 0) finishStream();
   }, 250);
@@ -657,6 +682,19 @@ function finishStream() {
   if (winner.value) {
     fireConfetti();
     fireSideCannons();
+    if (autoStartNextRound.value) {
+      nextRoundCountdown.value = 30;
+      nextRoundCountdownHandle.value = window.setInterval(() => {
+        nextRoundCountdown.value -= 1;
+        if (nextRoundCountdown.value <= 0) {
+          if (nextRoundCountdownHandle.value) {
+            window.clearInterval(nextRoundCountdownHandle.value);
+            nextRoundCountdownHandle.value = null;
+          }
+          startNextStream();
+        }
+      }, 1000);
+    }
   }
 }
 
@@ -680,6 +718,9 @@ function resetStream() {
 onBeforeUnmount(() => {
   if (timerHandle.value) window.clearInterval(timerHandle.value);
   if (streamTimerHandle.value) window.clearInterval(streamTimerHandle.value);
+  if (nextRoundCountdownHandle.value) {
+    window.clearInterval(nextRoundCountdownHandle.value);
+  }
   stopPolling();
   twitchChat.stop();
 });
@@ -759,6 +800,26 @@ onMounted(async () => {
   margin-bottom: 12px;
 }
 
+.stream-setting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+
+.stream-setting input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.stream-setting select {
+  padding: 6px;
+  color: inherit;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .stream-clock {
   display: flex;
   flex-direction: column;
@@ -806,6 +867,14 @@ onMounted(async () => {
 .stream-result h2,
 .stream-result p {
   margin: 0 0 8px;
+}
+
+.stream-result .next-round-countdown {
+  margin: 16px 0 0;
+  color: var(--neon-yellow);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
 }
 
 .stream-result p {
