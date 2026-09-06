@@ -105,7 +105,7 @@
         </div>
       </section>
     </main>
-    <FooterApp />
+    <FooterApp :twitch-live="isTwitchLive" />
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <PlatformBar />
+    <PlatformBar :twitch-live="twitchLive" />
 
     <div class="link-wrapper">
       <router-link class="internal-link" data-sfx="click" to="/blog">
@@ -112,6 +112,13 @@
 import { useConfigStore } from "@/stores/config";
 import PlatformBar from "@/components/page-ui/PlatformBar.vue";
 import { Icon } from "@iconify/vue";
+
+defineProps({
+  twitchLive: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const configStore = useConfigStore();
 
