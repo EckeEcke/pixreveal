@@ -5,6 +5,21 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">09-06-26</span>
+      </div>
+      <h3 class="log-title">New Live Badge for Twitch Stream!</h3>
+      <p>
+        You can now see a live badge next to the player avatar whenever I am
+        streaming PixReveal on Twitch. Viewers can join the game directly
+        through the stream chat and compete by guessing the pixel art in real
+        time. My channel is still brand new, so for now this is mostly a
+        just-for-fun test to see how Stream Mode works with a live audience.
+        <a href="https://www.twitch.tv/eckeeckeecke" target="_blank" rel="noopener noreferrer">Watch the stream</a>
+        and play along!
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">09-05-26</span>
       </div>
       <h3 class="log-title">New Stream Mode for YouTube and Twitch!</h3>
