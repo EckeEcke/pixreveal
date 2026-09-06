@@ -196,7 +196,7 @@
           size="small"
         />
         <p v-if="autoStartNextRound" class="next-round-countdown">
-          NEXT ROUND IN {{ nextRoundCountdown }}S
+          NEXT ROUND IN 0:{{ nextRoundCountdown }}
         </p>
         <ButtonPrimary
           class="next-round-btn"
