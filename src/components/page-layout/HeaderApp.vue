@@ -9,6 +9,18 @@
       </router-link>
     </div>
     <div class="header-actions">
+      <a
+        v-if="twitchLive"
+        class="live-badge"
+        href="https://www.twitch.tv/eckeeckeecke"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Watch the live Twitch stream"
+      >
+        <span class="live-dot"></span>
+        <Icon icon="pixel:twitch" class="twitch-icon" />
+        <span class="live-text">LIVE</span>
+      </a>
       <button
         class="avatar-btn"
         type="button"
@@ -52,6 +64,7 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 
 defineProps<{
   showBackBtn?: Boolean;
+  twitchLive?: boolean;
 }>();
 
 const configStore = useConfigStore();
@@ -101,6 +114,67 @@ header {
   transition:
     transform 0.15s ease,
     filter 0.15s ease;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  margin-right: 16px;
+  border: 2px solid var(--neon-error);
+  border-radius: 6px;
+  color: #fff;
+  background: rgba(255, 0, 60, 0.2);
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.7));
+  transition: transform 0.15s ease, background 0.15s ease, filter 0.15s ease;
+}
+
+@media (max-width: 499px) {
+  .live-badge {
+    display: none;
+    margin-right: 8px;
+  }
+}
+
+.live-badge:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.7));
+  background: rgba(255, 0, 60, 0.35);
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--neon-error);
+  box-shadow: 0 0 6px var(--neon-error);
+  animation: live-pulse 1.2s ease-in-out infinite;
+}
+
+.twitch-icon {
+  font-size: 14px;
+  color: var(--neon-social);
+  filter: drop-shadow(1px 0 0 #fff) 
+          drop-shadow(-1px 0 0 #fff) 
+          drop-shadow(0 1px 0 #fff) 
+          drop-shadow(0 -1px 0 #fff);
+}
+
+.live-text {
+  line-height: 1;
+}
+
+@keyframes live-pulse {
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .avatar-btn:hover {

@@ -1,6 +1,6 @@
 <template>
   <div class="home-content-wrapper">
-    <HeaderApp />
+    <HeaderApp :twitch-live="isTwitchLive" />
     <LoadingOverlay :show="channelStore.isLoading" />
     <GameManual
       v-show="configStore.showManual"
@@ -137,6 +137,7 @@ const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 const { prepareGame, createRounds, resetAndStartGame } = useGameStore();
 const { timeLeft } = useDailyCountDown();
+const isTwitchLive = ref(false);
 
 const router = useRouter();
 
@@ -170,9 +171,17 @@ const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
-onMounted(() =>
-  document.addEventListener("fullscreenchange", updateFullscreenStatus),
-);
+onMounted(() => {
+  document.addEventListener("fullscreenchange", updateFullscreenStatus);
+  fetch("/api/twitch-live")
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      isTwitchLive.value = data?.live === true;
+    })
+    .catch(() => {
+      isTwitchLive.value = false;
+    });
+});
 
 onUnmounted(() =>
   document.removeEventListener("fullscreenchange", updateFullscreenStatus),
