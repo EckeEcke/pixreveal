@@ -69,14 +69,40 @@
                 <input v-model="autoStartNextRound" type="checkbox" />
                 <span>Start next round automatically</span>
               </label>
-              <label class="stream-setting">
+              <div class="stream-setting duration-setting">
                 <span>Round duration</span>
-                <select v-model="selectedStreamDurationMinutes">
-                  <option :value="5">5 minutes</option>
-                  <option :value="10">10 minutes</option>
-                  <option :value="15">15 minutes</option>
-                </select>
-              </label>
+                <div class="duration-dropdown">
+                  <button
+                    type="button"
+                    class="duration-trigger"
+                    :aria-expanded="durationDropdownOpen"
+                    aria-haspopup="listbox"
+                    @click="durationDropdownOpen = !durationDropdownOpen"
+                  >
+                    {{ selectedStreamDurationMinutes }} minutes
+                  </button>
+                  <div
+                    v-if="durationDropdownOpen"
+                    class="duration-options"
+                    role="listbox"
+                    aria-label="Round duration"
+                  >
+                    <button
+                      v-for="duration in streamDurationOptions"
+                      :key="duration"
+                      type="button"
+                      role="option"
+                      :aria-selected="selectedStreamDurationMinutes === duration"
+                      :class="{
+                        selected: selectedStreamDurationMinutes === duration,
+                      }"
+                      @click="selectStreamDuration(duration)"
+                    >
+                      {{ duration }} minutes
+                    </button>
+                  </div>
+                </div>
+              </div>
               <ButtonPrimary
                 @clicked="startStreamMode"
                 :disabled="chatPlatform === 'twitch' && !twitchChannel.trim()"
@@ -220,6 +246,13 @@ const authInProgress = ref(false);
 const twitchChannel = ref("");
 const autoStartNextRound = ref(false);
 const selectedStreamDurationMinutes = ref<5 | 10 | 15>(15);
+const streamDurationOptions = [5, 10, 15] as const;
+const durationDropdownOpen = ref(false);
+
+function selectStreamDuration(duration: (typeof streamDurationOptions)[number]) {
+  selectedStreamDurationMinutes.value = duration;
+  durationDropdownOpen.value = false;
+}
 
 const running = ref(false);
 const roundEnded = ref(false);
@@ -813,11 +846,52 @@ onMounted(async () => {
   margin: 0;
 }
 
-.stream-setting select {
-  padding: 6px;
+.duration-setting {
+  justify-content: space-between;
+}
+
+.duration-dropdown {
+  position: relative;
+  min-width: 128px;
+}
+
+.duration-trigger {
+  width: 100%;
+  padding: 6px 8px;
+  margin: 0;
   color: inherit;
   background: #111;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: left;
+}
+
+.duration-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.duration-options button {
+  width: 100%;
+  padding: 7px 8px;
+  margin: 0;
+  color: inherit;
+  text-align: left;
+  border: 0;
+}
+
+.duration-options button:hover,
+.duration-options button.selected {
+  color: #000;
+  background: var(--primary);
 }
 
 .stream-clock {
