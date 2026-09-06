@@ -19,11 +19,6 @@ import { Icon } from "@iconify/vue";
 
 const socialLinks = [
   {
-    href: "https://www.facebook.com/profile.php?id=61580781216710",
-    icon: "streamline-pixel:logo-social-media-facebook-circle",
-    title: "Follow on Facebook",
-  },
-  {
     href: "https://www.youtube.com/@EckeEcke/shorts",
     icon: "pixel:youtube",
     title: "Subscribe on YouTube",
@@ -34,9 +29,14 @@ const socialLinks = [
     title: "Follow on TikTok",
   },
   {
-    href: "https://github.com/EckeEcke",
-    icon: "pixel:github",
-    title: "View on GitHub",
+    href: "https://www.twitch.tv/eckeeckeecke",
+    icon: "pixel:twitch",
+    title: "Watch on Twitch",
+  },
+  {
+    href: "https://www.facebook.com/profile.php?id=61580781216710",
+    icon: "streamline-pixel:logo-social-media-facebook-circle",
+    title: "Follow on Facebook",
   },
 ];
 </script>
