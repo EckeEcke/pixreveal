@@ -79,6 +79,7 @@ import GameHeader from "@/components/game-ui/GameHeader.vue";
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import { useBonusRounds } from "@/composables/useBonusRounds";
+import type { OnlineHighlight } from "@/types/player";
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -117,6 +118,7 @@ const pixelCanvasRef = ref<{
   playShake: () => void;
   triggerCorrectAnswer: () => void;
   triggerIncorrectAnswer: () => void;
+  getDisplayedPixelArray: () => number[][];
 } | null>(null);
 
 const resolution = ref(16);
@@ -230,6 +232,21 @@ const handleAnswer = (selectedOption: any) => {
   hasAnswered.value = true;
   gameStore.setGameState("feedback");
   clearAllLocalTimers();
+
+  if (!playerStore.isCreatorMode && selectedOption) {
+    const pixels = pixelCanvasRef.value?.getDisplayedPixelArray() ?? [];
+    const highlight: OnlineHighlight = {
+      pixels: pixels.map((row) => [...row]),
+      givenAnswer: selectedOption.title || selectedOption.name || "Unknown",
+      isCorrect: Boolean(selectedOption.isCorrect),
+      elapsedMs: Math.max(0, (timerDuration.value - timer.value) * 1000),
+      visiblePixelCount: pixels.reduce(
+        (total, row) => total + row.filter((pixel) => pixel !== 0).length,
+        0,
+      ),
+    };
+    playerStore.recordHighlight(highlight);
+  }
 
   if (playerStore.isCreatorMode) {
     pixelData.value = statusIcons.question;

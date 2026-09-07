@@ -13,6 +13,8 @@
       <div v-if="!waitingForFinalResults" class="results-card">
         <h1 class="logo">GAME <span>OVER</span></h1>
 
+        <OnlineHighlights :players="playersOnline" />
+
         <div
         v-for="(player, index) in playersSortedByPoints"
         :key="player.playerId"
@@ -79,6 +81,7 @@ import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import OnlineHighlights from "@/components/game-ui/OnlineHighlights.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";

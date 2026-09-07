@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
 import { generatePlayerId } from "@/utils/crypto";
+import type { OnlineHighlight } from "@/types/player";
 
 const STORAGE_KEY = "pixreveal:playerProfile";
 const CONTROLLER_ID_KEY = "pixreveal:controllerId";
@@ -28,6 +29,8 @@ export const usePlayerStore = defineStore("player", () => {
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const answerHistory: Ref<boolean[]> = ref([]);
+  const bestCorrectHighlight = ref<OnlineHighlight | null>(null);
+  const worstIncorrectHighlight = ref<OnlineHighlight | null>(null);
   const gameMode = ref<
     "classic" | "inspect" | "gravity" | "survival" | string
   >("classic");
@@ -50,6 +53,8 @@ export const usePlayerStore = defineStore("player", () => {
     points.value = 0;
     correctAnswers.value = 0;
     answerHistory.value = [];
+    bestCorrectHighlight.value = null;
+    worstIncorrectHighlight.value = null;
   };
 
   const setPlayerName = (newName: string) => {
@@ -73,6 +78,31 @@ export const usePlayerStore = defineStore("player", () => {
     answerHistory.value.push(isCorrect);
   }
 
+  const recordHighlight = (highlight: OnlineHighlight) => {
+    const current = highlight.isCorrect
+      ? bestCorrectHighlight.value
+      : worstIncorrectHighlight.value;
+
+    if (!current) {
+      if (highlight.isCorrect) bestCorrectHighlight.value = highlight;
+      else worstIncorrectHighlight.value = highlight;
+      return;
+    }
+
+    const isBetter = highlight.isCorrect
+      ? highlight.elapsedMs < current.elapsedMs ||
+        (highlight.elapsedMs === current.elapsedMs &&
+          highlight.visiblePixelCount < current.visiblePixelCount)
+      : highlight.elapsedMs > current.elapsedMs ||
+        (highlight.elapsedMs === current.elapsedMs &&
+          highlight.visiblePixelCount > current.visiblePixelCount);
+
+    if (isBetter) {
+      if (highlight.isCorrect) bestCorrectHighlight.value = highlight;
+      else worstIncorrectHighlight.value = highlight;
+    }
+  }
+
   return {
     controllerId,
     playerId,
@@ -83,9 +113,12 @@ export const usePlayerStore = defineStore("player", () => {
     gameMode,
     isCreatorMode,
     answerHistory,
+    bestCorrectHighlight,
+    worstIncorrectHighlight,
     setUser,
     setAvatar,
     addPoints,
     pushToAnswerHistory,
+    recordHighlight,
   };
 });

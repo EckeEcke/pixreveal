@@ -1,3 +1,11 @@
+export type OnlineHighlight = {
+  pixels: number[][];
+  givenAnswer: string;
+  isCorrect: boolean;
+  elapsedMs: number;
+  visiblePixelCount: number;
+};
+
 export interface Player {
   playerId: string;
   username: string;
@@ -8,4 +16,6 @@ export interface Player {
   hasFinished: boolean;
   correctAnswers: number;
   answerHistory?: boolean[];
+  bestCorrectHighlight?: OnlineHighlight;
+  worstIncorrectHighlight?: OnlineHighlight;
 }

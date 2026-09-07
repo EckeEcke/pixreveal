@@ -5,7 +5,7 @@ import { useGameStore } from "./game";
 import { usePlayerStore } from "./player";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
-import type { Player } from "@/types/player";
+import type { OnlineHighlight, Player } from "@/types/player";
 
 export const useOnlineStore = defineStore("online", () => {
   const channelStore = useChannelStore();
@@ -30,12 +30,16 @@ export const useOnlineStore = defineStore("online", () => {
     playerStore.points = 0;
     playerStore.correctAnswers = 0;
     playerStore.answerHistory = [];
+    playerStore.bestCorrectHighlight = null;
+    playerStore.worstIncorrectHighlight = null;
 
     channelStore.playersOnline.forEach((p: Player) => {
       p.points = 0;
       p.correctAnswers = 0;
       p.hasFinished = false;
       p.answerHistory = [];
+      p.bestCorrectHighlight = undefined;
+      p.worstIncorrectHighlight = undefined;
     });
   };
 
@@ -81,7 +85,14 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind(
       "client-player-finished",
-      (data: { playerId: string; points: number; correctAnswers: number; answerHistory: boolean[]; }) => {
+      (data: {
+        playerId: string;
+        points: number;
+        correctAnswers: number;
+        answerHistory: boolean[];
+        bestCorrectHighlight?: OnlineHighlight | null;
+        worstIncorrectHighlight?: OnlineHighlight | null;
+      }) => {
         const player = channelStore.playersOnline.find(
           (p: Player) => p.playerId === data.playerId,
         );
@@ -90,6 +101,43 @@ export const useOnlineStore = defineStore("online", () => {
           player.hasFinished = true;
           player.correctAnswers = data.correctAnswers;
           player.answerHistory = data.answerHistory;
+          player.bestCorrectHighlight = data.bestCorrectHighlight ?? undefined;
+          player.worstIncorrectHighlight = data.worstIncorrectHighlight ?? undefined;
+
+          if (
+            channelStore.isHost &&
+            channelStore.playersOnline
+              .filter((candidate) => candidate.isOnline)
+              .every((candidate) => candidate.hasFinished)
+          ) {
+            channel.trigger("client-online-highlights", {
+              players: channelStore.playersOnline.map((candidate) => ({
+                playerId: candidate.playerId,
+                bestCorrectHighlight: candidate.bestCorrectHighlight,
+                worstIncorrectHighlight: candidate.worstIncorrectHighlight,
+              })),
+            });
+          }
+        }
+      },
+    );
+
+    channel.bind(
+      "client-online-highlights",
+      (data: {
+        players?: Array<{
+          playerId: string;
+          bestCorrectHighlight?: OnlineHighlight | null;
+          worstIncorrectHighlight?: OnlineHighlight | null;
+        }>;
+      }) => {
+        for (const highlightPlayer of data.players ?? []) {
+          const player = channelStore.playersOnline.find(
+            (candidate) => candidate.playerId === highlightPlayer.playerId,
+          );
+          if (!player) continue;
+          player.bestCorrectHighlight = highlightPlayer.bestCorrectHighlight ?? undefined;
+          player.worstIncorrectHighlight = highlightPlayer.worstIncorrectHighlight ?? undefined;
         }
       },
     );
@@ -124,6 +172,8 @@ export const useOnlineStore = defineStore("online", () => {
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
     const answerHistory = playerStore.answerHistory;
+    const bestCorrectHighlight = playerStore.bestCorrectHighlight;
+    const worstIncorrectHighlight = playerStore.worstIncorrectHighlight;
     const me = channelStore.playersOnline.find(
       (p: Player) => p.playerId === channelStore.playerId,
     );
@@ -133,6 +183,8 @@ export const useOnlineStore = defineStore("online", () => {
       me.hasFinished = true;
       me.correctAnswers = correctAnswers;
       me.answerHistory = answerHistory
+      me.bestCorrectHighlight = bestCorrectHighlight ?? undefined;
+      me.worstIncorrectHighlight = worstIncorrectHighlight ?? undefined;
     }
 
     channel.trigger("client-player-finished", {
@@ -140,6 +192,8 @@ export const useOnlineStore = defineStore("online", () => {
       points,
       correctAnswers,
       answerHistory,
+      bestCorrectHighlight,
+      worstIncorrectHighlight,
     });
   };
 

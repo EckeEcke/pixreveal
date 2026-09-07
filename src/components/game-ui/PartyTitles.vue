@@ -40,9 +40,12 @@
             />
           </div>
           <div class="snapshot-copy">
-            <div class="title-line">
-              <span class="emoji">{{ currentSlide.emoji }}</span>
-              <span class="title">{{ currentSlide.title }}</span>
+            <div
+              class="answer-line"
+              :class="currentSlide.snapshot.isCorrect ? 'answer-correct' : 'answer-wrong'"
+            >
+              <span>{{ currentSlide.snapshot.isCorrect ? "✅" : "❌" }}</span>
+              <span>{{ currentSlide.snapshot.givenAnswer }}</span>
             </div>
             <div class="message">{{ currentSlide.message }}</div>
             <div class="who">
@@ -518,6 +521,19 @@ onBeforeUnmount(() => stop());
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.answer-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.answer-correct { color: var(--neon-success); }
+.answer-wrong { color: var(--neon-error); }
 
 .title-line {
   display: flex;
