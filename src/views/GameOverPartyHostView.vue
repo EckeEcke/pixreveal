@@ -415,6 +415,7 @@ main {
   overflow-y: auto;
 }
 
+
 .top-player {
   margin: 0px auto;
 }

@@ -14,6 +14,7 @@ import {
 } from "@/services/workerTimers"
 import type {
   BuzzerState,
+  PartyRoundSnapshot,
   PartyPlayer,
   PartyStatePayload,
 } from "@/types/party"
@@ -46,6 +47,11 @@ export const usePartyStore = defineStore("party", () => {
   const buzzTransitionPending = ref(false)
   const buzzedPlayerIds = ref<string[]>([])
   const emojiStatistics = ref<string[]>([])
+  const roundSnapshots = ref<PartyRoundSnapshot[]>([])
+  const lastGivenAnswer = ref<string | null>(null)
+  const lastAnswerPlayer = ref<PartyRoundSnapshot["player"] | null>(null)
+  const lastAnswerIsCorrect = ref(false)
+  const lastAnswerElapsedMs = ref<number | null>(null)
   const replayNavAllowedUntilAt = ref<number>(0)
 
   let buzzerTimer: number | null = null
@@ -106,8 +112,8 @@ export const usePartyStore = defineStore("party", () => {
     getPlayerId: () => channelStore.playerId,
     getChannel: () => channel.value,
     getIsHost: () => isHost.value,
-    onResolveAnswer: (playerId, isCorrect) =>
-      resolveAnswer(playerId, isCorrect),
+    onResolveAnswer: (playerId, isCorrect, answer) =>
+      resolveAnswer(playerId, isCorrect, answer),
   })
 
   const suddenDeath = useSuddenDeath({
@@ -269,6 +275,11 @@ export const usePartyStore = defineStore("party", () => {
 
     powerups.reset()
     emojiStatistics.value = []
+    roundSnapshots.value = []
+    lastGivenAnswer.value = null
+    lastAnswerPlayer.value = null
+    lastAnswerIsCorrect.value = false
+    lastAnswerElapsedMs.value = null
     gameStore.prepareGame(configStore.revealTime)
     channelStore.setGameRunning(true)
 
@@ -318,6 +329,10 @@ export const usePartyStore = defineStore("party", () => {
     answerStartedAt.value = null
     buzzTransitionPending.value = false
     roundResult.value = null
+    lastGivenAnswer.value = null
+    lastAnswerPlayer.value = null
+    lastAnswerIsCorrect.value = false
+    lastAnswerElapsedMs.value = null
     hasAnswered.value = false
     answerDeadlineAt.value = null
     buzzedPlayerIds.value = []
@@ -380,8 +395,24 @@ export const usePartyStore = defineStore("party", () => {
     resolveAnswer(null, false)
   }
 
-  const resolveAnswer = (playerId: string | null, isCorrect: boolean) => {
+  const resolveAnswer = (
+    playerId: string | null,
+    isCorrect: boolean,
+    givenAnswer: string | null = null,
+  ) => {
     if (roundResult.value !== null) return
+    if (playerId && givenAnswer) {
+      const player = players.value.find((candidate) => candidate.playerId === playerId)
+      if (player) {
+        lastGivenAnswer.value = givenAnswer
+        lastAnswerIsCorrect.value = isCorrect
+        lastAnswerPlayer.value = {
+          playerId: player.playerId,
+          username: player.username,
+          avatarIndex: player.avatarIndex,
+        }
+      }
+    }
     if (answerTimer) {
       workerClearTimeout(answerTimer)
       answerTimer = null
@@ -393,6 +424,7 @@ export const usePartyStore = defineStore("party", () => {
         ? Math.max(0, Date.now() - answerStartedAt.value)
         : null
     answerStartedAt.value = null
+    lastAnswerElapsedMs.value = elapsedMs
 
     const remainingPlayers = playerId
       ? players.value.filter(
@@ -523,6 +555,10 @@ export const usePartyStore = defineStore("party", () => {
     isRevealing.value = false
     buzzerState.value = "locked"
     roundResult.value = "incorrect"
+    lastGivenAnswer.value = null
+    lastAnswerPlayer.value = null
+    lastAnswerIsCorrect.value = false
+    lastAnswerElapsedMs.value = null
     activePlayerId.value = null
     hasAnswered.value = false
     answerDeadlineAt.value = null
@@ -544,6 +580,46 @@ export const usePartyStore = defineStore("party", () => {
     })
     broadcastPartyState("game-over")
     router.push("/gameover-party-host")
+  }
+
+  const recordRoundSnapshot = (pixels: number[][]) => {
+    if (!isHost.value || !lastGivenAnswer.value || !lastAnswerPlayer.value) return
+
+    const snapshot: PartyRoundSnapshot = {
+      roundIndex: gameStore.currentRoundIndex,
+      pixels: pixels.map((row) => [...row]),
+      givenAnswer: lastGivenAnswer.value,
+      isCorrect: lastAnswerIsCorrect.value,
+      elapsedMs: lastAnswerElapsedMs.value,
+      visiblePixelCount: pixels.reduce(
+        (total, row) => total + row.filter((pixel) => pixel !== 0).length,
+        0,
+      ),
+      player: { ...lastAnswerPlayer.value },
+    }
+
+    const current = roundSnapshots.value.find(
+      (candidate) => candidate.isCorrect === snapshot.isCorrect,
+    )
+    const isBetter = (candidate: PartyRoundSnapshot, existing: PartyRoundSnapshot) => {
+      if (candidate.elapsedMs === null) return false
+      if (existing.elapsedMs === null) return true
+
+      const faster = candidate.elapsedMs < existing.elapsedMs
+      const fewerPixels = candidate.visiblePixelCount < existing.visiblePixelCount
+      const slower = candidate.elapsedMs > existing.elapsedMs
+      const morePixels = candidate.visiblePixelCount > existing.visiblePixelCount
+
+      return candidate.isCorrect
+        ? faster || (candidate.elapsedMs === existing.elapsedMs && fewerPixels)
+        : slower || (candidate.elapsedMs === existing.elapsedMs && morePixels)
+    }
+
+    if (!current) {
+      roundSnapshots.value.push(snapshot)
+    } else if (isBetter(snapshot, current)) {
+      roundSnapshots.value.splice(roundSnapshots.value.indexOf(current), 1, snapshot)
+    }
   }
 
   const sendEmoji = (emoji: string) => {
@@ -1009,13 +1085,22 @@ export const usePartyStore = defineStore("party", () => {
 
       bindEvent(
         "client-party-answer",
-        (data: { playerId: string; isCorrect: boolean; seq?: number }) => {
+        (data: {
+          playerId: string;
+          isCorrect: boolean;
+          answer?: string;
+          seq?: number;
+        }) => {
           heartbeat.markHostActivity()
           if (
             buzzerState.value === "answering" &&
             activePlayerId.value === data.playerId
           ) {
-            resolveAnswer(data.playerId, data.isCorrect)
+            resolveAnswer(
+              data.playerId,
+              data.isCorrect,
+              data.answer && data.answer !== "Time up" ? data.answer : null,
+            )
           }
           if (data?.seq) {
             channel.value?.trigger("client-party-answer-ack", {
@@ -1142,6 +1227,10 @@ export const usePartyStore = defineStore("party", () => {
     hasAnswered,
     answerDeadlineAt,
     emojiStatistics,
+    roundSnapshots,
+    lastGivenAnswer,
+    lastAnswerPlayer,
+    lastAnswerIsCorrect,
 
     // Heartbeat / connection
     connectionStale: heartbeat.connectionStale,
@@ -1221,6 +1310,7 @@ export const usePartyStore = defineStore("party", () => {
     nextRound,
     skipRound,
     endGame,
+    recordRoundSnapshot,
     pressBuzzer: buzzerRetry.pressBuzzer,
     submitAnswer: answerRetry.submitAnswer,
     sendEmoji,

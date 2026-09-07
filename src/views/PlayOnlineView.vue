@@ -124,9 +124,6 @@
                     <span>
                       {{ playerStore.playerName || "SET PLAYER NAME" }}
                     </span>
-                    <span class="info-text">
-                      Tap to change
-                    </span>
                   </div>
                 </div>
               </div>

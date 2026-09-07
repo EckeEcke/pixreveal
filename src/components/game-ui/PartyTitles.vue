@@ -2,15 +2,20 @@
   <div v-if="currentSlide" class="party-titles">
     <RobotModerator />
     <Transition name="fade" mode="out-in">
-      <div :key="currentSlide.key" class="title-pill">
-        <div class="title-line">
+      <div
+        :key="currentSlide.key"
+        class="title-pill"
+        :class="{ 'snapshot-title-pill': currentSlide.snapshot }"
+        @click="handlePillClick"
+      >
+        <div v-if="!currentSlide.snapshot" class="title-line">
           <span class="emoji">{{ currentSlide.emoji }}</span>
           <span class="title">{{ currentSlide.title }}</span>
         </div>
-        <div class="message">
+        <div v-if="!currentSlide.snapshot" class="message">
           {{ currentSlide.message }}
         </div>
-        <div v-if="currentSlide.players?.length" class="who">
+        <div v-if="!currentSlide.snapshot && currentSlide.players?.length" class="who">
           <div
             v-for="p in currentSlide.players"
             :key="p.playerId"
@@ -23,6 +28,36 @@
             <span class="player-pill-name">{{ p.playerNameUpper }}</span>
           </div>
         </div>
+        <div v-if="currentSlide.snapshot" class="snapshot-content">
+          <div class="snapshot-image">
+            <PixelCanvas
+              :pixel-array="currentSlide.snapshot.pixels"
+              :resolution="currentSlide.snapshot.pixels.length"
+              :is-revealing="false"
+              :is-status-icon="false"
+              :timer-duration="0"
+              :pause-reveal="false"
+            />
+          </div>
+          <div class="snapshot-copy">
+            <div class="title-line">
+              <span class="emoji">{{ currentSlide.emoji }}</span>
+              <span class="title">{{ currentSlide.title }}</span>
+            </div>
+            <div class="message">{{ currentSlide.message }}</div>
+            <div class="who">
+              <div class="player-pill">
+                <div
+                  class="mini-avatar"
+                  :style="avatarStyleFor(currentSlide.snapshot.player.avatarIndex)"
+                />
+                <span class="player-pill-name">
+                  {{ currentSlide.snapshot.player.username.toUpperCase() }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </Transition>
   </div>
@@ -31,13 +66,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import RobotModerator from "@/components/game-ui/RobotModerator.vue";
+import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import { usePartyStore } from "@/stores/party";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import {
   workerClearInterval,
   workerSetInterval,
 } from "@/services/workerTimers";
-import type { PartyPlayerStats } from "@/types/party";
+import type { PartyPlayerStats, PartyRoundSnapshot } from "@/types/party";
 
 const props = defineProps<{
   players: PartyPlayerStats[];
@@ -45,7 +81,7 @@ const props = defineProps<{
 
 const partyStore = usePartyStore();
 
-const SLIDE_INTERVAL = 5000;
+const SLIDE_INTERVAL = 10000;
 
 // Alle folgenden Werte werden EINMALIG beim Setup aus den Props gelesen
 // und danach nicht mehr aktualisiert, auch wenn sich props.players oder
@@ -90,6 +126,7 @@ type Slide = {
   message: string;
   players: SlidePlayer[];
   playerNamesUpper: string;
+  snapshot?: PartyRoundSnapshot;
 };
 
 const slides: Slide[] = (() => {
@@ -309,9 +346,38 @@ const emojiStatsSlide: Slide | null = (() => {
   };
 })();
 
+const snapshotCopy = {
+  correct: [
+    ["⚡", "Fastest Guess", "You saw three pixels and chose violence."],
+    ["🎯", "Pixel Sniper", "That answer arrived before the picture did."],
+    ["🚀", "Blink And It's Gone", "Somehow you guessed faster than the buzzer could panic."],
+  ],
+  incorrect: [
+    ["🧱", "Confidently Wrong", "You waited for the whole masterpiece and still chose chaos."],
+    ["🐌", "Last To The Party", "The pixels were practically holding up a sign."],
+    ["🔍", "Overthinking Champion", "You gave every pixel a chance to testify."],
+  ],
+} as const;
+
+const createSnapshotSlides = (): Slide[] =>
+  (partyStore.roundSnapshots || []).map((snapshot) => {
+    const copy = snapshotCopy[snapshot.isCorrect ? "correct" : "incorrect"];
+    const [emoji, title, message] = copy[Math.floor(Math.random() * copy.length)];
+
+    return {
+      key: `${snapshot.isCorrect ? "best" : "worst"}-snapshot`,
+      emoji,
+      title,
+      message,
+      players: [],
+      playerNamesUpper: "",
+      snapshot,
+    };
+  });
+
 const allSlides: Slide[] = emojiStatsSlide
-  ? [...slides, emojiStatsSlide]
-  : slides;
+  ? [...slides, ...createSnapshotSlides(), emojiStatsSlide]
+  : [...slides, ...createSnapshotSlides()];
 
 const activeIndex = ref(0);
 let intervalId: number | null = null;
@@ -323,6 +389,17 @@ const currentSlide = computed(() => {
   return allSlides[activeIndex.value] ?? allSlides[0] ?? null;
 });
 
+const advanceSlide = () => {
+  if (!allSlides.length) return;
+  activeIndex.value = (activeIndex.value + 1) % allSlides.length;
+};
+
+const handlePillClick = () => {
+  advanceSlide();
+  stop();
+  start();
+};
+
 const start = () => {
   if (intervalId) return;
   if (!allSlides.length) return;
@@ -330,6 +407,7 @@ const start = () => {
     const len = allSlides.length;
     if (!len) return;
     activeIndex.value = (activeIndex.value + 1) % len;
+    advanceSlide();
   }, SLIDE_INTERVAL);
 };
 
@@ -371,6 +449,9 @@ onBeforeUnmount(() => stop());
 }
 
 .title-pill {
+  cursor: pointer;
+  min-height: 230px;
+  box-sizing: border-box;
   padding: 16px;
   border-radius: 8px;
   text-align: left;
@@ -385,6 +466,56 @@ onBeforeUnmount(() => stop());
   @media (min-width: 576px) {
     font-size: 20px;
   }
+}
+
+.snapshot-title-pill {
+  min-height: 180px;
+}
+
+.snapshot-content {
+  display: grid;
+  grid-template-columns: minmax(110px, 34%) 1fr;
+  gap: 32px;
+  height: 100%;
+  align-items: start;
+}
+
+.snapshot-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.snapshot-copy .who {
+  margin-top: 12px;
+}
+
+.snapshot-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+}
+
+.snapshot-image :deep(.canvas-wrapper),
+.snapshot-image :deep(canvas) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.snapshot-copy .player-pill {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.snapshot-copy .player-pill-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .title-line {
@@ -430,7 +561,8 @@ onBeforeUnmount(() => stop());
   gap: 6px;
   padding: 4px 10px 4px 4px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 

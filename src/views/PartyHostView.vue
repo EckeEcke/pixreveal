@@ -155,6 +155,7 @@ const channelStore = useChannelStore();
 const pixelCanvasRef = ref<{
   playShine: () => void;
   playShake: () => void;
+  getDisplayedPixelArray: () => number[][];
 } | null>(null);
 
 const pixelData = ref(Array(256).fill(0));
@@ -361,7 +362,7 @@ const setupDrawing = () => {
   suppressFilterTransition.value = true;
 
   pixelData.value = currentRound.value.data;
-  resolution.value = Math.sqrt(pixelData.value.length);
+  resolution.value = pixelData.value.length;
 
   partyStore.openBuzzer();
   startTimer();
@@ -395,6 +396,17 @@ const handleIncomingEmoji = (emojiChar: string, playerId?: string) => {
 const emojiListener = (event: any) => {
   handleIncomingEmoji(event.detail?.emoji, event.detail?.playerId);
 };
+
+watch(
+  () => partyStore.lastGivenAnswer,
+  (givenAnswer) => {
+    if (givenAnswer) {
+      partyStore.recordRoundSnapshot(
+        pixelCanvasRef.value?.getDisplayedPixelArray() ?? [],
+      );
+    }
+  },
+);
 
 watch(
   () => partyStore.roundResult,

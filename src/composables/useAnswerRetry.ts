@@ -14,7 +14,11 @@ export interface UseAnswerRetryOptions {
   getPlayerId: () => string;
   getChannel: () => any;
   getIsHost: () => boolean;
-  onResolveAnswer: (playerId: string, isCorrect: boolean) => void;
+  onResolveAnswer: (
+    playerId: string,
+    isCorrect: boolean,
+    answer: string,
+  ) => void;
 }
 
 // ─── Composable ───────────────────────────────────────────────────────────────
@@ -75,7 +79,11 @@ export function useAnswerRetry({
 
     // Host resolves immediately since it is the authority.
     if (getIsHost()) {
-      onResolveAnswer(getPlayerId(), payload.isCorrect);
+      onResolveAnswer(
+        getPlayerId(),
+        payload.isCorrect,
+        option ? option.name : "",
+      );
     }
   };
 

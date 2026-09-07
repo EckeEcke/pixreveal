@@ -112,7 +112,6 @@
                     @click="showAvatarModal = true"
                   >
                     <span>{{ playerStore.playerName || "SET YOUR NAME" }}</span>
-                    <span class="info-text">Tap to change</span>
                   </div>
                 </div>
               </div>

@@ -31,6 +31,20 @@ const props = defineProps({
   muteSound: Boolean
 })
 
+const getDisplayedPixelArray = () => {
+  const rowCount = props.pixelArray?.length || props.resolution || 16
+  const columnCount = props.pixelArray?.[0]?.length || rowCount
+  const pixels = Array.from({ length: rowCount }, () =>
+    Array(columnCount).fill(0),
+  )
+
+  displayedPixels.value.forEach(({ x, y, val }) => {
+    if (pixels[y]?.[x] !== undefined) pixels[y][x] = val
+  })
+
+  return pixels
+}
+
 defineEmits(["mousemove", "touchstart", "touchmove"])
 
 const internalSize = 600
@@ -397,6 +411,7 @@ const playPop = () => {
 
 defineExpose({
   getImageUrl: () => canvasRef.value?.toDataURL("image/png") || null,
+  getDisplayedPixelArray,
   playShine,
   playShake,
   playPop,

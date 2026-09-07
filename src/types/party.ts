@@ -62,3 +62,17 @@ export type PartyStatePayload = {
   buzzTransitionPending?: boolean;
   buzzedPlayerIds?: string[];
 };
+
+export type PartyRoundSnapshot = {
+  roundIndex: number;
+  pixels: number[][];
+  givenAnswer: string;
+  isCorrect: boolean;
+  elapsedMs: number | null;
+  visiblePixelCount: number;
+  player: {
+    playerId: string;
+    username: string;
+    avatarIndex: number;
+  };
+};

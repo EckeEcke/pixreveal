@@ -384,7 +384,10 @@ const handleAnswer = (selectedAnswer) => {
   startLinger();
 
   partyStore.hasAnswered = true;
-  partyStore.submitAnswer(selectedAnswer);
+  partyStore.submitAnswer({
+    name: selectedAnswer?.name ?? selectedAnswer?.title ?? "",
+    isCorrect: Boolean(selectedAnswer?.isCorrect),
+  });
 };
 
 const handleDevilClicked = ({ answer, index } = {}) => {
