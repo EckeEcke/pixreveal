@@ -71,7 +71,7 @@ const highlights = computed<HighlightSlide[]>(() => {
     for (const highlight of [player.bestCorrectHighlight, player.worstIncorrectHighlight]) {
       if (!highlight) continue;
       const variants = copy[highlight.isCorrect ? "correct" : "incorrect"];
-      const variant = variants[result.length % variants.length];
+      const variant = variants[result.length % variants.length] ?? variants[0];
       result.push({
         key: `${player.playerId}-${highlight.isCorrect ? "best" : "worst"}`,
         emoji: variant[0],
