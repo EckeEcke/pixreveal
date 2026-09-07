@@ -362,7 +362,8 @@ const snapshotCopy = {
 const createSnapshotSlides = (): Slide[] =>
   (partyStore.roundSnapshots || []).map((snapshot) => {
     const copy = snapshotCopy[snapshot.isCorrect ? "correct" : "incorrect"];
-    const [emoji, title, message] = copy[Math.floor(Math.random() * copy.length)];
+    const [emoji, title, message] =
+      copy[Math.floor(Math.random() * copy.length)] ?? copy[0];
 
     return {
       key: `${snapshot.isCorrect ? "best" : "worst"}-snapshot`,
