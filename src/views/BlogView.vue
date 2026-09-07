@@ -5,6 +5,15 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">09-07-26</span>
+      </div>
+      <h3 class="log-title">New highlight images in Party Gameover</h3>
+      <p>
+        We all know this kind of moment: the image is practically completely revealed, yet your friend guessed wrong. Or that one friend, who sees only two pixels and immidiately knows the answer. To make these moments more memorable, I added a highlight image to the game over screen in Partymode. The image is a snapshot of the moment when the player guessed correctly or incorrectly. This way you can relive the moment and see how your friends reacted to it.
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">09-06-26</span>
       </div>
       <h3 class="log-title">New Live Badge for Twitch Stream!</h3>
