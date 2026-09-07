@@ -68,7 +68,11 @@ type HighlightSlide = {
 const highlights = computed<HighlightSlide[]>(() => {
   const result: HighlightSlide[] = [];
   for (const player of props.players) {
-    for (const highlight of [player.bestCorrectHighlight, player.worstIncorrectHighlight]) {
+    const playerHighlights = player.onlineHighlights ?? [
+      player.bestCorrectHighlight,
+      player.worstIncorrectHighlight,
+    ];
+    for (const highlight of playerHighlights) {
       if (!highlight) continue;
       const variants = copy[highlight.isCorrect ? "correct" : "incorrect"];
       const variant = variants[result.length % variants.length] ?? variants[0];

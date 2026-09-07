@@ -29,6 +29,7 @@ export const usePlayerStore = defineStore("player", () => {
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const answerHistory: Ref<boolean[]> = ref([]);
+  const onlineHighlights = ref<OnlineHighlight[]>([]);
   const bestCorrectHighlight = ref<OnlineHighlight | null>(null);
   const worstIncorrectHighlight = ref<OnlineHighlight | null>(null);
   const gameMode = ref<
@@ -53,6 +54,7 @@ export const usePlayerStore = defineStore("player", () => {
     points.value = 0;
     correctAnswers.value = 0;
     answerHistory.value = [];
+    onlineHighlights.value = [];
     bestCorrectHighlight.value = null;
     worstIncorrectHighlight.value = null;
   };
@@ -79,6 +81,8 @@ export const usePlayerStore = defineStore("player", () => {
   }
 
   const recordHighlight = (highlight: OnlineHighlight) => {
+    onlineHighlights.value.push(highlight);
+
     const current = highlight.isCorrect
       ? bestCorrectHighlight.value
       : worstIncorrectHighlight.value;
@@ -113,6 +117,7 @@ export const usePlayerStore = defineStore("player", () => {
     gameMode,
     isCreatorMode,
     answerHistory,
+    onlineHighlights,
     bestCorrectHighlight,
     worstIncorrectHighlight,
     setUser,

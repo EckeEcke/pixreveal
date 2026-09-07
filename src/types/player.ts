@@ -16,6 +16,7 @@ export interface Player {
   hasFinished: boolean;
   correctAnswers: number;
   answerHistory?: boolean[];
+  onlineHighlights?: OnlineHighlight[];
   bestCorrectHighlight?: OnlineHighlight;
   worstIncorrectHighlight?: OnlineHighlight;
 }

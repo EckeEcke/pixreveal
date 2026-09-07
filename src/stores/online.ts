@@ -30,6 +30,7 @@ export const useOnlineStore = defineStore("online", () => {
     playerStore.points = 0;
     playerStore.correctAnswers = 0;
     playerStore.answerHistory = [];
+    playerStore.onlineHighlights = [];
     playerStore.bestCorrectHighlight = null;
     playerStore.worstIncorrectHighlight = null;
 
@@ -38,6 +39,7 @@ export const useOnlineStore = defineStore("online", () => {
       p.correctAnswers = 0;
       p.hasFinished = false;
       p.answerHistory = [];
+      p.onlineHighlights = [];
       p.bestCorrectHighlight = undefined;
       p.worstIncorrectHighlight = undefined;
     });
@@ -90,6 +92,7 @@ export const useOnlineStore = defineStore("online", () => {
         points: number;
         correctAnswers: number;
         answerHistory: boolean[];
+        onlineHighlights?: OnlineHighlight[];
         bestCorrectHighlight?: OnlineHighlight | null;
         worstIncorrectHighlight?: OnlineHighlight | null;
       }) => {
@@ -101,6 +104,7 @@ export const useOnlineStore = defineStore("online", () => {
           player.hasFinished = true;
           player.correctAnswers = data.correctAnswers;
           player.answerHistory = data.answerHistory;
+          player.onlineHighlights = data.onlineHighlights ?? [];
           player.bestCorrectHighlight = data.bestCorrectHighlight ?? undefined;
           player.worstIncorrectHighlight = data.worstIncorrectHighlight ?? undefined;
 
@@ -113,6 +117,7 @@ export const useOnlineStore = defineStore("online", () => {
             channel.trigger("client-online-highlights", {
               players: channelStore.playersOnline.map((candidate) => ({
                 playerId: candidate.playerId,
+                onlineHighlights: candidate.onlineHighlights,
                 bestCorrectHighlight: candidate.bestCorrectHighlight,
                 worstIncorrectHighlight: candidate.worstIncorrectHighlight,
               })),
@@ -127,6 +132,7 @@ export const useOnlineStore = defineStore("online", () => {
       (data: {
         players?: Array<{
           playerId: string;
+          onlineHighlights?: OnlineHighlight[];
           bestCorrectHighlight?: OnlineHighlight | null;
           worstIncorrectHighlight?: OnlineHighlight | null;
         }>;
@@ -136,6 +142,7 @@ export const useOnlineStore = defineStore("online", () => {
             (candidate) => candidate.playerId === highlightPlayer.playerId,
           );
           if (!player) continue;
+          player.onlineHighlights = highlightPlayer.onlineHighlights ?? [];
           player.bestCorrectHighlight = highlightPlayer.bestCorrectHighlight ?? undefined;
           player.worstIncorrectHighlight = highlightPlayer.worstIncorrectHighlight ?? undefined;
         }
@@ -172,6 +179,7 @@ export const useOnlineStore = defineStore("online", () => {
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
     const answerHistory = playerStore.answerHistory;
+    const onlineHighlights = playerStore.onlineHighlights;
     const bestCorrectHighlight = playerStore.bestCorrectHighlight;
     const worstIncorrectHighlight = playerStore.worstIncorrectHighlight;
     const me = channelStore.playersOnline.find(
@@ -183,6 +191,7 @@ export const useOnlineStore = defineStore("online", () => {
       me.hasFinished = true;
       me.correctAnswers = correctAnswers;
       me.answerHistory = answerHistory
+      me.onlineHighlights = onlineHighlights;
       me.bestCorrectHighlight = bestCorrectHighlight ?? undefined;
       me.worstIncorrectHighlight = worstIncorrectHighlight ?? undefined;
     }
@@ -192,6 +201,7 @@ export const useOnlineStore = defineStore("online", () => {
       points,
       correctAnswers,
       answerHistory,
+      onlineHighlights,
       bestCorrectHighlight,
       worstIncorrectHighlight,
     });
