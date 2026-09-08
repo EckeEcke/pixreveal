@@ -30,10 +30,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ChallengeParticipant, ChallengeRound } from "@/stores/challenge"
+import type { ChallengeParticipant } from "@/stores/challenge"
+import type { Round } from "@/types/game";
 
 defineProps<{
-  rounds: ChallengeRound[]
+  rounds: Round[]
   participants: ChallengeParticipant[]
 }>()
 </script>

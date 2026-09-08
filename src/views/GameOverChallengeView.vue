@@ -79,7 +79,7 @@ const highestScore = computed(() => {
 
 const isDraw = computed(() => {
   if (participants.value.length < 2) return false
-  return participants.value[0].score === participants.value[1].score
+  return participants.value[0]?.score === participants.value[1]?.score
 })
 
 const getPlayerStateClass = (score: number) => {
