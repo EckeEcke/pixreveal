@@ -41,13 +41,31 @@
           </div>
 
           <div
-            v-if="playerStore.gameMode === 'survival' && survivalStore.newHighscore"
+            v-if="
+              playerStore.gameMode === 'survival' && survivalStore.newHighscore
+            "
             class="rank-prophet highscore-message"
           >
             <Icon icon="pixel:sparkles" />
             NEW HIGHSCORE!
             <Icon icon="pixel:sparkles" />
           </div>
+
+          <ButtonPrimary
+              v-if="showChallengeButton"
+              class="btn-challenge"
+              data-sfx="click"
+              @mouseenter="soundStore.handleHoverSound"
+              @clicked="showChallengeModal = true"
+            >
+              <Icon icon="at-icons:swords" class="swords-icon" />
+              <div>
+                Challenge a friend
+                <br>
+                To beat your score
+              </div>
+              <Icon icon="at-icons:swords" class="swords-icon" />
+            </ButtonPrimary>
 
           <div class="gameover-actions">
             <ButtonPrimary
@@ -56,8 +74,9 @@
               @mouseenter="soundStore.handleHoverSound"
               @clicked="playAgainSingleplayer"
             >
-              <Icon icon="pixel:refresh-solid" /> Play Again</ButtonPrimary
-            >
+              <Icon icon="pixel:refresh-solid" /> Play Again
+            </ButtonPrimary>
+
             <ButtonSecondary
               data-sfx="back"
               @mouseenter="soundStore.handleHoverSound"
@@ -66,17 +85,15 @@
               <Icon icon="pixel:arrow-left" /> Go back
             </ButtonSecondary>
           </div>
-
-          <div class="share-section">
-            <h2>Challenge your friends!</h2>
-            <ShareIcons
-              :msg="getShareMessage(percentile, playerStore.gameMode)"
-            />
-          </div>
         </div>
       </div>
     </div>
   </main>
+
+  <ChallengeModal
+    v-if="showChallengeModal"
+    @close="showChallengeModal = false"
+  />
 </template>
 
 <script setup>
@@ -86,7 +103,6 @@ import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { useGameStore } from "@/stores/game";
 import { Icon } from "@iconify/vue";
-import ShareIcons from "@/components/page-ui/ShareIcons.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useConfigStore } from "@/stores/config";
 import GameOverCrown from "@/components/game-ui/GameOverCrown.vue";
@@ -97,6 +113,7 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { useConfetti } from "@/composables/useConfetti";
+import ChallengeModal from "@/components/modals/ChallengeModal.vue";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -107,12 +124,14 @@ const router = useRouter();
 const showIntro = ref(true);
 const wrapperRef = ref(null);
 
+const showChallengeModal = ref(false);
+
 const { fireConfetti } = useConfetti();
 
 const resizeGame = () => {
   if (!wrapperRef.value) return;
-  const baseWidth = 800;
-  const baseHeight = 738;
+  const baseWidth = 900;
+  const baseHeight = 900;
 
   wrapperRef.value.style.transform = "none";
 
@@ -125,7 +144,7 @@ const resizeGame = () => {
 
 onMounted(() => {
   resizeGame();
-  window.addEventListener('resize', resizeGame);
+  window.addEventListener("resize", resizeGame);
   submitSingleplayerScore();
   if (playerStore.gameMode === "survival" && survivalStore.newHighscore) {
     fireConfetti();
@@ -133,7 +152,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', resizeGame);
+  window.removeEventListener("resize", resizeGame);
 });
 
 const showSingleplayerRank = computed(() => {
@@ -143,6 +162,10 @@ const showSingleplayerRank = computed(() => {
     playerStore.gameMode === "gravity"
   );
 });
+
+const showChallengeButton = computed(() =>
+  ["classic", "inspect", "gravity"].includes(playerStore.gameMode)
+);
 
 const handleIntroDone = () => {
   showIntro.value = false;
@@ -156,9 +179,10 @@ const getRankDataForShare = (score) =>
   });
 
 const percentile = computed(() => {
-  const maxScore = Number(configStore.revealTime) * Number(configStore.maxRounds);
+  const maxScore =
+    Number(configStore.revealTime) * Number(configStore.maxRounds);
   if (!maxScore) return null;
-  
+
   const normalizedScore = Number(playerStore.points) / maxScore;
   return gameStore.getPercentile(normalizedScore);
 });
@@ -238,7 +262,7 @@ main {
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-top: 32px;
+  margin-top: 16px;
 }
 
 .btn-primary {
@@ -267,7 +291,7 @@ main {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 32px;
@@ -368,5 +392,20 @@ main {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
   animation: shine 4s infinite;
+}
+
+.btn-challenge {
+  margin-top: 32px;
+  width: 100%;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.swords-icon {
+  font-size: 24px;
+  margin: 0 8px;
+  display: none;
+  @media (min-width: 420px) {
+    display: block;
+  }
 }
 </style>

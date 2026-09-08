@@ -67,6 +67,42 @@ const router = createRouter({
       },
     },
     {
+      path: "/challenge",
+      name: "challenge",
+      component: () => import("@/views/ChallengeView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/challenge-game",
+      name: "challenge-game",
+      component: () => import("@/views/GameView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/challenge-classic",
+      name: "challenge-classic",
+      component: () => import("@/views/GameView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/challenge-inspect",
+      name: "challenge-inspect",
+      component: () => import("@/views/InspectView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/challenge-gravity",
+      name: "challenge-gravity",
+      component: () => import("@/views/GravityView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
+      path: "/gameover-challenge",
+      name: "gameover-challenge",
+      component: () => import("@/views/GameOverChallengeView.vue"),
+      meta: { robots: "noindex" },
+    },
+    {
       path: "/classic",
       name: "classic",
       component: () => import("@/views/GameView.vue"),

@@ -60,6 +60,7 @@ import { useGameStore } from "@/stores/game"
 import { usePlayerStore } from "@/stores/player"
 import { useConfigStore } from "@/stores/config"
 import { useOnlineStore } from "@/stores/online"
+import { useChallengeStore } from "@/stores/challenge"
 import { useSoundStore } from "@/stores/sound"
 import {
   workerClearInterval,
@@ -90,6 +91,7 @@ const resizeGame = () => {
 const router = useRouter()
 const playerStore = usePlayerStore()
 const onlineStore = useOnlineStore()
+const challengeStore = useChallengeStore()
 const configStore = useConfigStore()
 const gameStore = useGameStore()
 const soundStore = useSoundStore()
@@ -170,13 +172,20 @@ const handleAnswer = (selectedOption) => {
     pixelCanvasRef.value?.triggerIncorrectAnswer()
   }
 
+  playerStore.pushToAnswerHistory(selectedOption?.isCorrect ?? false)
+
   feedbackTimeoutId = workerSetTimeout(() => {
     gameStore.setGameState("revealed")
 
-    solutionTimeoutId = workerSetTimeout(() => {
+    solutionTimeoutId = workerSetTimeout(async () => {
       gameStore.nextRound()
 
       if (gameStore.isGameOver) {
+        if (challengeStore.active) {
+          await challengeStore.submitOpponentResult()
+          router.push(`/gameover-challenge?sessionId=${encodeURIComponent(challengeStore.session?.sessionId || "")}`)
+          return
+        }
         onlineStore.broadcastScore()
         const isOnlineRoute =
           router.currentRoute.value.name === "online" ||

@@ -76,6 +76,7 @@ import { useSoundStore } from "@/stores/sound"
 import { useOnlineStore } from "@/stores/online"
 import GameTransition from "@/components/game-ui/GameTransition.vue"
 import { useBonusRounds } from "@/composables/useBonusRounds"
+import { useChallengeStore } from "@/stores/challenge"
 import {
   workerClearInterval,
   workerClearTimeout,
@@ -105,6 +106,7 @@ const resizeGame = () => {
 const router = useRouter()
 const playerStore = usePlayerStore()
 const onlineStore = useOnlineStore()
+const challengeStore = useChallengeStore()
 const configStore = useConfigStore()
 const gameStore = useGameStore()
 const soundStore = useSoundStore()
@@ -204,10 +206,15 @@ const setupDrawing = () => {
   })
 }
 
-const goToNextRound = () => {
+const goToNextRound = async () => {
   gameStore.nextRound()
 
   if (gameStore.isGameOver) {
+    if (challengeStore.active) {
+      await challengeStore.submitOpponentResult()
+      router.push(`/gameover-challenge?sessionId=${encodeURIComponent(challengeStore.session?.sessionId || "")}`)
+      return
+    }
     onlineStore.broadcastScore()
     const isOnlineRoute =
       router.currentRoute.value.name === "online" ||

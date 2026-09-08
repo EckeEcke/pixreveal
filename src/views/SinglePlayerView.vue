@@ -67,11 +67,13 @@ import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import { useSurvivalStore } from "@/stores/survival";
+import { useChallengeStore } from "@/stores/challenge";
 
 const router = useRouter();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const survivalStore = useSurvivalStore();
+const challengeStore = useChallengeStore();
 const { prepareGame } = useGameStore();
 
 const setUser = () =>
@@ -83,24 +85,28 @@ const setUser = () =>
 setUser();
 
 const startClassic = () => {
+  challengeStore.clearSession();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
   router.push("/classic");
 };
 
 const startGravity = () => {
+  challengeStore.clearSession();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "gravity";
   router.push("/gravity");
 };
 
 const startInspect = () => {
+  challengeStore.clearSession();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "inspect";
   router.push("/inspect");
 };
 
 const startSurvival = () => {
+  challengeStore.clearSession();
   playerStore.gameMode = "survival";
   router.push("/survival");
 };

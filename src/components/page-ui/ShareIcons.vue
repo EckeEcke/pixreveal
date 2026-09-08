@@ -62,12 +62,16 @@ const props = defineProps({
     type: String,
     default: "Check out PixReveal! Can you guess the pixel art faster than me?",
   },
+  url: {
+    type: String,
+    default: "",
+  },
 });
 
 const copiedNotice = ref(false);
 
 const share = (platform) => {
-  const url = window.location.origin;
+  const url = props.url || window.location.origin;
   const text = encodeURIComponent(props.msg);
   const fullUrl = encodeURIComponent(url);
 
@@ -88,7 +92,7 @@ const share = (platform) => {
 };
 
 const shareDiscord = async () => {
-  const url = window.location.origin;
+  const url = props.url || window.location.origin;
   const combined = `${props.msg} ${url}`;
 
   try {
@@ -113,7 +117,7 @@ const shareNative = async () => {
     await navigator.share({
       title: "PixReveal",
       text: props.msg,
-      url: window.location.origin,
+      url: props.url || window.location.origin,
     });
   } catch (err) {
     console.log("Native share failed", err);

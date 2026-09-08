@@ -33,7 +33,7 @@
   box-shadow: 
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
-  padding: 2rem;
+  padding: 48px 32px 32px;
   border-radius: 8px;
   width: 100%;
   height: auto;
