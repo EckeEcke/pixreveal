@@ -7,39 +7,48 @@
         <p>{{ error }}</p>
         <ButtonSecondary @clicked="$router.push('/')">Go back</ButtonSecondary>
         </section>
-        <section v-else-if="challenge" class="challenge-card">
+        <section v-else-if="challenge" class="challenge-card" :class="{ 'is-completed': challenge.opponent }">
         <h1 class="logo">
           Pix<span>Reveal</span>
         </h1>
-        <h2>{{ challenge.challenger.username }} challenges you!</h2>
-        <div class="challenger">
-            <TopPlayerDisplay
-            :avatar-index="challenge.challenger.avatarIndex"
-            />        
-            <p>Can you beat their score?</p>
-        </div>
 
-        <div class="edit-card">
-            <p>Edit your avatar before creating a challenge</p>
+        <template v-if="challenge.opponent">
+            <h2>Challenge results</h2>
+            <AnswerComparison
+                :rounds="challenge.rounds"
+                :participants="participants"
+            />
+            <ButtonSecondary class="accept" @clicked="$router.push('/')">Go back</ButtonSecondary>
+        </template>
 
-            <div class="player-preview" @click="showPlayerEditModal = true">
-                <div
-                class="avatar"
-                :style="avatarStyleFor(playerStore.avatarIndex)"
-                />
-                <div class="player-info">
-                    <strong>{{ playerStore.playerName }}</strong>
-                    <Icon class="edit-icon" icon="pixel:edit-solid" />
+        <template v-else>
+            <h2>{{ challenge.challenger.username }} challenges you!</h2>
+            <div class="challenger">
+                <TopPlayerDisplay
+                :avatar-index="challenge.challenger.avatarIndex"
+                />        
+                <p>Can you beat their score?</p>
+            </div>
+
+            <div class="edit-card">
+                <p>Edit your avatar before creating a challenge</p>
+
+                <div class="player-preview" @click="showPlayerEditModal = true">
+                    <div
+                    class="avatar"
+                    :style="avatarStyleFor(playerStore.avatarIndex)"
+                    />
+                    <div class="player-info">
+                        <strong>{{ playerStore.playerName }}</strong>
+                        <Icon class="edit-icon" icon="pixel:edit-solid" />
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <p v-if="challenge.opponent" class="completed-message">
-            This challenge has already been completed.
-        </p>
-        <ButtonPrimary v-else class="accept" @clicked="acceptChallenge">
-            Accept the challenge
-        </ButtonPrimary>
+            <ButtonPrimary class="accept" @clicked="acceptChallenge">
+                Accept the challenge
+            </ButtonPrimary>
+        </template>
         </section>
     </main>
     <PlayerEditModal
@@ -54,15 +63,16 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { usePlayerStore } from "@/stores/player";
-import { useChallengeStore, type ChallengeSession } from "@/stores/challenge";
+import { useChallengeStore, type ChallengeSession, type ChallengeParticipant } from "@/stores/challenge";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
+import AnswerComparison from "@/components/game-ui/AnswerComparison.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -72,6 +82,13 @@ const challenge = ref<ChallengeSession | null>(null);
 const loading = ref(true);
 const error = ref("");
 const showPlayerEditModal = ref(false);
+
+const participants = computed<ChallengeParticipant[]>(() => {
+  if (!challenge.value) return [];
+  return challenge.value.opponent
+    ? [challenge.value.challenger, challenge.value.opponent]
+    : [challenge.value.challenger];
+});
 
 const avatarStyleFor = (avatarIndex: number) => ({
   backgroundImage: `url(${avatarSheet})`,
@@ -123,6 +140,10 @@ onMounted(async () => {
     text-align: center; 
 }
 
+.challenge-card.is-completed {
+    width: min(100%, 900px);
+}
+
 .eyebrow, .mode { 
     color: var(--neon-yellow); 
     font-weight: 900; 
@@ -156,11 +177,6 @@ onMounted(async () => {
 
 .edit-player { 
     margin: 0 auto 12px; 
-}
-
-.completed-message { 
-    color: var(--neon-yellow); 
-    font-weight: 800; 
 }
 
 .accept { 

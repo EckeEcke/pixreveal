@@ -1,5 +1,34 @@
 <template>
   <div class="answer-comparison">
+    <div class="score-grid">
+      <div
+        v-for="(player, index) in participants"
+        :key="player.username"
+        class="player-card"
+        :class="getPlayerStateClass(player.score)"
+      >
+        <TopPlayerDisplay
+          :avatar-index="player.avatarIndex"
+          :is-winner="!isDraw && player.score === highestScore"
+          :role="index === 0 ? 'Player 1' : 'Player 2'"
+          class="player"
+        />
+        <div class="player-name">{{ player.username }}</div>
+      </div>
+
+      <div
+        v-for="(player, index) in participants"
+        :key="`score-${player.username}`"
+        class="score-display"
+      >
+        {{ player.score }}
+        <Icon
+          icon="pixel:star-solid"
+          class="star-icon"
+        />
+      </div>
+    </div>
+
     <div
       v-for="(round, index) in rounds"
       :key="`${round.answer}-${index}`"
@@ -30,13 +59,32 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue"
+import { Icon } from "@iconify/vue"
+import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
 import type { ChallengeParticipant } from "@/stores/challenge"
 import type { Round } from "@/types/game";
 
-defineProps<{
+const props = defineProps<{
   rounds: Round[]
   participants: ChallengeParticipant[]
 }>()
+
+const highestScore = computed(() => {
+  if (!props.participants.length) return 0
+  return Math.max(...props.participants.map((p) => p.score))
+})
+
+const isDraw = computed(() => {
+  if (props.participants.length < 2) return false
+  return props.participants[0]?.score === props.participants[1]?.score
+})
+
+const getPlayerStateClass = (score: number) => {
+  if (props.participants.length < 2) return ""
+  if (isDraw.value) return "status-draw"
+  return score === highestScore.value ? "status-win" : "status-loss"
+}
 </script>
 
 <style scoped>
@@ -44,6 +92,71 @@ defineProps<{
   display: grid;
   gap: 8px;
   text-align: center;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 14px;
+    .star-icon {
+        color: var(--neon-yellow);
+    }
+}
+
+.player {
+    box-sizing: border-box;
+}
+
+.player-card {
+  padding: 14px 8px 8px;
+  border-radius: 8px;
+}
+
+.player-name {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 13px;
+    @media (min-width: 450px) {
+        font-size: 18px;
+    }
+}
+
+:deep(.status-win) {
+  background: rgba(0, 100, 50, 0.9)!important;
+  border-top: 3px solid rgba(0, 255, 150, 0.7) !important;
+  border-left: 3px solid rgba(0, 255, 150, 0.7) !important;
+  border-bottom: 3px solid rgba(0, 100, 50, 0.9) !important;
+  border-right: 3px solid rgba(0, 100, 50, 0.9) !important;
+  box-shadow: 0 4px 16px rgba(0, 220, 120, 0.15);
+}
+
+:deep(.status-loss) {
+  background: rgba(150, 20, 30, 0.9) !important;
+  border-top: 3px solid rgba(255, 120, 130, 0.7) !important;
+  border-left: 3px solid rgba(255, 120, 130, 0.7) !important;
+  border-bottom: 3px solid rgba(150, 20, 30, 0.9) !important;
+  border-right: 3px solid rgba(150, 20, 30, 0.9) !important;
+}
+
+:deep(.status-draw) {
+  background: rgba(100, 110, 120, 0.15) !important;
+  border-top: 3px solid rgba(150, 160, 170, 0.6) !important;
+  border-left: 3px solid rgba(150, 160, 170, 0.6) !important;
+  border-bottom: 3px solid rgba(40, 50, 60, 0.8) !important;
+  border-right: 3px solid rgba(40, 50, 60, 0.8) !important;
 }
 
 /* Desktop: P1 (links) | Begriff (Zentriert) | P2 (rechts) */
@@ -94,11 +207,13 @@ defineProps<{
   background: rgba(255, 70, 90, 0.14);
 }
 
-/* Mobile Layout: 
-   Zeile 1: Begriff (zentriert)
-   Zeile 2: P1 (links) & P2 (rechts) 
-*/
+/* Mobile Layout */
 @media (max-width: 650px) {
+  .score-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
   .answer-row {
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
