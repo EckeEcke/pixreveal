@@ -5,6 +5,15 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">09-08-26</span>
+      </div>
+      <h3 class="log-title">Asynchronous challenge mode added!</h3>
+      <p>
+        Just added a new big feature to PixReveal: play a single player round of Classic, Gravity or Inspect, then challenge a friend to beat your score! The friend will play the same drawings as you. Can they beat your score? The new Game Over screen shows who won the challenge, how many points they scored and who guessed which round correctly..      
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">09-07-26</span>
       </div>
       <h3 class="log-title">New highlight images in Online Gameover</h3>
