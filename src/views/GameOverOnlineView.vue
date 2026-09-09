@@ -294,6 +294,9 @@ main {
   text-align: center;
   margin-bottom: 32px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  @media (max-width: 400px) {
+    padding: 32px 16px;
+  }
 }
 
 .results-card::after {

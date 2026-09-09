@@ -130,7 +130,7 @@ onBeforeUnmount(() => {
   min-height: 180px;
   box-sizing: border-box;
   padding: 16px;
-  border: 2px solid var(--primary);
+  border: 2px solid rgba(255,255,255,0.09);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
@@ -209,7 +209,15 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 500px) {
-  .highlight-pill { grid-template-columns: 100px 1fr; gap: 12px; padding: 12px; }
+  .highlight-pill { 
+    grid-template-columns: 100px 1fr;
+    align-items: center; 
+    gap: 16px; 
+    padding: 12px;
+    .highlight-image {
+      max-width: 250px;
+    } 
+  }
   .title { font-size: 16px; }
   .message { font-size: 14px; }
 }
