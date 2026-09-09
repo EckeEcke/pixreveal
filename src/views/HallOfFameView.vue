@@ -18,18 +18,7 @@
         the daily challenge with the highest scores. Want to enter the
         Hall of Fame? Play today's challenge, guess the revealing drawing and secure your place among the best!
       </p>
-      <ButtonPrimary
-        v-if="!isYesterday"
-        data-sfx="click"
-        class="btn-primary"
-        @clicked="startDaily"
-      >
-        {{
-          dailyStore.hasPlayedToday
-            ? "CHECK TODAY'S RANKINGS"
-            : "PLAY DAILY CHALLENGE"
-        }}
-      </ButtonPrimary>
+
       <div class="player-grid">
       <TopPlayerDisplay
         v-for="player in paginatedWinners"
@@ -72,25 +61,12 @@ import { useGameStore } from "@/stores/game"
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
 import { useRouter } from "vue-router"
-import { usePlayerStore } from "@/stores/player"
 
 const dailyStore = useDailyStore()
-const { prepareGame } = useGameStore()
-const playerStore = usePlayerStore()
 const router = useRouter()
 
 const ITEMS_PER_PAGE = 20
 const currentPage = ref(1)
-
-const startDaily = () => {
-  prepareGame(10, dailyStore.dailyRounds)
-  playerStore.gameMode = dailyStore.mode
-  if (dailyStore.hasPlayedToday) {
-    router.push("/rankings-daily")
-  } else {
-    router.push("/daily")
-  }
-}
 
 const winners = computed(() => dailyStore.winners)
 
@@ -125,7 +101,7 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
-  margin: 64px auto;
+  margin: 0 auto 32px;
 }
 
 .subline {
