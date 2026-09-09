@@ -72,6 +72,11 @@
           </p>
         </div>
       </div>
+
+      <h3>Challenge a friend</h3>
+      <p>
+        After playing a round of <strong>Classic</strong>, <strong>Gravity</strong>, or <strong>Inspect</strong>, you can create a challenge to test your friends! Simply copy the generated link and send it over. Your friend will play the exact same set of drawings. Once finished, a detailed comparison screen reveals who won the match. <strong>No signup required</strong>, and every challenge link stays active for <strong>7 days</strong>.
+      </p>
     
       <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" class="content-container" />
 
@@ -155,8 +160,6 @@
         want more drawings, you can activate the ugc setting (user generated
         content) to include drawings created by users to the game.
       </p>
-      <h3>Rankings</h3>
-      <RankOverview />
     </article>
     <br />
     <ButtonPrimary data-sfx="back" @click="$emit('close')">
@@ -168,7 +171,6 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
-import RankOverview from "@/components/game-ui/RankOverview.vue";
 import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
 import PowerUpInfo from "../game-ui/PowerUpInfo.vue";
 import StepsComponent from "../page-ui/StepsComponent.vue";
