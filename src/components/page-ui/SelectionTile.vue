@@ -39,7 +39,7 @@
         ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
       >
       <span
-        v-if="!highscore && highscorePossible"
+        v-if="highscorePossible && !highscore"
         class="player-info challenge-badge"
         tabindex="0"
         data-tooltip="Set your own highscore"

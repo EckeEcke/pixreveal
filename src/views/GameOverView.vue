@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="full-width">
   <main>
     <Transition name="fade" mode="out-in">
       <GameTransition
@@ -140,8 +140,8 @@ const { fireConfetti } = useConfetti();
 
 const resizeGame = () => {
   if (!wrapperRef.value) return;
-  const baseWidth = 900;
-  const baseHeight = 900;
+  const baseWidth = 1000;
+  const baseHeight = 1000;
 
   wrapperRef.value.style.transform = "none";
 
@@ -538,5 +538,9 @@ main {
   .score-star {
     font-size: 15px;
   }
+}
+
+.full-width {
+  width: 100%;
 }
 </style>
