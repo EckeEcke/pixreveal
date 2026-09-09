@@ -60,9 +60,9 @@ const router = createRouter({
       meta: {
         robots: "index, follow",
         title:
-          "Free Singleplayer Pixel Art Games & Daily Challenge | PixReveal",
+          "Free Singleplayer Pixel Image Guessing Game & 1v1 Challenges | PixReveal",
         description:
-          "Play 5 unique pixel art singleplayer modes: race against time, beat high scores, and solve the daily challenge directly in your browser for free.",
+          "Play free browser pixel art guessing games: Classic, Gravity, Inspect & Survival. Test your visual speed or challenge friends to 1v1 duels!",
         canonical: "https://www.pixreveal.com/singleplayer",
       },
     },
