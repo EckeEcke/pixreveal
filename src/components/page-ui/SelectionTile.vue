@@ -28,15 +28,34 @@
       </div>
     </div>
 
-    <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
-      ><Icon icon="pixel:users-solid" /> 2-10</span
-    >
-    <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
-      ><Icon icon="pixel:user-solid" /> 1</span
-    >
-    <span v-if="highScore" class="player-info"
-      ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
-    >
+    <div v-if="maxPlayers || highScore || challengeable" class="top-badges">
+      <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
+        ><Icon icon="pixel:users-solid" /> 2-10</span
+      >
+      <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
+        ><Icon icon="pixel:user-solid" /> 1</span
+      >
+      <span v-if="highScore" class="player-info"
+        ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
+      >
+      <span
+        v-if="!highscore && highscorePossible"
+        class="player-info challenge-badge"
+        tabindex="0"
+        data-tooltip="Set your own highscore"
+      >
+        <Icon icon="pixel:crown-solid" />
+      </span>
+      <span
+        v-if="challengeable"
+        class="player-info challenge-badge"
+        tabindex="0"
+        data-tooltip="Challenge a friend to beat your score"
+      >
+        <Icon icon="at-icons:swords" />
+      </span>
+    </div>
+
     <span v-if="cornerText" class="corner-info"><Icon icon="pixel:clock" /> Ends in {{ cornerText }}</span>
     <div v-if="loading" class="loading-overlay">
       <span class="spinner"></span>
@@ -59,10 +78,13 @@ const props = defineProps<{
   isShiny?: boolean;
   maxPlayers?: number;
   highScore?: number;
+  highscorePossible?: boolean;
   isNew?: boolean;
   cornerText?: string;
   size?: "default" | "lg";
   featureBadges?: string[];
+  challengeable?: boolean;
+  challengeTooltip?: string;
 }>();
 
 const soundStore = useSoundStore();
@@ -94,7 +116,7 @@ const handleClick = (event: MouseEvent) => {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-    0 8px 24px rgba(0, 0, 0, 0.35);   
+    0 8px 24px rgba(0, 0, 0, 0.35);
   &::before {
     content: "";
     position: absolute;
@@ -234,10 +256,17 @@ const handleClick = (event: MouseEvent) => {
   transition: 0.3s all;
 }
 
-.player-info {
+.top-badges {
   position: absolute;
   top: 12px;
   right: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-info {
   color: var(--color-secondary);
   background: rgba(0, 0, 0, 0.4);
   padding: 4px 8px;
@@ -248,6 +277,38 @@ const handleClick = (event: MouseEvent) => {
   gap: 4px;
   min-width: 36px;
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.challenge-badge {
+  position: relative;
+  cursor: help;
+}
+
+.challenge-badge::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 1.3;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 5;
+}
+
+.challenge-badge:hover::after,
+.challenge-badge:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .new-badge {
@@ -369,11 +430,15 @@ const handleClick = (event: MouseEvent) => {
     font-size: 160px;
   }
 
+  .neon-btn--lg .top-badges {
+    top: 16px;
+    right: 16px;
+    gap: 4px;
+  }
+
   .neon-btn--lg .player-info {
     font-size: 14px;
     padding: 6px 10px;
-    top: 16px;
-    right: 16px;
   }
 
   .neon-btn--lg .corner-info {

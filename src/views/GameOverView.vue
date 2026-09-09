@@ -1,4 +1,5 @@
 <template>
+<div>
   <main>
     <Transition name="fade" mode="out-in">
       <GameTransition
@@ -51,31 +52,39 @@
             <Icon icon="pixel:sparkles" />
           </div>
 
-          <ButtonPrimary
-              v-if="showChallengeButton"
-              class="btn-challenge"
-              data-sfx="click"
-              @mouseenter="soundStore.handleHoverSound"
-              @clicked="showChallengeModal = true"
-            >
-              <Icon icon="at-icons:swords" class="swords-icon" />
-              <div>
-                Challenge a friend
-                <br>
-                To beat your score
+          <div
+            v-if="showChallengeButton"
+            class="challenge-slot"
+            data-sfx="click"
+            @mouseenter="soundStore.handleHoverSound"
+            @click="showChallengeModal = true"
+          >
+            <Icon icon="at-icons:swords" class="swords-icon" />
+
+            <div class="challenge-content">
+              <div class="challenge-title">
+                Challenge a Friend
               </div>
-              <Icon icon="at-icons:swords" class="swords-icon" />
-            </ButtonPrimary>
+
+              <div class="challenge-subtitle">
+                Can they beat your
+                <Icon icon="pixel:star-solid" class="score-star" />
+                <span>{{ playerStore.points }}</span>?
+              </div>
+            </div>
+
+            <Icon icon="at-icons:swords" class="swords-icon" />
+          </div>
 
           <div class="gameover-actions">
-            <ButtonPrimary
+            <ButtonSecondary
               class="btn-primary pulse-btn"
               data-sfx="click"
               @mouseenter="soundStore.handleHoverSound"
               @clicked="playAgainSingleplayer"
             >
               <Icon icon="pixel:refresh-solid" /> Play Again
-            </ButtonPrimary>
+            </ButtonSecondary>
 
             <ButtonSecondary
               data-sfx="back"
@@ -94,6 +103,7 @@
     v-if="showChallengeModal"
     @close="showChallengeModal = false"
   />
+  </div>
 </template>
 
 <script setup>
@@ -404,8 +414,129 @@ main {
   font-size: 24px;
   margin: 0 8px;
   display: none;
-  @media (min-width: 420px) {
+  @media (min-width: 500px) {
     display: block;
+  }
+}
+
+.challenge-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+
+  width: 100%;
+  min-height: 86px;
+  margin-top: 32px;
+  padding: 14px 24px;
+  box-sizing: border-box;
+
+  background: #bd3454;
+  border: 2px solid rgba(0, 0, 0, 0.75);
+  border-radius: 6px;
+
+  color: #08050d;
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 0 rgba(0, 0, 0, 0.65),
+    0 10px 20px rgba(0, 0, 0, 0.25);
+
+  transition:
+    transform 0.12s ease,
+    filter 0.12s ease,
+    box-shadow 0.12s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+
+    box-shadow:
+      0 7px 0 rgba(0, 0, 0, 0.65),
+      0 14px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(3px);
+
+    box-shadow:
+      0 2px 0 rgba(0, 0, 0, 0.65),
+      0 5px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.challenge-content {
+  min-width: 0;
+  text-align: center;
+}
+
+.challenge-title {
+  font-size: 21px;
+  line-height: 1.1;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.challenge-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  margin-top: 5px;
+
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 700;
+  opacity: 0.72;
+
+  span {
+    font-size: 16px;
+    font-weight: 900;
+    opacity: 1;
+  }
+}
+
+.swords-icon {
+  flex: 0 0 auto;
+  font-size: 38px;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.25));
+}
+
+.score-star {
+  flex: 0 0 auto;
+  font-size: 17px;
+  color: #ffcc00;
+  opacity: 1;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3));
+}
+
+@media (max-width: 419px) {
+  .challenge-slot {
+    gap: 12px;
+    min-height: 78px;
+    padding: 12px 14px;
+  }
+
+  .challenge-title {
+    font-size: 17px;
+  }
+
+  .challenge-subtitle {
+    font-size: 12px;
+
+    span {
+      font-size: 14px;
+    }
+  }
+
+  .swords-icon {
+    font-size: 30px;
+  }
+
+  .score-star {
+    font-size: 15px;
   }
 }
 </style>

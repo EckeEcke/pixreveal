@@ -57,7 +57,7 @@ const socialLinks = [
 <style scoped>
 .social-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: balance;
   justify-content: center;
   gap: 8px;
   margin-top: 16px;

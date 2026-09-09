@@ -4,7 +4,7 @@
       <router-link to="/" class="logo-link">
         <h1 class="logo">
           Pix<span>Reveal</span>
-          <span class="hook">Guess the pixel art</span>
+          <span class="hook">{{ subTitle ? subTitle : 'Guess the pixel art' }}</span>
         </h1>
       </router-link>
     </div>
@@ -65,6 +65,7 @@ import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
 defineProps<{
   showBackBtn?: Boolean;
   twitchLive?: boolean;
+  subTitle?: string;
 }>();
 
 const configStore = useConfigStore();

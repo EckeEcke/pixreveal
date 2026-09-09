@@ -19,6 +19,8 @@
                 btn-text="PLAY NOW"
                 sub-title="Guess what it is as the drawing is revealed"
                 btn-color="var(--primary)"
+                :challengeable="true"
+                :challenge-tooltip="'Challenge a friend to beat your score'"
                 :max-players="1"
                 :feature-badges="['~1 min per round', '5 random drawings']"
               />

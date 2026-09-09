@@ -4,7 +4,7 @@
       v-show="configStore.showManual"
       @close="configStore.closeManual"
     />
-    <HeaderApp :show-back-btn="true" />
+    <HeaderApp :show-back-btn="true" sub-title="SINGLEPLAYER MODES" />
     <main v-show="!configStore.showManual" class="singleplayer-container">
       <section class="setup-card">
         <div class="content-wrapper">
@@ -18,6 +18,9 @@
                 sub-title="Pixels dropping in from the top in Tetris style"
                 btn-color="var(--neon-yellow)"
                 :feature-badges="['Bottom to Top', 'Left to Right']"
+                :max-players="1"
+                :challengeable="true"
+                :challenge-tooltip="'Challenge a friend to beat your score'"
               />
               <SelectionTile
                 size="lg"
@@ -26,7 +29,10 @@
                 btn-text="INSPECT"
                 sub-title="Use your lens to spot the art in the dark"
                 btn-color="var(--neon-cyan)"
+                :max-players="1"
                 :feature-badges="['Control the Lens', 'Touch or Mouse']"
+                :challengeable="true"
+                :challenge-tooltip="'Challenge a friend to beat your score'"
               />
               <SelectionTile
                 size="lg"
@@ -35,7 +41,9 @@
                 btn-text="SURVIVAL"
                 sub-title="Answer correctly to gain more time"
                 btn-color="var(--neon-error)"
+                :max-players="1"
                 :high-score="survivalStore.highscore"
+                :highscore-possible="true"
                 :feature-badges="['Local Highscore', 'Time based']"
               />
               <SelectionTile
@@ -46,6 +54,9 @@
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
                 :feature-badges="['Random reveal', 'Default mode']"
+                :max-players="1"
+                :challengeable="true"
+                :challenge-tooltip="'Challenge a friend to beat your score'"
               />
             </div>
           </div>

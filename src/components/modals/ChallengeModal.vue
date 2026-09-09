@@ -230,7 +230,7 @@ p {
 
 .edit-card {
     background: black;
-    padding: 8px;
+    padding: 8px 16px;
     margin: 32px 0;
     border-radius: 8px;
     p {
