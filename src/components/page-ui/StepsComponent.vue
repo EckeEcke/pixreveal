@@ -9,7 +9,7 @@
             <source src="/assets/videos/classic-demo.mp4" type="video/mp4" />
           </video>
         </div>
-        <h3>1. Check the art</h3>
+        <h3 class="step"><span class="step-num">1</span> Check the art</h3>
         <p>
           Observe the pixel artwork as it gradually uncovers block by block.
         </p>
@@ -28,7 +28,7 @@
             <source src="/assets/videos/answer-demo.mp4" type="video/mp4" />
           </video>
         </div>
-        <h3>2. Make your guess</h3>
+        <h3 class="step"><span class="step-num">2</span> Make your guess</h3>
         <p>
           Hit the buzzer and select the correct answer before time runs out!
         </p>
@@ -47,7 +47,7 @@
             <source src="/assets/videos/gameover-demo.mp4" type="video/mp4" />
           </video>
         </div>
-        <h3>3. Gain points</h3>
+        <h3 class="step"><span class="step-num">3</span> Gain points</h3>
         <p>Earn stars, top the leaderboard, and outsmart your friends.</p>
       </div>
     </div>
@@ -90,7 +90,7 @@ import { Icon } from "@iconify/vue"
 }
 
 .step-card {
-  background: rgba(15, 12, 29, 0.75);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 
@@ -147,7 +147,7 @@ import { Icon } from "@iconify/vue"
   background: #000000;
   border-radius: 12px;
   overflow: hidden;
-  margin: 0 auto 16px auto;
+  margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -158,23 +158,34 @@ import { Icon } from "@iconify/vue"
   display: block;
 }
 
-.step-card h3 {
-  display: block;
-  font-size: 16px;
-  font-weight: 900;
-  color: #ffffff;
-  text-transform: uppercase;
-  margin: 0 auto 8px;
-  line-height: 1.3;
-  width: 100%;
-  max-width: 280px;
-}
-
 .step-card p {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.65);
   line-height: 1.4;
   margin: 0 auto;
   max-width: 280px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.step-num {
+  background: var(--primary);
+  color: #000000;
+  font-weight: bold;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  line-height: 1;
 }
 </style>
