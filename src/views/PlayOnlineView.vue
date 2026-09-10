@@ -382,7 +382,7 @@ const joinGame = () => {
 }
 
 .start-btn {
-  margin-top: 32px;
+  margin-top: 0px;
 }
 
 .card-grid {
@@ -516,7 +516,7 @@ const joinGame = () => {
 }
 
 .setup-section {
-  margin: 48px 0;
+  margin: 32px 0;
 }
 
 .host-info {

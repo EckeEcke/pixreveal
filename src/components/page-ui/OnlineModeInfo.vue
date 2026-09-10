@@ -3,22 +3,43 @@
     <li class="item">
       <Icon icon="streamline-pixel:phone-scan-qr-code-1" class="icon" />
       <div>
-        <div class="name">quick to join</div>
+        <div class="name">quick & easy join</div>
         <div class="desc">Enter the room ID, use a link, or scan a QR code — no account needed.</div>
       </div>
     </li>
     <li class="item">
       <Icon icon="streamline-pixel:photography-photo-image" class="icon" />
       <div>
-        <div class="name">race the same drawing</div>
-        <div class="desc">Every round, all players see the same drawing at once. The faster you answer, the more points you score.</div>
+        <div class="name">everyone plays the same drawings</div>
+        <div class="desc">All players see the same set of pictures. The faster you answer, the more points you score.</div>
       </div>
     </li>
     <li class="item">
-      <Icon icon="streamline-pixel:social-rewards-rating-star-1" class="icon" />
+      <Icon icon="streamline-pixel:photography-picture-polaroid" class="icon" />
       <div>
-        <div class="name">bonus round every 5 rounds</div>
-        <div class="desc">Double points and a twist modifier keep it competitive.</div>
+        <div class="name">full gallery at the end</div>
+        <div class="desc">Review every drawing and see what everyone answered once the game wraps up.</div>
+      </div>
+    </li>
+    <li class="item">
+      <Icon icon="streamline-pixel:multiple-user" class="icon" />
+      <div>
+        <div class="name">up to 10 players</div>
+        <div class="desc">Room for the whole squad — no matter the group size.</div>
+      </div>
+    </li>
+    <li class="item">
+      <Icon icon="streamline-pixel:business-product-check" class="icon" />
+      <div>
+        <div class="name">no login needed</div>
+        <div class="desc">Jump in and play instantly. No account, no signup, ever.</div>
+      </div>
+    </li>
+    <li class="item">
+      <Icon icon="streamline-pixel:coding-apps-websites-mobile" class="icon" />
+      <div>
+        <div class="name">playable across devices</div>
+        <div class="desc">Play in your browser on PC, Mac, tablet, or phone.</div>
       </div>
     </li>
   </ul>
