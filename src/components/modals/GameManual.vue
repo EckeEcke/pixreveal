@@ -10,9 +10,9 @@
       <h3 class="subline">PixReveal Manual</h3>
       <p>
         PixReveal is a <strong>free browser party game</strong> about guessing
-        <strong>pixelart</strong> within a time limit. The faster you answer
+        <strong>pixel art</strong> within a time limit. The faster you answer
         correctly, the higher you score. This
-        <strong>pixelart quiz</strong> offers different game modes with unique
+        <strong>pixel art quiz</strong> offers different game modes with unique
         mechanics for visibility and time management. Playable directly in the
         browser, <strong>no download needed</strong>.
       </p>
@@ -24,7 +24,7 @@
       </p>
 
       <StepsComponent class="content-container" />
-
+      <br>
       <h3>The Game Modes</h3>
       <div class="modes-grid">
         <div>
@@ -44,7 +44,7 @@
             leaderboard!
           </p>
         </div>
-      
+
         <div>
           <h4>Gravity</h4>
           <p>
@@ -68,7 +68,7 @@
           <p>
             The drawing is fully complete but shrouded in darkness. Use your
             <strong>magnifying glass</strong>
-            (search lens) to inspect sections and uncover the hidden pixelart.
+            (search lens) to inspect sections and uncover the hidden pixel art.
           </p>
         </div>
       </div>
@@ -77,10 +77,12 @@
       <p>
         After playing a round of <strong>Classic</strong>, <strong>Gravity</strong>, or <strong>Inspect</strong>, you can create a challenge to test your friends! Simply copy the generated link and send it over. Your friend will play the exact same set of drawings. Once finished, a detailed comparison screen reveals who won the match. <strong>No signup required</strong>, and every challenge link stays active for <strong>7 days</strong>.
       </p>
-    
+
       <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" class="content-container" />
 
-      <h3>Multiplayer and user generated content</h3>
+      <br>
+
+      <h3>Multiplayer & Content</h3>
       <div class="two-columns">
         <div>
           <p>
@@ -89,16 +91,16 @@
           </p>
         </div>
         <ul>
-          <li>enter room id manually</li>
-          <li>copying an invite link</li>
-          <li>sharing a link via native share</li>
-          <li>scan the QR code (very helpful for Party Mode)</li>
+          <li>Enter room ID manually</li>
+          <li>Copy an invite link</li>
+          <li>Share via native share menu</li>
+          <li>Scan the QR code (ideal for Party Mode)</li>
         </ul>
       </div>
 
       <h4>Free Online Multiplayer</h4>
       <p>
-        Play with others in the <strong>real-time multiplayer mode</strong>.
+        Play with others in <strong>real-time multiplayer mode</strong>.
         Host a session, invite friends and compete for the highest rank.
         Everyone plays the same drawings – may the fastest scout win!
       </p>
@@ -118,7 +120,13 @@
         replaces the oldest one in your inventory. Use them to sabotage your
         friends:
       </p>
+
+      <br>
+
       <PowerUpInfo />
+
+      <br>
+
       <p>
         Send emotes from your phone to the host screen to react to the current
         game (or distract other players). Bonus rounds and the final round allow you to gain
@@ -128,32 +136,33 @@
         The game is designed to be enjoyed in a social setting, making it
         perfect for parties, family gatherings, or casual game nights.
       </p>
-      <h4>Submit your Art - User Generat content</h4>
+
+      <h4>Submit Your Art - User Generated Content</h4>
       <p>
-        Have you created your own pixelart? Share it with the PixReveal
+        Have you created your own pixel art? Share it with the PixReveal
         community! Use the
         <router-link to="/editor">Editor</router-link> to upload your drawings
         and submit them for others to guess. Community-made content expands the
         pool of drawings and keeps the game fresh for everyone. Enable user art
         via the settings. Once approved, your art will be available in the game.
-        Additionally PixReveal provides a
-        <router-link to="/user-gallery">user art gallery</router-link>. Check
-        out art created by other players. If your art is not listed yet, then it
-        is still waiting for approval.
+        Additionally, PixReveal provides a
+        <router-link to="/user-gallery">user art gallery</router-link> to check
+        out art created by other players.
       </p>
+
+      <br>
 
       <h3>Settings & Customization</h3>
       <p>
-        Fine-tune your session for the best experience. I highly recommend
-        enabling
-        <strong>audio</strong> and <strong>fullscreen mode</strong> to
+        Fine-tune your session for the best experience. Enabling
+        <strong>audio</strong> and <strong>fullscreen mode</strong> is recommended to
         fully immerse yourself in the pixel-game atmosphere. PixReveal adapts
         to your playstyle: whether you want
         <strong>fast 5-second blitz rounds</strong> for a quick
         adrenaline rush, or a <strong>relaxed 20-second marathon</strong> with
         20 drawings to test your long-term recognition skills. Customize your
-        experience by selecting your prefered <strong>Drawing vibe</strong>, 
-        from nerdy drawings about anime & gaming to general drawings about food and nature.
+        experience by selecting your preferred <strong>Game Vibe</strong>, 
+        from nerdy themes like anime & gaming to general topics like food and nature.
       </p>
     </article>
     <br />
@@ -164,11 +173,13 @@
 </template>
 
 <script setup>
-import { Icon } from "@iconify/vue";
-import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue";
-import ButtonPrimary from "../page-ui/ButtonPrimary.vue";
-import PowerUpInfo from "../game-ui/PowerUpInfo.vue";
-import StepsComponent from "../page-ui/StepsComponent.vue";
+import { Icon } from "@iconify/vue"
+import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue"
+import ButtonPrimary from "../page-ui/ButtonPrimary.vue"
+import PowerUpInfo from "../game-ui/PowerUpInfo.vue"
+import StepsComponent from "../page-ui/StepsComponent.vue"
+
+defineEmits(["close"])
 </script>
 
 <style scoped>
@@ -190,13 +201,9 @@ import StepsComponent from "../page-ui/StepsComponent.vue";
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 16px;
+  right: 16px;
   z-index: 1;
-}
-
-h1 {
-  text-align: left;
 }
 
 a {
@@ -211,17 +218,23 @@ a {
 .modes-grid {
   display: grid;
   gap: 16px;
-  row-gap: 0;
-  @media (min-width: 1024px) {
+  row-gap: 12px;
+}
+
+@media (min-width: 1024px) {
+  .modes-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 .two-columns {
-  margin: 32px 0;
+  margin: 16px 0;
   display: grid;
   gap: 16px;
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
+  .two-columns {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -240,5 +253,9 @@ a {
   text-transform: uppercase;
   margin-top: 0;
   margin-bottom: 32px;
+}
+
+h4,p, ul {
+  margin-top: 0;
 }
 </style>
