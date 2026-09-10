@@ -11,6 +11,7 @@
 
       <main class="page">
         <div class="setup-card card">
+          <MinimalSettings :hide-keyboard="true" />
           <h1>PARTY MULTIPLAYER</h1>
           <span class="pre-headline">CREATE OR JOIN A GAME</span>
 
@@ -49,50 +50,8 @@
                   </span>
                 </div>
 
-                <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
-                  <label class="selection-label">HOW MANY ROUNDS</label>
+                <GameSettingsPanel v-if="!isScreenTooSmallForHost" />
 
-                  <div class="radio-group">
-                    <label
-                      v-for="amount in [5, 10, 15, 20]"
-                      :key="amount"
-                      class="radio-item"
-                    >
-                      <input
-                        type="radio"
-                        name="rounds"
-                        :value="amount"
-                        v-model="configStore.maxRounds"
-                        :disabled="configStore.filteredDrawings.length < amount * 4"
-                        @change="soundStore.playSound('click')"
-                      />
-
-                      <span class="radio-button">{{ amount }}</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div v-if="!isScreenTooSmallForHost" class="rounds-selection">
-                  <label class="selection-label">SET ROUND LENGTH</label>
-
-                  <div class="radio-group">
-                    <label
-                      v-for="duration in [5, 10, 15, 20]"
-                      :key="duration"
-                      class="radio-item"
-                    >
-                      <input
-                        type="radio"
-                        name="duration"
-                        :value="duration"
-                        v-model="configStore.revealTime"
-                        @change="soundStore.playSound('click')"
-                      />
-
-                      <span class="radio-button">{{ duration }}</span>
-                    </label>
-                  </div>
-                </div>
               </div>
 
               <div v-if="selectedRole !== 'host'" class="setup-section">
@@ -187,6 +146,8 @@ import { ROOM_ID_LENGTH } from "@/utils/crypto"
 import { useRoute } from "vue-router"
 import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue"
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
+import GameSettingsPanel from "@/components/page-ui/GameSettingsPanel.vue"
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 
 const wrapperRef = ref(null)
 

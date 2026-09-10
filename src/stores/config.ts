@@ -16,13 +16,21 @@ export const CATEGORIES = [
   { name: "Objects & People", color: "var(--neon-blue)", icon: "📦" },
   { name: "Food", color: "var(--primary)", icon: "🍕" },
   { name: "Gaming", color: "var(--neon-pink)", icon: "🎮" },
-    { name: "Anime & Cartoons", color: "var(--neon-yellow)", icon: "📺" },
+  { name: "Anime & Cartoons", color: "var(--neon-yellow)", icon: "📺" },
   {
     name: "Movies & TV",
     color: "var(--neon-purple)",
     icon: "🎬",
   },
 ];
+
+export const PRESETS = {
+  GENERAL: ["Animals & Nature", "Objects & People", "Food"],
+  NERDY: ["Gaming", "Anime & Cartoons", "Movies & TV"],
+  ALL: CATEGORIES.map((c) => c.name),
+} as const;
+
+export type PresetType = "general" | "nerdy" | "all";
 
 export const allCategoryNames = CATEGORIES.map((c) => c.name);
 
@@ -33,7 +41,6 @@ export const useConfigStore = defineStore("config", () => {
   const selectedCategories = ref([...allCategoryNames]);
   const minimumDrawings = computed(() => maxRounds.value * 4);
   const includeUgc = ref(false);
-  const addCRTFilter = ref(false);
   const ugcDrawings: Ref<Drawing[]> = ref([]);
   const isManualOpen = ref(false);
   const isSettingsOpen = ref(false);
@@ -46,14 +53,14 @@ export const useConfigStore = defineStore("config", () => {
 
   const fetchUgcDrawings = async () => {
     fetch(
-        "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          ugcDrawings.value = data;
-        })
-        .catch((err) => console.error("UGC fetch fehlgeschlagen:", err));
-  }
+      "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        ugcDrawings.value = data;
+      })
+      .catch((err) => console.error("UGC fetch fehlgeschlagen:", err));
+  };
 
   const filteredDrawings: Ref<Drawing[]> = computed(() => {
     const base = includeUgc.value
@@ -72,6 +79,27 @@ export const useConfigStore = defineStore("config", () => {
   const hasActiveFilters = computed(() => {
     return selectedCategories.value.length < allCategoryNames.length;
   });
+
+  const activePreset = computed<PresetType | "custom">(() => {
+    const current = selectedCategories.value;
+    const isSame = (arr: readonly string[]) =>
+      arr.length === current.length && arr.every((c) => current.includes(c));
+
+    if (isSame(PRESETS.GENERAL)) return "general";
+    if (isSame(PRESETS.NERDY)) return "nerdy";
+    if (isSame(PRESETS.ALL)) return "all";
+    return "custom";
+  });
+
+  const setPreset = (preset: PresetType) => {
+    if (preset === "general") {
+      selectedCategories.value = [...PRESETS.GENERAL];
+    } else if (preset === "nerdy") {
+      selectedCategories.value = [...PRESETS.NERDY];
+    } else if (preset === "all") {
+      selectedCategories.value = [...PRESETS.ALL];
+    }
+  };
 
   const toggleCategory = (category: string) => {
     const index = selectedCategories.value.indexOf(category);
@@ -128,7 +156,6 @@ export const useConfigStore = defineStore("config", () => {
   });
 
   const showManual = computed(() => isManualOpen.value);
-  const showSettings = computed(() => isSettingsOpen.value);
 
   const openManual = () => {
     isManualOpen.value = true;
@@ -137,32 +164,23 @@ export const useConfigStore = defineStore("config", () => {
     isManualOpen.value = false;
   };
 
-  const openSettings = () => {
-    isSettingsOpen.value = true;
-  };
-  const closeSettings = () => {
-    isSettingsOpen.value = false;
-  };
-
   return {
     categoriesWithCounts,
     revealTime,
     includeUgc,
-    addCRTFilter,
     ugcDrawings,
     selectedCategories,
     isCategorySelected,
     hasActiveFilters,
+    activePreset,
+    setPreset,
     maxRounds,
     filteredDrawings,
     toggleCategory,
     resetToDefault,
     showManual,
-    showSettings,
     openManual,
     closeManual,
-    openSettings,
-    closeSettings,
     showKeyHints,
     toggleKeyHints,
     fetchUgcDrawings,

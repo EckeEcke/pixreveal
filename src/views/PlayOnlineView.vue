@@ -11,6 +11,7 @@
 
       <main class="page">
         <div class="setup-card card">
+          <MinimalSettings :hide-keyboard="true" />
           <h1>ONLINE MULTIPLAYER</h1>
           <span class="pre-headline">CREATE OR JOIN A GAME</span>
 
@@ -45,66 +46,10 @@
                 v-if="selectedRole === 'host'"
                 class="host-settings"
               >
-                <div class="rounds-selection">
-                  <label class="selection-label">
-                    HOW MANY ROUNDS
-                  </label>
-
-                  <div class="radio-group">
-                    <label
-                      v-for="amount in [5, 10, 15, 20]"
-                      :key="amount"
-                      class="radio-item"
-                    >
-                      <input
-                        type="radio"
-                        name="rounds"
-                        :value="amount"
-                        v-model="configStore.maxRounds"
-                        :disabled="
-                          configStore.filteredDrawings.length <
-                          amount * 4
-                        "
-                        @change="soundStore.playSound('click')"
-                      />
-
-                      <span class="radio-button">
-                        {{ amount }}
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="rounds-selection">
-                  <label class="selection-label">
-                    SET ROUND LENGTH
-                  </label>
-
-                  <div class="radio-group">
-                    <label
-                      v-for="duration in [5, 10, 15, 20]"
-                      :key="duration"
-                      class="radio-item"
-                    >
-                      <input
-                        type="radio"
-                        name="duration"
-                        :value="duration"
-                        v-model="configStore.revealTime"
-                        @change="soundStore.playSound('click')"
-                      />
-
-                      <span class="radio-button">
-                        {{ duration }}
-                      </span>
-                    </label>
-                  </div>
-                </div>
+                <GameSettingsPanel />
               </div>
 
               <div class="setup-section">
-                <h3>SET YOUR NAME AND AVATAR</h3>
-
                 <div class="player-info-wrapper">
                   <div
                     class="player-avatar"
@@ -124,6 +69,7 @@
                     <span>
                       {{ playerStore.playerName || "SET PLAYER NAME" }}
                     </span>
+                    <span class="info-text">CLICK TO EDIT YOUR AVATAR</span>
                   </div>
                 </div>
               </div>
@@ -203,13 +149,15 @@ import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
 import OnlineModeInfo from "@/components/page-ui/OnlineModeInfo.vue";
+import GameSettingsPanel from "@/components/page-ui/GameSettingsPanel.vue";
+import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 
 const wrapperRef = ref(null);
 
 const resizeGame = () => {
   if (!wrapperRef.value) return;
 
-  const baseWidth = 1000;
+  const baseWidth = 1100;
   const baseHeight = 850;
 
   if (
@@ -516,7 +464,7 @@ const joinGame = () => {
 }
 
 .setup-section {
-  margin: 48px 0;
+  margin: 32px 0;
 }
 
 .host-info {

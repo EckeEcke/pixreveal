@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-wrapper" :class="{ crt: addCRT }" ref="wrapper">
+  <div class="canvas-wrapper" ref="wrapper">
     <canvas
       ref="canvasRef"
       :width="internalSize"
@@ -60,7 +60,6 @@ const {
 const soundStore = useSoundStore()
 const playerStore = usePlayerStore()
 
-const addCRT = computed(() => useConfigStore().addCRTFilter)
 const timerDuration = props.timerDuration || 15
 
 let autoAngle = 0

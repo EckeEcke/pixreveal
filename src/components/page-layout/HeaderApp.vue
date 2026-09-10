@@ -21,6 +21,7 @@
         <Icon icon="pixel:twitch" class="twitch-icon" />
         <span class="live-text">LIVE</span>
       </a>
+      <HeaderSettings />
       <button
         class="avatar-btn"
         type="button"
@@ -30,7 +31,6 @@
       >
         <span class="avatar-image" :style="avatarStyle"></span>
       </button>
-      <SettingsButton />
     </div>
   </header>
   <div class="back-btn-wrapper">
@@ -57,7 +57,7 @@
 import { computed, ref } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { usePlayerStore } from "@/stores/player";
-import SettingsButton from "@/components/page-ui/SettingsButton.vue";
+import HeaderSettings from "@/components/page-ui/HeaderSettings.vue";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { Icon } from "@iconify/vue";
 import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
@@ -102,7 +102,10 @@ header {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
+  @media (max-width: 375px) {
+    gap: 8px;
+  }
 }
 
 .avatar-btn {

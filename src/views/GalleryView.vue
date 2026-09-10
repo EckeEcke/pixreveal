@@ -55,7 +55,7 @@ const { imageUrls, isGenerating } = useDrawingImageUrls(userDrawings);
 
 <style scoped>
 .container {
-  width: 600px;
+  width: 1000px;
   max-width: 100%;
   padding-bottom: 64px;
 }
@@ -108,5 +108,9 @@ const { imageUrls, isGenerating } = useDrawingImageUrls(userDrawings);
 a {
   color: var(--primary);
   font-weight: 900;
+}
+
+.logo {
+  margin-top: 16px;
 }
 </style>

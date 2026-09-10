@@ -46,7 +46,7 @@ const generalFaqs = [
   {
     question: "I am not into anime or gaming. Can I still play the game?",
     answer:
-    "Yes, PixReveal is customizable. Just open the settings and unselect the categories that do not fit your likings. Then these drawings will be excluded from the game. Categories are Animals & Nature, Anime & Cartoons, Food, Gaming, Movies & TV and Objects & People.",
+    "Yes, PixReveal is customizable. Just choose General as drawing mix. General includes Objects & People, Nature and Food. Nerdy mix contains Movies & TV, Anime & Cartoons and Gaming. Mixed includes all drawings.",
   },
   {
     question: "Can I play PixReveal via keyboard?",

@@ -20,10 +20,6 @@
       </router-view>
       <audio ref="audio" loop></audio>
     </div>
-    <SettingsModal
-      v-if="configStore.showSettings"
-      @close="configStore.closeSettings"
-    />
   </div>
 </template>
 
@@ -35,7 +31,6 @@ import { useGameStore } from "./stores/game"
 import { Analytics } from "@vercel/analytics/vue"
 import { useRoute } from "vue-router"
 import { useConfigStore } from "./stores/config"
-import SettingsModal from "./components/modals/SettingsModal.vue"
 import { useDailyStore } from "./stores/daily"
 
 const route = useRoute()

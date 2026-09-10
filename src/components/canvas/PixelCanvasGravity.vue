@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-wrapper" :class="{ crt: addCRT }">
+  <div class="canvas-wrapper">
     <canvas
       ref="canvasRef"
       :width="internalSize"
@@ -34,8 +34,6 @@ const {
 
 const configStore = useConfigStore();
 const { playSound} = useSoundStore();
-
-const addCRT = computed(() => useConfigStore().addCRTFilter);
 
 const gravity = 0.5;
 const bounce = -0.3;

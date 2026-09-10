@@ -146,19 +146,14 @@
       <p>
         Fine-tune your session for the best experience. I highly recommend
         enabling
-        <strong>audio cues</strong> and <strong>fullscreen mode</strong> to
-        fully immerse yourself in the pixel-hunting atmosphere. PixReveal adapts
+        <strong>audio</strong> and <strong>fullscreen mode</strong> to
+        fully immerse yourself in the pixel-game atmosphere. PixReveal adapts
         to your playstyle: whether you want
-        <strong>action-packed 5-second blitz rounds</strong> for a quick
+        <strong>fast 5-second blitz rounds</strong> for a quick
         adrenaline rush, or a <strong>relaxed 20-second marathon</strong> with
         20 drawings to test your long-term recognition skills. Customize your
-        experience by selecting your favorite <strong>Categories</strong>. You
-        can combine as many as you like to increase the total pool of drawings.
-      </p>
-      <p>
-        Add an additional CRT filter for an even more retro look. And if you
-        want more drawings, you can activate the ugc setting (user generated
-        content) to include drawings created by users to the game.
+        experience by selecting your prefered <strong>Drawing vibe</strong>, 
+        from nerdy drawings about anime & gaming to general drawings about food and nature.
       </p>
     </article>
     <br />

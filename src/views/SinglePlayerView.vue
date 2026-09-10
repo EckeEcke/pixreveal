@@ -94,22 +94,28 @@
           </div>
         </article>
 
-        <!-- SEO TEXT SECTION -->
-        <article class="info-card seo-section">
-          <h2>Free Browser Pixel Image Guessing Game</h2>
-          <p>
-            Welcome to the singleplayer arena of <strong>PixReveal</strong>, a free <strong>browser guess the pixel image game</strong>. Test your visual recognition skills under time pressure, earn stars based on your speed, and climb to the top rank — <strong>no download or registration required</strong>.
-          </p>
-          <p>
-            Choose from four unique singleplayer modes tailored to your playstyle:
-          </p>
-          <ul>
-            <li><strong>Classic Reveal:</strong> Guess the drawing as it uncovers pixel by pixel.</li>
-            <li><strong>Gravity:</strong> Identify the pixel art as blocks fall Tetris-style from top to bottom.</li>
-            <li><strong>Inspect:</strong> Use a magnifying lens to explore the hidden image in the dark.</li>
-            <li><strong>Survival:</strong> Answer fast to gain extra time and push for a new highscore.</li>
-          </ul>
-        </article>
+        <div class="card-grid">
+          <div class="info-card seo-section">
+            <h2>Adjust your game settings</h2>
+            <GameSettingsPanel />
+          </div>
+          <!-- SEO TEXT SECTION -->
+          <article class="info-card seo-section">
+            <h2>Free Browser Pixel Image Guessing Game</h2>
+            <p>
+              Welcome to the singleplayer arena of <strong>PixReveal</strong>, a free <strong>browser guess the pixel image game</strong>. Test your visual recognition skills under time pressure, earn stars based on your speed, and climb to the top rank — <strong>no download or registration required</strong>.
+            </p>
+            <p>
+              Choose from four unique singleplayer modes tailored to your playstyle:
+            </p>
+            <ul>
+              <li><strong>Classic Reveal:</strong> Guess the drawing as it uncovers pixel by pixel.</li>
+              <li><strong>Gravity:</strong> Identify the pixel art as blocks fall Tetris-style from top to bottom.</li>
+              <li><strong>Inspect:</strong> Use a magnifying lens to explore the hidden image in the dark.</li>
+              <li><strong>Survival:</strong> Answer fast to gain extra time and push for a new highscore.</li>
+            </ul>
+          </article>
+        </div>
       </section>
     </main>
     <FooterApp />
@@ -126,6 +132,7 @@ import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
+import GameSettingsPanel from "@/components/page-ui/GameSettingsPanel.vue";
 import { useSurvivalStore } from "@/stores/survival";
 import { useChallengeStore } from "@/stores/challenge";
 import { Icon } from "@iconify/vue";
@@ -234,6 +241,16 @@ h2 {
   grid-template-columns: 1fr;
   gap: 8px;
   @media (min-width: 576px) {
+    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  @media (min-width: 700px) {
     gap: 16px;
     grid-template-columns: 1fr 1fr;
   }
@@ -350,7 +367,7 @@ h2 {
   h2 {
     color: var(--white);
     font-size: 18px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
 
   p {
