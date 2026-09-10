@@ -19,36 +19,45 @@
         Hall of Fame? Play today's challenge, guess the revealing drawing and secure your place among the best!
       </p>
 
-      <div class="player-grid">
-      <TopPlayerDisplay
-        v-for="player in paginatedWinners"
-            :key="player.date"
-            :name="player.winner.name"
-            :avatar-index="player.winner.avatarIndex"
-            :score="player.winner.score"
-            :subline="player.date"
+      <div v-if="groupedWinners.length" class="month-nav">
+        <button
+          class="pagination-btn"
+          :disabled="currentMonthIndex >= groupedWinners.length - 1"
+          @click="currentMonthIndex++"
+          data-sfx="click"
+        >
+          <Icon icon="pixel:angle-left-solid" />
+        </button>
+        <span class="month-label">{{ currentGroup.label }}</span>
+        <button
+          class="pagination-btn"
+          :disabled="currentMonthIndex <= 0"
+          @click="currentMonthIndex--"
+          data-sfx="click"
+        >
+          <Icon icon="pixel:angle-right-solid" />
+        </button>
+      </div>
+
+      <div v-if="currentGroup" class="player-grid">
+        <div
+          v-for="entry in currentGroup.entries"
+          :key="entry.date"
+          class="trophy-tile"
+          :class="{ latest: isLatest(entry) }"
+          :style="{ '--glow': glowColor(entry.winner.avatarIndex) }"
+        >
+          <TopPlayerDisplay
+            :name="entry.winner.name"
+            :avatar-index="entry.winner.avatarIndex"
+            :score="entry.winner.score"
+            :subline="entry.date"
             class="player-card"
-        />
-    </div>
-    <div v-if="totalPages > 1" class="pagination">
-      <button 
-        class="pagination-btn" 
-        :disabled="currentPage === 1" 
-        @click="currentPage--"
-        data-sfx="click"
-      >
-        <Icon icon="pixel:angle-left-solid" />
-      </button>
-      <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
-      <button 
-        class="pagination-btn" 
-        :disabled="currentPage === totalPages" 
-        @click="currentPage++"
-        data-sfx="click"
-      >
-        <Icon icon="pixel:angle-right-solid" />
-      </button>
-    </div>
+          />
+        </div>
+      </div>
+
+      <p v-else class="desc">No winners yet — be the first!</p>
     </div>
   </main>
 </template>
@@ -57,28 +66,56 @@
 import { ref, computed } from "vue"
 import { Icon } from "@iconify/vue"
 import { useDailyStore } from "@/stores/daily"
-import { useGameStore } from "@/stores/game"
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
-import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
-import { useRouter } from "vue-router"
 
 const dailyStore = useDailyStore()
-const router = useRouter()
-
-const ITEMS_PER_PAGE = 20
-const currentPage = ref(1)
 
 const winners = computed(() => dailyStore.winners)
 
-const totalPages = computed(() => {
-  return Math.ceil(winners.value.length / ITEMS_PER_PAGE) || 1
+// winners assumed sorted newest first, format { date: 'YYYY-MM-DD', winner: { name, avatarIndex, score } }
+const groupedWinners = computed(() => {
+  const groups = {}
+  winners.value.forEach((entry) => {
+    const key = entry.date.slice(0, 7)
+    if (!groups[key]) groups[key] = []
+    groups[key].push(entry)
+  })
+
+  return Object.keys(groups)
+    .sort((a, b) => (a < b ? 1 : -1))
+    .map((key) => {
+      const [year, month] = key.split("-").map(Number)
+      const label = new Date(year, month - 1, 1)
+        .toLocaleDateString("en-US", { month: "long", year: "numeric" })
+        .toUpperCase()
+      return { monthKey: key, label, entries: groups[key] }
+    })
 })
 
-const paginatedWinners = computed(() => {
-  const start = (currentPage.value - 1) * ITEMS_PER_PAGE
-  const end = start + ITEMS_PER_PAGE
-  return winners.value.slice(start, end)
-})
+const currentMonthIndex = ref(0)
+
+const currentGroup = computed(
+  () => groupedWinners.value[currentMonthIndex.value]
+)
+
+const latestDate = computed(() => winners.value[0]?.date)
+
+function isLatest(entry) {
+  return entry?.date === latestDate.value
+}
+
+const glowPalette = [
+  "#ff4d94",
+  "#4dd2ff",
+  "#7dff4d",
+  "#ffd24d",
+  "#c04dff",
+  "#ff794d",
+]
+
+function glowColor(avatarIndex) {
+  return glowPalette[avatarIndex % glowPalette.length]
+}
 </script>
 
 <style scoped>
@@ -94,14 +131,6 @@ main {
   width: 100%;
   max-width: 1280px;
   margin-bottom: 16px;
-}
-
-.player-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  margin: 0 auto 32px;
 }
 
 .subline {
@@ -123,7 +152,7 @@ main {
 }
 
 h1 {
-  margin-bottom: 16px;
+  margin: 16px auto;
 }
 
 .card {
@@ -135,7 +164,7 @@ h1 {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   width: 100%;
@@ -143,12 +172,21 @@ h1 {
   box-sizing: border-box;
 }
 
-.pagination {
+.month-nav {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+.month-label {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--neon-yellow, #ffd24d);
+  min-width: 200px;
+  text-align: center;
 }
 
 .pagination-btn {
@@ -175,14 +213,58 @@ h1 {
   cursor: not-allowed;
 }
 
-.pagination-info {
-  font-size: 14px;
-  color: #fff;
+.player-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.trophy-tile {
+  position: relative;
+  border-radius: 8px;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--glow) 14%, transparent) 0%,
+    transparent 70%
+  ),
+  rgba(255, 255, 255, 0.03);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trophy-tile:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.trophy-tile.latest {
+  animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
 .player-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   padding: 32px 0;
   border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+  .month-label {
+    font-size: 13px;
+    min-width: 140px;
+  }
+
+  .player-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .player-card {
+    padding: 16px 0;
+  }
 }
 </style>
