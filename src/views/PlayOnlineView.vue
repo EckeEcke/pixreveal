@@ -516,7 +516,7 @@ const joinGame = () => {
 }
 
 .setup-section {
-  margin: 32px 0;
+  margin: 48px 0;
 }
 
 .host-info {
