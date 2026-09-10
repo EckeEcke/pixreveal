@@ -28,7 +28,7 @@
         >
           <Icon icon="pixel:angle-left-solid" />
         </button>
-        <span class="month-label">{{ currentGroup.label }}</span>
+        <span class="month-label"><Icon icon="pixel:calender" class="month-icon" /> {{ currentGroup.label }}</span>
         <button
           class="pagination-btn"
           :disabled="currentMonthIndex <= 0"
@@ -47,11 +47,11 @@
           :class="{ latest: isLatest(entry) }"
           :style="{ '--glow': glowColor(entry.winner.avatarIndex) }"
         >
+          <span class="day-badge"><Icon icon="pixel:calender" /> {{ dayNumber(entry.date) }}</span>
           <TopPlayerDisplay
             :name="entry.winner.name"
             :avatar-index="entry.winner.avatarIndex"
             :score="entry.winner.score"
-            :subline="entry.date"
             class="player-card"
           />
         </div>
@@ -102,6 +102,19 @@ const latestDate = computed(() => winners.value[0]?.date)
 
 function isLatest(entry) {
   return entry?.date === latestDate.value
+}
+
+function dayNumber(date) {
+  const day = Number(date.slice(8, 10))
+  const suffix =
+    day % 10 === 1 && day !== 11
+      ? "st"
+      : day % 10 === 2 && day !== 12
+        ? "nd"
+        : day % 10 === 3 && day !== 13
+          ? "rd"
+          : "th"
+  return `${day}${suffix}`
 }
 
 const glowPalette = [
@@ -181,12 +194,20 @@ h1 {
 }
 
 .month-label {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 18px;
   font-weight: 900;
   letter-spacing: 1px;
   color: var(--neon-yellow, #ffd24d);
   min-width: 200px;
   text-align: center;
+}
+
+.month-icon {
+  font-size: 22px;
 }
 
 .pagination-btn {
@@ -247,6 +268,48 @@ h1 {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
+@keyframes pulse-glow {
+  0%,
+  100% {
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--glow) 14%, transparent) 0%,
+      transparent 70%
+    ),
+    rgba(255, 255, 255, 0.03);
+  }
+  50% {
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--glow) 30%, transparent) 0%,
+      transparent 75%
+    ),
+    rgba(255, 255, 255, 0.03);
+  }
+}
+
+.day-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 36px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
 .player-card {
   background: transparent;
   padding: 32px 0;
@@ -265,6 +328,15 @@ h1 {
 
   .player-card {
     padding: 16px 0;
+  }
+
+  .day-badge {
+    top: 8px;
+    right: 8px;
+    min-width: 32px;
+    height: 22px;
+    font-size: 11px;
+    padding: 0 6px;
   }
 }
 </style>
