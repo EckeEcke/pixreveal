@@ -166,16 +166,13 @@
       </p>
     </article>
     <br />
-    <ButtonPrimary data-sfx="back" @click="$emit('close')">
-      <Icon icon="pixel:arrow-circle-left-solid" /> BACK
-    </ButtonPrimary>
+    <div @click="$emit('close')" class="link">GO TO HOME</div>
   </div>
 </template>
 
 <script setup>
 import { Icon } from "@iconify/vue"
 import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue"
-import ButtonPrimary from "../page-ui/ButtonPrimary.vue"
 import PowerUpInfo from "../game-ui/PowerUpInfo.vue"
 import StepsComponent from "../page-ui/StepsComponent.vue"
 
@@ -257,5 +254,18 @@ a {
 
 h4,p, ul {
   margin-top: 0;
+}
+
+.link {
+  display: block;
+  text-align: center;
+  margin-top: 32px;
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
+
+.link:hover {
+  cursor: pointer;
+  color: white;
 }
 </style>

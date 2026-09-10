@@ -153,9 +153,10 @@ const setRevealTime = (duration) => {
 /* Individuelle Farben für Presets */
 .radio-item input:checked + .preset-btn {
   background: var(--preset-color);
-  border-color: var(--preset-color);
+  border-color: white;
   color: #000;
   font-weight: 700;
+
 }
 
 /* Dezentere Sekundärfarbe für Standard-Settings (Rounds/Time) */
