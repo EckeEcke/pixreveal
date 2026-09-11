@@ -73,9 +73,9 @@ const configStore = useConfigStore()
 const soundStore = useSoundStore()
 
 const presets = [
-  { label: "NERDY", value: "nerdy", color: "var(--neon-cyan)" },
-  { label: "MIXED", value: "all", color: "var(--neon-yellow)" },
-  { label: "GENERAL", value: "general", color: "var(--neon-success)" }
+  { label: "GENERAL", value: "general", color: "var(--neon-success)" },
+  { label: "MIXED", value: "all", color: "var(--neon-mint)" },
+  { label: "NERDY", value: "nerdy", color: "var(--neon-cyan)" }
 ]
 
 const isPresetDisabled = (presetKey) => {

@@ -36,7 +36,7 @@
           <span v-else class="timer-digits" :key="count"
             >{{ count }}
             <Icon
-              v-if="!isSurvival"
+              v-if="!isSurvival &&!hideStar"
               icon="pixel:star-solid"
               class="pill-icon gold-text"
             /><template v-else>s</template></span
@@ -59,6 +59,7 @@ const props = defineProps<{
   isSurvival: boolean
   isSuddenDeath?: boolean
   isCreatorMode?: boolean
+  hideStar?: boolean
 }>()
 
 const displayWidth = computed(() => {

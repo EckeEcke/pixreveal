@@ -71,6 +71,7 @@
         :max-rounds="Number(configStore.maxRounds)"
         :is-survival="false"
         :is-sudden-death="partyStore.isSuddenDeath"
+        :hide-star="true"
       />
 
       <div class="canvas-effects">

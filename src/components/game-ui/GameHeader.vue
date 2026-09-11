@@ -33,6 +33,7 @@
         :is-survival="isSurvival"
         :is-sudden-death="isSuddenDeath"
         :is-creator-mode="playerStore.isCreatorMode"
+        :hide-star="hideStar"
       />
     </div>
 
@@ -80,6 +81,7 @@ const props = defineProps<{
   isSurvival: boolean
   isBonus?: boolean
   isSuddenDeath?: boolean
+  hideStar?: boolean
 }>()
 
 const playerStore = usePlayerStore()
