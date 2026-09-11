@@ -5,11 +5,21 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">09-09-11</span>
+      </div>
+      <h3 class="log-title">New category filter and settings</h3>
+      <p>
+        You are playing with your grandparents and they have no idea, who Mario and Luigi are? Or you are hanging out with your gaming buddies, who find guessing animals rather boring? PixReveal now has an easy way to configure the game: set the drawing mix to <strong>nerdy, mixed or general.</strong>. Nerdy only shows you drawings from the categories anime, cartoons, movies or gaming. While general contains only objects, people, nature and food.
+        Additionally the filter settings are now available in the different game mode hubs. When setting up a party or online game. And in the hub page for the singleplayer modes. So for your next round of PixReveal, don't forget to adjust the game to your likings.
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">09-08-26</span>
       </div>
       <h3 class="log-title">Asynchronous challenge mode added!</h3>
       <p>
-        Just added a new big feature to PixReveal: play a single player round of Classic, Gravity or Inspect, then challenge a friend to beat your score! The friend will play the same drawings as you. Can they beat your score? The new Game Over screen shows who won the challenge, how many points they scored and who guessed which round correctly..      
+        Just added a new big feature to PixReveal: play a single player round of Classic, Gravity or Inspect, then challenge a friend to beat your score! The friend will play the same drawings as you. Can they beat your score? The new Game Over screen shows who won the challenge, how many points they scored and who guessed which round correctly.    
       </p>
     </div>
     <div class="log-card">
