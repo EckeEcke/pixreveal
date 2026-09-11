@@ -100,7 +100,7 @@ const streamFaqs = [
   justify-content: center;
   align-items: center;
   min-height: calc(100dvh - 128px);
-  padding: 32px 16px;
+  padding: 16px 0;
   box-sizing: border-box;
 }
 
