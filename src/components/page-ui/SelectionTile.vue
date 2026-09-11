@@ -36,7 +36,7 @@
         ><Icon icon="heroicons:user-16-solid" /> 1</span
       >
       <span v-if="highScore" class="player-info"
-        ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
+        ><Icon icon="fa6-solid:crown" /> {{ highScore }}</span
       >
       <span
         v-if="highscorePossible && !highScore"
@@ -44,7 +44,7 @@
         tabindex="0"
         data-tooltip="Set your own highscore"
       >
-        <Icon icon="pixel:crown-solid" />
+        <Icon icon="fa6-solid:crown" />
       </span>
       <span
         v-if="challengeable"
@@ -185,12 +185,11 @@ const handleClick = (event: MouseEvent) => {
   background: linear-gradient(
     135deg,
     rgb(from var(--btn-color) r g b / 0.5) 0%,
-    rgba(0, 40, 40, 0.1) 50%,
+    rgba(0, 40, 40, 0.1) 40%,
     rgba(0, 0, 0, 0.5) 100%
   );
   box-shadow:
-    inset 0 0 10px rgba(0, 255, 255, 0.2),
-    0 0 15px rgb(from var(--btn-color) r g b / 0.5);
+    inset 0 0 10px rgba(0, 255, 255, 0.2);
   flex: 0 0 auto;
   font-size: 32px;
   color: var(--btn-color);
