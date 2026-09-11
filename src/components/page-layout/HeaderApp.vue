@@ -21,16 +21,18 @@
         <Icon icon="pixel:twitch" class="twitch-icon" />
         <span class="live-text">LIVE</span>
       </a>
-      <HeaderSettings />
-      <button
-        class="avatar-btn"
-        type="button"
-        aria-label="Edit player"
-        data-sfx="click"
-        @click="showPlayerEditModal = true"
-      >
-        <span class="avatar-image" :style="avatarStyle"></span>
-      </button>
+      <div class="settings-pill">
+        <HeaderSettings />
+        <button
+          class="avatar-btn"
+          type="button"
+          aria-label="Edit player"
+          data-sfx="click"
+          @click="showPlayerEditModal = true"
+        >
+          <span class="avatar-image" :style="avatarStyle"></span>
+        </button>
+      </div> 
     </div>
   </header>
   <div class="back-btn-wrapper">
@@ -124,8 +126,7 @@ header {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
-  margin-right: 16px;
+  padding: 18px 10px;
   border: 2px solid var(--neon-error);
   border-radius: 6px;
   color: #fff;
@@ -142,13 +143,13 @@ header {
 @media (max-width: 499px) {
   .live-badge {
     display: none;
-    margin-right: 8px;
+    padding: 6px 10px;
   }
 }
 
 .live-badge:hover {
-  transform: translateY(-2px);
-  filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.7));
+  transform: translateY(-1px);
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.7));
   background: rgba(255, 0, 60, 0.35);
 }
 
@@ -245,5 +246,23 @@ h2 {
 
 .logo-link {
   text-decoration: none;
+}
+
+.settings-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (min-width: 500px) {
+  .settings-pill {
+    padding: 8px 22px 8px 16px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    backdrop-filter: blur(12px);
+    width: fit-content;
+    filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.7));
+  }
 }
 </style>

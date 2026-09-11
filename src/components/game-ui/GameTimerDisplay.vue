@@ -105,6 +105,7 @@ const statusClass = computed(() => ({
 .timer-progress {
   height: 100%;
   background: linear-gradient(90deg, #39ff14, #00ffa6);
+  border-radius: 4px;
   box-shadow: 0 0 12px #39ff14;
   transition:
     width 0.1s linear,
