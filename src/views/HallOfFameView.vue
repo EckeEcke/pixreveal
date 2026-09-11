@@ -265,7 +265,6 @@ h1 {
 }
 
 .trophy-tile.latest {
-  animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
 @keyframes pulse-glow {
