@@ -97,9 +97,10 @@ const { imageUrls, isGenerating } = useDrawingImageUrls(userDrawings);
 }
 
 .tile-title {
-  margin-top: 8px;
+  margin-top: 12px;
+  margin-bottom: 4px;
   font-size: 16px;
-  letter-spacing: 2px;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--white);
   opacity: 0.95;

@@ -88,7 +88,7 @@ const startDaily = () => {
   container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .block-heading {
@@ -99,7 +99,6 @@ const startDaily = () => {
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
   color: rgba(255,255,255,0.7);
   margin-bottom: 4px;
 }

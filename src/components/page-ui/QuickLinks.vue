@@ -56,9 +56,8 @@ const openManual = () => {
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
   color: rgba(255,255,255,0.7);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   .link-icon {
     color: var(--neon-blue, #38bdf8);
   }

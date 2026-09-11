@@ -100,7 +100,7 @@ const handleClick = (event: MouseEvent) => {
   position: relative;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(12px);
   border-radius: 8px;
   border: none;
   padding: 24px 16px;

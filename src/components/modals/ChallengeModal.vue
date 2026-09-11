@@ -15,9 +15,10 @@
 
         <template v-if="!createdLink">
         <h2 class="challenge-modal-title">CHALLENGE A FRIEND</h2>
+        <Icon icon="at-icons:swords" class="sword-icon" />
         <p>They will play the same drawings as you. Can they beat your score?</p>
         <div class="edit-card">
-            <p>Edit your avatar before creating a challenge</p>
+            <p>Edit your avatar before creating a challenge<br> (no signup needed)</p>
 
             <div class="player-preview" @click="showPlayerEditModal = true">
                 <div
@@ -241,5 +242,13 @@ p {
 .edit-icon {
     font-size: 24px;
     color: var(--primary);
+}
+
+.sword-icon {
+  display: block;
+  margin: 16px auto 4px;
+  text-align: center;
+  font-size: 32px;
+  color: var(--primary);
 }
 </style>

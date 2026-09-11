@@ -256,13 +256,13 @@ h2 {
 
 @media (min-width: 500px) {
   .settings-pill {
-    padding: 8px 22px 8px 16px;
+    padding: 12px 16px 12px 12px;
     background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     backdrop-filter: blur(12px);
     width: fit-content;
     filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.7));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 }
 </style>

@@ -87,9 +87,9 @@
                 >
                   <SelectionTile
                     icon-name="pixel:user-solid"
-                    btn-text="MORE MODES"
+                    btn-text="SINGLEPLAYER MODES"
                     sub-title="More ways to reveal. Gravity, Inspect, Classic & Survival"
-                    btn-color="var(--neon-blue)"
+                    btn-color="var(--neon-mint)"
                     :max-players="1"
                   />
                 </router-link>
