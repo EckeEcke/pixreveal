@@ -196,7 +196,7 @@ header {
   display: block;
   width: 34px;
   height: 34px;
-  border-radius: 8px;
+  border-radius: 4px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   image-rendering: crisp-edges;

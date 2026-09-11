@@ -5,7 +5,7 @@
     :mode="isProd ? 'production' : 'development'"
   />
   <div>
-    <div class="pixelCon">
+    <div v-if="!isMobile" class="pixelCon">
       <div
         v-for="n in 80"
         :key="n"
@@ -44,6 +44,13 @@ const dailyStore = useDailyStore()
 const gameStore = useGameStore()
 
 const audio = ref(null)
+
+const isMobile = ref(false)
+let mobileMql = null
+
+const updateIsMobile = (e) => {
+  isMobile.value = e.matches
+}
 
 const MUSIC_ROUTES = new Set([
   "classic",
@@ -150,6 +157,10 @@ onMounted(() => {
   configStore.fetchUgcDrawings()
   gameStore.fetchScores()
 
+  mobileMql = window.matchMedia("(max-width: 480px)")
+  isMobile.value = mobileMql.matches
+  mobileMql.addEventListener("change", updateIsMobile)
+
   requestWakeLock()
   document.addEventListener("visibilitychange", handleVisibilityChange)
   const urlParams = new URLSearchParams(window.location.search)
@@ -190,6 +201,7 @@ watch(
 
 onBeforeUnmount(() => {
   document.removeEventListener("visibilitychange", handleVisibilityChange)
+  mobileMql?.removeEventListener("change", updateIsMobile)
   releaseWakeLock()
 })
 </script>

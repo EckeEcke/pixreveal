@@ -195,7 +195,7 @@ const handleClick = (event: MouseEvent) => {
   color: var(--btn-color);
   padding: 8px;
   border: 1px solid var(--btn-color);
-  border-radius: 25%;
+  border-radius: 8px;
 }
 
 .content-column {
