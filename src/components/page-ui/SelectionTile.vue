@@ -30,10 +30,10 @@
 
     <div v-if="maxPlayers || highScore || challengeable" class="top-badges">
       <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
-        ><Icon icon="pixel:users-solid" /> 2-10</span
+        ><Icon icon="heroicons:user-group-solid" /> 2-10</span
       >
       <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
-        ><Icon icon="pixel:user-solid" /> 1</span
+        ><Icon icon="heroicons:user-16-solid" /> 1</span
       >
       <span v-if="highScore" class="player-info"
         ><Icon icon="pixel:crown-solid" /> {{ highScore }}</span
@@ -264,6 +264,7 @@ const handleClick = (event: MouseEvent) => {
   display: flex;
   align-items: center;
   gap: 6px;
+  line-height: 1;
 }
 
 .player-info {
