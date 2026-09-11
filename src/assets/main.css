@@ -39,6 +39,10 @@
   --orange-glow: rgba(255, 102, 0, 0.4);
   --orange-bg: rgba(255, 102, 0, 0.05);
 
+  --neon-mint: #00ffb3;
+  --mint-glow: rgba(0, 255, 179, 0.4);
+  --mint-bg: rgba(0, 255, 179, 0.05);
+
   --neon-yellow: #ffb000;
   --yellow-glow: rgba(255, 176, 0, 0.4);
   --yellow-bg: rgba(255, 176, 0, 0.05);

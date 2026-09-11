@@ -67,9 +67,9 @@ const emit = defineEmits(["answered", "devil-clicked"]);
 
 const buttonColors = [
   { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
-  { color: "var(--neon-blue)", glow: "var(--blue-glow)" },
-  { color: "var(--neon-purple)", glow: "var(--purple-glow)" },
+  { color: "var(--neon-mint)", glow: "var(--mint-glow)" },
   { color: "var(--neon-yellow)", glow: "var(--yellow-glow)" },
+  { color: "var(--neon-cyan)", glow: "var(--cyan-glow)" },
 ];
 
 const configStore = useConfigStore();
@@ -203,7 +203,7 @@ onUnmounted(() => {
 @media (min-width: 1024px) {
   .answer-buttons {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 20px;
     margin-top: 32px;
   }
 }
@@ -216,7 +216,7 @@ onUnmounted(() => {
 
 .key-hint {
   position: absolute;
-  top: -10px;
+  top: -8px;
   left: -8px;
   min-width: 22px;
   height: 22px;
@@ -225,7 +225,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0a0a0a;
+  background: #0d0c1d;
   border: 2px solid var(--btn-color);
   color: var(--btn-color);
   font-size: 11px;
@@ -233,8 +233,7 @@ onUnmounted(() => {
   line-height: 1;
   pointer-events: none;
   z-index: 10;
-  box-shadow: 0 0 5px var(--btn-glow);
-  transition: all 0.2s ease;
+  box-shadow: 0 0 8px var(--btn-glow);
 }
 
 @media (pointer: coarse) {
@@ -247,36 +246,49 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #111111aa;
-  backdrop-filter: blur(20px);
-  padding: 14px;
+  background: rgba(20, 16, 38, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 16px;
   height: 100%;
   text-transform: uppercase;
   font-family: inherit;
   letter-spacing: 2px;
   font-weight: 900;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease-in-out;
   position: relative;
   overflow: hidden;
   width: 100%;
-  border: 2px solid var(--btn-color);
+  
+  /* 2px Rahmen für saubere Kanten */
+  border: 4px solid var(--btn-color);
   color: var(--btn-color);
-  box-shadow: 0 0 10px var(--btn-glow);
+  
+  /* Nutzt deine bestehenden --btn-glow und --btn-color Variablen */
+  box-shadow: 
+    0 0 12px var(--btn-glow),
+    inset 0 0 8px rgba(0, 0, 0, 0.7);
+  
+  text-shadow: 0 0 8px var(--btn-glow);
   z-index: 1;
 }
 
 @media (hover: hover) {
   .answer-btn:not(:disabled):hover {
     background: var(--btn-color);
-    color: black;
-    transform: translateY(-4px);
+    color: #0d0c1d;
+    text-shadow: none;
+    box-shadow: 
+      0 0 20px var(--btn-color),
+      0 0 35px var(--btn-glow);
+    transform: translateY(-2px);
   }
 
   .answer-btn:not(:disabled):hover ~ .key-hint {
-    background: black;
-    color: var(--btn-color);
-    border-color: black;
+    background: var(--btn-color);
+    color: #0d0c1d;
+    border-color: #0d0c1d;
   }
 }
 
@@ -314,7 +326,7 @@ onUnmounted(() => {
 
 .answer-btn.is-wrong {
   background-color: var(--neon-error);
-  color: var(--white);
+  color: white;
   animation: shake-fail 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   box-shadow: 0 0 30px var(--neon-error);
   border-color: var(--neon-error);
@@ -322,19 +334,20 @@ onUnmounted(() => {
 
 .answer-btn.is-devil {
   border-color: #ff0000;
-  color: #ff0000;
-  background: #ff0000!important;
+  color: #ffffff;
+  background: #ff0000 !important;
   box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
 }
 
 .answer-btn:disabled:not(.is-correct):not(.is-wrong) {
   opacity: 0.2;
+  filter: grayscale(0.7);
 }
 
 @media (min-width: 769px) {
   .answer-btn {
     padding: 18px;
-    font-size: 20px;
+    font-size: 19px;
   }
 }
 </style>
