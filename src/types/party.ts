@@ -67,6 +67,7 @@ export type PartyRoundSnapshot = {
   roundIndex: number;
   pixels: number[][];
   givenAnswer: string;
+  correctAnswer: string;
   isCorrect: boolean;
   elapsedMs: number | null;
   visiblePixelCount: number;

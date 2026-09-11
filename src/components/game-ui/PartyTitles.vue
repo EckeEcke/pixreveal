@@ -47,6 +47,13 @@
               <span>{{ currentSlide.snapshot.isCorrect ? "✅" : "❌" }}</span>
               <span>{{ currentSlide.snapshot.givenAnswer }}</span>
             </div>
+            <div
+              v-if="!currentSlide.snapshot.isCorrect"
+              class="correct-answer-line"
+            >
+              Correct answer was
+              <span class="correct-answer-value">{{ currentSlide.snapshot.correctAnswer }}</span>
+            </div>
             <div class="message">{{ currentSlide.message }}</div>
             <div class="who">
               <div class="player-pill">
@@ -73,8 +80,8 @@ import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import { usePartyStore } from "@/stores/party";
 import avatarSheet from "@/assets/avatars/avatars.webp";
 import {
-  workerClearInterval,
-  workerSetInterval,
+  workerClearTimeout,
+  workerSetTimeout,
 } from "@/services/workerTimers";
 import type { PartyPlayerStats, PartyRoundSnapshot } from "@/types/party";
 
@@ -84,7 +91,22 @@ const props = defineProps<{
 
 const partyStore = usePartyStore();
 
-const SLIDE_INTERVAL = 10000;
+// Basisdauer für kurze Award-Slides (Emoji + Titel + eine Zeile)
+const BASE_DURATION = 5000;
+// Zusätzliche ms pro Zeichen in der Message oberhalb von 40 Zeichen
+const MS_PER_EXTRA_CHAR = 45;
+// Snapshot-Slides zeigen zusätzlich Canvas + Antwort-Zeile + Spieler-Pill,
+// bekommen daher einen fixen Aufschlag oben drauf
+const SNAPSHOT_EXTRA = 3000;
+// Obergrenze, damit sehr lange Messages den Screen nicht ewig blockieren
+const MAX_DURATION = 12000;
+
+const computeDuration = (message: string, isSnapshot: boolean) => {
+  const extraChars = Math.max(0, (message?.length ?? 0) - 40);
+  const fromLength = extraChars * MS_PER_EXTRA_CHAR;
+  const snapshotBonus = isSnapshot ? SNAPSHOT_EXTRA : 0;
+  return Math.min(BASE_DURATION + fromLength + snapshotBonus, MAX_DURATION);
+};
 
 // Alle folgenden Werte werden EINMALIG beim Setup aus den Props gelesen
 // und danach nicht mehr aktualisiert, auch wenn sich props.players oder
@@ -130,6 +152,7 @@ type Slide = {
   players: SlidePlayer[];
   playerNamesUpper: string;
   snapshot?: PartyRoundSnapshot;
+  durationMs: number;
 };
 
 const slides: Slide[] = (() => {
@@ -313,6 +336,7 @@ const slides: Slide[] = (() => {
       message: first.message,
       players: slidePlayers,
       playerNamesUpper,
+      durationMs: computeDuration(first.message, false),
     });
   }
 
@@ -339,13 +363,16 @@ const emojiStatsSlide: Slide | null = (() => {
     }
   }
 
+  const message = `Total emojis sent: ${total}\nMost popular emoji: ${mostPopular || "—"}`;
+
   return {
     key: "emoji-stats",
     emoji: "📊",
     title: "Emoji Stats",
-    message: `Total emojis sent: ${total}\nMost popular emoji: ${mostPopular || "—"}`,
+    message,
     players: [],
     playerNamesUpper: "",
+    durationMs: computeDuration(message, false),
   };
 })();
 
@@ -376,6 +403,7 @@ const createSnapshotSlides = (): Slide[] =>
       players: [],
       playerNamesUpper: "",
       snapshot,
+      durationMs: computeDuration(message, true),
     };
   });
 
@@ -384,7 +412,7 @@ const allSlides: Slide[] = emojiStatsSlide
   : [...slides, ...createSnapshotSlides()];
 
 const activeIndex = ref(0);
-let intervalId: number | null = null;
+let timeoutId: number | null = null;
 
 // currentSlide bleibt computed, weil sich NUR der Index (activeIndex)
 // noch ändern soll — allSlides selbst ist fix.
@@ -404,21 +432,25 @@ const handlePillClick = () => {
   start();
 };
 
-const start = () => {
-  if (intervalId) return;
+const scheduleNext = () => {
   if (!allSlides.length) return;
-  intervalId = workerSetInterval(() => {
-    const len = allSlides.length;
-    if (!len) return;
-    activeIndex.value = (activeIndex.value + 1) % len;
+  const duration = currentSlide.value?.durationMs ?? BASE_DURATION;
+  timeoutId = workerSetTimeout(() => {
     advanceSlide();
-  }, SLIDE_INTERVAL);
+    scheduleNext();
+  }, duration);
+};
+
+const start = () => {
+  if (timeoutId) return;
+  if (!allSlides.length) return;
+  scheduleNext();
 };
 
 const stop = () => {
-  if (!intervalId) return;
-  workerClearInterval(intervalId);
-  intervalId = null;
+  if (!timeoutId) return;
+  workerClearTimeout(timeoutId);
+  timeoutId = null;
 };
 
 const avatarStyleFor = (avatarIndex: number) => {
@@ -534,6 +566,20 @@ onBeforeUnmount(() => stop());
 
 .answer-correct { color: var(--neon-success); }
 .answer-wrong { color: var(--neon-error); }
+
+.correct-answer-line {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.correct-answer-value {
+  color: var(--neon-success);
+  font-weight: 900;
+  text-transform: uppercase;
+}
 
 .title-line {
   display: flex;

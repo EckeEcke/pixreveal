@@ -589,6 +589,7 @@ export const usePartyStore = defineStore("party", () => {
       roundIndex: gameStore.currentRoundIndex,
       pixels: pixels.map((row) => [...row]),
       givenAnswer: lastGivenAnswer.value,
+      correctAnswer: gameStore.currentRound?.answer ?? "",
       isCorrect: lastAnswerIsCorrect.value,
       elapsedMs: lastAnswerElapsedMs.value,
       visiblePixelCount: pixels.reduce(
