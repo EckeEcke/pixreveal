@@ -261,8 +261,11 @@ h2 {
 .mode-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 8px;
   padding: 16px 0;
+  @media (min-width: 576px) {
+    gap: 16px;
+  }
 }
 
 .classic-mode-buttons {
@@ -283,9 +286,12 @@ h2 {
 .trailer-bento {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 8px;
   .video-wrapper {
     order: 3;
+  }
+  @media (min-width: 576px) {
+    gap: 16px;
   }
   @media (min-width: 1024px) {
     grid-template-columns: 600px 1fr;
@@ -303,18 +309,25 @@ h2 {
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   padding: 24px;
+  order: 1;
   border-radius: 12px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-    0 8px 24px rgba(0, 0, 0, 0.35);   
+    0 8px 24px rgba(0, 0, 0, 0.35);
+  @media(min-width: 1024px) {
+    order: 0;
+  }
 }
 
 .tiles-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-   @media (min-width: 1024px) {
+  gap: 8px;
+  @media (min-width: 576px) {
+    gap: 16px;
+  }
+  @media (min-width: 1024px) {
     grid-template-columns: 1fr;
   }
   @media (max-width: 800px) {

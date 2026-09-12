@@ -67,7 +67,7 @@ const openManual = () => {
   flex-direction: column;
   gap: 20px;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
