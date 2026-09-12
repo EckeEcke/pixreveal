@@ -29,12 +29,6 @@
     </div>
 
     <div v-if="maxPlayers || highScore || challengeable" class="top-badges">
-      <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
-        ><Icon icon="heroicons:user-group-solid" /> 2-10</span
-      >
-      <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
-        ><Icon icon="heroicons:user-16-solid" /> 1</span
-      >
       <span v-if="highScore" class="player-info"
         ><Icon icon="fa6-solid:crown" /> {{ highScore }}</span
       >
@@ -54,6 +48,12 @@
       >
         <Icon icon="at-icons:swords" />
       </span>
+      <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
+        ><Icon icon="heroicons:user-group-solid" /> 2-10</span
+      >
+      <span v-if="maxPlayers && maxPlayers === 1" class="player-info"
+        ><Icon icon="heroicons:user-16-solid" /> 1</span
+      >
     </div>
 
     <span v-if="cornerText" class="corner-info"><Icon icon="pixel:clock" /> Ends in {{ cornerText }}</span>
