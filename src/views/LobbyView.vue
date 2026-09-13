@@ -85,7 +85,7 @@
             />
             <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>
           </div>
-          <LobbyChat />
+          <LobbyChat v-if="false" />
         </div>
       </div>
     </div>
@@ -237,7 +237,7 @@ const shareNative = async () => {
 }
 
 .lobby-card {
-  background: rgba(15, 12, 29, 0.75);
+  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 

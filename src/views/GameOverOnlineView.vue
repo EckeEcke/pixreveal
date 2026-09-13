@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <LobbyChat />
+    <LobbyChat v-if="false" />
     <WinnerAnimation
       v-if="!waitingForFinalResults && winnerPlayer"
       :show="showWinnerAnimation"
