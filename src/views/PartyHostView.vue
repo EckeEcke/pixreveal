@@ -1,4 +1,6 @@
 <template>
+<div>
+    <MinimalSettings :hide-keyboard="true" />
   <main class="host-layout">
     <Transition name="fade" mode="out-in">
       <CountdownTransition
@@ -59,7 +61,6 @@
 
     <!-- Mittlere Card (Spielfeld) -->
     <div class="center-column layout-card">
-      <MinimalSettings :hide-keyboard="true" />
       <GameHeader
         :max="Number(timerDuration)"
         :count="Number(timer)"
@@ -109,6 +110,7 @@
     <FartOverlay :trigger="fartTrigger" />
     <DevilBurstOverlay :trigger="devilTrigger" />
   </main>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -605,6 +607,8 @@ onUnmounted(() => {
 .center-column {
   display: flex;
   flex-direction: column;
+  padding: 0;
+  overflow: hidden;
 }
 
 .rankings-column {
