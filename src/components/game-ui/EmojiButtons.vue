@@ -63,7 +63,7 @@ const sendEmoji = (emoji: string) => {
   border: 2px solid var(--neon-pink);
   border-radius: 8px;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   backdrop-filter: blur(4px);
 }
 

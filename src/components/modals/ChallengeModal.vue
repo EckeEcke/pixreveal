@@ -174,6 +174,7 @@ const copyChallengeLink = async () => {
 .player-info strong {
   font-size: 18px;
   color: var(--white);
+  text-transform: uppercase;
 }
 
 .edit-player-btn {

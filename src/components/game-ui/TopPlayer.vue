@@ -115,7 +115,7 @@ const startDaily = () => {
   gap: 12px;
   padding: 10px 14px;
   border-radius: 8px;
-  background: rgba(15, 12, 29, 0.75);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);

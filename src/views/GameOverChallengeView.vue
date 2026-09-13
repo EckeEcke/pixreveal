@@ -67,7 +67,7 @@ onMounted(async () => {
   padding: 32px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  background: rgba(15, 12, 29, 0.8);
+  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   text-align: center;
   box-sizing: border-box;
 }

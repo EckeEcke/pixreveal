@@ -257,7 +257,16 @@ h2 {
 @media (min-width: 500px) {
   .settings-pill {
     padding: 12px 16px 12px 12px;
-    background: rgba(0, 0, 0, 0.35);
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(168, 85, 247, 0.12),
+      transparent 50%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(32, 16, 46, 0.95),
+      rgba(18, 9, 28, 0.98)
+    );
     border-radius: 8px;
     backdrop-filter: blur(12px);
     width: fit-content;

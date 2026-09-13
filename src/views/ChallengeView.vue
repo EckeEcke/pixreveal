@@ -210,6 +210,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 8px;
+    text-transform: uppercase;
 }
 
 .player-info strong {

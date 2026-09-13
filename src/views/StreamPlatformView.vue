@@ -107,7 +107,7 @@ const streamFaqs = [
 .stream-platform-card {
   width: min(100%, 820px);
   padding: 40px;
-  background: rgba(15, 12, 29, 0.78);
+  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
