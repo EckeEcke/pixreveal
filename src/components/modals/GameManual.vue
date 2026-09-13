@@ -198,8 +198,8 @@ defineEmits(["close"])
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 0px;
+  right: 0px;
   z-index: 1;
 }
 
