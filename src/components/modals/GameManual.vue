@@ -184,7 +184,7 @@ defineEmits(["close"])
   position: relative;
   top: 0;
   box-sizing: border-box;
-  padding: 32px;
+  padding: 32px 24px;
   background: rgba(15, 12, 29, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -192,6 +192,9 @@ defineEmits(["close"])
     inset 0 1px 1px rgba(255, 255, 255, 0.15),
     0 8px 32px rgba(0, 0, 0, 0.4);
   border-radius: 8px;
+  @media (min-width: 500px) {
+    padding: 32px;
+  }
 }
 
 .close-btn-wrapper {

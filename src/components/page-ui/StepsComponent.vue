@@ -107,6 +107,7 @@ import { Icon } from "@iconify/vue"
     border-color 0.2s ease;
   width: 100%;
   max-width: 320px;
+  box-sizing: border-box;
 }
 
 .step-divider {
