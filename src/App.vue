@@ -252,7 +252,7 @@ onBeforeUnmount(() => {
   opacity: 0;
   will-change: opacity;
   animation: new-blink 10s infinite;
-  margin: 1px;
+  margin: 0.5px;
   border-radius: 4px;
 }
 
