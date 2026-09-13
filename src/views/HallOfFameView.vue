@@ -72,10 +72,17 @@ const dailyStore = useDailyStore()
 
 const winners = computed(() => dailyStore.winners)
 
-// winners assumed sorted newest first, format { date: 'YYYY-MM-DD', winner: { name, avatarIndex, score } }
 const groupedWinners = computed(() => {
   const groups = {}
+
+  const uniqueMap = new Map()
   winners.value.forEach((entry) => {
+    if (!uniqueMap.has(entry.date)) {
+      uniqueMap.set(entry.date, entry)
+    }
+  })
+
+  uniqueMap.forEach((entry) => {
     const key = entry.date.slice(0, 7)
     if (!groups[key]) groups[key] = []
     groups[key].push(entry)

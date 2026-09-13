@@ -120,13 +120,20 @@
             </div>
             <div>
               <h2>LEADERBOARD</h2>
-              <PlayerDisplay
-                v-for="(player, index) in topPlayers"
-                :position="index + 1"
-                :name="player.username"
-                :points="player.points"
-                size="small"
-              />
+              <div class="leaderboard-list">
+                <div
+                  v-for="(player, index) in topPlayers"
+                  :key="player.playerId"
+                  class="leaderboard-item"
+                >
+                  <span class="rank">#{{ index + 1 }}</span>
+                  <span class="username">{{ player.username }}</span>
+                  <span class="score">
+                    {{ player.points }}
+                    <Icon icon="pixel:star-solid" class="star-icon" />
+                  </span>
+                </div>
+              </div>
             </div>
             <div class="ticker">
               <h3>Accepted Answers</h3>
@@ -170,9 +177,9 @@
             <p>
               Make your guess! Type
               <span class="answer-key answer-key--pink">1</span>,
-              <span class="answer-key answer-key--blue">2</span>,
-              <span class="answer-key answer-key--purple">3</span>,
-              <span class="answer-key answer-key--yellow">4</span>
+              <span class="answer-key answer-key--mint">2</span>,
+              <span class="answer-key answer-key--yellow">3</span>,
+              <span class="answer-key answer-key--cyan">4</span>
               or the full word!
             </p>
           </div>
@@ -226,6 +233,7 @@ import { useStreamStore } from "@/stores/stream";
 import { useChannelStore } from "@/stores/channel";
 import { useConfetti } from "@/composables/useConfetti";
 import drawings from "@/data/drawings.json";
+import { Icon } from "@iconify/vue"
 
 const ytChat = useYouTubeChat();
 const twitchChat = useTwitchChat();
@@ -1058,15 +1066,60 @@ button {
   color: var(--neon-pink);
 }
 
-.answer-key--blue {
-  color: var(--neon-blue);
+.answer-key--mint {
+  color: var(--neon-mint);
 }
 
-.answer-key--purple {
-  color: var(--neon-purple);
+.answer-key--cyan {
+  color: var(--neon-cyan);
 }
 
 .answer-key--yellow {
+  color: var(--neon-yellow);
+}
+
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rank {
+  min-width: 28px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.username {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--neon-yellow);
+  font-weight: 900;
+  margin-left: auto;
+}
+
+.star-icon {
+  font-size: 14px;
   color: var(--neon-yellow);
 }
 </style>
