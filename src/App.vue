@@ -252,6 +252,8 @@ onBeforeUnmount(() => {
   opacity: 0;
   will-change: opacity;
   animation: new-blink 10s infinite;
+  margin: 1px;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
