@@ -156,12 +156,9 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+  margin: 32px 0;
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 1fr;
   }
-}
-
-.two-columns {
-    margin: 32px 0;
 }
 </style>

@@ -32,8 +32,9 @@
         </div>
       </div>
 
-      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
-
+      <div class="trailer">
+        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+      </div>
       <div class="two-columns">
         <PartyHowTo />
         <PowerUpInfo class="powerups" />
@@ -167,13 +168,13 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
-
+  margin: 32px 0;
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-.two-columns {
-  margin: 32px 0;
+.trailer {
+  margin: 32px auto 64px;
 }
 </style>
