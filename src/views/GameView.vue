@@ -247,6 +247,7 @@ const handleAnswer = (selectedOption: any) => {
   if (!playerStore.isCreatorMode && selectedOption) {
     const pixels = pixelCanvasRef.value?.getDisplayedPixelArray() ?? [];
     const highlight: OnlineHighlight = {
+      roundIndex: gameStore.currentRoundIndex,
       pixels: pixels.map((row) => [...row]),
       givenAnswer: selectedOption.title || selectedOption.name || "Unknown",
       isCorrect: Boolean(selectedOption.isCorrect),

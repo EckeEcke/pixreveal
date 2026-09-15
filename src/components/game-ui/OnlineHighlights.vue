@@ -67,17 +67,31 @@ type HighlightSlide = {
 
 const highlights = computed<HighlightSlide[]>(() => {
   const result: HighlightSlide[] = [];
+
+  const byRound = new Map<number, { player: Player; highlight: OnlineHighlight }[]>();
+
   for (const player of props.players) {
     const playerHighlights = player.onlineHighlights ?? [
       player.bestCorrectHighlight,
       player.worstIncorrectHighlight,
-    ];
+    ].filter((h): h is OnlineHighlight => !!h);
+
     for (const highlight of playerHighlights) {
-      if (!highlight) continue;
+      const list = byRound.get(highlight.roundIndex) ?? [];
+      list.push({ player, highlight });
+      byRound.set(highlight.roundIndex, list);
+    }
+  }
+
+  const sortedRounds = [...byRound.keys()].sort((a, b) => a - b);
+
+  for (const round of sortedRounds) {
+    for (const { player, highlight } of byRound.get(round)!) {
       const variants = copy[highlight.isCorrect ? "correct" : "incorrect"];
       const variant = variants[result.length % variants.length] ?? variants[0];
+
       result.push({
-        key: `${player.playerId}-${highlight.isCorrect ? "best" : "worst"}`,
+        key: `${player.playerId}-${round}`,
         emoji: variant[0],
         title: variant[1],
         message: variant[2],
@@ -87,6 +101,7 @@ const highlights = computed<HighlightSlide[]>(() => {
       });
     }
   }
+
   return result;
 });
 

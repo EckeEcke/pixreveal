@@ -1,4 +1,5 @@
 export type OnlineHighlight = {
+  roundIndex: number;
   pixels: number[][];
   givenAnswer: string;
   isCorrect: boolean;
