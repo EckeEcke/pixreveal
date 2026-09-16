@@ -174,7 +174,7 @@ const showSingleplayerRank = computed(() => {
 });
 
 const showChallengeButton = computed(() =>
-  ["classic", "inspect", "gravity"].includes(playerStore.gameMode)
+  ["classic", "inspect", "gravity"].includes(playerStore.gameMode) && playerStore.points > 10
 );
 
 const handleIntroDone = () => {
