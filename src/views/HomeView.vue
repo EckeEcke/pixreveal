@@ -41,7 +41,17 @@
             <div class="trailer-bento">
               <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
               <div class="tiles-column">
-                <SelectionTile
+                  <router-link to="/play-online" data-sfx="click" class="tile-link">
+                    <SelectionTile
+                      icon-name="pixel:globe-solid"
+                      btn-text="ONLINE MULTIPLAYER"
+                      sub-title="Play online together from anywhere"
+                      btn-color="var(--neon-cyan)"
+                      :max-players="10"
+                    />
+                  </router-link>
+
+                  <SelectionTile
                     data-sfx="click"
                     :icon-name="
                       dailyStore.hasPlayedToday
@@ -61,16 +71,6 @@
                     :corner-text="timeLeft"
                     :is-new="!dailyStore.hasPlayedToday"
                   />
-
-                  <router-link to="/play-online" data-sfx="click" class="tile-link">
-                    <SelectionTile
-                      icon-name="pixel:globe-solid"
-                      btn-text="ONLINE MULTIPLAYER"
-                      sub-title="Play online together from anywhere"
-                      btn-color="var(--neon-cyan)"
-                      :max-players="10"
-                    />
-                  </router-link>
               </div>
             </div>
             <div class="trailer-bento">

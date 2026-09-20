@@ -20,20 +20,30 @@ const props = defineProps<{
   points: number;
 }>();
 
+const emit = defineEmits<{
+  (e: "done"): void;
+}>();
+
 const soundStore = useSoundStore();
 
 const displayPoints = ref<number>(0);
 const isCounting = ref<boolean>(false);
 
-const animateScore = () => {
-  if (props.points === 0) return;
+const START_DELAY = 1200;
+const COUNT_DURATION = 1000;
+const REVEAL_END = 1500 + 550;
 
-  const duration = 1000;
+const animateScore = () => {
+  if (props.points === 0) {
+    setTimeout(() => emit("done"), Math.max(REVEAL_END - START_DELAY, 0));
+    return;
+  }
+
   const startTime = performance.now();
 
   const updateScore = (currentTime: number) => {
     const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
+    const progress = Math.min(elapsed / COUNT_DURATION, 1);
     const currentPoints = Math.floor(props.points * progress);
 
     if (currentPoints !== displayPoints.value) {
@@ -49,6 +59,7 @@ const animateScore = () => {
       requestAnimationFrame(updateScore);
     } else {
       displayPoints.value = props.points;
+      emit("done");
     }
   };
 
@@ -58,7 +69,7 @@ const animateScore = () => {
 onMounted(() => {
   setTimeout(() => {
     animateScore();
-  }, 1200);
+  }, START_DELAY);
 });
 </script>
 

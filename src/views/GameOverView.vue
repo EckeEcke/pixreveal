@@ -1,108 +1,108 @@
 <template>
-<div class="full-width">
-  <main>
-    <Transition name="fade" mode="out-in">
-      <GameTransition
-        v-if="showIntro"
-        first="GAME"
-        second="OVER"
-        @done="handleIntroDone"
-      />
-    </Transition>
+  <div class="full-width">
+    <main>
+      <Transition name="fade" mode="out-in">
+        <GameTransition
+          v-if="showIntro"
+          first="GAME"
+          second="OVER"
+          @done="handleIntroDone"
+        />
+      </Transition>
 
-    <div class="scale-wrapper" ref="wrapperRef">
-      <div class="gameover-wrapper">
-        <div class="results-card">
-          <h1 class="logo">GAME <span>OVER</span></h1>
-          <GameOverStar
-            class="game-over-star"
-            :points="
-              playerStore.gameMode === 'survival'
-                ? survivalStore.solvedCount
-                : playerStore.points
-            "
-          />
-          <GameOverCrown
-            v-if="
-              playerStore.gameMode === 'survival' && !survivalStore.newHighscore
-            "
-            class="game-over-crown"
-            :highscore="survivalStore.highscore"
-          />
-          <div v-if="showSingleplayerRank">
-            <SingleplayerRanks :percentile="percentile" />
-          </div>
-
-          <div
-            v-if="showSingleplayerRank && percentile !== null"
-            class="percentile-tag"
-          >
-            <Icon icon="pixel:chart-up" />
-            Better than <span>{{ percentile }}%</span> of players
-          </div>
-
-          <div
-            v-if="
-              playerStore.gameMode === 'survival' && survivalStore.newHighscore
-            "
-            class="rank-prophet highscore-message"
-          >
-            <Icon icon="pixel:sparkles" />
-            NEW HIGHSCORE!
-            <Icon icon="pixel:sparkles" />
-          </div>
-
-          <div
-            v-if="showChallengeButton"
-            class="challenge-slot"
-            data-sfx="click"
-            @mouseenter="soundStore.handleHoverSound"
-            @click="showChallengeModal = true"
-          >
-            <Icon icon="at-icons:swords" class="swords-icon" />
-
-            <div class="challenge-content">
-              <div class="challenge-title">
-                Challenge a Friend
-              </div>
-
-              <div class="challenge-subtitle">
-                Can they beat your
-                <Icon icon="pixel:star-solid" class="score-star" />
-                <span>{{ playerStore.points }}</span>?
-              </div>
+      <div class="scale-wrapper" ref="wrapperRef">
+        <div class="gameover-wrapper">
+          <div class="results-card">
+            <h1 class="logo">GAME <span>OVER</span></h1>
+            <GameOverStar
+              class="game-over-star"
+              :points="
+                playerStore.gameMode === 'survival'
+                  ? survivalStore.solvedCount
+                  : playerStore.points
+              "
+              @done="starDone = true"
+            />
+            <GameOverCrown
+              v-if="
+                playerStore.gameMode === 'survival' &&
+                !survivalStore.newHighscore
+              "
+              class="game-over-crown"
+              :highscore="survivalStore.highscore"
+            />
+            <div v-if="showSingleplayerRank">
+              <SingleplayerRanks :percentile="percentile" />
             </div>
 
-            <Icon icon="at-icons:swords" class="swords-icon" />
-          </div>
+            <GameOverPercentile
+              v-if="showSingleplayerRank && percentile !== null"
+              :percentile="percentile"
+              :active="starDone"
+            />
 
-          <div class="gameover-actions">
-            <ButtonSecondary
-              class="btn-primary pulse-btn"
+            <div
+              v-if="
+                playerStore.gameMode === 'survival' &&
+                survivalStore.newHighscore
+              "
+              class="rank-prophet highscore-message"
+            >
+              <Icon icon="pixel:sparkles" />
+              NEW HIGHSCORE!
+              <Icon icon="pixel:sparkles" />
+            </div>
+
+            <div
+              v-if="showChallengeButton"
+              class="challenge-slot"
               data-sfx="click"
               @mouseenter="soundStore.handleHoverSound"
-              @clicked="playAgainSingleplayer"
+              @click="showChallengeModal = true"
             >
-              <Icon icon="pixel:refresh-solid" /> Play Again
-            </ButtonSecondary>
+              <Icon icon="at-icons:swords" class="swords-icon" />
 
-            <ButtonSecondary
-              data-sfx="back"
-              @mouseenter="soundStore.handleHoverSound"
-              @clicked="goBackSingleplayer"
-            >
-              <Icon icon="pixel:arrow-left" /> Go back
-            </ButtonSecondary>
+              <div class="challenge-content">
+                <div class="challenge-title">Challenge a Friend</div>
+
+                <div class="challenge-subtitle">
+                  Can they beat your
+                  <Icon icon="pixel:star-solid" class="score-star" />
+                  <span>{{ playerStore.points }}</span
+                  >?
+                </div>
+              </div>
+
+              <Icon icon="at-icons:swords" class="swords-icon" />
+            </div>
+
+            <div class="gameover-actions">
+              <ButtonSecondary
+                class="btn-primary pulse-btn"
+                data-sfx="click"
+                @mouseenter="soundStore.handleHoverSound"
+                @clicked="playAgainSingleplayer"
+              >
+                <Icon icon="pixel:refresh-solid" /> Play Again
+              </ButtonSecondary>
+
+              <ButtonSecondary
+                data-sfx="back"
+                @mouseenter="soundStore.handleHoverSound"
+                @clicked="goBackSingleplayer"
+              >
+                <Icon icon="pixel:arrow-left" /> Go back
+              </ButtonSecondary>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <ChallengeModal
-    v-if="showChallengeModal"
-    @close="showChallengeModal = false"
-  />
+    <ChallengeModal
+      v-if="showChallengeModal"
+      @close="showChallengeModal = false"
+    />
   </div>
 </template>
 
@@ -118,6 +118,7 @@ import { useConfigStore } from "@/stores/config";
 import GameOverCrown from "@/components/game-ui/GameOverCrown.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import SingleplayerRanks from "@/components/game-ui/SingleplayerRanks.vue";
+import GameOverPercentile from "@/components/game-ui/GameOverPercentile.vue";
 import { getRankData } from "@/utils/ranks";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
@@ -135,6 +136,7 @@ const showIntro = ref(true);
 const wrapperRef = ref(null);
 
 const showChallengeModal = ref(false);
+const starDone = ref(false);
 
 const { fireConfetti } = useConfetti();
 
@@ -173,8 +175,10 @@ const showSingleplayerRank = computed(() => {
   );
 });
 
-const showChallengeButton = computed(() =>
-  ["classic", "inspect", "gravity"].includes(playerStore.gameMode) && playerStore.points > 10
+const showChallengeButton = computed(
+  () =>
+    ["classic", "inspect", "gravity"].includes(playerStore.gameMode) &&
+    playerStore.points > 10,
 );
 
 const handleIntroDone = () => {
@@ -298,7 +302,9 @@ main {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
+  background:
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%),
+    linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
@@ -308,29 +314,6 @@ main {
   text-align: center;
   .rank-prophet {
     margin: 0 auto 16px;
-  }
-}
-
-.percentile-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  font-size: 14px;
-  color: #cccccc;
-
-  span {
-    color: #00ffcc;
-    font-weight: bold;
-  }
-
-  svg {
-    font-size: 16px;
-    color: #00ffcc;
   }
 }
 
