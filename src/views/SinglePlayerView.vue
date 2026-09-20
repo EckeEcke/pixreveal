@@ -233,7 +233,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  padding: 16px 0;
+  padding-top: 16px;
 }
 
 .mode-buttons {

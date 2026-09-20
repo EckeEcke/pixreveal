@@ -262,7 +262,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
-  padding: 16px 0;
+  padding-top: 16px;
   @media (min-width: 576px) {
     gap: 16px;
   }

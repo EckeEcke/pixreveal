@@ -78,6 +78,7 @@ const socialLinks = [
   text-decoration: none;
   transition: all 0.2s ease;
   border-radius: 8px;
+  filter: drop-shadow(3px 3px 0 #00000033);
 }
 
 .twitch-live-dot {
@@ -105,5 +106,6 @@ const socialLinks = [
   box-shadow: 0 0 20px var(--white);
   opacity: 1;
   transform: translateY(-2px);
+  filter: drop-shadow(3px 3px 0 transparent);
 }
 </style>
