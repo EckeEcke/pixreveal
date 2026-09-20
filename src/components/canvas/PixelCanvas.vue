@@ -415,7 +415,10 @@ defineExpose({
   playShake,
   playPop,
   triggerCorrectAnswer,
-  triggerIncorrectAnswer
+  triggerIncorrectAnswer,
+  getGridMetrics: () =>
+    calculateGrid(props.pixelArray?.length || props.resolution || 16),
+  internalSize,
 })
 
 watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })
