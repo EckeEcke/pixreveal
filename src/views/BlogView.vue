@@ -5,7 +5,16 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
-        <span class="date">09-09-11</span>
+        <span class="date">09-20-26</span>
+      </div>
+      <h3 class="log-title">Improded pixel art editor</h3>
+      <p>
+        The editor got a big upgrade today. Better controls with visual feedback, a visual overhaul and new features: a flood feature letting you fill all adjecent pixels, a mirror feature mirroring the pixels you draw horizontally and a forwards/backwards feature letting you revert or return your last drawn pixels. Check out the new <router-link to="/editor">Editor</router-link> now!
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
+        <span class="date">09-09-26</span>
       </div>
       <h3 class="log-title">New category filter and settings</h3>
       <p>
