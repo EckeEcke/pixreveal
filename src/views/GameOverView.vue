@@ -32,7 +32,7 @@
               :highscore="survivalStore.highscore"
             />
             <div v-if="showSingleplayerRank">
-              <SingleplayerRanks :percentile="percentile" />
+              <SingleplayerRanks :percentile="percentile" :active="starDone" />
             </div>
 
             <GameOverPercentile

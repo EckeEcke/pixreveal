@@ -1,7 +1,9 @@
 <template>
-  <div class="rank-text">
-    <div>YOUR RANK IS</div>
-    <div :class="rankData.class">{{ rankData.title }}</div>
+  <div class="rank-text" :class="{ active }">
+    <div class="rank-label">YOUR RANK IS</div>
+    <div class="rank-title-wrap">
+      <div :class="rankData.class">{{ rankData.title }}</div>
+    </div>
     <div class="rank-desc">
       {{ rankData.description }}
     </div>
@@ -10,20 +12,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useConfigStore } from "@/stores/config";
 import { getRankData } from "@/utils/ranks";
-import { useGameStore } from "@/stores/game";
 
-const props = defineProps<{
-  percentile: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    percentile: number;
+    active?: boolean;
+  }>(),
+  { active: true },
+);
 
-const configStore = useConfigStore();
-const gameStore = useGameStore();
-
-const rankData = computed(() => {
-  return getRankData(props.percentile);
-});
+const rankData = computed(() => getRankData(props.percentile));
 </script>
 
 <style scoped>
@@ -38,6 +37,75 @@ const rankData = computed(() => {
 
 .rank-desc {
   margin: 16px;
+}
+
+.rank-label,
+.rank-title-wrap,
+.rank-desc {
+  opacity: 0;
+}
+
+.rank-title-wrap {
+  transform-origin: center;
+}
+
+.rank-text.active .rank-label {
+  animation: rankFade 0.4s ease-out forwards;
+}
+
+.rank-text.active .rank-title-wrap {
+  animation: rankTitleReveal 0.6s cubic-bezier(0.18, 1.4, 0.4, 1) 0.15s forwards;
+}
+
+.rank-text.active .rank-desc {
+  animation: rankFadeUp 0.5s ease-out 0.55s forwards;
+}
+
+@keyframes rankFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rankTitleReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes rankFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rank-label,
+  .rank-title-wrap,
+  .rank-desc {
+    opacity: 1;
+  }
+
+  .rank-text.active .rank-label,
+  .rank-text.active .rank-title-wrap,
+  .rank-text.active .rank-desc {
+    animation: none;
+  }
 }
 
 .rank-prophet {
