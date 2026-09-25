@@ -1,14 +1,19 @@
 import { ref, onScopeDispose } from "vue";
 
-export function useDailyCountDown(resetHourUTC = 7) {
+export function useDailyCountDown(resetHourUTC = 7, bufferMinutes = 60) {
   const timeLeft = ref("00:00:00");
   let timerInterval: ReturnType<typeof setInterval> | null = null;
 
-  const updateCountdown = () => {
-    const now = new Date();
-
+  const getNextTarget = () => {
     const target = new Date();
     target.setUTCHours(resetHourUTC, 0, 0, 0);
+    target.setUTCMinutes(target.getUTCMinutes() + bufferMinutes);
+    return target;
+  };
+
+  const updateCountdown = () => {
+    const now = new Date();
+    const target = getNextTarget();
 
     if (now.getTime() >= target.getTime()) {
       target.setUTCDate(target.getUTCDate() + 1);

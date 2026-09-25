@@ -3,7 +3,7 @@ vue
   <div class="daily-status-container">
     <div class="countdown-wrapper">
       <span class="label">
-        <Icon icon="pixel:clock" class="clock" /> Next Challenge in:
+        <Icon icon="pixel:clock" class="clock" /> Challenge ends in:
       </span>
       <span class="timer-value">{{ timeLeft }}</span>
     </div>
