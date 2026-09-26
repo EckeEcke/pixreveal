@@ -202,7 +202,7 @@ const revealNext = () => {
   const player = order[nextIndex];
   if (player) {
     revealedIds.value = new Set(revealedIds.value).add(player.playerId);
-    soundStore.playSound("click");
+    soundStore.playSound("pop");
     animatePointsFor(player);
   }
 
