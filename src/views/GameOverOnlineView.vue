@@ -200,9 +200,11 @@ const revealNext = () => {
   }
 
   const player = order[nextIndex];
-  revealedIds.value = new Set(revealedIds.value).add(player.playerId);
-  soundStore.playSound("click"); // ggf. gegen einen eigenen "reveal"-Sound tauschen
-  animatePointsFor(player);
+  if (player) {
+    revealedIds.value = new Set(revealedIds.value).add(player.playerId);
+    soundStore.playSound("click");
+    animatePointsFor(player);
+  }
 
   revealTimer = setTimeout(revealNext, REVEAL_DELAY_MS);
 };
