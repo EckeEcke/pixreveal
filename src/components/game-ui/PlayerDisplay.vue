@@ -9,6 +9,7 @@
         first: position === 1 || shiny,
         rounded: rounded,
         'emoji-pulse': showEmojiBurst,
+        'is-you': showYouIndicator,
       },
     ]"
   >
@@ -24,7 +25,7 @@
           {{ displayedEmoji }}
         </div>
         <div v-else key="name" class="hud-username" :class="{ first: position === 1 || shiny }">
-          {{ name }}<span v-if="showYouIndicator" class="you-indicator"> (YOU)</span>
+          {{ name }}
         </div>
       </Transition>
       <div v-if="subline" class="hud-subline">{{ subline }}</div>
@@ -334,6 +335,10 @@ const avatarStyle = computed<CSSProperties>(() => {
   background: rgba(10, 4, 20, 0.92);
   box-sizing: border-box;
 }
+.player-hud.is-you {
+  background: rgba(60, 20, 60, 0.95);
+  box-shadow: inset 0 0 4px var(--purple-glow), 0 0 2px rgba(0, 243, 255, 0.3);
+}
 .rounded {
   border-radius: 8px;
 }
@@ -533,10 +538,5 @@ const avatarStyle = computed<CSSProperties>(() => {
 .player-hud.small .history-box:nth-child(5n) {
   width: 16px;
   height: 16px;
-}
-
-.you-indicator {
-  font-weight: 400;
-  opacity: 0.7;
 }
 </style>

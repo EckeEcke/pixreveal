@@ -3,7 +3,8 @@
     class="top-player-display"
     :class="{
       pending: isPending,
-      active: isActive
+      active: isActive,
+      'is-you': showYouIndicator,
     }"
   >
     <div class="avatar-container">
@@ -17,7 +18,7 @@
 
     <div class="player-pill" v-if="name">
       <span class="player-name">
-        {{ name }}<template v-if="showYouIndicator"> (YOU)</template>
+        {{ name }}
       </span>
       <template v-if="score !== undefined || highscore !== undefined">
         <div class="score-divider"></div>
@@ -27,7 +28,7 @@
         </div>
       </template>
     </div>
-    <div>{{ subline }}</div>
+    <div v-if="subline">{{ subline }}</div>
   </div>
 </template>
 
@@ -59,7 +60,7 @@ const avatarStyle = computed<CSSProperties>(() => {
     backgroundImage: `url(${avatarSheet})`,
     backgroundPosition: `${x}% ${y}%`,
     backgroundSize: "600%",
-    imageRendering: "pixelated" as CSSProperties["imageRendering"]
+    imageRendering: "pixelated" as CSSProperties["imageRendering"],
   };
 });
 </script>
@@ -82,6 +83,7 @@ const avatarStyle = computed<CSSProperties>(() => {
   overflow: hidden;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
   flex-shrink: 0;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .hud-avatar {
@@ -127,6 +129,18 @@ const avatarStyle = computed<CSSProperties>(() => {
     0 4px 12px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   max-width: 90%;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-player-display.is-you .avatar-container {
+  border: 2px solid var(--neon-cyan, #00f3ff);
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.4);
+}
+
+.top-player-display.is-you .player-pill {
+  background: rgba(30, 20, 60, 0.95);
+  border-color: var(--neon-cyan, #00f3ff);
+  box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2), 0 0 12px rgba(0, 243, 255, 0.3);
 }
 
 .player-name {

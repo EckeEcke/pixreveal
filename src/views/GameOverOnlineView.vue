@@ -60,7 +60,7 @@
     </div>
 
     <div v-if="waitingForFinalResults" class="results-card">
-    <h1 class="logo">GAME <span>OVER</span></h1>
+      <h1 class="logo">GAME <span>OVER</span></h1>
       <LoadingAnimation text="PLEASE KEEP THIS WINDOW OPEN WHILE WAITING FOR REMAINING PLAYERS" />
       <div v-if="joke" class="random-joke-box">
         <h2>Random joke</h2>
@@ -112,22 +112,19 @@ const winnerAnimationShown = ref(false);
 const winnerSoundPlayed = ref(false);
 const partySoundPlayed = ref(false);
 
-// Handle for the recursive joke-polling timeout, so we can cancel it on unmount
 let jokeTimer: ReturnType<typeof setTimeout> | null = null;
-// Handle for the delayed party-sound timer, so we can cancel it on unmount
 let partySoundTimer: ReturnType<typeof workerSetTimeout> | null = null;
 let isMounted = true;
 
-// --- Ranking reveal + points count-up ---
 const revealedIds = ref<Set<string>>(new Set());
 const animatedPoints = ref<Record<string, number>>({});
 const countingUpIds = ref<Set<string>>(new Set());
 let revealTimer: ReturnType<typeof setTimeout> | null = null;
 let countUpFrames: Record<string, number> = {};
 
-const REVEAL_DELAY_MS = 700;
-const COUNT_UP_DURATION_MS = 1500;
-const COUNT_UP_UPDATE_INTERVAL_MS = 60; // ~16 Updates/Sek. reicht für 0–100 völlig aus
+const REVEAL_DELAY_MS = 900;
+const COUNT_UP_DURATION_MS = 5000;
+const COUNT_UP_UPDATE_INTERVAL_MS = 60;
 
 const isMe = (id: string) => id === channelStore.playerId;
 
@@ -141,7 +138,6 @@ const waitingForFinalResults = computed(() =>
   playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
 );
 
-// Schlechtester Platz zuerst, Sieger zuletzt
 const revealOrder = computed(() => [...playersSortedByPoints.value].reverse());
 
 const isRevealed = (playerId: string) => revealedIds.value.has(playerId);
@@ -151,6 +147,18 @@ const revealedPlayersDisplay = computed(() =>
     .map((player, index) => ({ player, index }))
     .filter(({ player }) => isRevealed(player.playerId)),
 );
+
+const checkAndTriggerWinnerAnimation = () => {
+  const allRevealed = revealedIds.value.size >= revealOrder.value.length;
+  const allPointsCounted = countingUpIds.value.size === 0;
+
+  if (allRevealed && allPointsCounted && !winnerAnimationShown.value && winnerPlayer.value) {
+    winnerAnimationShown.value = true;
+    showWinnerAnimation.value = true;
+    soundStore.playSound('winner');
+    soundStore.stopSound('counting')
+  }
+};
 
 const animatePointsFor = (player: { playerId: string; points: number }) => {
   const start = performance.now();
@@ -182,6 +190,8 @@ const animatePointsFor = (player: { playerId: string; points: number }) => {
       const next = new Set(countingUpIds.value);
       next.delete(player.playerId);
       countingUpIds.value = next;
+
+      checkAndTriggerWinnerAnimation();
     }
   };
   countUpFrames[player.playerId] = requestAnimationFrame(step);
@@ -192,12 +202,11 @@ const revealNext = () => {
   const nextIndex = revealedIds.value.size;
 
   if (nextIndex >= order.length) {
-    if (!winnerAnimationShown.value && winnerPlayer.value) {
-      winnerAnimationShown.value = true;
-      showWinnerAnimation.value = true;
-    }
+    checkAndTriggerWinnerAnimation();
     return;
   }
+
+  soundStore.playSound('counting');
 
   const player = order[nextIndex];
   if (player) {
@@ -267,31 +276,31 @@ const activeMembersCount = computed(
   () => channelStore.playersOnline.filter((p) => p.isOnline).length,
 );
 
-const joke = ref(undefined)
+const joke = ref(undefined);
 
 const fetchJoke = async () => {
   try {
-    const response = await fetch('https://icanhazdadjoke.com/', {
-      headers: { 'Accept': 'application/json' }
-    })
-    if (!response.ok) throw new Error('Network failed')
+    const response = await fetch("https://icanhazdadjoke.com/", {
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) throw new Error("Network failed");
 
-    const contentType = response.headers.get('content-type') || ''
-    if (!contentType.includes('application/json')) {
-      throw new Error(`Unexpected content-type: ${contentType}`)
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      throw new Error(`Unexpected content-type: ${contentType}`);
     }
 
-    const data = await response.json()
-    if (isMounted) joke.value = data.joke
+    const data = await response.json();
+    if (isMounted) joke.value = data.joke;
   } catch (error) {
-    console.error('Error fetching joke:', error)
+    console.error("Error fetching joke:", error);
   }
   if (!isMounted) return;
   jokeTimer = setTimeout(() => {
     jokeTimer = null;
-    if (waitingForFinalResults.value) fetchJoke()
-  }, 10000)
-}
+    if (waitingForFinalResults.value) fetchJoke();
+  }, 10000);
+};
 
 watch(
   () => activeMembersCount.value,

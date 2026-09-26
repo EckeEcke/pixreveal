@@ -21,6 +21,7 @@ import shuffleSound from "@/assets/audio/shuffle.mp3";
 import devilSound from "@/assets/audio/devil.mp3";
 import fartSound from "@/assets/audio/fart.mp3";
 import rewardSound from "@/assets/audio/reward.mp3";
+import countingSound from "@/assets/audio/counting.mp3";
 import robot1Sound from "@/assets/audio/robot-talk1.mp3";
 import robot2Sound from "@/assets/audio/robot-talk2.mp3";
 import robot3Sound from "@/assets/audio/robot-talk3.mp3";
@@ -53,6 +54,7 @@ export const useSoundStore = defineStore("sound", () => {
     party: partyOverSound,
     partyCorrect: partyCorrectSound,
     partyIncorrect: partyIncorrectSound,
+    counting: countingSound,
     robot1: robot1Sound,
     robot2: robot2Sound,
     robot3: robot3Sound,
