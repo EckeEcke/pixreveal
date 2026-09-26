@@ -60,18 +60,24 @@
         </transition>
       </div>
       <div v-if="points || points === 0" class="hud-points">
-        <transition name="score-pop" mode="out-in">
-          <div :key="points" class="score-wrapper">
-            <Icon icon="pixel:star-solid" class="star-icon" />
-            <span :class="{ negative: points < 0 }">{{ points }}</span>
-          </div>
-        </transition>
-        <transition name="float-bonus">
-          <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
-        </transition>
-        <transition name="float-malus">
-          <span v-if="showMalus" class="hud-malus-popup">-{{ lastMalus }}</span>
-        </transition>
+        <div v-if="staticPointsDisplay" class="score-wrapper">
+          <Icon icon="pixel:star-solid" class="star-icon" />
+          <span :class="[{ negative: points < 0 }, trendClass]">{{ points }}</span>
+        </div>
+        <template v-else>
+          <transition name="score-pop" mode="out-in">
+            <div :key="points" class="score-wrapper">
+              <Icon icon="pixel:star-solid" class="star-icon" />
+              <span :class="[{ negative: points < 0 }, trendClass]">{{ points }}</span>
+            </div>
+          </transition>
+          <transition name="float-bonus">
+            <span v-if="showBonus" class="hud-bonus-popup">+{{ lastBonus }}</span>
+          </transition>
+          <transition name="float-malus">
+            <span v-if="showMalus" class="hud-malus-popup">-{{ lastMalus }}</span>
+          </transition>
+        </template>
       </div>
     </div>
     <div v-if="isHost" class="host-info">
@@ -114,6 +120,8 @@ const props = withDefaults(
     size?: "medium" | "small";
     answerHistory?: boolean[];
     emoji?: string;
+    staticPointsDisplay?: boolean;
+    pointsTrend?: "up" | "down" | null;
   }>(),
   { size: "medium" },
 );
@@ -162,6 +170,7 @@ const animateMalus = (delta: number) => {
 watch(
   () => props.points,
   (newVal, oldVal) => {
+    if (props.staticPointsDisplay) return;
     const current = typeof newVal === "number" ? newVal : 0;
     const previous = typeof oldVal === "number" ? oldVal : 0;
     const delta = current - previous;
@@ -172,6 +181,15 @@ watch(
     }
   },
 );
+
+const trendClass = computed(() => {
+  if (props.pointsTrend === "up") return "trend-up";
+  if (props.pointsTrend === "down") return "trend-down";
+  if (showBonus.value) return "trend-up";
+  if (showMalus.value) return "trend-down";
+  return null;
+});
+
 const avatarStyle = computed<CSSProperties>(() => {
   const index = props.avatarIndex || 0;
   const col = index % 6;
@@ -220,6 +238,12 @@ const avatarStyle = computed<CSSProperties>(() => {
   position: relative;
 }
 .negative {
+  color: var(--neon-error);
+}
+.trend-up {
+  color: var(--neon-success);
+}
+.trend-down {
   color: var(--neon-error);
 }
 .round-counter-view {
@@ -282,9 +306,6 @@ const avatarStyle = computed<CSSProperties>(() => {
 }
 .float-bonus-leave-to {
   opacity: 0;
-}
-.float-bonus-leave-active {
-  display: none;
 }
 .float-malus-enter-active {
   animation: float-up 0.8s ease-out forwards;

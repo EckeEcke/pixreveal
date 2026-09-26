@@ -15,22 +15,27 @@
 
         <OnlineHighlights :players="playersOnline" />
 
-        <div
-        v-for="(player, index) in playersSortedByPoints"
-        :key="player.playerId"
-      >
-        <PlayerDisplay
-          size="small"
-          :position="player.hasFinished ? index + 1 : undefined"
-          :name="player.username"
-          :avatar-index="player.avatarIndex"
-          :points="player.points"
-          :is-pending="!player.hasFinished"
-          :correct-answers="player.correctAnswers"
-          :show-you-indicator="isMe(player.playerId)"
-          :answer-history="player.answerHistory"
-        />
-      </div>
+        <TransitionGroup name="reveal-item" tag="div" class="players-list">
+          <div
+            v-for="{ player, index } in revealedPlayersDisplay"
+            :key="player.playerId"
+          >
+            <PlayerDisplay
+              size="small"
+              :position="player.hasFinished ? index + 1 : undefined"
+              :name="player.username"
+              :avatar-index="player.avatarIndex"
+              :points="animatedPoints[player.playerId] ?? player.points"
+              static-points-display
+              :points-trend="countingUpIds.has(player.playerId) ? 'up' : null"
+              :is-pending="!player.hasFinished"
+              :correct-answers="player.correctAnswers"
+              :show-you-indicator="isMe(player.playerId)"
+              :answer-history="player.answerHistory"
+            />
+          </div>
+        </TransitionGroup>
+
         <div class="gameover-actions">
           <ButtonPrimary
             class="btn-primary pulse-btn"
@@ -113,6 +118,17 @@ let jokeTimer: ReturnType<typeof setTimeout> | null = null;
 let partySoundTimer: ReturnType<typeof workerSetTimeout> | null = null;
 let isMounted = true;
 
+// --- Ranking reveal + points count-up ---
+const revealedIds = ref<Set<string>>(new Set());
+const animatedPoints = ref<Record<string, number>>({});
+const countingUpIds = ref<Set<string>>(new Set());
+let revealTimer: ReturnType<typeof setTimeout> | null = null;
+let countUpFrames: Record<string, number> = {};
+
+const REVEAL_DELAY_MS = 700;
+const COUNT_UP_DURATION_MS = 1500;
+const COUNT_UP_UPDATE_INTERVAL_MS = 60; // ~16 Updates/Sek. reicht für 0–100 völlig aus
+
 const isMe = (id: string) => id === channelStore.playerId;
 
 const playersOnline = computed(() => channelStore.playersOnline);
@@ -124,6 +140,80 @@ const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
 const waitingForFinalResults = computed(() =>
   playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
 );
+
+// Schlechtester Platz zuerst, Sieger zuletzt
+const revealOrder = computed(() => [...playersSortedByPoints.value].reverse());
+
+const isRevealed = (playerId: string) => revealedIds.value.has(playerId);
+
+const revealedPlayersDisplay = computed(() =>
+  playersSortedByPoints.value
+    .map((player, index) => ({ player, index }))
+    .filter(({ player }) => isRevealed(player.playerId)),
+);
+
+const animatePointsFor = (player: { playerId: string; points: number }) => {
+  const start = performance.now();
+  const target = player.points;
+  animatedPoints.value[player.playerId] = 0;
+  countingUpIds.value = new Set(countingUpIds.value).add(player.playerId);
+
+  let lastUpdate = start;
+  let lastValue = 0;
+
+  const step = (now: number) => {
+    const progress = Math.min((now - start) / COUNT_UP_DURATION_MS, 1);
+    const eased = 1 - Math.pow(1 - progress, 2); // ease-out quad
+    const isDue = now - lastUpdate >= COUNT_UP_UPDATE_INTERVAL_MS || progress === 1;
+
+    if (isDue) {
+      const nextValue = Math.round(target * eased);
+      if (nextValue !== lastValue) {
+        animatedPoints.value[player.playerId] = nextValue;
+        lastValue = nextValue;
+      }
+      lastUpdate = now;
+    }
+
+    if (progress < 1) {
+      countUpFrames[player.playerId] = requestAnimationFrame(step);
+    } else {
+      delete countUpFrames[player.playerId];
+      const next = new Set(countingUpIds.value);
+      next.delete(player.playerId);
+      countingUpIds.value = next;
+    }
+  };
+  countUpFrames[player.playerId] = requestAnimationFrame(step);
+};
+
+const revealNext = () => {
+  const order = revealOrder.value;
+  const nextIndex = revealedIds.value.size;
+
+  if (nextIndex >= order.length) {
+    if (!winnerAnimationShown.value && winnerPlayer.value) {
+      winnerAnimationShown.value = true;
+      showWinnerAnimation.value = true;
+    }
+    return;
+  }
+
+  const player = order[nextIndex];
+  revealedIds.value = new Set(revealedIds.value).add(player.playerId);
+  soundStore.playSound("click"); // ggf. gegen einen eigenen "reveal"-Sound tauschen
+  animatePointsFor(player);
+
+  revealTimer = setTimeout(revealNext, REVEAL_DELAY_MS);
+};
+
+const startReveal = () => {
+  revealedIds.value = new Set();
+  animatedPoints.value = {};
+  countingUpIds.value = new Set();
+  if (revealTimer) clearTimeout(revealTimer);
+  revealTimer = setTimeout(revealNext, REVEAL_DELAY_MS);
+};
 
 const playPartySoundOnce = () => {
   if (partySoundPlayed.value) return;
@@ -142,14 +232,10 @@ const handleIntroDone = () => {
 };
 
 watch(
-  [() => showIntro.value, () => waitingForFinalResults.value, () => winnerPlayer.value],
-  ([intro, waiting, winner]) => {
-    if (intro) return;
-    if (waiting) return;
-    if (!winner) return;
-    if (winnerAnimationShown.value) return;
-    winnerAnimationShown.value = true;
-    showWinnerAnimation.value = true;
+  [() => showIntro.value, () => waitingForFinalResults.value],
+  ([intro, waiting]) => {
+    if (intro || waiting) return;
+    startReveal();
   },
   { immediate: true },
 );
@@ -240,6 +326,12 @@ onUnmounted(() => {
     workerClearTimeout(partySoundTimer);
     partySoundTimer = null;
   }
+  if (revealTimer) {
+    clearTimeout(revealTimer);
+    revealTimer = null;
+  }
+  Object.values(countUpFrames).forEach((id) => cancelAnimationFrame(id));
+  countUpFrames = {};
   if (winnerSoundPlayed.value) {
     soundStore.stopSound("winner");
   }
@@ -299,18 +391,6 @@ main {
   }
 }
 
-.results-card::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 30%;
-  height: 300%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(30deg);
-  animation: shine 4s infinite;
-}
-
 .random-joke-box {
   margin-top: 32px;
   background: #111;
@@ -324,5 +404,16 @@ main {
     margin-bottom: 8px;
     opacity: 0.8;
   }
+}
+
+.reveal-item-enter-active {
+  transition: all 0.4s ease-out;
+}
+.reveal-item-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.reveal-item-move {
+  transition: transform 0.4s ease-out;
 }
 </style>
