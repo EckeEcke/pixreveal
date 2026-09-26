@@ -120,11 +120,25 @@ const revealedIds = ref<Set<string>>(new Set());
 const animatedPoints = ref<Record<string, number>>({});
 const countingUpIds = ref<Set<string>>(new Set());
 let revealTimer: ReturnType<typeof setTimeout> | null = null;
+let winnerAnimationTimer: ReturnType<typeof setTimeout> | null = null;
 let countUpFrames: Record<string, number> = {};
 
-const REVEAL_DELAY_MS = 900;
+const REVEAL_DELAY_MAX_MS = 900; // bei ≤4 Spielern
+const REVEAL_DELAY_MIN_MS = 400; // bei ≥12 Spielern
+const REVEAL_DELAY_SCALE_MIN_PLAYERS = 4;
+const REVEAL_DELAY_SCALE_MAX_PLAYERS = 12;
 const COUNT_UP_DURATION_MS = 5000;
 const COUNT_UP_UPDATE_INTERVAL_MS = 60;
+const WINNER_ANIMATION_DELAY_MS = 900;
+
+const getRevealDelay = (playerCount: number) => {
+  if (playerCount <= REVEAL_DELAY_SCALE_MIN_PLAYERS) return REVEAL_DELAY_MAX_MS;
+  if (playerCount >= REVEAL_DELAY_SCALE_MAX_PLAYERS) return REVEAL_DELAY_MIN_MS;
+  const t =
+    (playerCount - REVEAL_DELAY_SCALE_MIN_PLAYERS) /
+    (REVEAL_DELAY_SCALE_MAX_PLAYERS - REVEAL_DELAY_SCALE_MIN_PLAYERS);
+  return Math.round(REVEAL_DELAY_MAX_MS - t * (REVEAL_DELAY_MAX_MS - REVEAL_DELAY_MIN_MS));
+};
 
 const isMe = (id: string) => id === channelStore.playerId;
 
@@ -154,9 +168,12 @@ const checkAndTriggerWinnerAnimation = () => {
 
   if (allRevealed && allPointsCounted && !winnerAnimationShown.value && winnerPlayer.value) {
     winnerAnimationShown.value = true;
-    showWinnerAnimation.value = true;
-    soundStore.playSound('winner');
-    soundStore.stopSound('counting')
+    soundStore.stopSound("counting");
+    winnerAnimationTimer = setTimeout(() => {
+      winnerAnimationTimer = null;
+      showWinnerAnimation.value = true;
+      soundStore.playSound("winner");
+    }, WINNER_ANIMATION_DELAY_MS);
   }
 };
 
@@ -200,13 +217,14 @@ const animatePointsFor = (player: { playerId: string; points: number }) => {
 const revealNext = () => {
   const order = revealOrder.value;
   const nextIndex = revealedIds.value.size;
+  const delay = getRevealDelay(order.length);
 
   if (nextIndex >= order.length) {
     checkAndTriggerWinnerAnimation();
     return;
   }
 
-  soundStore.playSound('counting');
+  soundStore.playSound("counting");
 
   const player = order[nextIndex];
   if (player) {
@@ -215,7 +233,7 @@ const revealNext = () => {
     animatePointsFor(player);
   }
 
-  revealTimer = setTimeout(revealNext, REVEAL_DELAY_MS);
+  revealTimer = setTimeout(revealNext, delay);
 };
 
 const startReveal = () => {
@@ -223,7 +241,7 @@ const startReveal = () => {
   animatedPoints.value = {};
   countingUpIds.value = new Set();
   if (revealTimer) clearTimeout(revealTimer);
-  revealTimer = setTimeout(revealNext, REVEAL_DELAY_MS);
+  revealTimer = setTimeout(revealNext, getRevealDelay(revealOrder.value.length));
 };
 
 const playPartySoundOnce = () => {
@@ -340,6 +358,10 @@ onUnmounted(() => {
   if (revealTimer) {
     clearTimeout(revealTimer);
     revealTimer = null;
+  }
+  if (winnerAnimationTimer) {
+    clearTimeout(winnerAnimationTimer);
+    winnerAnimationTimer = null;
   }
   Object.values(countUpFrames).forEach((id) => cancelAnimationFrame(id));
   countUpFrames = {};
