@@ -240,6 +240,7 @@ export const usePartyStore = defineStore("party", () => {
         playerId: p.playerId,
         username: p.username,
         avatarIndex: p.avatarIndex,
+        avatarSpriteSheet: p.avatarSpriteSheet,
         points: p.points,
         wrongAnswers: p.wrongAnswers,
         correctAnswers: p.correctAnswers,
@@ -262,6 +263,7 @@ export const usePartyStore = defineStore("party", () => {
         playerId: p.playerId,
         username: p.username,
         avatarIndex: p.avatarIndex,
+        avatarSpriteSheet: p.avatarSpriteSheet,
         points: 0,
         wrongAnswers: 0,
         correctAnswers: 0,
@@ -301,6 +303,7 @@ export const usePartyStore = defineStore("party", () => {
       playerId: player.playerId,
       username: player.username,
       avatarIndex: player.avatarIndex,
+      avatarSpriteSheet: player.avatarSpriteSheet,
       points: 0,
       wrongAnswers: 0,
       correctAnswers: 0,
@@ -410,6 +413,7 @@ export const usePartyStore = defineStore("party", () => {
           playerId: player.playerId,
           username: player.username,
           avatarIndex: player.avatarIndex,
+          avatarSpriteSheet: player.avatarSpriteSheet,
         }
       }
     }

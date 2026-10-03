@@ -9,6 +9,7 @@
         <TopPlayerDisplay
             :name="sortedRankings[0].name"
             :avatar-index="sortedRankings[0].avatarIndex"
+            :avatar-sprite-sheet="sortedRankings[0].avatarSpriteSheet"
             :score="sortedRankings[0].score"
           />
           <ButtonPrimary
@@ -34,6 +35,7 @@
         <PlayerDisplay
           :name="ranking.name"
           :avatar-index="ranking.avatarIndex"
+          :avatar-sprite-sheet="ranking.avatarSpriteSheet"
           :points="ranking.score"
           :position="index + 2"
           size="small"

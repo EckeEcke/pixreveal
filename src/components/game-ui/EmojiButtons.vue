@@ -1,7 +1,7 @@
 <template>
   <div class="emoji-btns">
     <button
-      v-for="emoji in (reduced ? emojisReduced : emojis)"
+      v-for="emoji in (emojiOptions ?? (reduced ? emojisReduced : emojis))"
       :key="emoji"
       class="emoji-btn"
       data-sfx="pop"
@@ -19,6 +19,7 @@ defineProps<{
   isFrozen: boolean;
   connectionStale: boolean;
   reduced: boolean;
+  emojiOptions?: string[];
 }>();
 
 const emit = defineEmits<{

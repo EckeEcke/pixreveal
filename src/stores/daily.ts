@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import type { AvatarSpriteSheet } from "@/utils/avatar";
 
 type DailyRanking = {
   name: string;
   score: number;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
   userId?: string;
 };
 
@@ -135,6 +137,7 @@ export const useDailyStore = defineStore("daily", () => {
     avatarIndex: number,
     date: string,
     userId?: string,
+    avatarSpriteSheet?: AvatarSpriteSheet,
   ) => {
     hasSubmitted.value = true;
     try {
@@ -142,7 +145,7 @@ export const useDailyStore = defineStore("daily", () => {
         method: "POST",
         keepalive: true,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, userId, score, avatarIndex, date }),
+        body: JSON.stringify({ name, userId, score, avatarIndex, date, avatarSpriteSheet }),
       });
       if (!response.ok) throw new Error("Failed to post ranking");
     } catch (err: any) {

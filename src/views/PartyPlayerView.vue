@@ -4,7 +4,9 @@
     <PlayerDisplay
       :name="player.username"
       :avatar-index="player.avatarIndex"
+      :avatar-sprite-sheet="player.avatarSpriteSheet"
       :points="player.points"
+      is-own-player
       class="player-display"
     />
     <div class="container">

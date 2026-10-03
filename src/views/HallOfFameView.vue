@@ -51,6 +51,7 @@
           <TopPlayerDisplay
             :name="entry.winner.name"
             :avatar-index="entry.winner.avatarIndex"
+            :avatar-sprite-sheet="entry.winner.avatarSpriteSheet"
             :score="entry.winner.score"
             class="player-card"
           />

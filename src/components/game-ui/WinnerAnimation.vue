@@ -10,12 +10,10 @@
         >
           <div class="winner-card" ref="contentRef">
             <div class="winner-glow" />
-            <div
-              class="winner-avatar"
-              :style="avatarStyle"
-              aria-hidden="true"
-            />
-            <div class="winner-name">{{ displayName }}</div>
+            <div class="winner-avatar-wrap">
+              <div class="winner-avatar" :style="avatarStyle" aria-hidden="true" />
+            </div>
+            <div class="winner-name" :class="nameEffectClass">{{ displayName }}</div>
             <div class="winner-sub">is the winner</div>
           </div>
         </div>
@@ -27,13 +25,16 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
-import avatarSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
+import type { PlayerNameEffect } from "@/data/unlockables";
 import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers";
 import { useConfetti } from "@/composables/useConfetti";
 
 const props = defineProps<{
   winnerName: string;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
+  nameEffect?: PlayerNameEffect;
   show: boolean;
   durationMs?: number;
   isWinner?: boolean;
@@ -79,19 +80,14 @@ onBeforeUnmount(() => {
 });
 
 const displayName = computed(() => String(props.winnerName || "Player").toUpperCase());
+const nameEffectClass = computed(() =>
+  props.isWinner && props.nameEffect && props.nameEffect !== "none"
+    ? `name-effect-${props.nameEffect}`
+    : undefined,
+);
 
 const avatarStyle = computed<CSSProperties>(() => {
-  const index = props.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
-  return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated" as CSSProperties["imageRendering"],
-  };
+  return getAvatarStyle(props.avatarIndex, props.avatarSpriteSheet);
 });
 
 const wrapperRef = ref<HTMLElement | null>(null);
@@ -242,12 +238,19 @@ onUnmounted(() => {
   animation: shine-sweep 1.2s ease-out 120ms both;
 }
 
-.winner-avatar {
+.winner-avatar-wrap {
   position: relative;
   z-index: 1;
   width: 96px;
   height: 96px;
   margin: 0 auto 14px;
+}
+
+.winner-avatar {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
   border-radius: 14px;
   box-shadow:
     0 0 0 4px rgba(255, 176, 0, 0.15),

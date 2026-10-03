@@ -20,7 +20,6 @@
               class="panel panel-left"
               aria-label="Online game setup"
             >
-              <!-- HOST / JOIN TOGGLE -->
               <div
                 class="role-toggle"
                 :class="`role-${selectedRole}`"
@@ -66,7 +65,7 @@
                     class="player-name"
                     @click="showAvatarModal = true"
                   >
-                    <span>
+                    <span :class="nameEffectClass">
                       {{ playerStore.playerName || "SET PLAYER NAME" }}
                     </span>
                     <span class="info-text">CLICK TO EDIT YOUR AVATAR</span>
@@ -144,7 +143,7 @@ import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
 import { useChannelStore } from "@/stores/channel";
 import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
-import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle } from "@/utils/avatar";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import { ROOM_ID_LENGTH } from "@/utils/crypto";
 import { useRoute } from "vue-router";
@@ -225,17 +224,13 @@ watch(
 );
 
 const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-
-  return {
-    backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${col * 20}% ${row * 20}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated",
-  };
+  return getAvatarStyle(playerStore.avatarIndex, playerStore.avatarSpriteSheet);
 });
+const nameEffectClass = computed(() =>
+  playerStore.playerNameEffect === "none"
+    ? undefined
+    : `name-effect-${playerStore.playerNameEffect}`,
+);
 
 const hostGame = () => {
   channelStore.setMode("regular");
@@ -254,6 +249,7 @@ const hostGame = () => {
     playerId,
     username: playerStore.playerName,
     avatarIndex: playerStore.avatarIndex,
+    avatarSpriteSheet: playerStore.avatarSpriteSheet,
     isHost: true,
     rounds: configStore.maxRounds,
     revealTime: configStore.revealTime,
@@ -277,6 +273,7 @@ const joinGame = () => {
       playerId,
       username: playerStore.playerName,
       avatarIndex: playerStore.avatarIndex,
+      avatarSpriteSheet: playerStore.avatarSpriteSheet,
       isHost: false,
     },
     joinRoomId.value.toUpperCase().trim(),

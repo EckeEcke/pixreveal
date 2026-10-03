@@ -26,6 +26,7 @@
             <div class="challenger">
                 <TopPlayerDisplay
                 :avatar-index="challenge.challenger.avatarIndex"
+                :avatar-sprite-sheet="challenge.challenger.avatarSpriteSheet"
                 />        
                 <p>Can you beat their score?</p>
             </div>
@@ -37,9 +38,10 @@
                     <div
                     class="avatar"
                     :style="avatarStyleFor(playerStore.avatarIndex)"
-                    />
+                                        >
+                                        </div>
                     <div class="player-info">
-                        <strong>{{ playerStore.playerName }}</strong>
+                                                <strong :class="nameEffectClass">{{ playerStore.playerName }}</strong>
                         <Icon class="edit-icon" icon="pixel:edit-solid" />
                     </div>
                 </div>
@@ -69,7 +71,7 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { usePlayerStore } from "@/stores/player";
 import { useChallengeStore, type ChallengeSession, type ChallengeParticipant } from "@/stores/challenge";
-import avatarSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle } from "@/utils/avatar";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
 import AnswerComparison from "@/components/game-ui/AnswerComparison.vue";
@@ -90,12 +92,14 @@ const participants = computed<ChallengeParticipant[]>(() => {
     : [challenge.value.challenger];
 });
 
-const avatarStyleFor = (avatarIndex: number) => ({
-  backgroundImage: `url(${avatarSheet})`,
-  backgroundPosition: `${(avatarIndex % 6) * 20}% ${Math.floor(avatarIndex / 6) * 20}%`,
-  backgroundSize: "600%",
-  imageRendering: "pixelated",
-} as const);
+const avatarStyleFor = (avatarIndex: number) =>
+    getAvatarStyle(avatarIndex, playerStore.avatarSpriteSheet);
+
+const nameEffectClass = computed(() =>
+    playerStore.playerNameEffect === "none"
+        ? undefined
+        : `name-effect-${playerStore.playerNameEffect}`,
+);
 
 const acceptChallenge = async () => {
   if (!challenge.value) return;

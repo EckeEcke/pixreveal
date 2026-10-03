@@ -33,8 +33,8 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import avatarSheet from "@/assets/avatars/avatars.webp";
 import type { CSSProperties } from "vue";
+import { getAvatarStyle } from "@/utils/avatar";
 import { useDailyStore } from "@/stores/daily";
 import { useGameStore } from "@/stores/game";
 import { usePlayerStore } from "@/stores/player";
@@ -48,6 +48,7 @@ type DailyRanking = {
   name: string;
   score: number;
   avatarIndex: number;
+  avatarSpriteSheet?: import("@/utils/avatar").AvatarSpriteSheet;
 };
 
 const topRanking = computed<DailyRanking | null>(() => {
@@ -59,17 +60,10 @@ const topRanking = computed<DailyRanking | null>(() => {
 });
 
 const avatarStyle = computed<CSSProperties>(() => {
-  const index = topRanking.value?.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
-  return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated" as CSSProperties["imageRendering"],
-  };
+  return getAvatarStyle(
+    topRanking.value?.avatarIndex,
+    topRanking.value?.avatarSpriteSheet,
+  );
 });
 
 const startDaily = () => {
@@ -220,9 +214,6 @@ const startDaily = () => {
   }
 }
 
-/* Ab ~480px Container-Breite: Zeile hat sichtbar Platz (breite
-   Bento-Kachel/Desktop), also Avatar/Schrift/Badges hochskalieren
-   statt bei den kompakten Mobile-Maßen zu bleiben */
 @container (min-width: 480px) {
   .top-player-row {
     gap: 18px;

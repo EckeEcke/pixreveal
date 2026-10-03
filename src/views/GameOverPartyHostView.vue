@@ -21,6 +21,7 @@
                 :name="player.username"
                 :subline="getPartyTitleEmojis(player, index)"
                 :avatar-index="player.avatarIndex"
+                :avatar-sprite-sheet="player.avatarSpriteSheet"
                 :points="player.points"
               />
             </div>
@@ -51,6 +52,7 @@
       :show="showWinnerAnimation"
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
+      :avatar-sprite-sheet="winnerPlayer.avatarSpriteSheet"
       :is-winner="true"
       @done="showWinnerAnimation = false"
     />

@@ -125,12 +125,14 @@ import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { useConfetti } from "@/composables/useConfetti";
 import ChallengeModal from "@/components/modals/ChallengeModal.vue";
+import { useAchievementsStore } from "@/stores/achievements";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
 const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
+const achievementsStore = useAchievementsStore();
 const router = useRouter();
 const showIntro = ref(true);
 const wrapperRef = ref(null);
@@ -158,6 +160,23 @@ onMounted(() => {
   resizeGame();
   window.addEventListener("resize", resizeGame);
   submitSingleplayerScore();
+  const allSingleplayerModes = ["classic", "inspect", "gravity", "survival"];
+  if (allSingleplayerModes.includes(playerStore.gameMode)) {
+    void achievementsStore.unlock("play-singleplayer");
+  }
+  if (playerStore.gameMode === "survival" && survivalStore.highscore >= 20) {
+    void achievementsStore.unlock("survivor");
+  }
+  const singleplayerModes = ["classic", "inspect", "gravity"];
+  const answerHistory = playerStore.answerHistory;
+  if (
+    singleplayerModes.includes(playerStore.gameMode) &&
+    gameStore.rounds.length > 0 &&
+    answerHistory.length === gameStore.rounds.length &&
+    answerHistory.every(Boolean)
+  ) {
+    void achievementsStore.unlock("perfect-round");
+  }
   if (playerStore.gameMode === "survival" && survivalStore.newHighscore) {
     fireConfetti();
   }

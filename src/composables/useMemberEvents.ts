@@ -7,12 +7,14 @@ import {
 import type { Ref } from "vue";
 import type { Router } from "vue-router";
 import type { Player } from "@/types/player";
+import type { AvatarSpriteSheet } from "@/utils/avatar";
 
 interface RawMember {
   user_id: string;
   user_info: {
     name: string;
     avatar: number;
+    avatarSpriteSheet?: AvatarSpriteSheet;
     host: string | boolean | number;
   };
 }
@@ -64,6 +66,7 @@ export function buildPlayerFromMember(member: RawMember): Player {
     playerId: member.user_id,
     username: member.user_info.name,
     avatarIndex: member.user_info.avatar,
+    avatarSpriteSheet: member.user_info.avatarSpriteSheet ?? "classic",
     isHost: isHostFlag(member.user_info.host),
     isOnline: true,
     points: 0,
@@ -147,6 +150,7 @@ export function useMemberEvents({
       playerId?: string;
       username?: string;
       avatarIndex?: number;
+      avatarSpriteSheet?: AvatarSpriteSheet;
     }) => {
       if (!data?.playerId) return;
 
@@ -154,6 +158,9 @@ export function useMemberEvents({
         ...(data.username !== undefined ? { username: data.username } : {}),
         ...(data.avatarIndex !== undefined
           ? { avatarIndex: data.avatarIndex }
+          : {}),
+        ...(data.avatarSpriteSheet !== undefined
+          ? { avatarSpriteSheet: data.avatarSpriteSheet }
           : {}),
       });
     },

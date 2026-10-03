@@ -324,3 +324,61 @@ input[type="text"]:focus {
   outline: 2px solid var(--accent-pink, #ff477e);
   outline-offset: 3px;
 }
+
+.achievement-unlock-toast {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.achievement-unlock-toast__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 26px;
+}
+
+.achievement-unlock-toast__copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.achievement-unlock-toast__eyebrow {
+  color: var(--neon-success);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.achievement-unlock-toast__title {
+  color: var(--white);
+  font-family: var(--font-display), sans-serif;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.achievement-unlock-toast__description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.name-effect-arcade-glow {
+  text-shadow: 0 0 5px var(--neon-cyan), 0 0 12px rgba(0, 242, 255, 0.55);
+}
+
+.name-effect-glitcher {
+  color: #ff6600;
+  animation: glitch 0.2s infinite;
+}
+
+.name-effect-chromatic-shadow {
+  text-shadow: 2px 0 rgba(255, 20, 147, 0.7), -2px 0 rgba(0, 242, 255, 0.7);
+}

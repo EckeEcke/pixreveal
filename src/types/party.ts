@@ -1,9 +1,12 @@
+import type { AvatarSpriteSheet } from "@/utils/avatar";
+
 export type BuzzerState = "open" | "locked" | "answering";
 
 export type PartyPlayer = {
   playerId: string;
   username: string;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
   points: number;
   wrongAnswers: number;
   correctAnswers: number;
@@ -19,6 +22,7 @@ export type PartyPlayerStats = {
   playerId: string;
   username: string;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
   wrongAnswers: number;
   correctAnswers: number;
   quickestAnswer: number | null;
@@ -75,5 +79,6 @@ export type PartyRoundSnapshot = {
     playerId: string;
     username: string;
     avatarIndex: number;
+    avatarSpriteSheet?: AvatarSpriteSheet;
   };
 };

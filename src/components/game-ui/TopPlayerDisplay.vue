@@ -17,7 +17,7 @@
     </div>
 
     <div class="player-pill" v-if="name">
-      <span class="player-name">
+      <span class="player-name" :class="nameEffectClass">
         {{ name }}
       </span>
       <template v-if="score !== undefined || highscore !== undefined">
@@ -36,11 +36,14 @@
 import { computed } from "vue";
 import type { CSSProperties } from "vue";
 import { Icon } from "@iconify/vue";
-import avatarSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
+import { usePlayerStore } from "@/stores/player";
 
 const props = defineProps<{
   name?: string;
   avatarIndex?: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
+  isOwnPlayer?: boolean;
   score?: number;
   highscore?: number;
   showYouIndicator?: boolean;
@@ -49,19 +52,16 @@ const props = defineProps<{
   subline?: string;
 }>();
 
-const avatarStyle = computed<CSSProperties>(() => {
-  const index = props.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
+const playerStore = usePlayerStore();
 
-  return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated" as CSSProperties["imageRendering"],
-  };
+const nameEffectClass = computed(() =>
+  props.isOwnPlayer && playerStore.playerNameEffect !== "none"
+    ? `name-effect-${playerStore.playerNameEffect}`
+    : undefined,
+);
+
+const avatarStyle = computed<CSSProperties>(() => {
+  return getAvatarStyle(props.avatarIndex, props.avatarSpriteSheet);
 });
 </script>
 

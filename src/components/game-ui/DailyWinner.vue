@@ -6,6 +6,7 @@
         v-if="winnerData"
         :name="winnerData.name"
         :avatar-index="winnerData.avatarIndex"
+        :avatar-sprite-sheet="winnerData.avatarSpriteSheet"
         :score="winnerData.score"
       />
     </router-link>

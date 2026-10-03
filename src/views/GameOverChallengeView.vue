@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
 import AnswerComparison from "@/components/game-ui/AnswerComparison.vue"
@@ -29,11 +29,33 @@ import {
   type ChallengeSession,
   type ChallengeParticipant,
 } from "@/stores/challenge"
+import { usePlayerStore } from "@/stores/player"
+import { useAchievementsStore } from "@/stores/achievements"
 
 const route = useRoute()
 const router = useRouter()
 const challengeStore = useChallengeStore()
+const playerStore = usePlayerStore()
+const achievementsStore = useAchievementsStore()
 const session = ref<ChallengeSession | null>(challengeStore.session)
+
+watch(
+  session,
+  (value) => {
+    if (!value?.opponent) return
+    const ownParticipant = [value.challenger, value.opponent].find(
+      (participant) => participant.playerId === playerStore.playerId,
+    )
+    if (!ownParticipant) return
+
+    const otherParticipant =
+      ownParticipant === value.challenger ? value.opponent : value.challenger
+    if (ownParticipant.score > otherParticipant.score) {
+      void achievementsStore.unlock("win-challenge")
+    }
+  },
+  { immediate: true },
+)
 
 const participants = computed<ChallengeParticipant[]>(() => {
   if (!session.value) return []

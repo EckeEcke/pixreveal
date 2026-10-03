@@ -4,10 +4,13 @@ import { useGameStore } from "./game";
 import { usePlayerStore } from "./player";
 import { useConfigStore } from "./config";
 import type { Round } from "@/types/game";
+import type { AvatarSpriteSheet } from "@/utils/avatar";
 
 export type ChallengeParticipant = {
+  playerId?: string;
   username: string;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
   score: number;
   answerHistory: boolean[];
 };
@@ -74,12 +77,14 @@ export const useChallengeStore = defineStore("challenge", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        playerId: playerStore.playerId,
         mode: playerStore.gameMode,
         revealTime: Number(configStore.revealTime),
         rounds: gameStore.rounds,
         score: playerStore.points,
         username: playerStore.playerName,
         avatarIndex: playerStore.avatarIndex,
+        avatarSpriteSheet: playerStore.avatarSpriteSheet,
         answerHistory: playerStore.answerHistory,
       }),
     });
@@ -97,9 +102,11 @@ export const useChallengeStore = defineStore("challenge", () => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          playerId: playerStore.playerId,
           score: playerStore.points,
           username: playerStore.playerName,
           avatarIndex: playerStore.avatarIndex,
+          avatarSpriteSheet: playerStore.avatarSpriteSheet,
           answerHistory: playerStore.answerHistory,
         }),
         keepalive: true,

@@ -1,3 +1,5 @@
+import type { AvatarSpriteSheet } from "@/utils/avatar";
+
 export type OnlineHighlight = {
   roundIndex: number;
   pixels: number[][];
@@ -11,6 +13,7 @@ export interface Player {
   playerId: string;
   username: string;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
   isHost: boolean;
   isOnline: boolean;
   points: number;

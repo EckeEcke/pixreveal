@@ -8,6 +8,7 @@ export const createApinatorClient = (
   const headers: Record<string, string> = {
     "x-player-username": encodeURIComponent(String(userData.username ?? "")),
     "x-player-avatar": String(userData.avatarIndex ?? 0),
+    "x-player-avatar-sprite-sheet": String(userData.avatarSpriteSheet ?? "classic"),
     "x-player-id": String(userData.playerId ?? ""),
     "x-player-host": String(!!userData.isHost),
   };

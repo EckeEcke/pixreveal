@@ -22,7 +22,7 @@
           </div>
           <p class="message">{{ currentHighlight.message }}</p>
           <div class="player-pill">
-            <div class="mini-avatar" :style="avatarStyleFor(currentHighlight.avatarIndex)" />
+            <div class="mini-avatar" :style="avatarStyleFor(currentHighlight.avatarIndex, currentHighlight.avatarSpriteSheet)" />
             <span>{{ currentHighlight.username.toUpperCase() }}</span>
           </div>
         </div>
@@ -34,9 +34,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
-import avatarSheet from "@/assets/avatars/avatars.webp";
 import type { OnlineHighlight, Player } from "@/types/player";
 import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
+import { getAvatarStyle } from "@/utils/avatar";
 
 const props = defineProps<{ players: Player[] }>();
 const activeIndex = ref(0);
@@ -62,6 +62,7 @@ type HighlightSlide = {
   message: string;
   username: string;
   avatarIndex: number;
+  avatarSpriteSheet?: Player["avatarSpriteSheet"];
   highlight: OnlineHighlight;
 };
 
@@ -97,6 +98,7 @@ const highlights = computed<HighlightSlide[]>(() => {
         message: variant[2],
         username: player.username || "Player",
         avatarIndex: player.avatarIndex,
+        avatarSpriteSheet: player.avatarSpriteSheet,
         highlight,
       });
     }
@@ -113,14 +115,11 @@ const advance = () => {
   }
 };
 
-const avatarStyleFor = (avatarIndex: number) => {
-  const index = typeof avatarIndex === "number" ? avatarIndex : 0;
-  return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${(index % 6) * 20}% ${Math.floor(index / 6) * 20}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated",
-  } as const;
+const avatarStyleFor = (
+  avatarIndex: number,
+  avatarSpriteSheet?: Player["avatarSpriteSheet"],
+) => {
+  return getAvatarStyle(avatarIndex, avatarSpriteSheet);
 };
 
 onMounted(() => {

@@ -4,6 +4,7 @@
       <InlineAvatar
         v-if="activeAvatarIndex !== null"
         :avatarIndex="activeAvatarIndex"
+        :avatar-sprite-sheet="activeAvatarSpriteSheet"
       />{{ activePlayerName }}
     </span>
     <template v-if="isDevilActive">
@@ -55,6 +56,12 @@ const activeAvatarIndex = computed(() => {
   if (!id) return null
   const p = partyStore.players.find((pl: any) => pl.playerId === id)
   return p ? p.avatarIndex : null
+})
+
+const activeAvatarSpriteSheet = computed(() => {
+  const id = partyStore.activePlayerId ?? null
+  return partyStore.players.find((player: any) => player.playerId === id)
+    ?.avatarSpriteSheet
 })
 
 const EARLY_REVEAL_THRESHOLD = 5

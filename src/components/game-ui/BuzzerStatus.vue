@@ -62,6 +62,7 @@
                 <InlineAvatar
                   v-if="activeAvatarIndex !== null"
                   :avatarIndex="activeAvatarIndex"
+                  :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.activePlayerId)"
                 />{{ activePlayerNameUpper }} </span
               >.
             </template>
@@ -76,6 +77,7 @@
                 <InlineAvatar
                   v-if="activeAvatarIndex !== null"
                   :avatarIndex="activeAvatarIndex"
+                  :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.activePlayerId)"
                 />{{ activePlayerName }}
               </span>
               loses {{ pointsForWrong }} points.
@@ -87,6 +89,7 @@
               <InlineAvatar
                 v-if="activeAvatarIndex !== null"
                 :avatarIndex="activeAvatarIndex"
+                :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.activePlayerId)"
               />{{ activePlayerNameUpper }}
             </span>
             FARTED! 😯
@@ -97,6 +100,7 @@
               <InlineAvatar
                 v-if="saboteurAvatarIndex !== null"
                 :avatarIndex="saboteurAvatarIndex"
+                :avatar-sprite-sheet="avatarSpriteSheetFor(saboteurPlayerId)"
               />{{ saboteurPlayerNameUpper }}
             </span>
             IS A <span class="red-text">SABOTEUR</span>! 💣
@@ -108,6 +112,7 @@
               <InlineAvatar
                 v-if="darkenAvatarIndex !== null"
                 :avatarIndex="darkenAvatarIndex"
+                :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.darkenByPlayerId)"
               />{{ darkenActorNameUpper }}
             </span>
             {{ darkenMessageAfter }}
@@ -119,6 +124,7 @@
               <InlineAvatar
                 v-if="freezeAvatarIndex !== null"
                 :avatarIndex="freezeAvatarIndex"
+                :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.freezeByPlayerId)"
               />{{ freezeActorNameUpper }}
             </span>
             {{ freezeMessageAfter }}
@@ -130,6 +136,7 @@
               <InlineAvatar
                 v-if="leaderAvatarIndex !== null"
                 :avatarIndex="leaderAvatarIndex"
+                :avatar-sprite-sheet="avatarSpriteSheetFor(null, leaderUsername)"
               />{{ leaderNameUpper }}
             </span>
             {{ leaderMessageAfter }}
@@ -155,6 +162,7 @@
               <InlineAvatar
                 v-if="leaderAvatarIndex !== null"
                 :avatarIndex="leaderAvatarIndex"
+                :avatar-sprite-sheet="avatarSpriteSheetFor(null, leaderUsername)"
               />{{ leaderUsername?.toUpperCase?.() || "PLAYER" }}
             </span>
             {{ leaderGapMessageAfter }}
@@ -248,6 +256,13 @@ const {
 // so downstream consumers (and the early-options branch) can tell the
 // difference between "no active player" and "a player named Player".
 const activePlayerName = computed(() => partyStore.activePlayer?.username || "")
+
+const avatarSpriteSheetFor = (playerId: string | null, username?: string | null) =>
+  partyStore.players.find(
+    (player: any) =>
+      (playerId && player.playerId === playerId) ||
+      (username && player.username === username),
+  )?.avatarSpriteSheet
 
 const activePlayerNameUpper = computed(
   () => (activePlayerName.value || "Player").toUpperCase()

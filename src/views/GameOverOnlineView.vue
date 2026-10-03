@@ -25,12 +25,14 @@
               :position="player.hasFinished ? index + 1 : undefined"
               :name="player.username"
               :avatar-index="player.avatarIndex"
+              :avatar-sprite-sheet="player.avatarSpriteSheet"
               :points="animatedPoints[player.playerId] ?? player.points"
               static-points-display
               :points-trend="countingUpIds.has(player.playerId) ? 'up' : null"
               :is-pending="!player.hasFinished"
               :correct-answers="player.correctAnswers"
               :show-you-indicator="isMe(player.playerId)"
+              :is-own-player="isMe(player.playerId)"
               :answer-history="player.answerHistory"
             />
           </div>
@@ -74,7 +76,9 @@
       :show="showWinnerAnimation"
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
+      :avatar-sprite-sheet="winnerPlayer.avatarSpriteSheet"
       :is-winner="isMe(winnerPlayer.playerId)"
+      :name-effect="isMe(winnerPlayer.playerId) ? playerStore.playerNameEffect : 'none'"
       @done="showWinnerAnimation = false"
     />
   </main>
@@ -99,11 +103,15 @@ import { useChannelStore } from "@/stores/channel";
 import { useOnlineStore } from "@/stores/online";
 import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
+import { useAchievementsStore } from "@/stores/achievements";
+import { usePlayerStore } from "@/stores/player";
 
 const channelStore = useChannelStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
+const achievementsStore = useAchievementsStore();
+const playerStore = usePlayerStore();
 const router = useRouter();
 
 const showIntro = ref(true);
@@ -168,6 +176,9 @@ const checkAndTriggerWinnerAnimation = () => {
 
   if (allRevealed && allPointsCounted && !winnerAnimationShown.value && winnerPlayer.value) {
     winnerAnimationShown.value = true;
+    if (isMe(winnerPlayer.value.playerId)) {
+      void achievementsStore.unlock("win-online");
+    }
     soundStore.stopSound("counting");
     winnerAnimationTimer = setTimeout(() => {
       winnerAnimationTimer = null;
@@ -338,6 +349,7 @@ onMounted(() => {
     router.replace("/gameover-party-player");
     return;
   }
+  void achievementsStore.unlock("play-online");
   const winnerId = playersSortedByPoints.value[0]?.playerId;
   if (winnerId && winnerId === channelStore.playerId) {
     winnerSoundPlayed.value = true;

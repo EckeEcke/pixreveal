@@ -75,12 +75,14 @@
               :avatar-index="
                 isParty && player.isHost ? undefined : player.avatarIndex
               "
+              :avatar-sprite-sheet="player.avatarSpriteSheet"
               :class="[
                 isParty && player.isHost ? 'hidden' : '',
                 { 'editable-player': isMe(player.playerId) },
               ]"
               :is-host="player.isHost"
               :show-you-indicator="isMe(player.playerId)"
+              :is-own-player="isMe(player.playerId)"
               @click="isMe(player.playerId) && (showPlayerEditModal = true)"
             />
             <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>

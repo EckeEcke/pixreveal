@@ -24,7 +24,12 @@
         <div v-if="showEmojiBurst" key="emoji" class="hud-username hud-emoji-burst">
           {{ displayedEmoji }}
         </div>
-        <div v-else key="name" class="hud-username" :class="{ first: position === 1 || shiny }">
+        <div
+          v-else
+          key="name"
+          class="hud-username"
+          :class="[{ first: position === 1 || shiny }, nameEffectClass]"
+        >
           {{ name }}
         </div>
       </Transition>
@@ -97,7 +102,8 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
-import avatarSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
+import { usePlayerStore } from "@/stores/player";
 import { Icon } from "@iconify/vue";
 import PositionInfo from "./PositionInfo.vue";
 const props = withDefaults(
@@ -107,6 +113,8 @@ const props = withDefaults(
     subline?: string;
     sublineSmall?: string;
     avatarIndex?: number;
+    avatarSpriteSheet?: AvatarSpriteSheet;
+    isOwnPlayer?: boolean;
     points?: number;
     highscore?: number;
     isPending?: boolean;
@@ -128,6 +136,12 @@ const props = withDefaults(
 );
 
 const showEmojiBurst = ref(false);
+const playerStore = usePlayerStore();
+const nameEffectClass = computed(() =>
+  props.isOwnPlayer && playerStore.playerNameEffect !== "none"
+    ? `name-effect-${playerStore.playerNameEffect}`
+    : undefined,
+);
 const displayedEmoji = ref("");
 let emojiBurstTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -192,17 +206,7 @@ const trendClass = computed(() => {
 });
 
 const avatarStyle = computed<CSSProperties>(() => {
-  const index = props.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
-  return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated" as CSSProperties["imageRendering"],
-  };
+  return getAvatarStyle(props.avatarIndex, props.avatarSpriteSheet);
 });
 </script>
 <style scoped>

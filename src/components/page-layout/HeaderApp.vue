@@ -26,9 +26,10 @@
         <button
           class="avatar-btn"
           type="button"
-          aria-label="Edit player"
+          aria-label="Open player profile"
+          title="Player profile"
           data-sfx="click"
-          @click="showPlayerEditModal = true"
+          @click="showPlayerProfileModal = true"
         >
           <span class="avatar-image" :style="avatarStyle"></span>
         </button>
@@ -46,6 +47,21 @@
     </button>
   </div>
 
+  <PlayerProfileModal
+    v-if="showPlayerProfileModal"
+    @close="showPlayerProfileModal = false"
+    @edit="openPlayerEditor"
+    @achievements="openAchievements"
+    @unlockables="openUnlockables"
+  />
+  <AchievementsModal
+    v-if="showAchievementsModal"
+    @close="showAchievementsModal = false"
+  />
+  <UnlockablesModal
+    v-if="showUnlockablesModal"
+    @close="showUnlockablesModal = false"
+  />
   <PlayerEditModal
     v-if="showPlayerEditModal"
     title="EDIT PLAYER"
@@ -61,8 +77,11 @@ import { useConfigStore } from "@/stores/config";
 import { usePlayerStore } from "@/stores/player";
 import HeaderSettings from "@/components/page-ui/HeaderSettings.vue";
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
+import PlayerProfileModal from "@/components/modals/PlayerProfileModal.vue";
+import AchievementsModal from "@/components/modals/AchievementsModal.vue";
+import UnlockablesModal from "@/components/modals/UnlockablesModal.vue";
 import { Icon } from "@iconify/vue";
-import avatarSpriteSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle } from "@/utils/avatar";
 
 defineProps<{
   showBackBtn?: Boolean;
@@ -72,17 +91,28 @@ defineProps<{
 
 const configStore = useConfigStore();
 const playerStore = usePlayerStore();
+const showPlayerProfileModal = ref(false);
+const showAchievementsModal = ref(false);
+const showUnlockablesModal = ref(false);
 const showPlayerEditModal = ref(false);
 
+const openPlayerEditor = () => {
+  showPlayerProfileModal.value = false;
+  showPlayerEditModal.value = true;
+};
+
+const openAchievements = () => {
+  showPlayerProfileModal.value = false;
+  showAchievementsModal.value = true;
+};
+
+const openUnlockables = () => {
+  showPlayerProfileModal.value = false;
+  showUnlockablesModal.value = true;
+};
+
 const avatarStyle = computed(() => {
-  const index = playerStore.avatarIndex || 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  return {
-    backgroundImage: `url(${avatarSpriteSheet})`,
-    backgroundPosition: `${col * 20}% ${row * 20}%`,
-    backgroundSize: "600%",
-  };
+  return getAvatarStyle(playerStore.avatarIndex, playerStore.avatarSpriteSheet);
 });
 </script>
 

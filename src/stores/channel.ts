@@ -417,6 +417,7 @@ export const useChannelStore = defineStore("channel", () => {
       playerId: playerId.value,
       username: playerStore.playerName,
       avatarIndex: playerStore.avatarIndex,
+      avatarSpriteSheet: playerStore.avatarSpriteSheet,
     };
 
     playerMgmt.updatePlayer(profile.playerId, profile);

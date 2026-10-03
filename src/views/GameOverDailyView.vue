@@ -76,12 +76,14 @@ import { useRouter } from "vue-router"
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
 import DailyCountdown from "@/components/page-ui/DailyCountdown.vue"
+import { useAchievementsStore } from "@/stores/achievements"
 
 const router = useRouter()
 
 const playerStore = usePlayerStore()
 const soundStore = useSoundStore()
 const dailyStore = useDailyStore()
+const achievementsStore = useAchievementsStore()
 
 const isPosting = ref(false)
 const showIntro = ref(true)
@@ -136,6 +138,7 @@ const recomputeScale = () => {
 }
 
 onMounted(async () => {
+  void achievementsStore.unlock("play-daily")
   await nextTick()
   recomputeScale()
   resizeObserver = new ResizeObserver(recomputeScale)
@@ -171,6 +174,7 @@ const post = () => {
     userId,
     score: playerStore.points,
     avatarIndex: playerStore.avatarIndex,
+    avatarSpriteSheet: playerStore.avatarSpriteSheet,
   })
 
   dailyStore.postRanking(
@@ -179,6 +183,7 @@ const post = () => {
     playerStore.avatarIndex,
     dailyStore.date,
     userId,
+    playerStore.avatarSpriteSheet,
   )
 
   toast.success(

@@ -13,6 +13,7 @@
           :position="index + 1"
           :name="player.username"
           :avatar-index="player.avatarIndex"
+          :avatar-sprite-sheet="player.avatarSpriteSheet"
           :points="player.points"
           :size="partyPlayersSorted.length > 5 ? 'small' : 'medium'"
           :is-active="activePlayerId === player.playerId"
@@ -26,11 +27,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
+import type { AvatarSpriteSheet } from "@/utils/avatar";
 
 type RankingPlayer = {
   playerId: string;
   username: string;
   avatarIndex: number;
+  avatarSpriteSheet?: AvatarSpriteSheet;
   points: number;
 };
 

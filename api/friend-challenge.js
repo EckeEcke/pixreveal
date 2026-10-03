@@ -30,8 +30,10 @@ const cleanSession = (body) => {
     revealTime: Math.max(1, Math.min(60, Number(body.revealTime) || 15)),
     rounds,
     challenger: {
+      playerId: String(body.playerId || "").slice(0, 80),
       username: String(body.username || "Player").slice(0, 32),
       avatarIndex: Math.max(0, Number(body.avatarIndex) || 0),
+      avatarSpriteSheet: body.avatarSpriteSheet === "unlockables" ? "unlockables" : "classic",
       score: Number(body.score) || 0,
       answerHistory: answers,
     },
@@ -106,8 +108,10 @@ export default async function handler(req, res) {
         : [];
 
       session.opponent = {
+        playerId: String(req.body?.playerId || "").slice(0, 80),
         username: String(req.body?.username || "Player").slice(0, 32),
         avatarIndex: Math.max(0, Number(req.body?.avatarIndex) || 0),
+        avatarSpriteSheet: req.body?.avatarSpriteSheet === "unlockables" ? "unlockables" : "classic",
         score: Number(req.body?.score) || 0,
         answerHistory,
       };

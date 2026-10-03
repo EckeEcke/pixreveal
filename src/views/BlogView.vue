@@ -5,6 +5,15 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">10-04-26</span>
+      </div>
+      <h3 class="log-title">New achievement system and unlockable content!</h3>
+      <p>
+        I just added a new big update to PixReveal! 12 achievements are waiting for you to complete. Leading you through the most relevant features of the game and giving you some neat little challenges. By completing achievements you unlock new bonus content to make your avatar more unique. Unlock a collection of new avatars and text animations for your player name. People will be like "How did they do that?!". The complete achievement system works without any signup or login. To see your progress, simply click on the avatar in the page header.
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">09-20-26</span>
       </div>
       <h3 class="log-title">Improded pixel art editor</h3>

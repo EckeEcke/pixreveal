@@ -24,9 +24,10 @@
                 <div
                 class="avatar"
                 :style="avatarStyleFor(playerStore.avatarIndex)"
-                />
+                >
+                </div>
                 <div class="player-info">
-                    <strong>{{ playerStore.playerName }}</strong>
+                    <strong :class="nameEffectClass">{{ playerStore.playerName }}</strong>
                     <Icon class="edit-icon" icon="pixel:edit-solid" />
                 </div>
             </div>
@@ -85,12 +86,14 @@ import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
 import PlayerEditModal from "@/components/modals/PlayerEditModal.vue"
 import { usePlayerStore } from "@/stores/player"
 import { useChallengeStore } from "@/stores/challenge"
-import avatarSheet from "@/assets/avatars/avatars.webp"
+import { useAchievementsStore } from "@/stores/achievements"
+import { getAvatarStyle } from "@/utils/avatar"
 
 defineEmits(["close"])
 
 const playerStore = usePlayerStore()
 const challengeStore = useChallengeStore()
+const achievementsStore = useAchievementsStore()
 
 const createdLink = ref("")
 const isCreating = ref(false)
@@ -102,18 +105,21 @@ const challengeShareMessage = computed(
     `${playerStore.playerName} challenges you to beat their PixReveal score!`
 )
 
-const avatarStyleFor = (avatarIndex) => ({
-  backgroundImage: `url(${avatarSheet})`,
-  backgroundPosition: `${(avatarIndex % 6) * 20}% ${Math.floor(avatarIndex / 6) * 20}%`,
-  backgroundSize: "600%",
-  imageRendering: "pixelated"
-})
+const avatarStyleFor = (avatarIndex) =>
+  getAvatarStyle(avatarIndex, playerStore.avatarSpriteSheet)
+
+const nameEffectClass = computed(() =>
+  playerStore.playerNameEffect === "none"
+    ? undefined
+    : `name-effect-${playerStore.playerNameEffect}`,
+)
 
 const handleCreateChallenge = async () => {
   if (isCreating.value) return
   isCreating.value = true
   try {
     const sessionId = await challengeStore.createChallenge()
+    void achievementsStore.unlock("create-challenge")
     createdLink.value = `${window.location.origin}/challenge?sessionId=${encodeURIComponent(sessionId)}`
   } catch (error) {
     console.error("Failed to create challenge", error)
@@ -159,6 +165,7 @@ const copyChallengeLink = async () => {
 }
 
 .avatar {
+  position: relative;
   width: 48px;
   height: 48px;
   border-radius: 6px;

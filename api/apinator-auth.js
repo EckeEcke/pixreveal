@@ -34,6 +34,10 @@ export default async function handler(req, res) {
         "Guest " + Math.floor(Math.random() * 1000),
     );
     const avatarIndex = req.headers["x-player-avatar"] || 0;
+    const avatarSpriteSheet =
+      req.headers["x-player-avatar-sprite-sheet"] === "unlockables"
+        ? "unlockables"
+        : "classic";
     const playerId = req.headers["x-player-id"] || "anon";
     const isHost = req.headers["x-player-host"] === "true";
     const rounds = req.headers["x-player-rounds"] || null;
@@ -83,6 +87,7 @@ export default async function handler(req, res) {
       user_info: {
         name: String(username),
         avatar: Number(avatarIndex),
+        avatarSpriteSheet,
         host: isHost,
         rounds,
         duration,

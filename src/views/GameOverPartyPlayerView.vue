@@ -13,8 +13,10 @@
         <h1 class="logo">PARTY <span>OVER</span></h1>
         <TopPlayerDisplay
           :avatar-index="ownPlayer.avatarIndex"
+          :avatar-sprite-sheet="ownPlayer.avatarSpriteSheet"
           :name="ownPlayer.username"
           :score="ownPlayer.points"
+          is-own-player
           class="top-player"
         />
         <div class="party-actions">
@@ -42,13 +44,16 @@
       :show="showWinnerAnimation"
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
+      :avatar-sprite-sheet="winnerPlayer.avatarSpriteSheet"
       :is-winner="isWinner"
+      :name-effect="isWinner ? playerStore.playerNameEffect : 'none'"
       @done="showWinnerAnimation = false"
     />
     <EmojiButtons
       :emoji-cooldown="emojiCooldown"
       :is-frozen="partyStore.isFrozen"
       :connection-stale="partyStore.connectionStale"
+      :emoji-options="gameOverEmojiOptions"
       reduced
       @clicked="sendEmoji"
     />
@@ -56,7 +61,7 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue";
@@ -67,14 +72,18 @@ import { workerClearTimeout } from "@/services/workerTimers";
 import { useChannelStore } from "@/stores/channel";
 import { useGameStore } from "@/stores/game";
 import { usePartyStore } from "@/stores/party";
+import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
+import { useAchievementsStore } from "@/stores/achievements";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 import EmojiButtons from "@/components/game-ui/EmojiButtons.vue";
 
 const channelStore = useChannelStore();
 const partyStore = usePartyStore();
+const playerStore = usePlayerStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
+const achievementsStore = useAchievementsStore();
 const router = useRouter();
 
 const showIntro = ref(true);
@@ -90,6 +99,24 @@ const winnerPlayer = computed(() => partyPlayersSorted.value[0] ?? null);
 
 const isWinner = computed(
   () => winnerPlayer.value?.playerId === channelStore.playerId,
+);
+
+onMounted(() => {
+  void achievementsStore.unlock("play-party");
+});
+
+watch(
+  isWinner,
+  (won) => {
+    if (won) void achievementsStore.unlock("win-party");
+  },
+  { immediate: true },
+);
+
+const gameOverEmojiOptions = computed(() =>
+  isWinner.value
+    ? ["🙇", "🏆", "😎", "😁"]
+    : ["👏", "😭", "😆", "💩"],
 );
 
 const handleIntroDone = () => {

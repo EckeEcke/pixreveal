@@ -9,11 +9,15 @@
       >
         <TopPlayerDisplay
           :avatar-index="player.avatarIndex"
+          :avatar-sprite-sheet="player.avatarSpriteSheet"
+          :is-own-player="player.playerId === playerStore.playerId"
           :is-winner="!isDraw && player.score === highestScore"
           :role="index === 0 ? 'Player 1' : 'Player 2'"
           class="player"
         />
-        <div class="player-name">{{ player.username }}</div>
+        <div class="player-name" :class="getNameEffectClass(player)">
+          {{ player.username }}
+        </div>
       </div>
 
       <div
@@ -64,11 +68,19 @@ import { Icon } from "@iconify/vue"
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
 import type { ChallengeParticipant } from "@/stores/challenge"
 import type { Round } from "@/types/game";
+import { usePlayerStore } from "@/stores/player";
 
 const props = defineProps<{
   rounds: Round[]
   participants: ChallengeParticipant[]
 }>()
+
+const playerStore = usePlayerStore();
+
+const getNameEffectClass = (player: ChallengeParticipant) =>
+  player.playerId === playerStore.playerId && playerStore.playerNameEffect !== "none"
+    ? `name-effect-${playerStore.playerNameEffect}`
+    : undefined;
 
 const highestScore = computed(() => {
   if (!props.participants.length) return 0

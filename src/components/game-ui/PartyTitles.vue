@@ -23,7 +23,7 @@
           >
             <div
               class="mini-avatar"
-              :style="avatarStyleFor(p.avatarIndex)"
+              :style="avatarStyleFor(p.avatarIndex, p.avatarSpriteSheet)"
             />
             <span class="player-pill-name">{{ p.playerNameUpper }}</span>
           </div>
@@ -59,7 +59,7 @@
               <div class="player-pill">
                 <div
                   class="mini-avatar"
-                  :style="avatarStyleFor(currentSlide.snapshot.player.avatarIndex)"
+                  :style="avatarStyleFor(currentSlide.snapshot.player.avatarIndex, currentSlide.snapshot.player.avatarSpriteSheet)"
                 />
                 <span class="player-pill-name">
                   {{ currentSlide.snapshot.player.username.toUpperCase() }}
@@ -78,7 +78,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import RobotModerator from "@/components/game-ui/RobotModerator.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import { usePartyStore } from "@/stores/party";
-import avatarSheet from "@/assets/avatars/avatars.webp";
+import { getAvatarStyle } from "@/utils/avatar";
 import {
   workerClearTimeout,
   workerSetTimeout,
@@ -142,6 +142,7 @@ type SlidePlayer = {
   playerId: string;
   playerNameUpper: string;
   avatarIndex: number;
+  avatarSpriteSheet?: PartyPlayerStats["avatarSpriteSheet"];
 };
 
 type Slide = {
@@ -163,6 +164,7 @@ const slides: Slide[] = (() => {
     playerId: string;
     playerNameUpper: string;
     avatarIndex: number;
+    avatarSpriteSheet?: PartyPlayerStats["avatarSpriteSheet"];
   }> = [];
 
   const players = props.players || [];
@@ -183,6 +185,7 @@ const slides: Slide[] = (() => {
       playerId: p.playerId,
       playerNameUpper: nameUpper,
       avatarIndex: p.avatarIndex,
+      avatarSpriteSheet: p.avatarSpriteSheet,
     };
 
     if (correct > 0 && wrong === 0) {
@@ -319,6 +322,7 @@ const slides: Slide[] = (() => {
         playerId: p.playerId,
         playerNameUpper: p.playerNameUpper,
         avatarIndex: p.avatarIndex,
+        avatarSpriteSheet: p.avatarSpriteSheet,
       }));
 
     const playerNamesUpper = slidePlayers
@@ -453,18 +457,11 @@ const stop = () => {
   timeoutId = null;
 };
 
-const avatarStyleFor = (avatarIndex: number) => {
-  const index = typeof avatarIndex === "number" ? avatarIndex : 0;
-  const col = index % 6;
-  const row = Math.floor(index / 6);
-  const x = col * 20;
-  const y = row * 20;
-  return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated",
-  } as const;
+const avatarStyleFor = (
+  avatarIndex: number,
+  avatarSpriteSheet?: PartyPlayerStats["avatarSpriteSheet"],
+) => {
+  return getAvatarStyle(avatarIndex, avatarSpriteSheet);
 };
 
 onMounted(() => start());

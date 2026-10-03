@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, userId, score, avatarIndex, date } = req.body;
+  const { name, userId, score, avatarIndex, date, avatarSpriteSheet } = req.body;
 
   if (!name || score === undefined || avatarIndex === undefined || !date) {
     return res.status(400).json({ error: "name, score, avatarIndex required" });
@@ -21,7 +21,14 @@ export default async function handler(req, res) {
     await client.connect();
 
     const key = `daily:${date}:rankings`;
-    const entry = JSON.stringify({ name, userId, score, avatarIndex, date });
+    const entry = JSON.stringify({
+      name,
+      userId,
+      score,
+      avatarIndex,
+      avatarSpriteSheet: avatarSpriteSheet === "unlockables" ? "unlockables" : "classic",
+      date,
+    });
 
     await client.zAdd(key, {
       score: Number(score),

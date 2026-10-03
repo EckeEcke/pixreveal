@@ -4,6 +4,9 @@ import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
 import { generatePlayerId } from "@/utils/crypto";
 import type { OnlineHighlight } from "@/types/player";
+import type { AvatarSpriteSheet } from "@/utils/avatar";
+import { NAME_EFFECTS, type PlayerNameEffect } from "@/data/unlockables";
+import { useAchievementsStore } from "@/stores/achievements";
 
 const STORAGE_KEY = "pixreveal:playerProfile";
 const CONTROLLER_ID_KEY = "pixreveal:controllerId";
@@ -26,6 +29,14 @@ export const usePlayerStore = defineStore("player", () => {
 
   const playerName: Ref<string> = ref(savedProfile.name || "");
   const avatarIndex: Ref<number> = ref(savedProfile.avatar ?? 0);
+  const avatarSpriteSheet: Ref<AvatarSpriteSheet> = ref(
+    savedProfile.spriteSheet === "unlockables" ? "unlockables" : "classic",
+  );
+  const playerNameEffect: Ref<PlayerNameEffect> = ref(
+      NAME_EFFECTS.some((effect) => effect.id === savedProfile.nameEffect)
+      ? savedProfile.nameEffect
+      : "none",
+  );
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const answerHistory: Ref<boolean[]> = ref([]);
@@ -37,16 +48,29 @@ export const usePlayerStore = defineStore("player", () => {
   >("classic");
   const isCreatorMode: Ref<boolean> = ref(false);
 
-  watch([playerName, avatarIndex, playerId], ([newName, newAvatar, newId]) => {
+  const achievementsStore = useAchievementsStore();
+  void achievementsStore.loadAchievements().then(() => {
+    if (!achievementsStore.hasBonusAvatars && avatarSpriteSheet.value === "unlockables") {
+      avatarSpriteSheet.value = "classic";
+    }
+  });
+
+  watch(
+      [playerName, avatarIndex, playerId, avatarSpriteSheet, playerNameEffect],
+      ([newName, newAvatar, newId, newSpriteSheet, newNameEffect]) => {
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
         name: newName,
         avatar: newAvatar,
         id: newId,
+        spriteSheet: newSpriteSheet,
+        nameEffect: newNameEffect,
       }),
     );
-  }, { immediate: true });
+    },
+    { immediate: true },
+  );
 
   const setUser = (user: { username: string; avatar: number }) => {
     setPlayerName(user.username);
@@ -68,6 +92,16 @@ export const usePlayerStore = defineStore("player", () => {
 
   const setAvatar = (newIndex: number) => {
     avatarIndex.value = newIndex ?? 0;
+  };
+
+  const setSheet = (newSheet: AvatarSpriteSheet) => {
+    if (newSheet === "unlockables" && !achievementsStore.hasBonusAvatars) return;
+    avatarSpriteSheet.value = newSheet;
+  };
+
+  const setPlayerNameEffect = (effect: PlayerNameEffect) => {
+    if (effect !== "none" && !achievementsStore.hasNameEffects) return;
+    playerNameEffect.value = effect;
   };
 
   const addPoints = (earnedPoints: number) => {
@@ -112,6 +146,8 @@ export const usePlayerStore = defineStore("player", () => {
     playerId,
     playerName,
     avatarIndex,
+    avatarSpriteSheet,
+    playerNameEffect,
     points,
     correctAnswers,
     gameMode,
@@ -122,6 +158,8 @@ export const usePlayerStore = defineStore("player", () => {
     worstIncorrectHighlight,
     setUser,
     setAvatar,
+    setSheet,
+    setPlayerNameEffect,
     addPoints,
     pushToAnswerHistory,
     recordHighlight,

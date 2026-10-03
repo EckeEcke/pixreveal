@@ -8,24 +8,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import avatarSheet from "@/assets/avatars/avatars.webp";
 import type { CSSProperties } from "vue";
+import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
 
 const props = defineProps<{
   avatarIndex?: number | null;
+  avatarSpriteSheet?: AvatarSpriteSheet;
 }>();
 
 const avatarStyle = computed<CSSProperties>(() => {
-  const idx = props.avatarIndex ?? 0;
-  const col = idx % 6;
-  const row = Math.floor(idx / 6);
-  const x = col * 20;
-  const y = row * 20;
   return {
-    backgroundImage: `url(${avatarSheet})`,
-    backgroundPosition: `${x}% ${y}%`,
-    backgroundSize: "600%",
-    imageRendering: "pixelated" as CSSProperties["imageRendering"],
+    ...getAvatarStyle(props.avatarIndex, props.avatarSpriteSheet),
     width: "1em",
     height: "1em",
     display: "inline-block",
