@@ -37,7 +37,7 @@
           @click="setSheet('unlockables')"
           data-sfx="click"
         >
-          UNLOCKABLES
+          BONUS
         </button>
       </div>
       <div class="avatar-grid-scroll-container">
