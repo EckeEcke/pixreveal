@@ -21,14 +21,20 @@
             :key="partner.name"
             class="partner-card"
           >
-            <img
-              :src="partner.image"
-              :alt="`Preview of ${partner.name}`"
-              class="partner-image"
-              width="1280"
-              height="720"
-              loading="lazy"
-            />
+            <a 
+              :href="partner.url" 
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                :src="partner.image"
+                :alt="`Preview of ${partner.name}`"
+                class="partner-image"
+                width="1280"
+                height="720"
+                loading="lazy"
+              />
+            </a>
             <h3>{{ partner.name }}</h3>
             <p>{{ partner.description }}</p>
 
@@ -97,7 +103,7 @@ const partners = [
   },
   {
     name: "Schoolfight",
-    url: "https://eckeecke.itch.io/schoolfight",
+    url: "https://eckeecke.itch.io/school-fight",
     image: "/schoolfight-preview.webp",
     description:
       "A free turn-based browser game about school rivalry. Build a team of three characters, battle your way through the playground and become king of the school. Win mini games to earn money, upgrade your fighters and unlock new characters through achievements.",

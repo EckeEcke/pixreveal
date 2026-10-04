@@ -54,6 +54,11 @@ const generalFaqs = [
       "Yes, the game is playable via keyboard! You can use 1, 2, 3 and 4 to select the according answers. By selecting the small ⌨️ keyboard icon on the top right of the game screen, you can also display small key hints on the answer buttons.",
   },
   {
+    question: "Some players use avatars and text animations that are not available. Where can I get these?",
+    answer:
+      "By completing achievements in PixReveal, you can unlock special avatars and text animations. You can view your unlocked achievements in your profile.",
+  },
+  {
     question: "I submitted art, but I don't see it in the game?",
     answer:
       "Submitted artwork goes through a manual approval process for moderation. Additionally, user-generated content (UGC) must be enabled in the settings. Once your art is approved, it can be viewed and admired in the user gallery.",
@@ -66,7 +71,7 @@ const generalFaqs = [
   {
     question: "Is there a registration or account system?",
     answer:
-      "No, a registration system does not exist. You can host rooms, play solo, join games, and submit your final scores to the global leaderboard instantly without ever needing an account.",
+      "No, a registration system does not exist. You can host rooms, play solo, join games, and submit your final scores to the global leaderboard instantly without ever needing an account. Achievements and unlockables are saved exclusively in your browser.",
   },
 ];
 </script>
