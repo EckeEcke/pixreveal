@@ -23,5 +23,6 @@ export const getAvatarStyle = (
     backgroundSize: "600%",
     backgroundRepeat: "no-repeat",
     imageRendering: "pixelated",
+    transform: "scale(1.05)",
   };
 };

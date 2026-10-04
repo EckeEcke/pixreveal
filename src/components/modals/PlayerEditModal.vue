@@ -210,7 +210,6 @@ h3 {
   box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
   transform: scale(1.3);
   opacity: 1;
-  filter: contrast(2);
   z-index: 2;
 }
 
