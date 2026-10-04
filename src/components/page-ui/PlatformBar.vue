@@ -5,8 +5,10 @@
       :key="link.href"
       :href="link.href"
       :title="link.title"
+      :aria-label="link.title"
       target="_blank"
-      class="btn-outline"
+      rel="noopener noreferrer"
+      class="social-btn"
       data-sfx="click"
     >
       <Icon :icon="link.icon" />
@@ -57,34 +59,44 @@ const socialLinks = [
 <style scoped>
 .social-bar {
   display: flex;
-  flex-wrap: balance;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  margin-top: 16px;
+
+  @media (min-width: 600px) {
+    justify-content: flex-start;
+  }
 }
 
-.btn-outline {
+.social-btn {
   position: relative;
-  padding: 8px;
-  width: 45px;
-  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
   color: var(--white);
-  opacity: 0.8;
   text-decoration: none;
-  transition: all 0.2s ease;
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 15%);
   border-radius: 8px;
-  filter: drop-shadow(3px 3px 0 #00000033);
+  opacity: 0.85;
+  transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+  background: var(--neon-social);
+  border-color: transparent;
+  box-shadow: 0 0 20px var(--white);
+  opacity: 1;
+  transform: translateY(-2px);
 }
 
 .twitch-live-dot {
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: -4px;
+  right: -4px;
   width: 9px;
   height: 9px;
   border: 2px solid var(--bg-dark);
@@ -99,13 +111,5 @@ const socialLinks = [
     opacity: 0.35;
     transform: scale(0.8);
   }
-}
-
-.social-bar .btn-outline:hover {
-  background: var(--neon-social);
-  box-shadow: 0 0 20px var(--white);
-  opacity: 1;
-  transform: translateY(-2px);
-  filter: drop-shadow(3px 3px 0 transparent);
 }
 </style>
