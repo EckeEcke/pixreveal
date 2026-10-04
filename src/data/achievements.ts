@@ -30,13 +30,13 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: "play-singleplayer",
     title: "Welcome to PixReveal",
     description: "Play a game in any singleplayer mode.",
-    icon: "🖼️",
+    icon: "👋",
   },
   {
     id: "survivor",
     title: "Survivor",
     description: "Reach a Survival highscore of at least 20.",
-    icon: "🛡️",
+    icon: "💀",
   },
   {
     id: "perfect-round",
@@ -60,7 +60,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: "win-challenge",
     title: "Win a Friend Challenge",
     description: "Finish a friend challenge with a higher score than your opponent.",
-    icon: "🧾",
+    icon: "💪",
   },
   {
     id: "play-party",

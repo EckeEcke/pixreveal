@@ -3,8 +3,8 @@
     <main class="stream-platform-content">
       <section class="stream-platform-card">
         <p class="eyebrow">STREAM MODE</p>
-        <h1>CHOOSE YOUR CHAT</h1>
-        <p class="intro">Let your viewers play along through the stream chat.</p>
+        <h1>PLAY TOGETHER WITH YOUR CHAT</h1>
+        <p class="intro">Are you a streamer on YouTube or Twitch? Stream PixReveal live and let your viewers play via your chat.</p>
 
         <div class="platform-grid">
           <router-link to="/stream/youtube" class="tile-link" data-sfx="click">

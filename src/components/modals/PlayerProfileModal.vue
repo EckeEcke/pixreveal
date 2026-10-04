@@ -36,7 +36,7 @@
         data-sfx="click"
         @click="emit('achievements')"
       >
-        <Icon icon="pixel:crown-solid" class="achievement-icon" />
+        <Icon icon="pixel:trophy-solid" class="achievement-icon" />
         <span>ACHIEVEMENTS</span>
         <strong>{{ achievementsStore.unlockedCount }} / {{ ACHIEVEMENTS.length }}</strong>
       </button>
@@ -46,7 +46,7 @@
         data-sfx="click"
         @click="emit('unlockables')"
       >
-        <Icon icon="pixel:star-solid" class="unlockables-icon" />
+        <Icon icon="pixel:lock-alt-solid" class="unlockables-icon" />
         <span>UNLOCKABLES</span>
       </button>
     </div>
