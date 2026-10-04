@@ -133,7 +133,7 @@ export const useAchievementsStore = defineStore("achievements", () => {
               h("p", { class: "achievement-unlock-toast__description" }, achievement.description),
             ]),
           ]),
-          { icon: false, autoClose: 4500 },
+          { icon: false, autoClose: 3000 },
         );
       }
       if (id !== "completionist" && unlockedCount.value >= ACHIEVEMENTS.length - 1) {

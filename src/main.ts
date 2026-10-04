@@ -13,7 +13,7 @@ app.use(createPinia());
 app.use(router);
 
 app.use(Vue3Toastify, {
-  autoClose: 3000,
+  autoClose: 2000,
   position: "bottom-center",
   theme: "dark",
   transition: "bounce",

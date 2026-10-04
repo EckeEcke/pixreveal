@@ -21,6 +21,14 @@
             :key="partner.name"
             class="partner-card"
           >
+            <img
+              :src="partner.image"
+              :alt="`Preview of ${partner.name}`"
+              class="partner-image"
+              width="1280"
+              height="720"
+              loading="lazy"
+            />
             <h3>{{ partner.name }}</h3>
             <p>{{ partner.description }}</p>
 
@@ -29,7 +37,12 @@
                 <strong>{{ highlight.title }}:</strong> {{ highlight.text }}
               </li>
             </ul>
-            <a :href="partner.url" target="_blank" class="link-btn-primary">
+            <a
+              :href="partner.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-btn-primary"
+            >
               VISIT {{ partner.name.toUpperCase() }} &rarr;
             </a>
           </div>
@@ -64,6 +77,7 @@ const partners = [
   {
     name: "GameBuddies.io",
     url: "https://gamebuddies.io",
+    image: "/gamebuddies-preview.webp",
     description:
       "A fantastic free Jackbox alternative built by an independent solo developer. GameBuddies offers a collection of 17 multiplayer browser games—including drawing, trivia, social deduction, bingo, and word games—with built-in video chat for seamless party sessions with friends.",
     highlights: [
@@ -78,6 +92,27 @@ const partners = [
       {
         title: "No App Needed",
         text: "Completely free browser party games to jump right into the action.",
+      },
+    ],
+  },
+  {
+    name: "Schoolfight",
+    url: "https://eckeecke.itch.io/schoolfight",
+    image: "/schoolfight-preview.webp",
+    description:
+      "A free turn-based browser game about school rivalry. Build a team of three characters, battle your way through the playground and become king of the school. Win mini games to earn money, upgrade your fighters and unlock new characters through achievements.",
+    highlights: [
+      {
+        title: "Turn-Based Team Battles",
+        text: "Lead a team of three characters, who all attack at once each turn.",
+      },
+      {
+        title: "Upgrades & Items",
+        text: "Spend your earnings on stronger characters and use items mid-fight.",
+      },
+      {
+        title: "3 Mini Games",
+        text: "Switch up the gameplay and earn extra money between battles.",
       },
     ],
   },
@@ -107,11 +142,6 @@ const partners = [
   max-width: 700px;
 }
 
-.pre-headline {
-  font-size: 16px;
-  color: var(--primary);
-}
-
 h2 {
   margin-top: 40px;
   margin-bottom: 16px;
@@ -139,7 +169,7 @@ h2 {
   display: flex;
   flex-direction: column;
   @media (min-width: 600px) {
-    box-shadow: 
+    box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 0.15),
       0 8px 32px rgba(0, 0, 0, 0.4);
     background: rgba(15, 12, 29, 0.75);
@@ -148,6 +178,16 @@ h2 {
     border-radius: 8px;
     padding: 24px;
   }
+}
+
+.partner-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 16px;
 }
 
 .partner-card h3 {
@@ -171,44 +211,10 @@ h2 {
   margin-bottom: 6px;
 }
 
-.btn-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 0.5px;
-  font-size: 0.9rem;
-  transition: transform 0.1s;
-  text-align: center;
-  margin-top: auto;
-  align-self: flex-start;
-}
-
-.btn-cta:active {
-  transform: scale(0.98);
-}
-
-.btn-cta.host {
-  background: var(--primary);
-  color: #fff;
-}
-
 .more-partners {
   margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.link-contact {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  a {
-    margin-top: 4px;
-  }
 }
 
 .link {
