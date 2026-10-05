@@ -27,7 +27,7 @@
               v-if="!isPosting"
               data-sfx="click"
               class="btn-primary"
-              @click="showAvatarModal = true"
+              @click="handlePostClick"
             >
               <Icon icon="pixel:arrow-circle-up-solid" /> POST SCORE TO LEADERBOARD
             </ButtonPrimary>
@@ -43,7 +43,7 @@
           </ButtonSecondary>
           </div>
           <div>
-            <h2>Challenge your friends!</h2>
+            <h2>Share today's challenge!</h2>
             <ShareIcons :msg="shareMessage" />
           </div>
           <DailyCountdown />
@@ -98,6 +98,14 @@ const SCALE_BREAKPOINT = 1000
 
 let resizeObserver = null
 let rafId = null
+
+const handlePostClick = () => {
+  if (!achievementsStore.isUnlocked("edit-player")) {
+    showAvatarModal.value = true
+    return
+  }
+  post()
+}
 
 const showAvatarModal = ref(false)
 

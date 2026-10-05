@@ -1,7 +1,7 @@
 <template>
   <div class="social-bar">
     <button
-      class="btn-outline"
+      class="social-btn"
       @click="share('whatsapp')"
       data-sfx="click"
       title="Share via WhatsApp"
@@ -10,7 +10,7 @@
     </button>
 
     <button
-      class="btn-outline"
+      class="social-btn"
       @click="share('discord')"
       data-sfx="click"
       title="Share on Discord"
@@ -19,7 +19,7 @@
     </button>
 
     <button
-      class="btn-outline"
+      class="social-btn"
       @click="share('facebook')"
       data-sfx="click"
       title="Share on Facebook"
@@ -28,7 +28,7 @@
     </button>
 
     <button
-      class="btn-outline"
+      class="social-btn"
       @click="share('reddit')"
       data-sfx="click"
       title="Share on Reddit"
@@ -37,7 +37,7 @@
     </button>
     <button
       v-if="canNativeShare"
-      class="btn-outline"
+      class="social-btn"
       @click="shareNative"
       title="More sharing options"
       data-sfx="click"
@@ -130,29 +130,34 @@ const shareNative = async () => {
   display: flex;
   flex-wrap: balance;
   justify-content: center;
-  gap: 16px;
+  gap: 8px;
   margin-top: 16px;
   position: relative;
 }
 
-.btn-outline {
-  padding: 8px;
-  width: unset;
-  height: 45px;
+.social-btn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
   color: var(--white);
-  opacity: 0.8;
-  backdrop-filter: none;
-  border-radius: 4px;
+  text-decoration: none;
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 8px;
+  opacity: 0.85;
+  transition: all 0.2s ease;
 }
 
-.social-bar .btn-outline:hover {
+.social-btn:hover {
   background: var(--neon-social);
+  border-color: transparent;
   box-shadow: 0 0 20px var(--white);
+  opacity: 1;
+  transform: translateY(-2px);
 }
 
 .copied-toast {
