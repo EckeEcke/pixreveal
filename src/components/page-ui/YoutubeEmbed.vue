@@ -64,7 +64,7 @@ const effectiveThumbnail = computed(() => {
   if (props.thumbnailUrl) {
     return props.thumbnailUrl
   }
-  return `https://img.youtube.com/vi/${props.videoId}/sddefault.jpg`
+  return `https://img.youtube.com/vi/${props.videoId}/maxresdefault.jpg`
 })
 
 const schemaData = computed(() => ({
