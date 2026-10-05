@@ -85,7 +85,7 @@ onMounted(() => {
   gap: 8px;
   max-height: 62vh;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 8px;
 }
 
 .achievement-list::-webkit-scrollbar {
@@ -106,11 +106,10 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.035);
-  opacity: 0.55;
+  opacity: 0.3;
 }
 
 .achievement-row.unlocked {
-  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   opacity: 1;
 }
 

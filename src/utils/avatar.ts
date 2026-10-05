@@ -20,9 +20,10 @@ export const getAvatarStyle = (
   return {
     backgroundImage: `url(${spriteSheets[spriteSheet]})`,
     backgroundPosition: `${column * 20}% ${row * 20}%`,
-    backgroundSize: "600%",
+    backgroundSize: "605%",
     backgroundRepeat: "no-repeat",
     imageRendering: "pixelated",
-    transform: "scale(1.05)",
+    transformOrigin: "center",
+    transform: "scale(1)",
   };
 };
