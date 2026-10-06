@@ -5,7 +5,7 @@
     :mode="isProd ? 'production' : 'development'"
   />
   <div>
-    <div v-if="!isMobile" class="pixelCon">
+    <div class="pixelCon">
       <div
         v-for="n in 80"
         :key="n"
@@ -44,13 +44,6 @@ const dailyStore = useDailyStore()
 const gameStore = useGameStore()
 
 const audio = ref(null)
-
-const isMobile = ref(false)
-let mobileMql = null
-
-const updateIsMobile = (e) => {
-  isMobile.value = e.matches
-}
 
 const MUSIC_ROUTES = new Set([
   "classic",
@@ -123,7 +116,6 @@ const requestWakeLock = async () => {
   try {
     wakeLock = await navigator.wakeLock.request("screen")
     wakeLock.addEventListener("release", () => {
-      console.log("WakeLock released")
       if (document.visibilityState === "visible") {
         wakeLock = null
         setTimeout(() => {
@@ -158,12 +150,8 @@ onMounted(() => {
   gameStore.fetchScores()
 
   const load = () => configStore.fetchUgcDrawings();
-  if ("requestIdleCallback" in window) requestIdleCallback(load);
+  if ("requestIdleCallback" in window) requestIdleCallback(load, { timeout: 3000 });
   else setTimeout(load, 1000);
-
-  mobileMql = window.matchMedia("(max-width: 480px)")
-  isMobile.value = mobileMql.matches
-  mobileMql.addEventListener("change", updateIsMobile)
 
   requestWakeLock()
   document.addEventListener("visibilitychange", handleVisibilityChange)
@@ -205,7 +193,6 @@ watch(
 
 onBeforeUnmount(() => {
   document.removeEventListener("visibilitychange", handleVisibilityChange)
-  mobileMql?.removeEventListener("change", updateIsMobile)
   releaseWakeLock()
 })
 </script>
@@ -266,8 +253,8 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 480px) {
-  .pixel {
-    width: 20%;
+  .pixelCon {
+    display: none;
   }
 }
 
@@ -289,3 +276,15 @@ onBeforeUnmount(() => {
   transition: opacity 0.2s ease-out;
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
