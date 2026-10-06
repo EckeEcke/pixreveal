@@ -1,66 +1,75 @@
 import { createClient } from "redis";
 
-export default async function handler(req, res) {
-  const client = createClient({
-    url: process.env.KV_REDIS_URL,
-  });
+let client = null;
 
-  client.on("error", (err) => console.log("Redis Client Error", err));
-
-  let targetDate = new Date().toISOString().split("T")[0];
-
-  try {
+async function getClient() {
+  if (!client) {
+    client = createClient({ url: process.env.KV_REDIS_URL });
+    client.on("error", (err) => console.log("Redis Client Error", err));
+  }
+  if (!client.isOpen) {
     await client.connect();
+  }
+  return client;
+}
 
-    let data = await client.get(`daily:${targetDate}:set`);
+const dateKey = (date) => date.toISOString().split("T")[0];
 
-    let rankingsRaw = await client.zRange(
-      `daily:${targetDate}:rankings`,
-      0,
-      -1,
-      { REV: true },
-    );
-    const winnersRaw = await client.lRange("daily:winners", 0, -1);
+export default async function handler(req, res) {
+  try {
+    const redis = await getClient();
 
-    if (!data) {
-      const yesterdayDate = new Date();
-      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-      targetDate = yesterdayDate.toISOString().split("T")[0];
+    let targetDate = dateKey(new Date());
 
-      const [fallbackData, fallbackRankings] = await Promise.all([
-        client.get(`daily:${targetDate}:set`),
-        client.zRange(`daily:${targetDate}:rankings`, 0, -1, { REV: true }),
+    let [data, winnersRaw] = await Promise.all([
+      redis.get(`daily:${targetDate}:set`),
+      redis.lRange("daily:winners", 0, -1),
+    ]);
+
+    let rankingsRaw;
+
+    if (data) {
+      rankingsRaw = await redis.zRange(`daily:${targetDate}:rankings`, 0, -1, {
+        REV: true,
+      });
+    } else {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      targetDate = dateKey(yesterday);
+
+      [data, rankingsRaw] = await Promise.all([
+        redis.get(`daily:${targetDate}:set`),
+        redis.zRange(`daily:${targetDate}:rankings`, 0, -1, { REV: true }),
       ]);
-
-      data = fallbackData;
-      rankingsRaw = fallbackRankings;
     }
 
     if (!data) {
-      await client.disconnect();
       return res
         .status(404)
         .json({ error: "No data available", attempted: targetDate });
     }
 
     const parsedData = JSON.parse(data);
-    const parsedRankings = rankingsRaw.map((r) => JSON.parse(r));
-    const parsedYesterdayRankings = parsedData.yesterdayRankings ?? [];
-    const parsedWinners = winnersRaw.map((w) => JSON.parse(w));
 
-    await client.disconnect();
+    if (req.query.fresh) {
+      res.setHeader("Cache-Control", "no-store");
+    } else {
+      res.setHeader(
+        "Cache-Control",
+        "public, s-maxage=30, stale-while-revalidate=60",
+      );
+    }
 
     return res.status(200).json({
       date: targetDate,
       rounds: parsedData.dailyRounds,
       mode: parsedData.mode,
       title: parsedData.curation?.heading,
-      rankings: parsedRankings,
-      winners: parsedWinners,
-      yesterdayRankings: parsedYesterdayRankings,
+      rankings: rankingsRaw.map((r) => JSON.parse(r)),
+      winners: winnersRaw.map((w) => JSON.parse(w)),
+      yesterdayRankings: parsedData.yesterdayRankings ?? [],
     });
   } catch (error) {
-    if (client.isOpen) await client.disconnect();
     return res.status(500).json({
       error: "Database error",
       details: error.message,

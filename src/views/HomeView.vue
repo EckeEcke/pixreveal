@@ -196,8 +196,11 @@ const updateFullscreenStatus = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
-onMounted(() => {
-  document.addEventListener("fullscreenchange", updateFullscreenStatus);
+// Twitch-Status erst nach dem ersten Paint abrufen (nicht kritisch fuer den Render)
+let idleHandle = null;
+let timeoutHandle = null;
+
+const loadTwitchStatus = () =>
   fetch("/api/twitch-live")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
@@ -206,10 +209,21 @@ onMounted(() => {
     .catch(() => {
       isTwitchLive.value = false;
     });
+
+onMounted(() => {
+  document.addEventListener("fullscreenchange", updateFullscreenStatus);
+
+  if ("requestIdleCallback" in window) {
+    idleHandle = requestIdleCallback(loadTwitchStatus, { timeout: 4000 });
+  } else {
+    timeoutHandle = setTimeout(loadTwitchStatus, 2000);
+  }
 });
 
 onUnmounted(() => {
   stopDailyWatch?.();
+  if (idleHandle !== null) cancelIdleCallback(idleHandle);
+  if (timeoutHandle !== null) clearTimeout(timeoutHandle);
   document.removeEventListener("fullscreenchange", updateFullscreenStatus);
 });
 </script>
