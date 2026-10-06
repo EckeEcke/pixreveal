@@ -647,11 +647,12 @@ h2 {
 .pre-headline {
   display: block;
   color: var(--primary);
-  margin-bottom: 64px;
+  margin-bottom: 32px;
   text-align: left;
 
   @media (min-width: 1024px) {
     text-align: center;
+    margin-bottom: 64px;
   }
 }
 

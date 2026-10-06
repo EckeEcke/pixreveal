@@ -247,8 +247,8 @@ const handleClick = (event: MouseEvent) => {
 
 .background-icon {
   position: absolute;
-  right: -15%;
-  bottom: -15%;
+  right: -24px;
+  bottom: -24px;
   color: var(--btn-color);
   font-size: 120px;
   opacity: 0.05;

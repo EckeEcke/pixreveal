@@ -16,7 +16,7 @@
                 :btn-function="startGravity"
                 btn-text="GRAVITY"
                 sub-title="Pixels dropping in from the top in Tetris style"
-                btn-color="var(--neon-yellow)"
+                btn-color="var(--neon-mint)"
                 :feature-badges="['Bottom to Top', 'Left to Right']"
                 :max-players="1"
                 :challengeable="true"
