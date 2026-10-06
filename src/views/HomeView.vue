@@ -24,53 +24,52 @@
                 :max-players="1"
                 :feature-badges="['~1 min per round', '5 random drawings']"
               />
-                          <router-link to="/play-party" data-sfx="click" class="tile-link">
-                            <SelectionTile
-                              size="lg"
-                              icon-name="pixel:users-solid"
-                              btn-text="PARTY MULTIPLAYER"
-                              sub-title="Jackbox style party game for your group"
-                              btn-color="var(--neon-yellow)"
-                              :is-shiny="true"
-                              :max-players="10"
-                              :feature-badges="['No app needed', 'Phones as controllers']"
-                            />
-                          </router-link>
-              
+                <router-link to="/play-party" data-sfx="click" class="tile-link">
+                  <SelectionTile
+                    size="lg"
+                    icon-name="pixel:users-solid"
+                    btn-text="PARTY MULTIPLAYER"
+                    sub-title="Jackbox style party game for your group"
+                    btn-color="var(--neon-yellow)"
+                    :is-shiny="true"
+                    :max-players="10"
+                    :feature-badges="['No app needed', 'Phones as controllers']"
+                  />
+                </router-link>
             </div>
             <div class="trailer-bento">
-              <YoutubeEmbed video-id="YQl5jOqm2n0" />
+              <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
               <div class="tiles-column">
-                  <router-link to="/play-online" data-sfx="click" class="tile-link">
-                    <SelectionTile
-                      icon-name="pixel:globe-solid"
-                      btn-text="ONLINE MULTIPLAYER"
-                      sub-title="Play online together from anywhere"
-                      btn-color="var(--neon-cyan)"
-                      :max-players="10"
-                    />
-                  </router-link>
-
+                <router-link to="/play-online" data-sfx="click" class="tile-link">
                   <SelectionTile
-                    data-sfx="click"
-                    :icon-name="
-                      dailyStore.hasPlayedToday
-                        ? 'pixel:numbered-list-solid'
-                        : 'pixel:star-solid'
-                    "
-                    :max-players="!dailyStore.hasPlayedToday ? 1 : undefined"
-                    :btn-function="startDaily"
-                    btn-text="DAILY CHALLENGE"
-                    :sub-title="
-                      dailyStore.hasPlayedToday
-                        ? 'Check today\'s leaderboard'
-                        : 'Compete for the top position on the global leaderboard'
-                    "
-                    btn-color="var(--neon-orange)"
-                    :loading="dailyStore.isLoading"
-                    :corner-text="timeLeft"
-                    :is-new="!dailyStore.hasPlayedToday"
+                    icon-name="pixel:globe-solid"
+                    btn-text="ONLINE MULTIPLAYER"
+                    sub-title="Play online together from anywhere"
+                    btn-color="var(--neon-cyan)"
+                    :max-players="10"
                   />
+                </router-link>
+
+                <SelectionTile
+                  data-sfx="click"
+                  :icon-name="
+                    dailyStore.hasPlayedToday
+                      ? 'pixel:numbered-list-solid'
+                      : 'pixel:star-solid'
+                  "
+                  :max-players="!dailyStore.hasPlayedToday ? 1 : undefined"
+                  :btn-function="startDaily"
+                  btn-text="DAILY CHALLENGE"
+                  :sub-title="
+                    dailyStore.hasPlayedToday
+                      ? 'Check today\'s leaderboard'
+                      : 'Compete for the top position on the global leaderboard'
+                  "
+                  btn-color="var(--neon-orange)"
+                  :loading="dailyStore.isLoading"
+                  :corner-text="timeLeft"
+                  :is-new="!dailyStore.hasPlayedToday"
+                />
               </div>
             </div>
             <div class="trailer-bento">

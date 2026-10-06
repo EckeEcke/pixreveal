@@ -5,15 +5,23 @@
     </component>
 
     <div v-if="!isLoaded" class="video-placeholder">
-      <img
-        :src="effectiveThumbnail"
-        alt="PixReveal Gameplay Video"
-        width="640"
-        height="360"
-        decoding="async"
-        fetchpriority="high"
-      />
-      
+      <picture>
+        <source
+          v-if="thumbnailUrl"
+          media="(max-width: 768px)"
+          :srcset="thumbnailUrl"
+        />
+        <img
+          :src="youtubeThumbnail"
+          alt="PixReveal Gameplay Video"
+          width="640"
+          height="360"
+          decoding="async"
+          :loading="priority ? 'eager' : 'lazy'"
+          :fetchpriority="priority ? 'high' : undefined"
+        />
+      </picture>
+
       <noscript>
         <a :href="`https://www.youtube.com/watch?v=${videoId}`" target="_blank" rel="noopener">
           Watch PixReveal Gameplay Trailer on YouTube
@@ -56,25 +64,24 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  priority: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const isLoaded = ref(false)
 
-const effectiveThumbnail = computed(() => {
-  if (props.thumbnailUrl) {
-    return props.thumbnailUrl
-  }
-  return `https://img.youtube.com/vi/${props.videoId}/maxresdefault.jpg`
-})
+const youtubeThumbnail = computed(
+  () => `https://i.ytimg.com/vi/${props.videoId}/maxresdefault.jpg`
+)
 
 const schemaData = computed(() => ({
   "@context": "https://schema.org",
   "@type": "VideoObject",
   "name": "PixReveal Gameplay Trailer",
   "description": "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
-  "thumbnailUrl": [
-    props.thumbnailUrl || `https://img.youtube.com/vi/${props.videoId}/hqdefault.jpg`
-  ],
+  "thumbnailUrl": [props.thumbnailUrl || youtubeThumbnail.value],
   "uploadDate": "2026-03-01T08:00:00+01:00",
   "duration": "PT48S",
   "expires": "2040-01-01T00:00:00+01:00",
@@ -96,10 +103,17 @@ const schemaData = computed(() => ({
   box-sizing: border-box;
 }
 
-.video-placeholder img {
+.video-placeholder,
+.video-placeholder picture {
+  display: block;
   width: 100%;
   height: 100%;
-  aspect-ratio: 16 / 9;
+}
+
+.video-placeholder img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -114,10 +128,6 @@ noscript a {
   z-index: 10;
   text-decoration: none;
   border-radius: 4px;
-}
-
-.video-wrapper:hover img {
-  opacity: 1;
 }
 
 .play-overlay {
