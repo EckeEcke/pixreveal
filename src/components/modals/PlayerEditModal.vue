@@ -166,6 +166,8 @@ h3 {
 /* Der neue, sichere Scroll-Container für Mobile */
 .avatar-grid-scroll-container {
   width: 100%;
+  padding: 0 12px;
+  margin: 0 -12px;
 }
 
 .avatar-grid {
@@ -185,7 +187,7 @@ h3 {
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   overflow: hidden;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .avatar-image {
