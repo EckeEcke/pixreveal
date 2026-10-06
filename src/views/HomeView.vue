@@ -31,7 +31,6 @@
                     btn-text="PARTY MULTIPLAYER"
                     sub-title="Jackbox style party game for your group"
                     btn-color="var(--neon-yellow)"
-                    :is-shiny="true"
                     :max-players="10"
                     :feature-badges="['No app needed', 'Phones as controllers']"
                   />
@@ -66,7 +65,7 @@
                       : 'Compete for the top position on the global leaderboard'
                   "
                   btn-color="var(--neon-orange)"
-                  :loading="dailyStore.isLoading"
+                  :loading="isDailyPending"
                   :corner-text="timeLeft"
                   :is-new="!dailyStore.hasPlayedToday"
                 />
@@ -111,7 +110,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { usePlayerStore } from "@/stores/player";
 import { getRandomUserName } from "@/utils/random";
 import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
@@ -144,14 +143,36 @@ const isTwitchLive = ref(false);
 
 const router = useRouter();
 
-const startDaily = () => {
+const isDailyPending = ref(false);
+let stopDailyWatch = null;
+
+const proceedToDaily = () => {
   prepareGame(10, dailyStore.dailyRounds);
   playerStore.gameMode = dailyStore.mode;
-  if (dailyStore.hasPlayedToday) {
-    router.push("/rankings-daily");
-  } else {
-    router.push("/daily");
+  router.push(dailyStore.hasPlayedToday ? "/rankings-daily" : "/daily");
+};
+
+const startDaily = () => {
+  if (isDailyPending.value) return;
+
+  // Daten schon da -> direkt weiter
+  if (!dailyStore.isLoading) {
+    proceedToDaily();
+    return;
   }
+
+  // Daten laden noch -> Loading-State, danach automatisch weiter
+  isDailyPending.value = true;
+  stopDailyWatch = watch(
+    () => dailyStore.isLoading,
+    (loading) => {
+      if (loading) return;
+      stopDailyWatch?.();
+      stopDailyWatch = null;
+      isDailyPending.value = false;
+      proceedToDaily();
+    },
+  );
 };
 
 const startClassic = () => {
@@ -187,9 +208,10 @@ onMounted(() => {
     });
 });
 
-onUnmounted(() =>
-  document.removeEventListener("fullscreenchange", updateFullscreenStatus),
-);
+onUnmounted(() => {
+  stopDailyWatch?.();
+  document.removeEventListener("fullscreenchange", updateFullscreenStatus);
+});
 </script>
 
 <style scoped>
