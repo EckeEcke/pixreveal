@@ -43,7 +43,6 @@ export const useConfigStore = defineStore("config", () => {
   const includeUgc = ref(false);
   const ugcDrawings: Ref<Drawing[]> = ref([]);
   const isManualOpen = ref(false);
-  const isSettingsOpen = ref(false);
 
   const showKeyHints = ref(false);
 
@@ -51,15 +50,29 @@ export const useConfigStore = defineStore("config", () => {
     showKeyHints.value = !showKeyHints.value;
   };
 
-  const fetchUgcDrawings = async () => {
-    fetch(
-      "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json",
-    )
-      .then((res) => res.json())
+  const ugcLoaded = ref(false);
+  
+  let ugcRequest: Promise<void> | null = null;
+
+  const fetchUgcDrawings = () => {
+    if (ugcLoaded.value) return Promise.resolve();
+    if (ugcRequest) return ugcRequest;
+
+    ugcRequest = fetch("/data/approved.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         ugcDrawings.value = data;
+        ugcLoaded.value = true;
       })
-      .catch((err) => console.error("UGC fetch fehlgeschlagen:", err));
+      .catch((err) => console.error("UGC fetch fehlgeschlagen:", err))
+      .finally(() => {
+        ugcRequest = null;
+      });
+
+    return ugcRequest;
   };
 
   const filteredDrawings: Ref<Drawing[]> = computed(() => {

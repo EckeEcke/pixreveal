@@ -2,6 +2,10 @@
     "cleanUrls": true,
     "rewrites": [
         {
+            "source": "/data/approved.json",
+            "destination": "https://raw.githubusercontent.com/EckeEcke/pixreveal-ugc/main/approved.json"
+        },
+        {
             "source": "/_va/:match*",
             "destination": "https://pixreveal.com/_vercel/insights/:match*"
         },
@@ -12,6 +16,17 @@
         {
             "source": "/((?!api|@|.*\\..*).*)",
             "destination": "/"
+        }
+    ],
+    "headers": [
+        {
+        "source": "/data/approved.json",
+        "headers": [
+            {
+            "key": "Cache-Control",
+            "value": "public, s-maxage=300, stale-while-revalidate=86400"
+            }
+        ]
         }
     ],
     "crons": [

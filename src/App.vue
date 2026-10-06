@@ -155,8 +155,11 @@ const handleVisibilityChange = () => {
 
 onMounted(() => {
   dailyStore.fetchDailyData()
-  configStore.fetchUgcDrawings()
   gameStore.fetchScores()
+
+  const load = () => configStore.fetchUgcDrawings();
+  if ("requestIdleCallback" in window) requestIdleCallback(load);
+  else setTimeout(load, 1000);
 
   mobileMql = window.matchMedia("(max-width: 480px)")
   isMobile.value = mobileMql.matches
