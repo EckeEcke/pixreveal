@@ -73,14 +73,14 @@
                 </div>
               </div>
 
-              <button
+              <ButtonPrimary 
                 v-if="selectedRole === 'host'"
-                class="start-btn"
+                class="primary-btn"
                 data-sfx="click"
                 @click="hostGame"
               >
                 CREATE ROOM
-              </button>
+              </ButtonPrimary>
 
               <div
                 v-else
@@ -118,14 +118,18 @@
             </section>
           </div>
         </div>
-
-        <PlayerEditModal
-          v-if="showAvatarModal"
-          @btn-click="showAvatarModal = false"
-          @close="showAvatarModal = false"
-        />
       </main>
     </div>
+
+    <!-- Außerhalb des transformierten .scale-wrapper, damit position: fixed
+         wieder auf den Viewport bezogen ist und das Modal nicht mitskaliert wird -->
+    <Teleport to="body">
+      <PlayerEditModal
+        v-if="showAvatarModal"
+        @btn-click="showAvatarModal = false"
+        @close="showAvatarModal = false"
+      />
+    </Teleport>
   </div>
 </template>
 
@@ -152,6 +156,7 @@ import OnlineModeInfo from "@/components/page-ui/OnlineModeInfo.vue";
 import RoomIdInput from "@/components/page-ui/RoomIdInput.vue";
 import GameSettingsPanel from "@/components/page-ui/GameSettingsPanel.vue";
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 
 const wrapperRef = ref(null);
 
@@ -341,8 +346,11 @@ const joinGame = () => {
   text-align: left;
 }
 
-.start-btn {
+.primary-btn {
   margin-top: 0px;
+  height: 64px;
+  width: 100%;
+  font-size: 18px;
 }
 
 .card-grid {

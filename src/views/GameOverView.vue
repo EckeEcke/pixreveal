@@ -434,11 +434,11 @@ main {
   padding: 14px 24px;
   box-sizing: border-box;
 
-  background: #bd3454;
+  background: var(--purple-glow);
   border: 2px solid rgba(0, 0, 0, 0.75);
   border-radius: 6px;
 
-  color: #08050d;
+  color: #fff;
   cursor: pointer;
 
   box-shadow:

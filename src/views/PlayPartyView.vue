@@ -121,14 +121,18 @@
             </section>
           </div>
         </div>
-
-        <PlayerEditModal
-          v-if="showAvatarModal"
-          @btn-click="showAvatarModal = false"
-          @close="showAvatarModal = false"
-        />
       </main>
     </div>
+
+    <!-- Außerhalb des transformierten .scale-wrapper, damit position: fixed
+         wieder auf den Viewport bezogen ist und das Modal nicht mitskaliert wird -->
+    <Teleport to="body">
+      <PlayerEditModal
+        v-if="showAvatarModal"
+        @btn-click="showAvatarModal = false"
+        @close="showAvatarModal = false"
+      />
+    </Teleport>
   </div>
 </template>
 

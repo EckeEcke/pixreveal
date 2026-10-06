@@ -272,8 +272,10 @@ input[type="text"]:focus {
 }
 
 .close-btn svg {
-  border: 2px solid black;
-  border-radius: 2px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: #fff;
+  background-size: 90%;
 }
 
 .back-btn {

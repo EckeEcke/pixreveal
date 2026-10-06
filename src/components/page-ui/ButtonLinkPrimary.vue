@@ -25,7 +25,7 @@ defineEmits(["clicked"]);
   border: none;
   text-transform: uppercase;
   text-decoration: none;
-  color: black;
+  color: white;
   font-family: inherit;
   font-weight: 900;
   font-size: 16px;

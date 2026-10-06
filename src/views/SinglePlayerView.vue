@@ -96,7 +96,7 @@
 
         <div class="card-grid">
           <div class="info-card seo-section">
-            <h2>Adjust your game settings</h2>
+            <h2>Game settings</h2>
             <GameSettingsPanel />
           </div>
           <!-- SEO TEXT SECTION -->
