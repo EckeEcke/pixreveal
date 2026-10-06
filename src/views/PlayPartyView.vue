@@ -88,13 +88,14 @@
               <div v-else class="join-container">
                 <h3>ENTER ROOM ID TO JOIN A GAME</h3>
 
-                <div class="join-terminal">
-                  <input
+                <div>
+                  <RoomIdInput
+                    ref="roomIdRef"
                     v-model="joinRoomId"
-                    placeholder="Enter ID"
-                    :maxlength="ROOM_ID_LENGTH"
-                    autocapitalize="on"
-                    class="terminal-input"
+                    :length="ROOM_ID_LENGTH"
+                    :error="joinError"
+                    :disabled="channelStore.isLoading"
+                    @submit="submitJoin"
                   />
 
                   <button
@@ -146,6 +147,7 @@ import { ROOM_ID_LENGTH } from "@/utils/crypto"
 import { useRoute } from "vue-router"
 import PartyModeInfo from "@/components/page-ui/PartyModeInfo.vue"
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
+import RoomIdInput from "@/components/page-ui/RoomIdInput.vue"
 import GameSettingsPanel from "@/components/page-ui/GameSettingsPanel.vue"
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 
@@ -461,40 +463,20 @@ h2 {
   min-width: 0;
 }
 
-.join-terminal {
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media (min-width: 400px) {
-    grid-template-columns: 120px 1fr;
-  }
-
-  gap: 8px;
-}
-
-.terminal-input {
-  background: transparent;
-  border: 2px solid var(--primary);
-  border-radius: 4px;
-  color: #fff;
-  padding: 12px;
-  font-family: inherit;
-  font-size: 20px;
-  outline: none;
-}
-
 .terminal-btn {
   background: var(--primary);
   color: #000;
   border: none;
   border-radius: 4px;
   padding: 12px 20px;
+  margin-top: 16px;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 900;
   animation: pulse 3s infinite;
   min-height: 52px;
+  width: 100%;
 }
 
 .terminal-btn:disabled {

@@ -17,6 +17,12 @@ const generateRandomCode = (length: number) => {
   return result;
 };
 
+export const normalizeRoomId = (value: string, length: number) =>
+  value
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, length);
+
 export const generateRoomId = (cluster: ApinatorCluster) => {
   return `${CLUSTER_PREFIXES[cluster]}${generateRandomCode(ROOM_ID_LENGTH - 1)}`;
 };
