@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { usePlayerStore } from '@/stores/player'
 
 const props = defineProps<{
@@ -54,12 +54,17 @@ const props = defineProps<{
 
 const playerStore = usePlayerStore()
 
+const isDraw = computed(() => {
+  if (!props.challenge?.opponent) return false
+  return props.challenge.challenger.score === props.challenge.opponent.score
+})
+
 const isParticipant = computed(() => {
-  if (!challenge.value) return false
+  if (!props.challenge) return false
 
   const myId = playerStore.playerId
-  const challengerId = challenge.value.challenger?.playerId
-  const opponentId = challenge.value.opponent?.playerId
+  const challengerId = props.challenge.challenger?.playerId
+  const opponentId = props.challenge.opponent?.playerId
 
   return (
     (challengerId && challengerId === myId) ||
@@ -68,23 +73,18 @@ const isParticipant = computed(() => {
 })
 
 const hasWon = computed(() => {
-  if (!challenge.value?.opponent || isDraw.value || !isParticipant.value) return false
+  if (!props.challenge?.opponent || isDraw.value || !isParticipant.value) return false
   
-  const challengerScore = challenge.value.challenger.score
-  const opponentScore = challenge.value.opponent.score
+  const challengerScore = props.challenge.challenger.score
+  const opponentScore = props.challenge.opponent.score
   
-  const isUserOpponent = challenge.value.opponent.playerId === playerStore.playerId
+  const isUserOpponent = props.challenge.opponent.playerId === playerStore.playerId
 
   if (isUserOpponent) {
     return opponentScore > challengerScore
   } else {
     return challengerScore > opponentScore
   }
-})
-
-const isDraw = computed(() => {
-  if (!props.challenge?.opponent) return false
-  return props.challenge.challenger.score === props.challenge.opponent.score
 })
 </script>
 
