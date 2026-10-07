@@ -25,18 +25,15 @@
         :key="challenge.sessionId"
         class="challenge-row"
       >
-        <div class="challenge-icon" aria-hidden="true">
-          <Icon icon="pixel:trophy" />
+        <div class="challenge-icon" aria-hidden="true" :class="getIconClass(challenge)">
+          <Icon :icon="getChallengeIcon(challenge)" />
         </div>
         <div class="challenge-copy">
           <div class="challenge-header">
             <h3>Mode: {{ challenge.mode }}</h3>
             <span class="score-badge">
-                <Icon
-                    icon="pixel:star-solid"
-                    class="star-icon"
-                /> 
-                {{ challenge.score }}
+              <Icon icon="pixel:star-solid" class="star-icon" /> 
+              {{ challenge.score }}
             </span>
           </div>
           <p class="expiry-text">Expires: {{ formatDate(challenge.expiresAt) }}</p>
@@ -71,11 +68,12 @@
 import { onMounted, ref } from "vue"
 import { Icon } from "@iconify/vue"
 import ModalWrapper from "@/components/modals/ModalWrapper.vue"
-import type { StoredChallenge } from "@/stores/challenge"
+import { useChallengeStore, type StoredChallenge } from "@/stores/challenge"
 
 const emit = defineEmits<{ close: [] }>()
+const challengeStore = useChallengeStore()
 
-const challenges = ref<StoredChallenge[]>([])
+const challenges = ref<(StoredChallenge & { won?: boolean; draw?: boolean })[]>([])
 
 const DB_NAME = "pixreveal_challenges_db"
 const STORE_NAME = "challenges"
@@ -101,6 +99,53 @@ const loadChallengesFromDB = async () => {
     }
     request.onerror = () => reject(request.error)
   })
+}
+
+const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won?: boolean; draw?: boolean })[]) => {
+  const sessionIds = loadedChallenges.map(c => c.sessionId)
+  if (sessionIds.length === 0) return
+
+  try {
+    const response = await fetch('/api/friend-challenge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionIds })
+    })
+
+    if (!response.ok) return
+    const statuses = await response.json()
+
+    for (const challenge of loadedChallenges) {
+      const statusData = statuses[challenge.sessionId]
+      if (statusData) {
+        const hasOpp = Boolean(statusData.hasOpponent)
+        if (challenge.hasOpponent !== hasOpp) {
+          challenge.hasOpponent = hasOpp
+          challenge.won = statusData.won
+          challenge.draw = statusData.draw
+          await challengeStore.updateChallengeStatus(challenge.sessionId, hasOpp)
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Failed to check batch challenge statuses", error)
+  }
+}
+
+const getChallengeIcon = (challenge: StoredChallenge & { won?: boolean; draw?: boolean }) => {
+  if (!challenge.hasOpponent) {
+    return "at-icons:swords"
+  }
+  if (challenge.draw) {
+    return "pixel:handshake-solid"
+  }
+  return challenge.won ? "pixel:trophy" : "pixel:times-solid"
+}
+
+const getIconClass = (challenge: StoredChallenge & { won?: boolean; draw?: boolean }) => {
+  if (!challenge.hasOpponent) return "status-pending"
+  if (challenge.draw) return "status-draw"
+  return challenge.won ? "status-win" : "status-lose"
 }
 
 const formatDate = (timestamp: number) => {
@@ -145,7 +190,9 @@ const handleOpenLink = (challenge: StoredChallenge) => {
 
 onMounted(async () => {
   try {
-    challenges.value = await loadChallengesFromDB()
+    const loaded = await loadChallengesFromDB()
+    challenges.value = loaded
+    await checkAndUpdateStatuses(loaded)
   } catch (error) {
     console.error("Failed to load challenges from IndexedDB", error)
   }
@@ -206,7 +253,22 @@ onMounted(async () => {
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.22);
   font-size: 20px;
-  color: var(--primary, #fff);
+}
+
+.status-pending {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.status-win {
+  color: var(--neon-success);
+}
+
+.status-draw {
+  color: var(--neon-yellow);
+}
+
+.status-lose {
+  color: var(--neon-error);
 }
 
 .challenge-copy {
@@ -221,7 +283,7 @@ onMounted(async () => {
 }
 
 .star-icon {
-    color: var(--neon-yellow);
+  color: var(--neon-yellow);
 }
 
 h3 {
@@ -233,14 +295,14 @@ h3 {
 }
 
 .score-badge {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    padding: 2px 6px;
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 3px;
-    color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 3px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .expiry-text {

@@ -31,6 +31,7 @@ export type StoredChallenge = {
   mode: "classic" | "inspect" | "gravity"
   createdAt: number
   expiresAt: number
+  hasOpponent?: boolean
 }
 
 const DB_NAME = "pixreveal_challenges_db"
@@ -163,6 +164,7 @@ export const useChallengeStore = defineStore("challenge", () => {
       mode: playerStore.gameMode as "classic" | "inspect" | "gravity",
       createdAt: now,
       expiresAt: now + sevenDaysInMs,
+      hasOpponent: false,
     }
 
     try {
@@ -201,6 +203,25 @@ export const useChallengeStore = defineStore("challenge", () => {
     }
   }
 
+  const updateChallengeStatus = async (sessionId: string, hasOpponent: boolean) => {
+    try {
+      const db = await openDatabase()
+      const tx = db.transaction(STORE_NAME, "readwrite")
+      const store = tx.objectStore(STORE_NAME)
+
+      const request = store.get(sessionId)
+      request.onsuccess = () => {
+        const record = request.result as StoredChallenge
+        if (record && record.hasOpponent !== hasOpponent) {
+          record.hasOpponent = hasOpponent
+          store.put(record)
+        }
+      }
+    } catch (error) {
+      console.error("Could not update challenge status in IndexedDB", error)
+    }
+  }
+
   loadStored()
 
   return {
@@ -211,5 +232,6 @@ export const useChallengeStore = defineStore("challenge", () => {
     startAcceptedChallenge,
     createChallenge,
     submitOpponentResult,
+    updateChallengeStatus,
   }
 })
