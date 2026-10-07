@@ -152,6 +152,13 @@
 
       <br>
 
+      <h3>Achievements & Unlockables</h3>
+      <p>
+        Play PixReveal to complete achievements. By unlocking achievements, you can earn new avatars and other cosmetic options. Some achievements are easy to unlock, while others require more skill and dedication. Check your progress in the avatar section that you can access via the avatar in the page header.
+      </p>
+
+      <br>
+      
       <h3>Settings & Customization</h3>
       <p>
         Fine-tune your session for the best experience. Enabling

@@ -28,7 +28,7 @@
             <source src="/assets/videos/answer-demo.mp4" type="video/mp4" />
           </video>
         </div>
-        <h3 class="step"><span class="step-num">2</span> Make your guess</h3>
+        <h3 class="step"><span class="step-num">2</span> Make a guess</h3>
         <p>
           Hit the buzzer and select the correct answer before time runs out!
         </p>
