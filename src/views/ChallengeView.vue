@@ -14,9 +14,9 @@
 
         <template v-if="challenge.opponent">
             <h2 :class="resultClass">
-              <span v-if="isDraw">Unentschieden!</span>
-              <span v-else-if="hasWon">Gewonnen!</span>
-              <span v-else>Verloren!</span>
+              <span v-if="isDraw">DRAW!</span>
+              <span v-else-if="hasWon">YOU WON!</span>
+              <span v-else>YOU LOST!</span>
             </h2>
             <AnswerComparison
                 :rounds="challenge.rounds"
@@ -170,14 +170,17 @@ onMounted(async () => {
 }
 
 .result-win {
+    font-family: "8bit";
     color: var(--neon-green, #48bb78);
 }
 
 .result-loss {
+    font-family: "8bit";
     color: var(--neon-red, #f56565);
 }
 
 .result-draw {
+    font-family: "8bit";
     color: var(--white);
 }
 
