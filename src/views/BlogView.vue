@@ -5,6 +5,15 @@
     <div class="log-grid">
     <div class="log-card">
       <div class="log-info">
+        <span class="date">10-07-26</span>
+      </div>
+      <h3 class="log-title">Improved friend challenges!</h3>
+      <p>
+        Friend challenges allow you to play against a friend in an asynchronous duel multiplayer. Play a set of drawings in singleplayer, create a challenge link and share it with a friend. They get to play the same drawings and you can check who scored more stars. The new feature: in the profile section you find a new Challenges button. There you find an overview of all your created challenges, if your friend already played it and who won. You can also share your link once more if needed.
+      </p>
+    </div>
+    <div class="log-card">
+      <div class="log-info">
         <span class="date">10-04-26</span>
       </div>
       <h3 class="log-title">New achievement system and unlockable content!</h3>
