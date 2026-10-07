@@ -16,7 +16,7 @@
             <h2 :class="resultClass">
               <span v-if="isDraw">DRAW!</span>
               <span v-else-if="hasWon">YOU WIN</span>
-              <span v-else>YOU LOST!</span>
+              <span v-else>YOU LOSE...</span>
             </h2>
             <AnswerComparison
                 :rounds="challenge.rounds"
