@@ -9,6 +9,8 @@ type DailyRanking = {
   avatarIndex: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
   userId?: string;
+  nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
 };
 
 type DailyWinner = {

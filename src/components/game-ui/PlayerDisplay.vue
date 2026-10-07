@@ -17,7 +17,7 @@
     <div
       v-if="avatarIndex !== undefined"
       class="hud-avatar"
-      :class="props.avatarEffect"
+      :class="avatarEffect"
       :style="avatarStyle"
     ></div>
     <div>
@@ -133,7 +133,7 @@ const props = withDefaults(
     emoji?: string;
     staticPointsDisplay?: boolean;
     pointsTrend?: "up" | "down" | null;
-    avtarEffect?: PlayerAvatarEffect;
+    avatarEffect?: PlayerAvatarEffect;
   }>(),
   { size: "medium" },
 );

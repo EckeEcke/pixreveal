@@ -5,6 +5,7 @@ import { usePlayerStore } from "./player"
 import { useConfigStore } from "./config"
 import type { Round } from "@/types/game"
 import type { AvatarSpriteSheet } from "@/utils/avatar"
+import type { PlayerNameEffect, PlayerAvatarEffect } from "@/data/unlockables"
 
 export type ChallengeParticipant = {
   playerId?: string
@@ -13,6 +14,8 @@ export type ChallengeParticipant = {
   avatarSpriteSheet?: AvatarSpriteSheet
   score: number
   answerHistory: boolean[]
+  nameEffect: PlayerNameEffect
+  avatarEffect: PlayerAvatarEffect
 }
 
 export type ChallengeSession = {
