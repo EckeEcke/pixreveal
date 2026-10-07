@@ -18,7 +18,7 @@
     </div>
 
     <div class="player-pill" v-if="name">
-      <span class="player-name" :class="nameEffect">
+      <span class="player-name" :class="nameEffectClass">
         {{ name }}
       </span>
       <template v-if="score !== undefined || highscore !== undefined">
@@ -58,9 +58,9 @@ const props = defineProps<{
 const playerStore = usePlayerStore();
 
 const nameEffectClass = computed(() =>
-  props.isOwnPlayer && playerStore.playerNameEffect !== "none"
-    ? `name-effect-${playerStore.playerNameEffect}`
-    : undefined,
+  props.nameEffect
+    ? `name-effect-${props.nameEffect}`
+    : 'none',
 );
 
 const avatarStyle = computed<CSSProperties>(() => {
