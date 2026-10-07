@@ -69,11 +69,13 @@ import { onMounted, ref } from "vue"
 import { Icon } from "@iconify/vue"
 import ModalWrapper from "@/components/modals/ModalWrapper.vue"
 import { useChallengeStore, type StoredChallenge } from "@/stores/challenge"
+import { usePlayerStore } from "@/stores/player"
 
 const emit = defineEmits<{ close: [] }>()
 const challengeStore = useChallengeStore()
+const playerStore = usePlayerStore()
 
-const challenges = ref<(StoredChallenge & { won?: boolean; draw?: boolean })[]>([])
+const challenges = ref<(StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean })[]>([])
 
 const DB_NAME = "pixreveal_challenges_db"
 const STORE_NAME = "challenges"
@@ -101,7 +103,7 @@ const loadChallengesFromDB = async () => {
   })
 }
 
-const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won?: boolean; draw?: boolean })[]) => {
+const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean })[]) => {
   const sessionIds = loadedChallenges.map(c => c.sessionId)
   if (sessionIds.length === 0) return
 
@@ -124,14 +126,14 @@ const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won
             let draw = false
 
             if (hasOpp) {
-                const isUserChallenger = challenge.challenger.playerId === playerStore.playerId
-                const userScore = isUserChallenger ? statusData.challengerScore : statusData.opponentScore
-                const opponentScore = isUserChallenger ? statusData.opponentScore : statusData.challengerScore
+                // Da du im Modal der Ersteller dieser Challenge bist, vergleichst du dich mit dem Challenger-Score
+                const userScore = statusData.challengerScore
+                const opponentScore = statusData.opponentScore
 
                 if (userScore === opponentScore) {
-                draw = true
+                  draw = true
                 } else {
-                won = userScore > opponentScore
+                  won = userScore > opponentScore
                 }
             }
 
@@ -145,7 +147,7 @@ const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won
   }
 }
 
-const getChallengeIcon = (challenge: StoredChallenge & { won?: boolean; draw?: boolean }) => {
+const getChallengeIcon = (challenge: StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean }) => {
   if (!challenge.hasOpponent) {
     return "at-icons:swords"
   }
@@ -155,7 +157,7 @@ const getChallengeIcon = (challenge: StoredChallenge & { won?: boolean; draw?: b
   return challenge.won ? "pixel:trophy" : "pixel:times-solid"
 }
 
-const getIconClass = (challenge: StoredChallenge & { won?: boolean; draw?: boolean }) => {
+const getIconClass = (challenge: StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean }) => {
   if (!challenge.hasOpponent) return "status-pending"
   if (challenge.draw) return "status-draw"
   return challenge.won ? "status-win" : "status-lose"
