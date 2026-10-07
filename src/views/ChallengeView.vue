@@ -1,58 +1,3 @@
-<script setup lang="ts">
-import { computed, ref } from 'vue'
-import { usePlayerStore } from '@/stores/player'
-
-const props = defineProps<{
-  challenge: {
-    challenger: {
-      playerId: string
-      name: string
-      score: number
-    }
-    opponent?: {
-      playerId: string
-      name: string
-      score: number
-    }
-  }
-}>()
-
-const playerStore = usePlayerStore()
-
-const isParticipant = computed(() => {
-  if (!session.value) return false
-
-  const myId = playerStore.playerId
-  const challengerId = session.value.challenger?.playerId
-  const opponentId = session.value.opponent?.playerId
-
-  return (
-    (challengerId && challengerId === myId) ||
-    (opponentId && opponentId === myId)
-  )
-})
-
-const hasWon = computed(() => {
-  if (!session.value?.opponent || isDraw.value || !isParticipant.value) return false
-  
-  const challengerScore = session.value.challenger.score
-  const opponentScore = session.value.opponent.score
-  
-  const isUserOpponent = session.value.opponent.playerId === playerStore.playerId
-
-  if (isUserOpponent) {
-    return opponentScore > challengerScore
-  } else {
-    return challengerScore > opponentScore
-  }
-})
-
-const isDraw = computed(() => {
-  if (!props.challenge?.opponent) return false
-  return props.challenge.challenger.score === props.challenge.opponent.score
-})
-</script>
-
 <template>
   <div class="challenge-detail-card">
     <h2>Duell-Details</h2>
@@ -87,6 +32,61 @@ const isDraw = computed(() => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { usePlayerStore } from '@/stores/player'
+
+const props = defineProps<{
+  challenge: {
+    challenger: {
+      playerId: string
+      name: string
+      score: number
+    }
+    opponent?: {
+      playerId: string
+      name: string
+      score: number
+    }
+  }
+}>()
+
+const playerStore = usePlayerStore()
+
+const isParticipant = computed(() => {
+  if (!challenge.value) return false
+
+  const myId = playerStore.playerId
+  const challengerId = challenge.value.challenger?.playerId
+  const opponentId = challenge.value.opponent?.playerId
+
+  return (
+    (challengerId && challengerId === myId) ||
+    (opponentId && opponentId === myId)
+  )
+})
+
+const hasWon = computed(() => {
+  if (!challenge.value?.opponent || isDraw.value || !isParticipant.value) return false
+  
+  const challengerScore = challenge.value.challenger.score
+  const opponentScore = challenge.value.opponent.score
+  
+  const isUserOpponent = challenge.value.opponent.playerId === playerStore.playerId
+
+  if (isUserOpponent) {
+    return opponentScore > challengerScore
+  } else {
+    return challengerScore > opponentScore
+  }
+})
+
+const isDraw = computed(() => {
+  if (!props.challenge?.opponent) return false
+  return props.challenge.challenger.score === props.challenge.opponent.score
+})
+</script>
 
 <style scoped>
 .challenge-detail-card {
