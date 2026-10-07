@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { usePlayerStore } from '@/stores/player' // Passe den Pfad bei Bedarf an
+import { usePlayerStore } from '@/stores/player'
 
-// Beispiel für die Challenge-Daten (ersetze das durch deine echten Props oder deinen Store)
 const props = defineProps<{
   challenge: {
     challenger: {
@@ -21,31 +20,25 @@ const props = defineProps<{
 const playerStore = usePlayerStore()
 
 const isParticipant = computed(() => {
-  if (!challenge.value) return false
+  if (!session.value) return false
 
   const myId = playerStore.playerId
-  const challengerId = challenge.value.challenger?.playerId
-  const opponentId = challenge.value.opponent?.playerId
+  const challengerId = session.value.challenger?.playerId
+  const opponentId = session.value.opponent?.playerId
 
   return (
     (challengerId && challengerId === myId) ||
-    (opponentId && opponentId === myId) ||
-    hasLocalChallengeRecord(challenge.value.sessionId)
+    (opponentId && opponentId === myId)
   )
 })
 
-const isDraw = computed(() => {
-  if (!props.challenge?.opponent) return false
-  return props.challenge.challenger.score === props.challenge.opponent.score
-})
-
-// Berechnen, ob der eingeloggte Spieler gewonnen hat
 const hasWon = computed(() => {
-  if (!props.challenge?.opponent || isDraw.value || !isParticipant.value) return false
+  if (!session.value?.opponent || isDraw.value || !isParticipant.value) return false
   
-  const challengerScore = props.challenge.challenger.score
-  const opponentScore = props.challenge.opponent.score
-  const isUserOpponent = props.challenge.opponent.playerId === playerStore.playerId
+  const challengerScore = session.value.challenger.score
+  const opponentScore = session.value.opponent.score
+  
+  const isUserOpponent = session.value.opponent.playerId === playerStore.playerId
 
   if (isUserOpponent) {
     return opponentScore > challengerScore
@@ -53,16 +46,20 @@ const hasWon = computed(() => {
     return challengerScore > opponentScore
   }
 })
+
+const isDraw = computed(() => {
+  if (!props.challenge?.opponent) return false
+  return props.challenge.challenger.score === props.challenge.opponent.score
+})
 </script>
 
 <template>
   <div class="challenge-detail-card">
     <h2>Duell-Details</h2>
 
-    <!-- Fall 1: User ist Teilnehmer und das Spiel ist vorbei / hat ein Ergebnis -->
     <div v-if="isParticipant" class="result-banner">
       <template v-if="isDraw">
-        <span class="badge draw">UNENTSCHIEDEN</span>
+        <span class="badge draw">DRAW</span>
       </template>
       <template v-else>
         <span v-if="hasWon" class="badge win">YOU WIN</span>
@@ -70,12 +67,10 @@ const hasWon = computed(() => {
       </template>
     </div>
 
-    <!-- Fall 2: User ist nur Zuschauer / Fremter (nicht beteiligt) -->
     <div v-else class="spectator-banner">
-      <span class="badge spectator">Zuschaueransicht (Du bist nicht an diesem Duell beteiligt)</span>
+      <span class="badge spectator">Only participants can see the results.</span>
     </div>
 
-    <!-- Ergebnisübersicht -->
     <div class="score-board" v-if="challenge">
       <div class="player-side">
         <span>{{ challenge.challenger.name }}</span>
