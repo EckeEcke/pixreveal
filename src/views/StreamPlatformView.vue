@@ -2,8 +2,12 @@
   <div class="stream-platform-page">
     <main class="stream-platform-content">
       <section class="stream-platform-card">
-        <p class="eyebrow">STREAM MODE</p>
-        <h1>PLAY TOGETHER WITH YOUR CHAT</h1>
+        <p class="eyebrow"></p>
+        <h1>
+          STREAM MODE
+          <br/>
+          <span class="eyebrow">PLAY TOGETHER WITH YOUR CHAT</span>
+        </h1>
         <p class="intro">Are you a streamer on YouTube or Twitch? Stream PixReveal live and let your viewers play via your chat.</p>
 
         <div class="platform-grid">
@@ -117,22 +121,36 @@ const streamFaqs = [
 
 .stream-platform-video {
   margin: 48px auto;
+  aspect-ratio: 16 / 7.7;
 }
 
 .eyebrow {
   margin: 0 0 8px;
   color: var(--primary);
-  font-weight: 800;
-  letter-spacing: 2px;
+  text-shadow: none;
+  font-size: 14px;
 }
 
 h1 {
   margin: 0;
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 0.8;
+  font-weight: 900;
+  text-align: left;
+  @media (min-width: 1024px) {
+    text-align: center;
+  }
 }
 
 .intro {
-  margin: 12px 0 32px;
+  margin: 32px auto;
   opacity: 0.7;
+  text-align: left;
+  max-width: 500px;
+  @media (min-width: 1024px) {
+    text-align: center;
+  }
 }
 
 .platform-grid {

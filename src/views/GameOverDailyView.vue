@@ -21,7 +21,7 @@
 
           <div v-if="!dailyStore.hasSubmitted">
             <p>
-              See where you rank today and lock in your score on the global leaderboard!
+              Thank you for playing today's daily challenge! Post your score to the leaderboard to find out where you rank. No login required.
             </p>
             <ButtonPrimary
               v-if="!isPosting"
@@ -243,6 +243,8 @@ h1 {
 p {
   text-align: center;
   line-height: 1.5;
+  max-width: 500px;
+  margin-bottom: 32px;
 }
 
 .ranking-card {
