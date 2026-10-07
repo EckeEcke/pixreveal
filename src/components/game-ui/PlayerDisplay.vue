@@ -17,6 +17,7 @@
     <div
       v-if="avatarIndex !== undefined"
       class="hud-avatar"
+      :class="props.avatarEffect"
       :style="avatarStyle"
     ></div>
     <div>
@@ -103,6 +104,7 @@
 import { computed, nextTick, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
+import { type PlayerAvatarEffect } from "@/data/unlockables";
 import { usePlayerStore } from "@/stores/player";
 import { Icon } from "@iconify/vue";
 import PositionInfo from "./PositionInfo.vue";
@@ -131,6 +133,7 @@ const props = withDefaults(
     emoji?: string;
     staticPointsDisplay?: boolean;
     pointsTrend?: "up" | "down" | null;
+    avtarEffect?: PlayerAvatarEffect;
   }>(),
   { size: "medium" },
 );

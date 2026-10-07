@@ -2,7 +2,7 @@ import { computed, h, ref } from "vue";
 import { defineStore } from "pinia";
 import { toast } from "vue3-toastify";
 import { ACHIEVEMENTS, type AchievementId } from "@/data/achievements";
-import { BONUS_AVATAR_ACHIEVEMENT_THRESHOLD, NAME_EFFECTS } from "@/data/unlockables";
+import { BONUS_AVATAR_ACHIEVEMENT_THRESHOLD, NAME_EFFECTS, AVATAR_EFFECTS } from "@/data/unlockables";
 import { useSoundStore } from "@/stores/sound";
 
 const DATABASE_NAME = "pixreveal-achievements";
@@ -66,6 +66,9 @@ export const useAchievementsStore = defineStore("achievements", () => {
   );
   const hasNameEffects = computed(
     () => unlockedCount.value >= (NAME_EFFECTS[0]?.unlockAt ?? Number.POSITIVE_INFINITY),
+  );
+  const hasAvatarEffects = computed(
+    () => unlockedCount.value >= (AVATAR_EFFECTS[0]?.unlockAt ?? Number.POSITIVE_INFINITY),
   );
   let loadPromise: Promise<void> | null = null;
   const unlocking = new Set<AchievementId>();
@@ -155,6 +158,7 @@ export const useAchievementsStore = defineStore("achievements", () => {
     unlockedCount,
     hasBonusAvatars,
     hasNameEffects,
+    hasAvatarEffects,
     isLoaded,
     loadAchievements,
     isUnlocked,

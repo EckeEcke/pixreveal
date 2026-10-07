@@ -47,12 +47,14 @@
         </template>
 
         <template v-else>
-          <h2>{{ challenge.challenger.username }} challenges you!</h2>
+          <h2><span :class="`name-effect-${challenge.challenger.nameEffect}`">{{ challenge.challenger.username }}</span> challenges you!</h2>
 
           <div class="challenger">
             <TopPlayerDisplay
               :avatar-index="challenge.challenger.avatarIndex"
               :avatar-sprite-sheet="challenge.challenger.avatarSpriteSheet"
+              :name-effect="challenge.challenger.nameEffect"
+              :avatar-effect="challenge.challenger.avatarEffect"
             />
 
             <p>Can you beat their score?</p>

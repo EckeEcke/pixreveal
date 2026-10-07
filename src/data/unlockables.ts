@@ -2,6 +2,33 @@ export const BONUS_AVATAR_ACHIEVEMENT_THRESHOLD = 3;
 export const BONUS_AVATAR_COUNT = 3;
 
 export type PlayerNameEffect = "none" | "arcade-glow" | "glitcher" | "chromatic-shadow";
+export type PlayerAvatarEffect = "none" | "avatar-effect-inverted" | "avatar-effect-sepia" | "avatar-effect-blur";
+
+export const AVATAR_EFFECTS: Array<{
+  id: Exclude<PlayerAvatarEffect, "none">;
+  title: string;
+  description: string;
+  unlockAt: number;
+}> = [
+  {
+    id: "avatar-effect-inverted",
+    title: "Inverted",
+    description: "An inverted color filter for your avatar.",
+    unlockAt: 4,
+  },
+  {
+    id: "avatar-effect-sepia",
+    title: "Sepia",
+    description: "A vintage sepia tone filter for your avatar.",
+    unlockAt: 7,
+  },
+  {
+    id: "avatar-effect-blur",
+    title: "Glitch Blur",
+    description: "A glitched blur effect for your avatar.",
+    unlockAt: 10,
+  },
+];
 
 export const NAME_EFFECTS: Array<{
   id: Exclude<PlayerNameEffect, "none">;

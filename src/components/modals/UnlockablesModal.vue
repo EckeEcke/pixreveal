@@ -32,6 +32,24 @@
         </div>
       </section>
 
+      <section class="unlockable-section" :class="{ locked: !achievementsStore.hasAvatarEffects }">
+        <div class="section-heading">
+          <div>
+            <h3>Avatar Effects</h3>
+            <p>Unlock special visual effects for your avatar at 4, 7, and 10 achievements.</p>
+          </div>
+          <span class="section-progress">
+            {{ achievementsStore.hasAvatarEffects ? "UNLOCKED" : `${achievementsStore.unlockedCount}/10` }}
+          </span>
+        </div>
+        <div class="effect-preview-list">
+          <div v-for="effect in AVATAR_EFFECTS" :key="effect.id" class="effect-preview">
+            <span class="avatar-preview preview-sample" :class="`avatar-effect-${effect.id}`" :style="getAvatarStyle(0, 'unlockables')" />
+            <span>{{ effect.title }}</span>
+          </div>
+        </div>
+      </section>
+
       <section class="unlockable-section" :class="{ locked: !achievementsStore.hasNameEffects }">
         <div class="section-heading">
           <div>
@@ -44,7 +62,7 @@
         </div>
         <div class="effect-preview-list">
           <div v-for="effect in NAME_EFFECTS" :key="effect.id" class="effect-preview">
-              <strong :class="`name-effect-${effect.id}`">PLAYER</strong>
+            <strong :class="`name-effect-${effect.id}`">PLAYER</strong>
             <span>{{ effect.title }}</span>
           </div>
         </div>
@@ -54,26 +72,32 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { Icon } from "@iconify/vue";
-import ModalWrapper from "@/components/modals/ModalWrapper.vue";
-import { ACHIEVEMENTS } from "@/data/achievements";
+import { onMounted } from "vue"
+import { Icon } from "@iconify/vue"
+import ModalWrapper from "@/components/modals/ModalWrapper.vue"
+import { ACHIEVEMENTS } from "@/data/achievements"
 import {
   BONUS_AVATAR_ACHIEVEMENT_THRESHOLD,
   NAME_EFFECTS,
-} from "@/data/unlockables";
-import { useAchievementsStore } from "@/stores/achievements";
-import { getAvatarStyle } from "@/utils/avatar";
+} from "@/data/unlockables"
+import { useAchievementsStore } from "@/stores/achievements"
+import { getAvatarStyle } from "@/utils/avatar"
 
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: [] }>()
 
-const achievementsStore = useAchievementsStore();
-const AVATAR_UNLOCK_THRESHOLD = BONUS_AVATAR_ACHIEVEMENT_THRESHOLD;
-const bonusAvatarPreviews = Array.from({ length: 6 }, (_, index) => index);
+const achievementsStore = useAchievementsStore()
+const AVATAR_UNLOCK_THRESHOLD = BONUS_AVATAR_ACHIEVEMENT_THRESHOLD
+const bonusAvatarPreviews = Array.from({ length: 6 }, (_, index) => index)
+
+const AVATAR_EFFECTS = [
+  { id: "inverted", title: "Inverted Filter" },
+  { id: "sepia", title: "Sepia Tone" },
+  { id: "blur", title: "Glitch Blur" }
+]
 
 onMounted(() => {
-  void achievementsStore.loadAchievements();
-});
+  void achievementsStore.loadAchievements()
+})
 </script>
 
 <style scoped>
@@ -85,7 +109,6 @@ h2 {
 .unlockable-list {
   display: grid;
   gap: 10px;
-  max-height: 62vh;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -146,6 +169,11 @@ h3 {
   image-rendering: pixelated;
 }
 
+.preview-sample {
+  width: 24px;
+  height: 24px;
+}
+
 .effect-preview-list {
   display: grid;
   gap: 6px;
@@ -153,7 +181,7 @@ h3 {
 
 .effect-preview {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   min-width: 0;
@@ -174,6 +202,19 @@ h3 {
   flex: 0 0 auto;
   color: rgba(255, 255, 255, 0.62);
   font-size: 11px;
+}
+
+.avatar-effect-inverted {
+  filter: invert(1);
+}
+
+.avatar-effect-sepia {
+  filter: sepia(1);
+}
+
+.avatar-effect-blur {
+  filter: blur(0px);
+  animation: glitch-blur 4s infinite steps(1, start);
 }
 
 @media (max-width: 420px) {

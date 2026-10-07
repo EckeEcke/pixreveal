@@ -14,7 +14,9 @@
         <TopPlayerDisplay
           :avatar-index="ownPlayer.avatarIndex"
           :avatar-sprite-sheet="ownPlayer.avatarSpriteSheet"
+          :avatar-effect="ownPlayer.avatarEffect"
           :name="ownPlayer.username"
+          :name-effect="ownPlayer.nameEffect"
           :score="ownPlayer.points"
           is-own-player
           class="top-player"

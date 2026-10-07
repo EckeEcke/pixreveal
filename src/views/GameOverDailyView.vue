@@ -183,6 +183,8 @@ const post = () => {
     score: playerStore.points,
     avatarIndex: playerStore.avatarIndex,
     avatarSpriteSheet: playerStore.avatarSpriteSheet,
+    nameEffect: playerStore.playerNameEffect,
+    avatarEffect: playerStore.playerAvatarEffect,
   })
 
   dailyStore.postRanking(
@@ -192,6 +194,8 @@ const post = () => {
     dailyStore.date,
     userId,
     playerStore.avatarSpriteSheet,
+    playerStore.playerNameEffect,
+    playerStore.playerAvatarEffect,
   )
 
   toast.success(

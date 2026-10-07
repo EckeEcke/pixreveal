@@ -2,6 +2,8 @@ import { createClient } from "redis";
 
 const ALLOWED_MODES = ["classic", "inspect", "gravity"];
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+const ALLOWED_NAME_EFFECTS = ["none", "arcade-glow", "glitcher", "chromatic-shadow"];
+const ALLOWED_AVATAR_EFFECTS = ["none", "avatar-effect-inverted", "avatar-effect-sepia", "avatar-effect-blur"];
 
 const redisKey = (sessionId) => `challenge:v1:${sessionId}`;
 
@@ -34,6 +36,8 @@ const cleanSession = (body) => {
       username: String(body.username || "Player").slice(0, 32),
       avatarIndex: Math.max(0, Number(body.avatarIndex) || 0),
       avatarSpriteSheet: body.avatarSpriteSheet === "unlockables" ? "unlockables" : "classic",
+      nameEffect: ALLOWED_NAME_EFFECTS.includes(body.nameEffect) ? body.nameEffect : "none",
+      avatarEffect: ALLOWED_AVATAR_EFFECTS.includes(body.avatarEffect) ? body.avatarEffect : "none",
       score: Number(body.score) || 0,
       answerHistory: answers,
     },
@@ -54,7 +58,6 @@ export default async function handler(req, res) {
   try {
     await client.connect();
 
-    // 1. Batch-Status-Check für mehrere Session-IDs (Inkl. Sieg/Niederlage/Unentschieden-Auswertung)
     if (req.method === "POST" && Array.isArray(req.body?.sessionIds)) {
       const sessionIds = req.body.sessionIds.filter(isValidSessionId);
       const results = {};
@@ -87,11 +90,13 @@ export default async function handler(req, res) {
 
               results[id] = {
                 hasOpponent,
+                won,
+                draw,
                 challengerScore: session.challenger?.score || 0,
                 opponentScore: session.opponent?.score || 0,
                 challengerPlayerId: session.challenger?.playerId || "",
-                opponentPlayerId: session.opponent?.playerId || ""
-              }
+                opponentPlayerId: session.opponent?.playerId || "",
+              };
             } catch {
               results[id] = { hasOpponent: false, won: false, draw: false };
             }
@@ -163,6 +168,8 @@ export default async function handler(req, res) {
         username: String(req.body?.username || "Player").slice(0, 32),
         avatarIndex: Math.max(0, Number(req.body?.avatarIndex) || 0),
         avatarSpriteSheet: req.body?.avatarSpriteSheet === "unlockables" ? "unlockables" : "classic",
+        nameEffect: ALLOWED_NAME_EFFECTS.includes(req.body?.nameEffect) ? req.body.nameEffect : "none",
+        avatarEffect: ALLOWED_AVATAR_EFFECTS.includes(req.body?.avatarEffect) ? req.body.avatarEffect : "none",
         score: Number(req.body?.score) || 0,
         answerHistory,
       };

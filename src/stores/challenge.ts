@@ -174,6 +174,8 @@ export const useChallengeStore = defineStore("challenge", () => {
         avatarIndex: playerStore.avatarIndex,
         avatarSpriteSheet: playerStore.avatarSpriteSheet,
         answerHistory: playerStore.answerHistory,
+        nameEffect: playerStore.playerNameEffect,
+        avatarEffect: playerStore.playerAvatarEffect,
       }),
     })
 

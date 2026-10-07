@@ -53,12 +53,29 @@
             data-sfx="click"
             @click="selectAvatar(avatar.id)"
           >
-            <div class="avatar-image" :style="getAvatarStyle(avatar.id)"></div>
+            <div class="avatar-image" :style="getAvatarStyle(avatar.id)" :class="playerStore.avatarEffect ? `avatar-effect-${playerStore.avatarEffect}` : ''"></div>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="achievementsStore.hasNameEffects" class="cosmetic-selects">
+    <div v-if="achievementsStore.hasNameEffects || achievementsStore.hasAvatarEffects" class="cosmetic-selects">
+      <div v-if="achievementsStore.hasAvatarEffects" class="input-group">
+        <h3>Avatar Effect</h3>
+        <select
+          :value="playerStore.playerAvatarEffect"
+          @change="setAvatarEffect"
+        >
+          <option value="none">None</option>
+          <option
+            v-for="effect in AVATAR_EFFECTS"
+            :key="effect.id"
+            :value="effect.id"
+            :disabled="achievementsStore.unlockedCount < effect.unlockAt"
+          >
+            {{ effect.title }}
+          </option>
+        </select>
+      </div>
       <div v-if="achievementsStore.hasNameEffects" class="input-group">
         <h3>Player Name Effect</h3>
         <select
@@ -92,7 +109,7 @@ import { computed, onMounted } from 'vue';
 import { usePlayerStore } from "@/stores/player";
 import { useSoundStore } from "@/stores/sound";
 import { useAchievementsStore } from "@/stores/achievements";
-import { NAME_EFFECTS } from "@/data/unlockables";
+import { NAME_EFFECTS, AVATAR_EFFECTS } from "@/data/unlockables";
 import { getAvatarStyle as resolveAvatarStyle } from "@/utils/avatar";
 import { Icon } from "@iconify/vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
@@ -113,10 +130,12 @@ const originalProfile = {
   name: playerStore.playerName,
   avatarIndex: playerStore.avatarIndex,
   spriteSheet: playerStore.avatarSpriteSheet,
+  avatarEffect: playerStore.avatarEffect,
 };
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
 const availableNameEffects = NAME_EFFECTS;
+
 const getAvatarStyle = (index) => {
   return resolveAvatarStyle(index, selectedSheet.value);
 };
@@ -131,10 +150,8 @@ const onNameInput = (event) => {
   const input = event.target;
   const { selectionStart, selectionEnd } = input;
 
-  // toUpperCase kann die Länge ändern (ß -> SS), daher zusätzlich kürzen
   const upper = input.value.toUpperCase().slice(0, NAME_MAX_LENGTH);
   input.value = upper;
-  // Cursorposition erhalten, sonst springt er beim Tippen mitten im Namen ans Ende
   input.setSelectionRange(selectionStart, selectionEnd);
 
   playerStore.playerName = upper;
@@ -147,8 +164,13 @@ const selectAvatar = (id) => {
 
 const setSheet = (sheet) => {
   if (sheet === "unlockables" && !achievementsStore.hasBonusAvatars) return;
-  playerStore.setSheet(sheet)
-}
+  playerStore.setSheet(sheet);
+};
+
+const setAvatarEffect = (event) => {
+  if (!achievementsStore.hasAvatarEffects) return;
+  playerStore.setPlayerAvatarEffect(event.target.value);
+};
 
 const setPlayerNameEffect = (event) => {
   if (!achievementsStore.hasNameEffects) return;
@@ -159,7 +181,8 @@ const unlockIfProfileChanged = () => {
   const changed =
     playerStore.playerName !== originalProfile.name ||
     playerStore.avatarIndex !== originalProfile.avatarIndex ||
-    playerStore.avatarSpriteSheet !== originalProfile.spriteSheet;
+    playerStore.avatarSpriteSheet !== originalProfile.spriteSheet ||
+    playerStore.avatarEffect !== originalProfile.avatarEffect;
 
   if (changed) void achievementsStore.unlock("edit-player");
 };
@@ -182,7 +205,6 @@ h3 {
   text-transform: uppercase;
 }
 
-/* Anzeige immer in Grossbuchstaben, Platzhalter bleibt normal */
 #username {
   text-transform: uppercase;
 }
@@ -191,7 +213,6 @@ h3 {
   text-transform: none;
 }
 
-/* Der neue, sichere Scroll-Container für Mobile */
 .avatar-grid-scroll-container {
   width: 100%;
   padding: 0 12px;
@@ -277,6 +298,46 @@ h3 {
   margin-left: 6px;
 }
 
+.avatar-effect-inverted {
+  filter: invert(1);
+}
+
+.avatar-effect-sepia {
+  filter: sepia(1);
+}
+
+.avatar-effect-blur {
+  filter: blur(0px);
+  animation: glitch-blur 4s infinite steps(1, start);
+}
+
+@keyframes glitch-blur {
+  0%, 100% {
+    filter: blur(0px) brightness(1);
+  }
+  15% {
+    filter: blur(3px) brightness(1.2);
+  }
+  18% {
+    filter: blur(0px) brightness(1);
+  }
+  42% {
+    filter: blur(6px) contrast(140%) brightness(1.1);
+  }
+  46% {
+    filter: blur(1px) contrast(100%);
+  }
+  50% {
+    filter: blur(0px) brightness(1);
+  }
+  80% {
+    filter: blur(4px) brightness(1.15);
+  }
+  84% {
+    filter: blur(0px) brightness(1);
+  }
+}
+
 @media (max-width: 575px) {
   .avatar-grid-scroll-container {
     max-height: 250px;
@@ -299,50 +360,31 @@ h3 {
   }
 }
 
-/* =========================================================
-   TOGGLE
-   ========================================================= */
-
 .role-toggle {
   position: relative;
   display: flex;
-
   background: #111;
   border: 2px solid var(--border-color);
   border-radius: 4px;
-
   margin-bottom: 16px;
   padding: 3px;
   gap: 3px;
-
   overflow: hidden;
 }
 
-/* Sliding selection indicator */
 .role-toggle::before {
   content: "";
-
   position: absolute;
   z-index: 0;
-
   top: 3px;
   bottom: 3px;
   left: 2px;
-
   width: calc(50% - 6px);
-
   background: #29282d;
-
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 2px;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 2px 6px rgba(0, 0, 0, 0.35);
-
-  transition:
-    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
 }
 
 .role-toggle.role-unlockables::before {
@@ -352,30 +394,20 @@ h3 {
 .role-toggle button {
   position: relative;
   z-index: 1;
-
   flex: 1;
-
   text-align: center;
-
   padding: 10px 0;
-
   background: transparent;
   border: none;
   border-radius: 2px;
-
   color: rgba(255, 255, 255, 0.38);
-
   font-size: 14px;
   font-family: inherit;
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
-
   cursor: pointer;
-
-  transition:
-    color 0.2s ease,
-    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 0.2s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .role-toggle button:hover {

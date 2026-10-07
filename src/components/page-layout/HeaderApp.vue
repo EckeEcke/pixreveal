@@ -31,7 +31,7 @@
           data-sfx="click"
           @click="showPlayerProfileModal = true"
         >
-          <span class="avatar-image" :style="avatarStyle"></span>
+          <span class="avatar-image" :class="playerStore.playerAvatarEffect" :style="avatarStyle"></span>
         </button>
       </div> 
     </div>

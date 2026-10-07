@@ -11,6 +11,8 @@
             :avatar-index="sortedRankings[0].avatarIndex"
             :avatar-sprite-sheet="sortedRankings[0].avatarSpriteSheet"
             :score="sortedRankings[0].score"
+            :name-effect="sortedRankings[0].nameEffect"
+            :avatar-effect="sortedRankings[0].avatarEffect"
           />
           <ButtonPrimary
             v-if="!isYesterday && !dailyStore.hasPlayedToday"
@@ -38,6 +40,8 @@
           :avatar-sprite-sheet="ranking.avatarSpriteSheet"
           :points="ranking.score"
           :position="index + 2"
+          :name-effect="ranking.nameEffect"
+          :avatar-effect="ranking.avatarEffect"
           size="small"
         />
       </div>

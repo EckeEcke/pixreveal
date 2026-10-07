@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import type { AvatarSpriteSheet } from "@/utils/avatar";
+import { type PlayerAvatarEffect, type PlayerNameEffect } from "@/data/unlockables";
 
 type DailyRanking = {
   name: string;
@@ -138,6 +139,8 @@ export const useDailyStore = defineStore("daily", () => {
     date: string,
     userId?: string,
     avatarSpriteSheet?: AvatarSpriteSheet,
+    nameEffect?: PlayerNameEffect,
+    avatarEffect?: PlayerAvatarEffect,
   ) => {
     hasSubmitted.value = true;
     try {
@@ -145,7 +148,7 @@ export const useDailyStore = defineStore("daily", () => {
         method: "POST",
         keepalive: true,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, userId, score, avatarIndex, date, avatarSpriteSheet }),
+        body: JSON.stringify({ name, userId, score, avatarIndex, date, avatarSpriteSheet, nameEffect, avatarEffect }),
       });
       if (!response.ok) throw new Error("Failed to post ranking");
     } catch (err: any) {

@@ -8,6 +8,8 @@
         :avatar-index="winnerData.avatarIndex"
         :avatar-sprite-sheet="winnerData.avatarSpriteSheet"
         :score="winnerData.score"
+        :name-effect="winnerData.nameEffect"
+        :avatar-effect="winnerData.avatarEffect"
       />
     </router-link>
     <div class="message"><b> Congratulations!</b> You reached the highest score in yesterday's Daily Challenge and made it to the Hall of Fame!</div>

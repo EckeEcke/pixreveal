@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, userId, score, avatarIndex, date, avatarSpriteSheet } = req.body;
+  const { name, userId, score, avatarIndex, date, avatarSpriteSheet, nameEffect, avatarEffect } = req.body;
 
   if (!name || score === undefined || avatarIndex === undefined || !date) {
     return res.status(400).json({ error: "name, score, avatarIndex required" });
@@ -27,6 +27,8 @@ export default async function handler(req, res) {
       score,
       avatarIndex,
       avatarSpriteSheet: avatarSpriteSheet === "unlockables" ? "unlockables" : "classic",
+      nameEffect: nameEffect || "none",
+      avatarEffect: avatarEffect || "none",
       date,
     });
 

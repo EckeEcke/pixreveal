@@ -5,7 +5,7 @@ import { useConfigStore } from "./config";
 import { generatePlayerId } from "@/utils/crypto";
 import type { OnlineHighlight } from "@/types/player";
 import type { AvatarSpriteSheet } from "@/utils/avatar";
-import { NAME_EFFECTS, type PlayerNameEffect } from "@/data/unlockables";
+import { NAME_EFFECTS, AVATAR_EFFECTS, type PlayerNameEffect, type PlayerAvatarEffect } from "@/data/unlockables";
 import { useAchievementsStore } from "@/stores/achievements";
 
 const STORAGE_KEY = "pixreveal:playerProfile";
@@ -37,6 +37,11 @@ export const usePlayerStore = defineStore("player", () => {
       ? savedProfile.nameEffect
       : "none",
   );
+  const playerAvatarEffect: Ref<PlayerAvatarEffect> = ref(
+      AVATAR_EFFECTS.some((effect) => effect.id === savedProfile.avatarEffect)
+      ? savedProfile.avatarEffect
+      : "none",
+  );
   const points: Ref<number> = ref(0);
   const correctAnswers = ref(0);
   const answerHistory: Ref<boolean[]> = ref([]);
@@ -56,8 +61,8 @@ export const usePlayerStore = defineStore("player", () => {
   });
 
   watch(
-      [playerName, avatarIndex, playerId, avatarSpriteSheet, playerNameEffect],
-      ([newName, newAvatar, newId, newSpriteSheet, newNameEffect]) => {
+      [playerName, avatarIndex, playerId, avatarSpriteSheet, playerNameEffect, playerAvatarEffect],
+      ([newName, newAvatar, newId, newSpriteSheet, newNameEffect, newAvatarEffect]) => {
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
@@ -66,6 +71,7 @@ export const usePlayerStore = defineStore("player", () => {
         id: newId,
         spriteSheet: newSpriteSheet,
         nameEffect: newNameEffect,
+        avatarEffect: newAvatarEffect,
       }),
     );
     },
@@ -102,6 +108,11 @@ export const usePlayerStore = defineStore("player", () => {
   const setPlayerNameEffect = (effect: PlayerNameEffect) => {
     if (effect !== "none" && !achievementsStore.hasNameEffects) return;
     playerNameEffect.value = effect;
+  };
+
+  const setPlayerAvatarEffect = (effect: PlayerAvatarEffect) => {
+    if (effect !== "none" && !achievementsStore.hasAvatarEffects) return;
+    playerAvatarEffect.value = effect;
   };
 
   const addPoints = (earnedPoints: number) => {
@@ -148,6 +159,7 @@ export const usePlayerStore = defineStore("player", () => {
     avatarIndex,
     avatarSpriteSheet,
     playerNameEffect,
+    playerAvatarEffect,
     points,
     correctAnswers,
     gameMode,
@@ -160,6 +172,7 @@ export const usePlayerStore = defineStore("player", () => {
     setAvatar,
     setSheet,
     setPlayerNameEffect,
+    setPlayerAvatarEffect,
     addPoints,
     pushToAnswerHistory,
     recordHighlight,

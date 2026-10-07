@@ -7,10 +7,10 @@
 
     <div class="top-player-row">
       <router-link to="/rankings-daily" class="row-link">
-        <div class="hud-avatar" :style="avatarStyle"></div>
+        <div class="hud-avatar" :class="topRanking.avatarEffect" :style="avatarStyle"></div>
 
         <div class="row-info">
-          <span class="row-name">{{ topRanking.name }}</span>
+          <span class="row-name" :class="topRanking.nameEffect">{{ topRanking.name }}</span>
         </div>
 
         <div class="row-divider"></div>
@@ -49,6 +49,8 @@ type DailyRanking = {
   score: number;
   avatarIndex: number;
   avatarSpriteSheet?: import("@/utils/avatar").AvatarSpriteSheet;
+  nameEffect?: import("@/data/unlockables").PlayerNameEffect;
+  avatarEffect?: import("@/data/unlockables").PlayerAvatarEffect;
 };
 
 const topRanking = computed<DailyRanking | null>(() => {

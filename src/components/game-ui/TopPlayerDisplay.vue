@@ -11,13 +11,14 @@
       <div
         v-if="avatarIndex !== undefined"
         class="hud-avatar"
+        :class="avatarEffect"
         :style="avatarStyle"
       ></div>
       <div class="avatar-shine"></div>
     </div>
 
     <div class="player-pill" v-if="name">
-      <span class="player-name" :class="nameEffectClass">
+      <span class="player-name" :class="nameEffect">
         {{ name }}
       </span>
       <template v-if="score !== undefined || highscore !== undefined">
@@ -50,6 +51,8 @@ const props = defineProps<{
   isPending?: boolean;
   isActive?: boolean;
   subline?: string;
+  nameEffect?: import("@/data/unlockables").PlayerNameEffect;
+  avatarEffect?: import("@/data/unlockables").PlayerAvatarEffect;
 }>();
 
 const playerStore = usePlayerStore();

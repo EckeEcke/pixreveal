@@ -10,6 +10,8 @@
         <TopPlayerDisplay
           :avatar-index="player.avatarIndex"
           :avatar-sprite-sheet="player.avatarSpriteSheet"
+          :name-effect="player.nameEffect"
+          :avatar-effect="player.avatarEffect"
           :is-own-player="player.playerId === playerStore.playerId"
           :is-winner="!isDraw && player.score === highestScore"
           :role="index === 0 ? 'Player 1' : 'Player 2'"

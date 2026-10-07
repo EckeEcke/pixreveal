@@ -384,3 +384,40 @@ input[type="text"]:focus {
 .name-effect-chromatic-shadow {
   text-shadow: 2px 0 rgba(255, 20, 147, 0.7), -2px 0 rgba(0, 242, 255, 0.7);
 }
+
+.avatar-effect-inverted {
+  filter: invert(1);
+}
+
+.avatar-effect-sepia {
+  filter: sepia(1);
+}
+
+.avatar-effect-blur {
+  transition: all 0.3s;
+  filter: blur(0px);
+  animation: glitch-blur 4s infinite ease-in-out;
+}
+
+@keyframes glitch-blur {
+  0%, 100% {
+    filter: blur(0px) brightness(1);
+  }
+  50% {
+    filter: blur(0px) brightness(1);
+    transform: rotate(10deg);
+  }
+  55% {
+    filter: blur(4px) brightness(1.15);
+    transform: rotate(0);
+  }
+  79% {
+    filter: blur(0px) brightness(1);
+  }
+  80% {
+    filter: blur(4px) brightness(1.15);
+  }
+  84% {
+    filter: blur(0px) brightness(1);
+  }
+}

@@ -1,6 +1,7 @@
 import type { CSSProperties } from "vue";
 import classicSpriteSheet from "@/assets/avatars/avatars.webp";
 import unlockablesSpriteSheet from "@/assets/avatars/avatars2.webp";
+import { type PlayerAvatarEffect } from "@/data/unlockables";
 
 export type AvatarSpriteSheet = "classic" | "unlockables";
 
@@ -12,6 +13,7 @@ const spriteSheets: Record<AvatarSpriteSheet, string> = {
 export const getAvatarStyle = (
   avatarIndex: number | null | undefined,
   spriteSheet: AvatarSpriteSheet = "classic",
+  avatarEffect: PlayerAvatarEffect = "none",
 ): CSSProperties => {
   const index = Math.max(0, Math.floor(avatarIndex ?? 0));
   const column = index % 6;

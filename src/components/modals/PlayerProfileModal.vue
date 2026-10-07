@@ -13,7 +13,7 @@
     <h2>PLAYER PROFILE</h2>
 
     <div class="profile-identity">
-      <span class="avatar-image" :style="avatarStyle" aria-hidden="true" />
+      <span class="avatar-image" :class="playerStore.playerAvatarEffect" :style="avatarStyle" aria-hidden="true" />
       <div class="player-copy">
         <span class="eyebrow">CURRENT PLAYER</span>
         <strong :class="nameEffectClass">{{ playerStore.playerName || "MYSTERY PLAYER" }}</strong>

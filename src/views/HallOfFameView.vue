@@ -53,6 +53,8 @@
             :avatar-index="entry.winner.avatarIndex"
             :avatar-sprite-sheet="entry.winner.avatarSpriteSheet"
             :score="entry.winner.score"
+            :name-effect="entry.winner.nameEffect"
+            :avatar-effect="entry.winner.avatarEffect"
             class="player-card"
           />
         </div>
