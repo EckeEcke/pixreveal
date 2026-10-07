@@ -141,6 +141,7 @@ const getPlayerStateClass = (score: number) => {
     text-transform: uppercase;
     font-weight: bold;
     font-size: 13px;
+    margin-top: 8px;
     @media (min-width: 450px) {
         font-size: 18px;
     }

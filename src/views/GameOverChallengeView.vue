@@ -30,12 +30,14 @@ import {
   type ChallengeParticipant,
 } from "@/stores/challenge"
 import { usePlayerStore } from "@/stores/player"
+import { useSoundStore } from "@/stores/sound"
 import { useAchievementsStore } from "@/stores/achievements"
 
 const route = useRoute()
 const router = useRouter()
 const challengeStore = useChallengeStore()
 const playerStore = usePlayerStore()
+const soundStore = useSoundStore()
 const achievementsStore = useAchievementsStore()
 const session = ref<ChallengeSession | null>(challengeStore.session)
 
@@ -74,6 +76,7 @@ onMounted(async () => {
   if (response.ok) {
     session.value = (await response.json()) as ChallengeSession
   }
+  soundStore.playSound("complete")
 })
 </script>
 
