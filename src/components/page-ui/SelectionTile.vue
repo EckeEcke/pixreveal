@@ -232,7 +232,9 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .neon-btn:hover {
-  box-shadow: 0 0 20px var(--btn-color);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 20px color-mix(in srgb, var(--btn-color) 55%, transparent);
   animation: 0.3s light-float forwards ease-in-out;
 }
 

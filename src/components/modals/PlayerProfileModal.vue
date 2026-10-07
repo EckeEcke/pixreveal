@@ -49,6 +49,15 @@
         <Icon icon="pixel:lock-alt-solid" class="unlockables-icon" />
         <span>UNLOCKABLES</span>
       </button>
+      <button
+        class="challenges-action"
+        type="button"
+        data-sfx="click"
+        @click="emit('challenges')"
+      >
+        <Icon icon="at-icons:swords" class="challenges-icon" />
+        <span>CHALLENGES</span>
+      </button>
     </div>
   </ModalWrapper>
 </template>
@@ -67,6 +76,7 @@ const emit = defineEmits<{
   edit: [];
   achievements: [];
   unlockables: [];
+  challenges: [];
 }>();
 
 const playerStore = usePlayerStore();

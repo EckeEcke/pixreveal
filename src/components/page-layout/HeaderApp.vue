@@ -53,6 +53,7 @@
     @edit="openPlayerEditor"
     @achievements="openAchievements"
     @unlockables="openUnlockables"
+    @challenges="openChallenges"
   />
   <AchievementsModal
     v-if="showAchievementsModal"
@@ -69,6 +70,10 @@
     @btn-click="showPlayerEditModal = false"
     @close="showPlayerEditModal = false"
   />
+  <ChallengeHistoryModal
+    v-if="showChallengeModal"
+    @close="showChallengeModal = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -80,6 +85,7 @@ import PlayerEditModal from "@/components/modals/PlayerEditModal.vue";
 import PlayerProfileModal from "@/components/modals/PlayerProfileModal.vue";
 import AchievementsModal from "@/components/modals/AchievementsModal.vue";
 import UnlockablesModal from "@/components/modals/UnlockablesModal.vue";
+import ChallengeHistoryModal from "@/components/modals/ChallengeHistoryModal.vue";
 import { Icon } from "@iconify/vue";
 import { getAvatarStyle } from "@/utils/avatar";
 
@@ -95,6 +101,7 @@ const showPlayerProfileModal = ref(false);
 const showAchievementsModal = ref(false);
 const showUnlockablesModal = ref(false);
 const showPlayerEditModal = ref(false);
+const showChallengeModal = ref(false);
 
 const openPlayerEditor = () => {
   showPlayerProfileModal.value = false;
@@ -109,6 +116,11 @@ const openAchievements = () => {
 const openUnlockables = () => {
   showPlayerProfileModal.value = false;
   showUnlockablesModal.value = true;
+};
+
+const openChallenges = () => {
+  showPlayerProfileModal.value = false;
+  showChallengeModal.value = true;
 };
 
 const avatarStyle = computed(() => {

@@ -54,6 +54,35 @@ export default async function handler(req, res) {
   try {
     await client.connect();
 
+    // 1. NEU: Batch-Status-Check für mehrere Session-IDs
+    if (req.method === "POST" && Array.isArray(req.body?.sessionIds)) {
+      const sessionIds = req.body.sessionIds.filter(isValidSessionId);
+      const results = {};
+
+      if (sessionIds.length > 0) {
+        const keys = sessionIds.map(redisKey);
+        const rawValues = await client.mGet(keys);
+
+        sessionIds.forEach((id, index) => {
+          const raw = rawValues[index];
+          if (raw) {
+            try {
+              const session = JSON.parse(raw);
+              results[id] = Boolean(session.opponent);
+            } catch {
+              results[id] = false;
+            }
+          } else {
+            results[id] = false;
+          }
+        });
+      }
+
+      await client.disconnect();
+      return res.status(200).json(results);
+    }
+
+    // 2. Bestehend: Einzelne Challenge erstellen (POST)
     if (req.method === "POST") {
       const session = cleanSession(req.body || {});
       if (!session) {
@@ -80,6 +109,7 @@ export default async function handler(req, res) {
       return res.status(201).json({ sessionId: session.sessionId });
     }
 
+    // 3. Abrufen oder Patchen einer einzelnen Challenge (GET / PATCH)
     const sessionId = req.query?.sessionId;
     if (!isValidSessionId(sessionId)) {
       await client.disconnect();
