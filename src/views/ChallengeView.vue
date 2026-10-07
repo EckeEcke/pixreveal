@@ -20,16 +20,20 @@ const props = defineProps<{
 
 const playerStore = usePlayerStore()
 
-// Prüfen, ob der aktuelle User überhaupt an dieser Challenge beteiligt ist
 const isParticipant = computed(() => {
-  if (!props.challenge) return false
+  if (!challenge.value) return false
+
+  const myId = playerStore.playerId
+  const challengerId = challenge.value.challenger?.playerId
+  const opponentId = challenge.value.opponent?.playerId
+
   return (
-    props.challenge.challenger.playerId === playerStore.playerId ||
-    props.challenge.opponent?.playerId === playerStore.playerId
+    (challengerId && challengerId === myId) ||
+    (opponentId && opponentId === myId) ||
+    hasLocalChallengeRecord(challenge.value.sessionId)
   )
 })
 
-// Prüfen, ob es ein Unentschieden ist
 const isDraw = computed(() => {
   if (!props.challenge?.opponent) return false
   return props.challenge.challenger.score === props.challenge.opponent.score
