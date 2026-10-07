@@ -4,15 +4,18 @@
       <Icon icon="pixel:window-close-solid" />
     </button>
     <h2>{{ title ? title : "EDIT PLAYER" }}</h2>
-    <div class="input-group" @keyup.enter="handleEnter">
+    <div class="input-group" @keyup.enter="confirmEdit">
       <h3>Set Your Name</h3>
       <input
         id="username"
-        v-model="playerStore.playerName"
+        :value="playerStore.playerName"
         type="text"
         placeholder="Enter Name..."
-        maxlength="10"
-        @input="soundStore.playSound('click')"
+        :maxlength="NAME_MAX_LENGTH"
+        autocapitalize="characters"
+        autocomplete="off"
+        spellcheck="false"
+        @input="onNameInput"
       />
     </div>
     <div class="avatar-selection">
@@ -101,6 +104,8 @@ defineProps({
 });
 const emit = defineEmits(["close", "btn-click"]);
 
+const NAME_MAX_LENGTH = 10;
+
 const playerStore = usePlayerStore();
 const soundStore = useSoundStore();
 const achievementsStore = useAchievementsStore();
@@ -121,6 +126,20 @@ const selectedSheet = computed(() => playerStore.avatarSpriteSheet);
 onMounted(() => {
   void achievementsStore.loadAchievements();
 });
+
+const onNameInput = (event) => {
+  const input = event.target;
+  const { selectionStart, selectionEnd } = input;
+
+  // toUpperCase kann die Länge ändern (ß -> SS), daher zusätzlich kürzen
+  const upper = input.value.toUpperCase().slice(0, NAME_MAX_LENGTH);
+  input.value = upper;
+  // Cursorposition erhalten, sonst springt er beim Tippen mitten im Namen ans Ende
+  input.setSelectionRange(selectionStart, selectionEnd);
+
+  playerStore.playerName = upper;
+  soundStore.playSound("click");
+};
 
 const selectAvatar = (id) => {
   playerStore.setAvatar(id);
@@ -161,6 +180,15 @@ h3 {
   color: var(--primary);
   margin-bottom: 8px;
   text-transform: uppercase;
+}
+
+/* Anzeige immer in Grossbuchstaben, Platzhalter bleibt normal */
+#username {
+  text-transform: uppercase;
+}
+
+#username::placeholder {
+  text-transform: none;
 }
 
 /* Der neue, sichere Scroll-Container für Mobile */
