@@ -155,7 +155,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 .score-divider {
