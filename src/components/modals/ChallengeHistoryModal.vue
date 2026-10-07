@@ -125,7 +125,6 @@ const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won
         let draw = false
 
         if (hasOpp) {
-          // Prüfen, ob du der Opponent oder der Challenger bist
           const isUserOpponent = statusData.opponentPlayerId === playerStore.playerId
 
           const userScore = isUserOpponent ? statusData.opponentScore : statusData.challengerScore
