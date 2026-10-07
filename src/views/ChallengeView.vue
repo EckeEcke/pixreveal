@@ -1,90 +1,82 @@
 <template>
   <div class="challenge-detail-card">
-    <h2>Duell-Details</h2>
+    <h2>Challenge details</h2>
 
-    <div v-if="isParticipant" class="result-banner">
-      <template v-if="isDraw">
-        <span class="badge draw">DRAW</span>
-      </template>
-      <template v-else>
-        <span v-if="hasWon" class="badge win">YOU WIN</span>
-        <span v-else class="badge lose">YOU LOSE</span>
-      </template>
+    <div class="result-banner">
+      <span class="badge" :class="banner.tone">{{ banner.text }}</span>
     </div>
 
-    <div v-else class="spectator-banner">
-      <span class="badge spectator">Only participants can see the results.</span>
-    </div>
-
-    <div class="score-board" v-if="challenge">
-      <div class="player-side">
-        <span>{{ challenge.challenger.name }}</span>
-        <strong>{{ challenge.challenger.score }} Pkt.</strong>
+    <div class="score-board">
+      <div
+        class="player-side"
+        :class="{ winner: winnerSide === 'challenger' }"
+      >
+        <span>{{ challenge.challenger.username }}</span>
+        <strong>{{ challenge.challenger.score }} pts</strong>
       </div>
+
       <div class="vs">VS</div>
-      <div class="player-side" v-if="challenge.opponent">
-        <span>{{ challenge.opponent.name }}</span>
-        <strong>{{ challenge.opponent.score }} Pkt.</strong>
+
+      <div
+        v-if="challenge.opponent"
+        class="player-side"
+        :class="{ winner: winnerSide === 'opponent' }"
+      >
+        <span>{{ challenge.opponent.username }}</span>
+        <strong>{{ challenge.opponent.score }} pts</strong>
       </div>
-      <div class="player-side" v-else>
-        <span>Wartet auf Gegner...</span>
+      <div v-else class="player-side waiting">
+        <span>Waiting for opponent...</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { usePlayerStore } from '@/stores/player'
+import { computed } from "vue"
+import { usePlayerStore } from "@/stores/player"
+import type { ChallengeSession } from "@/stores/challenge"
 
 const props = defineProps<{
-  challenge: {
-    challenger: {
-      playerId: string
-      name: string
-      score: number
-    }
-    opponent?: {
-      playerId: string
-      name: string
-      score: number
-    }
-  }
+  challenge: Pick<ChallengeSession, "challenger" | "opponent">
 }>()
 
 const playerStore = usePlayerStore()
 
-const isDraw = computed(() => {
-  if (!props.challenge?.opponent) return false
-  return props.challenge.challenger.score === props.challenge.opponent.score
-})
+type Side = "challenger" | "opponent"
 
-const isParticipant = computed(() => {
-  if (!props.challenge) return false
-
+const role = computed<Side | "spectator">(() => {
   const myId = playerStore.playerId
-  const challengerId = props.challenge.challenger?.playerId
-  const opponentId = props.challenge.opponent?.playerId
-
-  return (
-    (challengerId && challengerId === myId) ||
-    (opponentId && opponentId === myId)
-  )
+  if (!myId) return "spectator"
+  if (props.challenge.challenger.playerId === myId) return "challenger"
+  if (props.challenge.opponent?.playerId === myId) return "opponent"
+  return "spectator"
 })
 
-const hasWon = computed(() => {
-  if (!props.challenge?.opponent || isDraw.value || !isParticipant.value) return false
-  
-  const challengerScore = props.challenge.challenger.score
-  const opponentScore = props.challenge.opponent.score
-  
-  const isUserOpponent = props.challenge.opponent.playerId === playerStore.playerId
+const winnerSide = computed<Side | "draw" | null>(() => {
+  const { challenger, opponent } = props.challenge
+  if (!opponent) return null
+  if (challenger.score === opponent.score) return "draw"
+  return challenger.score > opponent.score ? "challenger" : "opponent"
+})
 
-  if (isUserOpponent) {
-    return opponentScore > challengerScore
-  } else {
-    return challengerScore > opponentScore
+const banner = computed<{
+  text: string
+  tone: "pending" | "win" | "lose" | "draw" | "spectator"
+}>(() => {
+  const { challenger, opponent } = props.challenge
+
+  if (!opponent) return { text: "WAITING FOR OPPONENT", tone: "pending" }
+  if (winnerSide.value === "draw") return { text: "DRAW", tone: "draw" }
+
+  if (role.value === "spectator") {
+    const winner = winnerSide.value === "challenger" ? challenger : opponent
+    return { text: `${winner.username} WINS`, tone: "spectator" }
   }
+
+  return role.value === winnerSide.value
+    ? { text: "YOU WIN", tone: "win" }
+    : { text: "YOU LOSE", tone: "lose" }
 })
 </script>
 
@@ -114,6 +106,19 @@ const hasWon = computed(() => {
   align-items: center;
 }
 
+.player-side.winner strong {
+  color: #ffd54f;
+}
+
+.player-side.waiting {
+  opacity: 0.6;
+}
+
+.vs {
+  opacity: 0.6;
+  font-weight: 700;
+}
+
 .badge {
   display: inline-block;
   padding: 8px 16px;
@@ -138,9 +143,13 @@ const hasWon = computed(() => {
   color: #fff;
 }
 
+.badge.pending {
+  background-color: #37474f;
+  color: #cfd8dc;
+}
+
 .badge.spectator {
   background-color: #455a64;
   color: #cfd8dc;
-  font-size: 0.9rem;
 }
 </style>

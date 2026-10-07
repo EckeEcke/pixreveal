@@ -55,6 +55,34 @@ const openDatabase = (): Promise<IDBDatabase> => {
   })
 }
 
+export const loadStoredChallenges = async (): Promise<StoredChallenge[]> => {
+  try {
+    const db = await openDatabase()
+    return await new Promise<StoredChallenge[]>((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite")
+      const store = tx.objectStore(STORE_NAME)
+      const active: StoredChallenge[] = []
+
+      const request = store.getAll()
+      request.onsuccess = () => {
+        const now = Date.now()
+        for (const entry of request.result as StoredChallenge[]) {
+          if (entry.expiresAt <= now) store.delete(entry.sessionId)
+          else active.push(entry)
+        }
+        active.sort((a, b) => b.createdAt - a.createdAt)
+      }
+
+      tx.oncomplete = () => resolve(active)
+      tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error)
+    })
+  } catch (error) {
+    console.error("Could not load challenges from IndexedDB", error)
+    return []
+  }
+}
+
 const saveToIndexedDB = async (storeName: string, key: string, value: any) => {
   try {
     const db = await openDatabase()

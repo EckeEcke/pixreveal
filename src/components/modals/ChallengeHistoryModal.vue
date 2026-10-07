@@ -68,127 +68,86 @@
 import { onMounted, ref } from "vue"
 import { Icon } from "@iconify/vue"
 import ModalWrapper from "@/components/modals/ModalWrapper.vue"
-import { useChallengeStore, type StoredChallenge } from "@/stores/challenge"
-import { usePlayerStore } from "@/stores/player"
+import { loadStoredChallenges, type StoredChallenge } from "@/stores/challenge"
+
+type ChallengeStatus = {
+  hasOpponent: boolean
+  challengerScore: number
+  opponentScore: number
+}
+
+type ChallengeRow = StoredChallenge & { won?: boolean; draw?: boolean }
 
 const emit = defineEmits<{ close: [] }>()
-const challengeStore = useChallengeStore()
-const playerStore = usePlayerStore()
 
-const challenges = ref<(StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean })[]>([])
+const challenges = ref<ChallengeRow[]>([])
 
-const DB_NAME = "pixreveal_challenges_db"
-const STORE_NAME = "challenges"
+const resolveRow = (
+  challenge: StoredChallenge,
+  status?: ChallengeStatus,
+): ChallengeRow => {
+  if (!status) return { ...challenge }
+  if (!status.hasOpponent) return { ...challenge, hasOpponent: false }
 
-const loadChallengesFromDB = async () => {
-  return new Promise<StoredChallenge[]>((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 2)
-    request.onsuccess = () => {
-      const db = request.result
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        resolve([])
-        return
-      }
-      const tx = db.transaction(STORE_NAME, "readonly")
-      const store = tx.objectStore(STORE_NAME)
-      const getAllRequest = store.getAll()
-      getAllRequest.onsuccess = () => {
-        const result = getAllRequest.result as StoredChallenge[]
-        result.sort((a, b) => b.createdAt - a.createdAt)
-        resolve(result)
-      }
-      getAllRequest.onerror = () => reject(getAllRequest.error)
-    }
-    request.onerror = () => reject(request.error)
-  })
+  const draw = status.challengerScore === status.opponentScore
+  return {
+    ...challenge,
+    hasOpponent: true,
+    draw,
+    won: !draw && status.challengerScore > status.opponentScore,
+  }
 }
 
-const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean })[]) => {
-  const sessionIds = loadedChallenges.map(c => c.sessionId)
-  if (sessionIds.length === 0) return
-
+const fetchStatuses = async (
+  rows: StoredChallenge[],
+): Promise<Record<string, ChallengeStatus>> => {
+  if (rows.length === 0) return {}
   try {
-    const response = await fetch('/api/friend-challenge', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionIds })
+    const response = await fetch("/api/friend-challenge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionIds: rows.map((c) => c.sessionId) }),
     })
-
-    if (!response.ok) return
-    const statuses = await response.json()
-
-    for (const challenge of loadedChallenges) {
-      const statusData = statuses[challenge.sessionId]
-      if (statusData) {
-        const hasOpp = Boolean(statusData.hasOpponent)
-        let won = false
-        let draw = false
-
-        if (hasOpp) {
-          const isUserOpponent = statusData.opponentPlayerId === playerStore.playerId
-
-          const userScore = isUserOpponent ? statusData.opponentScore : statusData.challengerScore
-          const opponentScore = isUserOpponent ? statusData.challengerScore : statusData.opponentScore
-
-          if (userScore === opponentScore) {
-            draw = true
-          } else {
-            won = userScore > opponentScore
-          }
-        }
-
-        challenge.hasOpponent = hasOpp
-        challenge.won = won
-        challenge.draw = draw
-      }
-    }
+    return response.ok ? await response.json() : {}
   } catch (error) {
-    console.error("Failed to check batch challenge statuses", error)
+    console.error("Failed to check challenge statuses", error)
+    return {}
   }
 }
 
-const getChallengeIcon = (challenge: StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean }) => {
-  if (!challenge.hasOpponent) {
-    return "at-icons:swords"
-  }
-  if (challenge.draw) {
-    return "pixel:handshake-solid"
-  }
+const getChallengeIcon = (challenge: ChallengeRow) => {
+  if (!challenge.hasOpponent) return "at-icons:swords"
+  if (challenge.draw) return "pixel:handshake-solid"
   return challenge.won ? "pixel:trophy" : "pixel:times-solid"
 }
 
-const getIconClass = (challenge: StoredChallenge & { won?: boolean; draw?: boolean; hasOpponent?: boolean }) => {
+const getIconClass = (challenge: ChallengeRow) => {
   if (!challenge.hasOpponent) return "status-pending"
   if (challenge.draw) return "status-draw"
   return challenge.won ? "status-win" : "status-lose"
 }
 
-const formatDate = (timestamp: number) => {
-  const date = new Date(timestamp)
-  return date.toLocaleDateString(undefined, {
+const formatDate = (timestamp: number) =>
+  new Date(timestamp).toLocaleDateString(undefined, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   })
-}
 
 const handleShare = async (challenge: StoredChallenge) => {
   if (navigator.share) {
     try {
       await navigator.share({
         title: "PixReveal Challenge",
-        text: `Can you beat my score in PixReveal?`,
+        text: "Can you beat my score in PixReveal?",
         url: challenge.link,
       })
       return
     } catch (error) {
-      if ((error as Error).name !== "AbortError") {
-        console.error("Error sharing", error)
-      } else {
-        return
-      }
+      if ((error as Error).name === "AbortError") return
+      console.error("Error sharing", error)
     }
   }
 
@@ -204,13 +163,11 @@ const handleOpenLink = (challenge: StoredChallenge) => {
 }
 
 onMounted(async () => {
-  try {
-    const loaded = await loadChallengesFromDB()
-    challenges.value = loaded
-    await checkAndUpdateStatuses(loaded)
-  } catch (error) {
-    console.error("Failed to load challenges from IndexedDB", error)
-  }
+  const stored = await loadStoredChallenges()
+  challenges.value = stored.map((c) => resolveRow(c))
+
+  const statuses = await fetchStatuses(stored)
+  challenges.value = stored.map((c) => resolveRow(c, statuses[c.sessionId]))
 })
 </script>
 
