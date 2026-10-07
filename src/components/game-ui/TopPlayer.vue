@@ -10,7 +10,7 @@
         <div class="hud-avatar" :class="topRanking.avatarEffect" :style="avatarStyle"></div>
 
         <div class="row-info">
-          <span class="row-name" :class="topRanking.nameEffect">{{ topRanking.name }}</span>
+          <span class="row-name" :class="`name-effect-${topRanking.nameEffect}`">{{ topRanking.name }}</span>
         </div>
 
         <div class="row-divider"></div>
