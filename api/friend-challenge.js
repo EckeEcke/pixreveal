@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   try {
     await client.connect();
 
-    // 1. NEU: Batch-Status-Check für mehrere Session-IDs
+    // 1. Batch-Status-Check für mehrere Session-IDs (Inkl. Sieg/Niederlage/Unentschieden-Auswertung)
     if (req.method === "POST" && Array.isArray(req.body?.sessionIds)) {
       const sessionIds = req.body.sessionIds.filter(isValidSessionId);
       const results = {};
@@ -68,12 +68,33 @@ export default async function handler(req, res) {
           if (raw) {
             try {
               const session = JSON.parse(raw);
-              results[id] = Boolean(session.opponent);
+              const hasOpponent = Boolean(session.opponent);
+              let won = false;
+              let draw = false;
+
+              if (hasOpponent) {
+                const challengerScore = session.challenger?.score || 0;
+                const opponentScore = session.opponent?.score || 0;
+
+                if (challengerScore > opponentScore) {
+                  won = true;
+                } else if (challengerScore === opponentScore) {
+                  draw = true;
+                } else {
+                  won = false;
+                }
+              }
+
+              results[id] = {
+                hasOpponent,
+                won,
+                draw,
+              };
             } catch {
-              results[id] = false;
+              results[id] = { hasOpponent: false, won: false, draw: false };
             }
           } else {
-            results[id] = false;
+            results[id] = { hasOpponent: false, won: false, draw: false };
           }
         });
       }

@@ -9,11 +9,15 @@
         </section>
         <section v-else-if="challenge" class="challenge-card" :class="{ 'is-completed': challenge.opponent }">
         <h1 class="logo">
-          Pix<span>Reveal</span>
+        Pix<span>Reveal</span>
         </h1>
 
         <template v-if="challenge.opponent">
-            <h2>Challenge results</h2>
+            <h2 :class="resultClass">
+              <span v-if="isDraw">Unentschieden!</span>
+              <span v-else-if="hasWon">Gewonnen!</span>
+              <span v-else>Verloren!</span>
+            </h2>
             <AnswerComparison
                 :rounds="challenge.rounds"
                 :participants="participants"
@@ -38,8 +42,8 @@
                     <div
                     class="avatar"
                     :style="avatarStyleFor(playerStore.avatarIndex)"
-                                        >
-                                        </div>
+                                                    >
+                    </div>
                     <div class="player-info">
                                                 <strong :class="nameEffectClass">{{ playerStore.playerName }}</strong>
                         <Icon class="edit-icon" icon="pixel:edit-solid" />
@@ -90,6 +94,23 @@ const participants = computed<ChallengeParticipant[]>(() => {
   return challenge.value.opponent
     ? [challenge.value.challenger, challenge.value.opponent]
     : [challenge.value.challenger];
+});
+
+const isDraw = computed(() => {
+  if (!challenge.value?.opponent) return false;
+  return challenge.value.challenger.score === challenge.value.opponent.score;
+});
+
+const hasWon = computed(() => {
+  if (!challenge.value?.opponent || isDraw.value) return false;
+  return challenge.value.opponent.playerId === playerStore.playerId 
+    ? challenge.value.opponent.score > challenge.value.challenger.score 
+    : challenge.value.challenger.score > challenge.value.opponent.score;
+});
+
+const resultClass = computed(() => {
+  if (isDraw.value) return "result-draw";
+  return hasWon.value ? "result-win" : "result-loss";
 });
 
 const avatarStyleFor = (avatarIndex: number) =>
@@ -148,12 +169,24 @@ onMounted(async () => {
     width: min(100%, 900px);
 }
 
+.result-win {
+    color: var(--neon-green, #48bb78);
+}
+
+.result-loss {
+    color: var(--neon-red, #f56565);
+}
+
+.result-draw {
+    color: var(--white);
+}
+
 .eyebrow, .mode { 
     color: var(--neon-yellow); 
     font-weight: 900; 
     letter-spacing: 1px; 
-
 }
+
 .challenger { 
     display: flex;
     flex-direction: column; 
