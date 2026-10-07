@@ -40,6 +40,7 @@
 
           <div class="challenge-actions">
             <button
+              v-if="!challenge.hasOpponent"
               class="action-btn share-btn"
               type="button"
               data-sfx="click"
@@ -49,6 +50,7 @@
               <span>Share</span>
             </button>
             <button
+              v-else
               class="action-btn check-btn"
               type="button"
               data-sfx="click"
