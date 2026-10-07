@@ -116,16 +116,29 @@ const checkAndUpdateStatuses = async (loadedChallenges: (StoredChallenge & { won
     const statuses = await response.json()
 
     for (const challenge of loadedChallenges) {
-      const statusData = statuses[challenge.sessionId]
-      if (statusData) {
-        const hasOpp = Boolean(statusData.hasOpponent)
-        if (challenge.hasOpponent !== hasOpp) {
-          challenge.hasOpponent = hasOpp
-          challenge.won = statusData.won
-          challenge.draw = statusData.draw
-          await challengeStore.updateChallengeStatus(challenge.sessionId, hasOpp)
+        const statusData = statuses[challenge.sessionId]
+        if (statusData) {
+            const hasOpp = Boolean(statusData.hasOpponent)
+            
+            let won = false
+            let draw = false
+
+            if (hasOpp) {
+                const isUserChallenger = challenge.challenger.playerId === playerStore.playerId
+                const userScore = isUserChallenger ? statusData.challengerScore : statusData.opponentScore
+                const opponentScore = isUserChallenger ? statusData.opponentScore : statusData.challengerScore
+
+                if (userScore === opponentScore) {
+                draw = true
+                } else {
+                won = userScore > opponentScore
+                }
+            }
+
+            challenge.hasOpponent = hasOpp
+            challenge.won = won
+            challenge.draw = draw
         }
-      }
     }
   } catch (error) {
     console.error("Failed to check batch challenge statuses", error)

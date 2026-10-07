@@ -87,9 +87,11 @@ export default async function handler(req, res) {
 
               results[id] = {
                 hasOpponent,
-                won,
-                draw,
-              };
+                challengerScore: session.challenger?.score || 0,
+                opponentScore: session.opponent?.score || 0,
+                challengerPlayerId: session.challenger?.playerId || "",
+                opponentPlayerId: session.opponent?.playerId || ""
+              }
             } catch {
               results[id] = { hasOpponent: false, won: false, draw: false };
             }
