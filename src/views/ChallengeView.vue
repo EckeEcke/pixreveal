@@ -1,155 +1,374 @@
+```vue
 <template>
-  <div class="challenge-detail-card">
-    <h2>Challenge details</h2>
+  <div>
+    <main class="challenge-page">
+      <section v-if="loading" class="challenge-card">
+        Loading challenge...
+      </section>
 
-    <div class="result-banner">
-      <span class="badge" :class="banner.tone">{{ banner.text }}</span>
-    </div>
+      <section v-else-if="error" class="challenge-card">
+        <h1>Challenge unavailable</h1>
+        <p>{{ error }}</p>
+        <ButtonSecondary @clicked="$router.push('/')">
+          Go back
+        </ButtonSecondary>
+      </section>
 
-    <div class="score-board">
-      <div
-        class="player-side"
-        :class="{ winner: winnerSide === 'challenger' }"
+      <section
+        v-else-if="challenge"
+        class="challenge-card"
+        :class="{ 'is-completed': challenge.opponent }"
       >
-        <span>{{ challenge.challenger.username }}</span>
-        <strong>{{ challenge.challenger.score }} pts</strong>
-      </div>
+        <h1 class="logo">
+          Pix<span>Reveal</span>
+        </h1>
 
-      <div class="vs">VS</div>
+        <template v-if="challenge.opponent">
+          <h2 :class="resultClass">
+            <span v-if="isDraw">DRAW!</span>
+            <span v-else-if="hasWon">YOU WIN</span>
+            <span v-else-if="isSpectator">
+              {{ winnerName }} WINS
+            </span>
+            <span v-else>YOU LOSE...</span>
+          </h2>
 
-      <div
-        v-if="challenge.opponent"
-        class="player-side"
-        :class="{ winner: winnerSide === 'opponent' }"
-      >
-        <span>{{ challenge.opponent.username }}</span>
-        <strong>{{ challenge.opponent.score }} pts</strong>
-      </div>
-      <div v-else class="player-side waiting">
-        <span>Waiting for opponent...</span>
-      </div>
-    </div>
+          <AnswerComparison
+            :rounds="challenge.rounds"
+            :participants="participants"
+          />
+
+          <ButtonSecondary
+            class="accept"
+            @clicked="$router.push('/')"
+          >
+            Go back
+          </ButtonSecondary>
+        </template>
+
+        <template v-else>
+          <h2>{{ challenge.challenger.username }} challenges you!</h2>
+
+          <div class="challenger">
+            <TopPlayerDisplay
+              :avatar-index="challenge.challenger.avatarIndex"
+              :avatar-sprite-sheet="challenge.challenger.avatarSpriteSheet"
+            />
+
+            <p>Can you beat their score?</p>
+          </div>
+
+          <div class="edit-card">
+            <p>Edit your avatar before creating a challenge</p>
+
+            <div
+              class="player-preview"
+              @click="showPlayerEditModal = true"
+            >
+              <div
+                class="avatar"
+                :style="avatarStyleFor(playerStore.avatarIndex)"
+              ></div>
+
+              <div class="player-info">
+                <strong :class="nameEffectClass">
+                  {{ playerStore.playerName }}
+                </strong>
+
+                <Icon
+                  class="edit-icon"
+                  icon="pixel:edit-solid"
+                />
+              </div>
+            </div>
+          </div>
+
+          <ButtonPrimary
+            class="accept"
+            @clicked="acceptChallenge"
+          >
+            Accept the challenge
+          </ButtonPrimary>
+        </template>
+      </section>
+    </main>
+
+    <PlayerEditModal
+      v-if="showPlayerEditModal"
+      title="YOUR PLAYER"
+      btn-text="DONE"
+      @btn-click="showPlayerEditModal = false"
+      @close="showPlayerEditModal = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
-import { usePlayerStore } from "@/stores/player"
-import type { ChallengeSession } from "@/stores/challenge"
+import { Icon } from "@iconify/vue"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
-const props = defineProps<{
-  challenge: Pick<ChallengeSession, "challenger" | "opponent">
-}>()
+import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue"
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
+import { usePlayerStore } from "@/stores/player"
+import {
+  useChallengeStore,
+  type ChallengeSession,
+  type ChallengeParticipant,
+} from "@/stores/challenge"
+import { getAvatarStyle } from "@/utils/avatar"
+import PlayerEditModal from "@/components/modals/PlayerEditModal.vue"
+import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
+import AnswerComparison from "@/components/game-ui/AnswerComparison.vue"
+
+const route = useRoute()
+const router = useRouter()
 
 const playerStore = usePlayerStore()
+const challengeStore = useChallengeStore()
 
-type Side = "challenger" | "opponent"
+const challenge = ref<ChallengeSession | null>(null)
+const loading = ref(true)
+const error = ref("")
+const showPlayerEditModal = ref(false)
 
-const role = computed<Side | "spectator">(() => {
-  const myId = playerStore.playerId
-  if (!myId) return "spectator"
-  if (props.challenge.challenger.playerId === myId) return "challenger"
-  if (props.challenge.opponent?.playerId === myId) return "opponent"
+const role = computed<"challenger" | "opponent" | "spectator">(() => {
+  if (!challenge.value) return "spectator"
+
+  const playerId = playerStore.playerId
+
+  if (!playerId) return "spectator"
+
+  if (challenge.value.challenger.playerId === playerId) {
+    return "challenger"
+  }
+
+  if (challenge.value.opponent?.playerId === playerId) {
+    return "opponent"
+  }
+
   return "spectator"
 })
 
-const winnerSide = computed<Side | "draw" | null>(() => {
-  const { challenger, opponent } = props.challenge
-  if (!opponent) return null
-  if (challenger.score === opponent.score) return "draw"
-  return challenger.score > opponent.score ? "challenger" : "opponent"
+const isSpectator = computed(() => role.value === "spectator")
+
+const participants = computed<ChallengeParticipant[]>(() => {
+  if (!challenge.value) return []
+
+  return challenge.value.opponent
+    ? [challenge.value.challenger, challenge.value.opponent]
+    : [challenge.value.challenger]
 })
 
-const banner = computed<{
-  text: string
-  tone: "pending" | "win" | "lose" | "draw" | "spectator"
-}>(() => {
-  const { challenger, opponent } = props.challenge
+const isDraw = computed(() => {
+  if (!challenge.value?.opponent) return false
 
-  if (!opponent) return { text: "WAITING FOR OPPONENT", tone: "pending" }
-  if (winnerSide.value === "draw") return { text: "DRAW", tone: "draw" }
+  return (
+    challenge.value.challenger.score ===
+    challenge.value.opponent.score
+  )
+})
 
-  if (role.value === "spectator") {
-    const winner = winnerSide.value === "challenger" ? challenger : opponent
-    return { text: `${winner.username} WINS`, tone: "spectator" }
+const hasWon = computed(() => {
+  if (!challenge.value?.opponent) return false
+  if (isDraw.value) return false
+
+  if (role.value === "challenger") {
+    return (
+      challenge.value.challenger.score >
+      challenge.value.opponent.score
+    )
   }
 
-  return role.value === winnerSide.value
-    ? { text: "YOU WIN", tone: "win" }
-    : { text: "YOU LOSE", tone: "lose" }
+  if (role.value === "opponent") {
+    return (
+      challenge.value.opponent.score >
+      challenge.value.challenger.score
+    )
+  }
+
+  return false
+})
+
+const winnerName = computed(() => {
+  if (!challenge.value?.opponent) return ""
+
+  return challenge.value.challenger.score >
+    challenge.value.opponent.score
+    ? challenge.value.challenger.username
+    : challenge.value.opponent.username
+})
+
+const resultClass = computed(() => {
+  if (isDraw.value) return "result-draw"
+  if (isSpectator.value) return ""
+  return hasWon.value ? "result-win" : "result-loss"
+})
+
+const avatarStyleFor = (avatarIndex: number) =>
+  getAvatarStyle(
+    avatarIndex,
+    playerStore.avatarSpriteSheet,
+  )
+
+const nameEffectClass = computed(() =>
+  playerStore.playerNameEffect === "none"
+    ? undefined
+    : `name-effect-${playerStore.playerNameEffect}`,
+)
+
+const acceptChallenge = async () => {
+  if (!challenge.value) return
+
+  await challengeStore.startAcceptedChallenge(
+    challenge.value,
+  )
+
+  router.push(`/challenge-${challenge.value.mode}`)
+}
+
+onMounted(async () => {
+  const sessionId = String(route.query.sessionId || "")
+
+  if (!sessionId) {
+    error.value = "No challenge session was provided."
+    loading.value = false
+    return
+  }
+
+  try {
+    const response = await fetch(
+      `/api/friend-challenge?sessionId=${encodeURIComponent(sessionId)}`,
+    )
+
+    if (!response.ok) {
+      throw new Error(
+        "This challenge has expired or does not exist.",
+      )
+    }
+
+    challenge.value =
+      (await response.json()) as ChallengeSession
+  } catch (caught) {
+    error.value =
+      caught instanceof Error
+        ? caught.message
+        : "Could not load challenge."
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
 <style scoped>
-.challenge-detail-card {
-  padding: 20px;
-  border-radius: 12px;
-  background: #1a1a1a;
-  color: #fff;
-  max-width: 500px;
-  margin: 0 auto;
+.challenge-page {
+  display: grid;
+  min-height: 80vh;
+  place-items: center;
+  padding: 24px;
 }
 
-.score-board {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  background: #2a2a2a;
-  padding: 15px;
+.challenge-card {
+  width: min(100%, 520px);
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  text-align: center;
 }
 
-.player-side {
+.challenge-card.is-completed {
+  width: min(100%, 900px);
+}
+
+.result-win {
+  font-family: "8bit";
+}
+
+.result-loss {
+  font-family: "8bit";
+}
+
+.result-draw {
+  font-family: "8bit";
+}
+
+.eyebrow,
+.mode {
+  color: var(--neon-yellow);
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.challenger {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 28px 0;
+  text-align: left;
+
+  p {
+    margin: 0;
+  }
 }
 
-.player-side.winner strong {
-  color: #ffd54f;
+.challenger span {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.player-side.waiting {
-  opacity: 0.6;
-}
-
-.vs {
-  opacity: 0.6;
-  font-weight: 700;
-}
-
-.badge {
-  display: inline-block;
-  padding: 8px 16px;
-  font-weight: bold;
+.avatar {
+  width: 48px;
+  height: 48px;
   border-radius: 6px;
-  text-align: center;
+  background-color: #2d3748;
+}
+
+.edit-player {
+  margin: 0 auto 12px;
+}
+
+.accept {
   width: 100%;
+  margin-top: 20px;
 }
 
-.badge.win {
-  background-color: #2e7d32;
-  color: #fff;
+.edit-card {
+  background: black;
+  padding: 8px;
+  margin: 32px 0;
+  border-radius: 8px;
+
+  p {
+    font-weight: bold;
+  }
 }
 
-.badge.lose {
-  background-color: #c62828;
-  color: #fff;
+.edit-icon {
+  font-size: 24px;
+  color: var(--primary);
 }
 
-.badge.draw {
-  background-color: #f57f17;
-  color: #fff;
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
 }
 
-.badge.pending {
-  background-color: #37474f;
-  color: #cfd8dc;
+.player-info strong {
+  font-size: 18px;
+  color: var(--white);
 }
 
-.badge.spectator {
-  background-color: #455a64;
-  color: #cfd8dc;
+.player-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0 12px;
+  cursor: pointer;
 }
 </style>

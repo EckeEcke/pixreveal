@@ -105,7 +105,6 @@ export default async function handler(req, res) {
       return res.status(200).json(results);
     }
 
-    // 2. Bestehend: Einzelne Challenge erstellen (POST)
     if (req.method === "POST") {
       const session = cleanSession(req.body || {});
       if (!session) {
@@ -132,7 +131,6 @@ export default async function handler(req, res) {
       return res.status(201).json({ sessionId: session.sessionId });
     }
 
-    // 3. Abrufen oder Patchen einer einzelnen Challenge (GET / PATCH)
     const sessionId = req.query?.sessionId;
     if (!isValidSessionId(sessionId)) {
       await client.disconnect();
