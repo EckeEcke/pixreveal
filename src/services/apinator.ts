@@ -11,6 +11,8 @@ export const createApinatorClient = (
     "x-player-avatar-sprite-sheet": String(userData.avatarSpriteSheet ?? "classic"),
     "x-player-id": String(userData.playerId ?? ""),
     "x-player-host": String(!!userData.isHost),
+    "x-player-name-effect": String(userData.nameEffect ?? "none"),
+    "x-player-avatar-effect": String(userData.avatarEffect ?? "none"),
   };
 
   if (userData.rounds !== undefined && userData.rounds !== null) {

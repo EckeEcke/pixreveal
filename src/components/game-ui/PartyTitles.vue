@@ -23,9 +23,13 @@
           >
             <div
               class="mini-avatar"
+              :class="p.avatarEffect"
               :style="avatarStyleFor(p.avatarIndex, p.avatarSpriteSheet)"
             />
-            <span class="player-pill-name">{{ p.playerNameUpper }}</span>
+            <span
+              class="player-pill-name"
+              :class="`name-effect-${p.nameEffect}`"
+            >{{ p.playerNameUpper }}</span>
           </div>
         </div>
         <div v-if="currentSlide.snapshot" class="snapshot-content">
@@ -59,9 +63,13 @@
               <div class="player-pill">
                 <div
                   class="mini-avatar"
+                  :class="currentSlide.snapshot.player.avatarEffect ?? 'none'"
                   :style="avatarStyleFor(currentSlide.snapshot.player.avatarIndex, currentSlide.snapshot.player.avatarSpriteSheet)"
                 />
-                <span class="player-pill-name">
+                <span
+                  class="player-pill-name"
+                  :class="`name-effect-${currentSlide.snapshot.player.nameEffect ?? 'none'}`"
+                >
                   {{ currentSlide.snapshot.player.username.toUpperCase() }}
                 </span>
               </div>
@@ -143,6 +151,8 @@ type SlidePlayer = {
   playerNameUpper: string;
   avatarIndex: number;
   avatarSpriteSheet?: PartyPlayerStats["avatarSpriteSheet"];
+  avatarEffect: NonNullable<PartyPlayerStats["avatarEffect"]> | "none";
+  nameEffect: NonNullable<PartyPlayerStats["nameEffect"]> | "none";
 };
 
 type Slide = {
@@ -157,15 +167,13 @@ type Slide = {
 };
 
 const slides: Slide[] = (() => {
-  const raw: Array<{
-    emoji: string;
-    title: string;
-    message: string;
-    playerId: string;
-    playerNameUpper: string;
-    avatarIndex: number;
-    avatarSpriteSheet?: PartyPlayerStats["avatarSpriteSheet"];
-  }> = [];
+  const raw: Array<
+    {
+      emoji: string;
+      title: string;
+      message: string;
+    } & SlidePlayer
+  > = [];
 
   const players = props.players || [];
   const maxPowerups = maxPowerupsUsed;
@@ -181,11 +189,13 @@ const slides: Slide[] = (() => {
     const emojis = p.emojisSent ?? 0;
     const isDecrypter = Boolean(p.isDecrypter);
 
-    const playerData = {
+    const playerData: SlidePlayer = {
       playerId: p.playerId,
       playerNameUpper: nameUpper,
       avatarIndex: p.avatarIndex,
       avatarSpriteSheet: p.avatarSpriteSheet,
+      avatarEffect: p.avatarEffect ?? "none",
+      nameEffect: p.nameEffect ?? "none",
     };
 
     if (correct > 0 && wrong === 0) {
@@ -323,6 +333,8 @@ const slides: Slide[] = (() => {
         playerNameUpper: p.playerNameUpper,
         avatarIndex: p.avatarIndex,
         avatarSpriteSheet: p.avatarSpriteSheet,
+        avatarEffect: p.avatarEffect,
+        nameEffect: p.nameEffect,
       }));
 
     const playerNamesUpper = slidePlayers
@@ -598,7 +610,7 @@ onBeforeUnmount(() => stop());
   letter-spacing: 1px;
   @media (min-width: 576px) {
     font-size: 22px;
-    letterspacing: 2px;
+    letter-spacing: 2px;
   }
 }
 

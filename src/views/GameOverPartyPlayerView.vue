@@ -47,6 +47,8 @@
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
       :avatar-sprite-sheet="winnerPlayer.avatarSpriteSheet"
+      :name-effect="winnerPlayer.nameEffect"
+      :avatar-effect="winnerPlayer.avatarEffect"
       :is-winner="isWinner"
       :name-effect="isWinner ? playerStore.playerNameEffect : 'none'"
       @done="showWinnerAnimation = false"

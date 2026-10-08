@@ -9,11 +9,14 @@ import type { Ref } from "vue";
 import type { Router } from "vue-router";
 import type { Player } from "@/types/player";
 import type { AvatarSpriteSheet } from "@/utils/avatar";
+import type { PlayerAvatarEffect, PlayerNameEffect } from "@/data/unlockables";
 
 interface PresenceMember {
   name: string;
   avatar: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
+  nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
   host: string | boolean | number;
   rounds?: number;
   duration?: number;
@@ -97,6 +100,8 @@ export function syncPlayersFromHash(
       username: member.name,
       avatarIndex: member.avatar,
       avatarSpriteSheet: member.avatarSpriteSheet ?? "classic",
+      nameEffect: member.nameEffect ?? "none",
+      avatarEffect: member.avatarEffect ?? "none",
       isHost: memberIsHost,
       isOnline: true,
       points: 0,

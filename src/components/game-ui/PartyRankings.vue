@@ -14,6 +14,8 @@
           :name="player.username"
           :avatar-index="player.avatarIndex"
           :avatar-sprite-sheet="player.avatarSpriteSheet"
+          :name-effect="player.nameEffect"
+          :avatar-effect="player.avatarEffect"
           :points="player.points"
           :size="partyPlayersSorted.length > 5 ? 'small' : 'medium'"
           :is-active="activePlayerId === player.playerId"
@@ -34,6 +36,8 @@ type RankingPlayer = {
   username: string;
   avatarIndex: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
+  nameEffect?: import("@/data/unlockables").PlayerNameEffect;
+  avatarEffect?: import("@/data/unlockables").PlayerAvatarEffect;
   points: number;
 };
 

@@ -43,6 +43,9 @@ export default async function handler(req, res) {
     const rounds = req.headers["x-player-rounds"] || null;
     const duration = req.headers["x-player-duration"] || 15;
 
+    const nameEffect = req.headers["x-player-name-effect"] || "none";
+    const avatarEffect = req.headers["x-player-avatar-effect"] || "none";
+
     const appKey = process.env.APINATOR_KEY || process.env.VITE_APINATOR_KEY;
     const appSecret = process.env.APINATOR_SECRET;
 
@@ -91,6 +94,8 @@ export default async function handler(req, res) {
         host: isHost,
         rounds,
         duration,
+        nameEffect,
+        avatarEffect,
       },
     });
 

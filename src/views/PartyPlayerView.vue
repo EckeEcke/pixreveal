@@ -5,6 +5,8 @@
       :name="player.username"
       :avatar-index="player.avatarIndex"
       :avatar-sprite-sheet="player.avatarSpriteSheet"
+      :name-effect="player.nameEffect"
+      :avatar-effect="player.avatarEffect"
       :points="player.points"
       is-own-player
       class="player-display"

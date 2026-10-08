@@ -63,7 +63,8 @@
                   v-if="activeAvatarIndex !== null"
                   :avatarIndex="activeAvatarIndex"
                   :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.activePlayerId)"
-                />{{ activePlayerNameUpper }} </span
+                  :avatar-effect="avatarEffectFor(partyStore.activePlayerId)"
+                /><span :class="nameEffectClassFor(partyStore.activePlayerId)">{{ activePlayerNameUpper }}</span> </span
               >.
             </template>
 
@@ -78,7 +79,8 @@
                   v-if="activeAvatarIndex !== null"
                   :avatarIndex="activeAvatarIndex"
                   :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.activePlayerId)"
-                />{{ activePlayerName }}
+                  :avatar-effect="avatarEffectFor(partyStore.activePlayerId)"
+                /><span :class="nameEffectClassFor(partyStore.activePlayerId)">{{ activePlayerName }}</span>
               </span>
               loses {{ pointsForWrong }} points.
             </template>
@@ -90,7 +92,8 @@
                 v-if="activeAvatarIndex !== null"
                 :avatarIndex="activeAvatarIndex"
                 :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.activePlayerId)"
-              />{{ activePlayerNameUpper }}
+                :avatar-effect="avatarEffectFor(partyStore.activePlayerId)"
+              /><span :class="nameEffectClassFor(partyStore.activePlayerId)">{{ activePlayerNameUpper }}</span>
             </span>
             FARTED! 😯
           </template>
@@ -101,7 +104,8 @@
                 v-if="saboteurAvatarIndex !== null"
                 :avatarIndex="saboteurAvatarIndex"
                 :avatar-sprite-sheet="avatarSpriteSheetFor(saboteurPlayerId)"
-              />{{ saboteurPlayerNameUpper }}
+                :avatar-effect="avatarEffectFor(saboteurPlayerId)"
+              /><span :class="nameEffectClassFor(saboteurPlayerId)">{{ saboteurPlayerNameUpper }}</span>
             </span>
             IS A <span class="red-text">SABOTEUR</span>! 💣
           </template>
@@ -113,7 +117,8 @@
                 v-if="darkenAvatarIndex !== null"
                 :avatarIndex="darkenAvatarIndex"
                 :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.darkenByPlayerId)"
-              />{{ darkenActorNameUpper }}
+                :avatar-effect="avatarEffectFor(partyStore.darkenByPlayerId)"
+              /><span :class="nameEffectClassFor(partyStore.darkenByPlayerId)">{{ darkenActorNameUpper }}</span>
             </span>
             {{ darkenMessageAfter }}
           </template>
@@ -125,7 +130,8 @@
                 v-if="freezeAvatarIndex !== null"
                 :avatarIndex="freezeAvatarIndex"
                 :avatar-sprite-sheet="avatarSpriteSheetFor(partyStore.freezeByPlayerId)"
-              />{{ freezeActorNameUpper }}
+                :avatar-effect="avatarEffectFor(partyStore.freezeByPlayerId)"
+              /><span :class="nameEffectClassFor(partyStore.freezeByPlayerId)">{{ freezeActorNameUpper }}</span>
             </span>
             {{ freezeMessageAfter }}
           </template>
@@ -137,7 +143,8 @@
                 v-if="leaderAvatarIndex !== null"
                 :avatarIndex="leaderAvatarIndex"
                 :avatar-sprite-sheet="avatarSpriteSheetFor(null, leaderUsername)"
-              />{{ leaderNameUpper }}
+                :avatar-effect="avatarEffectFor(null, leaderUsername)"
+              /><span :class="nameEffectClassFor(null, leaderUsername)">{{ leaderNameUpper }}</span>
             </span>
             {{ leaderMessageAfter }}
           </template>
@@ -163,7 +170,8 @@
                 v-if="leaderAvatarIndex !== null"
                 :avatarIndex="leaderAvatarIndex"
                 :avatar-sprite-sheet="avatarSpriteSheetFor(null, leaderUsername)"
-              />{{ leaderUsername?.toUpperCase?.() || "PLAYER" }}
+                :avatar-effect="avatarEffectFor(null, leaderUsername)"
+              /><span :class="nameEffectClassFor(null, leaderUsername)">{{ leaderUsername?.toUpperCase?.() || "PLAYER" }}</span>
             </span>
             {{ leaderGapMessageAfter }}
           </template>
@@ -257,12 +265,22 @@ const {
 // difference between "no active player" and "a player named Player".
 const activePlayerName = computed(() => partyStore.activePlayer?.username || "")
 
-const avatarSpriteSheetFor = (playerId: string | null, username?: string | null) =>
+// ─── Player lookup helpers (sprite sheet, avatar effect, name effect) ────
+const findPlayer = (playerId?: string | null, username?: string | null) =>
   partyStore.players.find(
     (player: any) =>
       (playerId && player.playerId === playerId) ||
       (username && player.username === username),
-  )?.avatarSpriteSheet
+  )
+
+const avatarSpriteSheetFor = (playerId?: string | null, username?: string | null) =>
+  findPlayer(playerId, username)?.avatarSpriteSheet
+
+const avatarEffectFor = (playerId?: string | null, username?: string | null) =>
+  findPlayer(playerId, username)?.avatarEffect ?? "none"
+
+const nameEffectClassFor = (playerId?: string | null, username?: string | null) =>
+  `name-effect-${findPlayer(playerId, username)?.nameEffect ?? "none"}`
 
 const activePlayerNameUpper = computed(
   () => (activePlayerName.value || "Player").toUpperCase()

@@ -334,6 +334,7 @@ export const useChannelStore = defineStore("channel", () => {
     roomId: string,
     role: "host" | "player" = "player",
   ) => {
+    console.log(userData)
     const cluster = parseClusterFromRoomId(roomId);
     const clientInstance = createApinatorClient(userData, cluster);
     client.value = clientInstance;
@@ -400,6 +401,9 @@ export const useChannelStore = defineStore("channel", () => {
       username: playerStore.playerName,
       text,
       avatarIndex: playerStore.avatarIndex,
+      avatarSpriteSheet: playerStore.avatarSpriteSheet,
+      nameEffect: playerStore.playerNameEffect,
+      avatarEffect: playerStore.playerAvatarEffect,
     };
     activeChannel.value.trigger("client-chat-message", messageData);
     messages.value.push({
@@ -418,6 +422,8 @@ export const useChannelStore = defineStore("channel", () => {
       username: playerStore.playerName,
       avatarIndex: playerStore.avatarIndex,
       avatarSpriteSheet: playerStore.avatarSpriteSheet,
+      nameEffect: playerStore.playerNameEffect,
+      avatarEffect: playerStore.playerAvatarEffect,
     };
 
     playerMgmt.updatePlayer(profile.playerId, profile);

@@ -2,6 +2,7 @@
   <span
     v-if="avatarIndex !== null && avatarIndex !== undefined"
     :style="avatarStyle"
+    :class="avatarEffect"
     class="inline-avatar"
   />
 </template>
@@ -14,6 +15,7 @@ import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
 const props = defineProps<{
   avatarIndex?: number | null;
   avatarSpriteSheet?: AvatarSpriteSheet;
+  avatarEffect?: import("@/data/unlockables").PlayerAvatarEffect;
 }>();
 
 const avatarStyle = computed<CSSProperties>(() => {

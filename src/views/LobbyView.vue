@@ -76,6 +76,8 @@
                 isParty && player.isHost ? undefined : player.avatarIndex
               "
               :avatar-sprite-sheet="player.avatarSpriteSheet"
+              :name-effect="player.nameEffect"
+              :avatar-effect="player.avatarEffect"
               :class="[
                 isParty && player.isHost ? 'hidden' : '',
                 { 'editable-player': isMe(player.playerId) },

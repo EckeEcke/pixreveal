@@ -373,24 +373,24 @@ input[type="text"]:focus {
 }
 
 .name-effect-arcade-glow {
-  text-shadow: 0 0 5px var(--neon-cyan), 0 0 12px rgba(0, 242, 255, 0.55);
+  text-shadow: 0 0 5px var(--neon-cyan), 0 0 12px rgba(0, 242, 255, 0.55)!important;
 }
 
 .name-effect-glitcher {
-  color: #ff6600;
-  animation: glitch 0.2s infinite;
+  color: #ff6600!important;
+  animation: glitch 0.2s infinite!important;
 }
 
 .name-effect-chromatic-shadow {
-  text-shadow: 2px 0 rgba(255, 20, 147, 0.7), -2px 0 rgba(0, 242, 255, 0.7);
+  text-shadow: 2px 0 rgba(255, 20, 147, 0.7), -2px 0 rgba(0, 242, 255, 0.7)!important;
 }
 
 .avatar-effect-inverted {
-  filter: invert(1);
+  filter: invert(1)!important;
 }
 
 .avatar-effect-sepia {
-  filter: sepia(1);
+  filter: sepia(1)!important;
 }
 
 .avatar-effect-blur {

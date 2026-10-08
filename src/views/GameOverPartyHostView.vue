@@ -22,6 +22,8 @@
                 :subline="getPartyTitleEmojis(player, index)"
                 :avatar-index="player.avatarIndex"
                 :avatar-sprite-sheet="player.avatarSpriteSheet"
+                :name-effect="player.nameEffect"
+                :avatar-effect="player.avatarEffect"
                 :points="player.points"
               />
             </div>
@@ -53,6 +55,8 @@
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
       :avatar-sprite-sheet="winnerPlayer.avatarSpriteSheet"
+      :name-effect="winnerPlayer.nameEffect"
+      :avatar-effect="winnerPlayer.avatarEffect"
       :is-winner="true"
       @done="showWinnerAnimation = false"
     />
@@ -409,8 +413,7 @@ main {
 }
 
 .final-rankings {
-  background: #22222244;
-  padding: 0 16px 16px;
+  padding: 0 0 16px;
   border-radius: 8px;
   margin: 32px 0;
   max-height: 250px;

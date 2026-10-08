@@ -22,8 +22,8 @@
           </div>
           <p class="message">{{ currentHighlight.message }}</p>
           <div class="player-pill">
-            <div class="mini-avatar" :style="avatarStyleFor(currentHighlight.avatarIndex, currentHighlight.avatarSpriteSheet)" />
-            <span>{{ currentHighlight.username.toUpperCase() }}</span>
+            <div class="mini-avatar" :class="currentHighlight.avatarEffect" :style="avatarStyleFor(currentHighlight.avatarIndex, currentHighlight.avatarSpriteSheet)" />
+            <span :class="`name-effect-${currentHighlight.nameEffect}`">{{ currentHighlight.username.toUpperCase() }}</span>
           </div>
         </div>
       </article>
@@ -37,6 +37,7 @@ import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import type { OnlineHighlight, Player } from "@/types/player";
 import { workerClearInterval, workerSetInterval } from "@/services/workerTimers";
 import { getAvatarStyle } from "@/utils/avatar";
+import type { PlayerNameEffect, PlayerAvatarEffect } from "@/data/unlockables";
 
 const props = defineProps<{ players: Player[] }>();
 const activeIndex = ref(0);
@@ -63,6 +64,8 @@ type HighlightSlide = {
   username: string;
   avatarIndex: number;
   avatarSpriteSheet?: Player["avatarSpriteSheet"];
+  nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
   highlight: OnlineHighlight;
 };
 
@@ -99,6 +102,8 @@ const highlights = computed<HighlightSlide[]>(() => {
         username: player.username || "Player",
         avatarIndex: player.avatarIndex,
         avatarSpriteSheet: player.avatarSpriteSheet,
+        nameEffect: player.nameEffect,
+        avatarEffect: player.avatarEffect,
         highlight,
       });
     }

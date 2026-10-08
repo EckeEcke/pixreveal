@@ -26,6 +26,8 @@
               :name="player.username"
               :avatar-index="player.avatarIndex"
               :avatar-sprite-sheet="player.avatarSpriteSheet"
+              :name-effect="player.nameEffect"
+              :avatar-effect="player.avatarEffect"
               :points="animatedPoints[player.playerId] ?? player.points"
               static-points-display
               :points-trend="countingUpIds.has(player.playerId) ? 'up' : null"
@@ -77,8 +79,9 @@
       :winner-name="winnerPlayer.username"
       :avatar-index="winnerPlayer.avatarIndex"
       :avatar-sprite-sheet="winnerPlayer.avatarSpriteSheet"
+      :name-effect="winnerPlayer.nameEffect"
+      :avatar-effect="winnerPlayer.avatarEffect"
       :is-winner="isMe(winnerPlayer.playerId)"
-      :name-effect="isMe(winnerPlayer.playerId) ? playerStore.playerNameEffect : 'none'"
       @done="showWinnerAnimation = false"
     />
   </main>

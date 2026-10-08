@@ -264,6 +264,8 @@ export const usePartyStore = defineStore("party", () => {
         username: p.username,
         avatarIndex: p.avatarIndex,
         avatarSpriteSheet: p.avatarSpriteSheet,
+        nameEffect: p.nameEffect,
+        avatarEffect: p.avatarEffect,
         points: 0,
         wrongAnswers: 0,
         correctAnswers: 0,

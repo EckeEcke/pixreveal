@@ -1,4 +1,5 @@
 import type { AvatarSpriteSheet } from "@/utils/avatar";
+import type { PlayerNameEffect, PlayerAvatarEffect } from "@/data/unlockables";
 
 export type BuzzerState = "open" | "locked" | "answering";
 
@@ -7,6 +8,8 @@ export type PartyPlayer = {
   username: string;
   avatarIndex: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
+  nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
   points: number;
   wrongAnswers: number;
   correctAnswers: number;
@@ -23,6 +26,8 @@ export type PartyPlayerStats = {
   username: string;
   avatarIndex: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
+  nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
   wrongAnswers: number;
   correctAnswers: number;
   quickestAnswer: number | null;
@@ -80,5 +85,7 @@ export type PartyRoundSnapshot = {
     username: string;
     avatarIndex: number;
     avatarSpriteSheet?: AvatarSpriteSheet;
+    nameEffect?: PlayerNameEffect;
+    avatarEffect?: PlayerAvatarEffect;
   };
 };

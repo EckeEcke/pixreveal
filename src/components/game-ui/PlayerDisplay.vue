@@ -29,7 +29,7 @@
           v-else
           key="name"
           class="hud-username"
-          :class="[{ first: position === 1 || shiny }, nameEffectClass]"
+          :class="[{ first: position === 1 || shiny }, nameEffectClass, `name-effect-${nameEffect}`]"
         >
           {{ name }}
         </div>
@@ -104,10 +104,11 @@
 import { computed, nextTick, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
-import { type PlayerAvatarEffect } from "@/data/unlockables";
+import { type PlayerAvatarEffect, type PlayerNameEffect } from "@/data/unlockables";
 import { usePlayerStore } from "@/stores/player";
 import { Icon } from "@iconify/vue";
 import PositionInfo from "./PositionInfo.vue";
+
 const props = withDefaults(
   defineProps<{
     position?: number;
@@ -133,6 +134,7 @@ const props = withDefaults(
     emoji?: string;
     staticPointsDisplay?: boolean;
     pointsTrend?: "up" | "down" | null;
+    nameEffect?: PlayerNameEffect;
     avatarEffect?: PlayerAvatarEffect;
   }>(),
   { size: "medium" },
@@ -436,7 +438,6 @@ const avatarStyle = computed<CSSProperties>(() => {
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
   @media (min-width: 576px) {
     font-size: 18px;
   }

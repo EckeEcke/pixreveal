@@ -5,7 +5,8 @@
         v-if="activeAvatarIndex !== null"
         :avatarIndex="activeAvatarIndex"
         :avatar-sprite-sheet="activeAvatarSpriteSheet"
-      />{{ activePlayerName }}
+        :avatar-effect="activeAvatarEffect"
+      /><span :class="activeNameEffectClass">{{ activePlayerName }}</span>
     </span>
     <template v-if="isDevilActive">
       is playing Devil! Is it
@@ -51,18 +52,25 @@ const props = defineProps<{
 
 const partyStore = usePartyStore()
 
-const activeAvatarIndex = computed(() => {
+const activePlayer = computed(() => {
   const id = partyStore.activePlayerId ?? null
   if (!id) return null
-  const p = partyStore.players.find((pl: any) => pl.playerId === id)
-  return p ? p.avatarIndex : null
+  return partyStore.players.find((pl: any) => pl.playerId === id) ?? null
 })
 
-const activeAvatarSpriteSheet = computed(() => {
-  const id = partyStore.activePlayerId ?? null
-  return partyStore.players.find((player: any) => player.playerId === id)
-    ?.avatarSpriteSheet
-})
+const activeAvatarIndex = computed(() => activePlayer.value?.avatarIndex ?? null)
+
+const activeAvatarSpriteSheet = computed(
+  () => activePlayer.value?.avatarSpriteSheet,
+)
+
+const activeAvatarEffect = computed(
+  () => activePlayer.value?.avatarEffect ?? "none",
+)
+
+const activeNameEffectClass = computed(
+  () => `name-effect-${activePlayer.value?.nameEffect ?? "none"}`,
+)
 
 const EARLY_REVEAL_THRESHOLD = 5
 const MIN_MAX_REVEAL_TIME = 10

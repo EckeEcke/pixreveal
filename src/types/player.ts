@@ -1,4 +1,5 @@
 import type { AvatarSpriteSheet } from "@/utils/avatar";
+import type { PlayerNameEffect, PlayerAvatarEffect } from "@/data/unlockables";
 
 export type OnlineHighlight = {
   roundIndex: number;
@@ -14,6 +15,8 @@ export interface Player {
   username: string;
   avatarIndex: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
+  nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
   isHost: boolean;
   isOnline: boolean;
   points: number;

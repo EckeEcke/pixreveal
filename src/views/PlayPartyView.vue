@@ -60,6 +60,7 @@
                 <div class="player-info-wrapper">
                   <div
                     class="player-avatar"
+                    :class="playerStore.playerAvatarEffect"
                     :style="avatarStyle"
                     @click="showAvatarModal = true"
                   >
@@ -293,6 +294,8 @@ const joinGame = () => {
       username: playerStore.playerName,
       avatarIndex: playerStore.avatarIndex,
       avatarSpriteSheet: playerStore.avatarSpriteSheet,
+      nameEffect: playerStore.playerNameEffect,
+      avatarEffect: playerStore.playerAvatarEffect,
       isHost: false,
     },
     joinRoomId.value.toUpperCase().trim(),

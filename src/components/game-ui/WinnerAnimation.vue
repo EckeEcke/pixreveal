@@ -11,7 +11,7 @@
           <div class="winner-card" ref="contentRef">
             <div class="winner-glow" />
             <div class="winner-avatar-wrap">
-              <div class="winner-avatar" :style="avatarStyle" aria-hidden="true" />
+              <div class="winner-avatar" :class="avatarEffect" :style="avatarStyle" aria-hidden="true" />
             </div>
             <div class="winner-name" :class="nameEffectClass">{{ displayName }}</div>
             <div class="winner-sub">is the winner</div>
@@ -26,7 +26,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from "vue";
 import type { CSSProperties } from "vue";
 import { getAvatarStyle, type AvatarSpriteSheet } from "@/utils/avatar";
-import type { PlayerNameEffect } from "@/data/unlockables";
+import type { PlayerNameEffect, PlayerAvatarEffect } from "@/data/unlockables";
 import { workerClearTimeout, workerSetTimeout } from "@/services/workerTimers";
 import { useConfetti } from "@/composables/useConfetti";
 
@@ -35,6 +35,7 @@ const props = defineProps<{
   avatarIndex: number;
   avatarSpriteSheet?: AvatarSpriteSheet;
   nameEffect?: PlayerNameEffect;
+  avatarEffect?: PlayerAvatarEffect;
   show: boolean;
   durationMs?: number;
   isWinner?: boolean;
@@ -80,8 +81,9 @@ onBeforeUnmount(() => {
 });
 
 const displayName = computed(() => String(props.winnerName || "Player").toUpperCase());
+
 const nameEffectClass = computed(() =>
-  props.isWinner && props.nameEffect && props.nameEffect !== "none"
+  props.nameEffect && props.nameEffect !== "none"
     ? `name-effect-${props.nameEffect}`
     : undefined,
 );
@@ -135,7 +137,20 @@ const recomputeScale = () => {
 
 let mediaObserverAttached = false;
 
+const detachObservers = () => {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = null;
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+  window.removeEventListener("resize", recomputeScale);
+  window.visualViewport?.removeEventListener("resize", recomputeScale);
+  mediaObserverAttached = false;
+};
+
 const attachObservers = async () => {
+  // Defensiv: nie doppelt anhängen
+  if (mediaObserverAttached) detachObservers();
+
   await nextTick();
   recomputeScale();
 
@@ -146,15 +161,6 @@ const attachObservers = async () => {
   window.addEventListener("resize", recomputeScale);
   window.visualViewport?.addEventListener("resize", recomputeScale);
   mediaObserverAttached = true;
-};
-
-const detachObservers = () => {
-  if (rafId) cancelAnimationFrame(rafId);
-  resizeObserver?.disconnect();
-  resizeObserver = null;
-  window.removeEventListener("resize", recomputeScale);
-  window.visualViewport?.removeEventListener("resize", recomputeScale);
-  mediaObserverAttached = false;
 };
 
 watch(visible, (isVisible) => {

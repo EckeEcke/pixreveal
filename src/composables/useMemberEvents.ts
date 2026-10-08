@@ -8,6 +8,7 @@ import type { Ref } from "vue";
 import type { Router } from "vue-router";
 import type { Player } from "@/types/player";
 import type { AvatarSpriteSheet } from "@/utils/avatar";
+import type { PlayerAvatarEffect, PlayerNameEffect } from "@/data/unlockables";
 
 interface RawMember {
   user_id: string;
@@ -15,6 +16,8 @@ interface RawMember {
     name: string;
     avatar: number;
     avatarSpriteSheet?: AvatarSpriteSheet;
+    avatarEffect?: PlayerAvatarEffect;
+    nameEffect?: PlayerNameEffect;
     host: string | boolean | number;
   };
 }
@@ -67,6 +70,8 @@ export function buildPlayerFromMember(member: RawMember): Player {
     username: member.user_info.name,
     avatarIndex: member.user_info.avatar,
     avatarSpriteSheet: member.user_info.avatarSpriteSheet ?? "classic",
+    nameEffect: member.user_info.nameEffect ?? "none",
+    avatarEffect: member.user_info.avatarEffect ?? "none",
     isHost: isHostFlag(member.user_info.host),
     isOnline: true,
     points: 0,
@@ -151,6 +156,8 @@ export function useMemberEvents({
       username?: string;
       avatarIndex?: number;
       avatarSpriteSheet?: AvatarSpriteSheet;
+      nameEffect?: PlayerNameEffect;
+      avatarEffect?: PlayerAvatarEffect;
     }) => {
       if (!data?.playerId) return;
 
@@ -162,6 +169,8 @@ export function useMemberEvents({
         ...(data.avatarSpriteSheet !== undefined
           ? { avatarSpriteSheet: data.avatarSpriteSheet }
           : {}),
+        ...(data.nameEffect !== undefined ? { nameEffect: data.nameEffect } : {}),
+        ...(data.avatarEffect !== undefined ? { avatarEffect: data.avatarEffect } : {}),
       });
     },
   );
