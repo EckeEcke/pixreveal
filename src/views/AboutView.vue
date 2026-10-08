@@ -54,6 +54,15 @@
       </div>
     </section>
 
+    <section class="igdb-link">
+      Want to leave a rating? PixReveal on <a href="https://www.igdb.com/games/pixreveal" target="_blank">
+        <Icon
+          icon="thesvg:igdb"
+          alt="pixreveal on IGDB"
+        />
+      </a>
+    </section>
+
     <section class="about-section">
       <p>
         Looking for a collab or want to give me feedback? You can reach out to
@@ -173,4 +182,16 @@ a {
   text-transform: uppercase;
   margin-bottom: 32px;
 }
+
+.igdb-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.igdb-link a {
+    font-size: 32px;
+    color: white;
+    margin-bottom: -6px;
+  }
 </style>
