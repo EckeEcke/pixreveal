@@ -50,7 +50,6 @@
       :name-effect="winnerPlayer.nameEffect"
       :avatar-effect="winnerPlayer.avatarEffect"
       :is-winner="isWinner"
-      :name-effect="isWinner ? playerStore.playerNameEffect : 'none'"
       @done="showWinnerAnimation = false"
     />
     <EmojiButtons
