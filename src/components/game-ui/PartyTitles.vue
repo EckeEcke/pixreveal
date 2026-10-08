@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import RobotModerator from "@/components/game-ui/RobotModerator.vue";
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue";
 import { usePartyStore } from "@/stores/party";
@@ -93,9 +93,15 @@ import {
 } from "@/services/workerTimers";
 import type { PartyPlayerStats, PartyRoundSnapshot } from "@/types/party";
 
-const props = defineProps<{
-  players: PartyPlayerStats[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    players: PartyPlayerStats[];
+    // true, solange Intro und Winner-Animation noch laufen:
+    // zeigt eine Wartefolie, pausiert Timer und ignoriert Klicks
+    waiting?: boolean;
+  }>(),
+  { waiting: false },
+);
 
 const partyStore = usePartyStore();
 
@@ -427,12 +433,24 @@ const allSlides: Slide[] = emojiStatsSlide
   ? [...slides, ...createSnapshotSlides(), emojiStatsSlide]
   : [...slides, ...createSnapshotSlides()];
 
+// Wartefolie, solange Intro und Winner-Animation noch laufen
+const waitingSlide: Slide = {
+  key: "waiting",
+  emoji: "⏳",
+  title: "Final results",
+  message: "Waiting for the final results...",
+  players: [],
+  playerNamesUpper: "",
+  durationMs: 0,
+};
+
 const activeIndex = ref(0);
 let timeoutId: number | null = null;
 
 // currentSlide bleibt computed, weil sich NUR der Index (activeIndex)
-// noch ändern soll — allSlides selbst ist fix.
+// bzw. das waiting-Prop noch ändern soll — allSlides selbst ist fix.
 const currentSlide = computed(() => {
+  if (props.waiting) return waitingSlide;
   if (!allSlides.length) return null;
   return allSlides[activeIndex.value] ?? allSlides[0] ?? null;
 });
@@ -443,6 +461,7 @@ const advanceSlide = () => {
 };
 
 const handlePillClick = () => {
+  if (props.waiting) return;
   advanceSlide();
   stop();
   start();
@@ -458,6 +477,7 @@ const scheduleNext = () => {
 };
 
 const start = () => {
+  if (props.waiting) return;
   if (timeoutId) return;
   if (!allSlides.length) return;
   scheduleNext();
@@ -468,6 +488,18 @@ const stop = () => {
   workerClearTimeout(timeoutId);
   timeoutId = null;
 };
+
+// Sobald das Warten endet, beginnt die Slideshow bei der ersten Folie.
+watch(
+  () => props.waiting,
+  (waiting) => {
+    stop();
+    if (!waiting) {
+      activeIndex.value = 0;
+      start();
+    }
+  },
+);
 
 const avatarStyleFor = (
   avatarIndex: number,

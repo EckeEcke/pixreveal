@@ -12,7 +12,7 @@
       <div class="party-wrapper" ref="contentRef">
         <div class="results-card party-results-card">
           <h1 class="logo">PARTY <span>OVER</span></h1>
-          <PartyTitles :players="partyPlayersSorted" />
+          <PartyTitles :players="partyPlayersSorted" :waiting="!revealDone" />
           <div class="final-rankings">
             <h2>Final Rankings</h2>
             <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
@@ -58,7 +58,7 @@
       :name-effect="winnerPlayer.nameEffect"
       :avatar-effect="winnerPlayer.avatarEffect"
       :is-winner="true"
-      @done="showWinnerAnimation = false"
+      @done="handleWinnerDone"
     />
     <EmojiOverlay :new-emoji="lastEmoji" />
   </main>
@@ -90,6 +90,7 @@ const router = useRouter();
 const showIntro = ref(true);
 const partySoundPlayed = ref(false);
 const showWinnerAnimation = ref(false);
+const revealDone = ref(false);
 
 const wrapperRef = ref(null);
 const contentRef = ref(null);
@@ -240,7 +241,16 @@ const handleIntroDone = () => {
     partySoundTimer = null;
     playPartySoundOnce();
   }, 2000);
-  if (winnerPlayer) showWinnerAnimation.value = true;
+  if (winnerPlayer) {
+    showWinnerAnimation.value = true;
+  } else {
+    revealDone.value = true;
+  }
+};
+
+const handleWinnerDone = () => {
+  showWinnerAnimation.value = false;
+  revealDone.value = true;
 };
 
 onUnmounted(() => {
