@@ -266,7 +266,7 @@ h2 {
   border: none;
   text-transform: uppercase;
   text-decoration: none;
-  color: black;
+  color: white;
   font-family: inherit;
   font-weight: 900;
   font-size: 16px;
@@ -289,7 +289,7 @@ h2 {
   display: flex;
   place-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 8px;
   background: var(--primary);
   padding: 12px 16px;
   border: none;
@@ -306,6 +306,9 @@ h2 {
     rgba(45, 35, 66, 0.4) 0 2px 4px,
     rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
     rgba(0, 0, 0, 0.3) 0 -3px 0 inset;
+  svg {
+    fill: white;
+  }
 }
 
 .btn-primary:hover {
