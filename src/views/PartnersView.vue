@@ -93,16 +93,16 @@ const partners = [
       "A fantastic free Jackbox alternative built by an independent solo developer. GameBuddies offers a collection of 17 multiplayer browser games—including drawing, trivia, social deduction, bingo, and word games—with built-in video chat for seamless party sessions with friends.",
     highlights: [
       {
-        title: "Free Browser Games",
-        text: "Play a growing collection of casual games and puzzles directly in your browser, with no downloads or registration required.",
+        title: "17 Games in One Platform",
+        text: "Enjoy drawing (like Canvas Chaos), trivia, word, and deduction games.",
       },
       {
-        title: "Daily Challenges & High Scores",
-        text: "Test your skills with daily challenges, beat your best scores, and compete for a place on the leaderboards.",
+        title: "Built-In Video Chat",
+        text: "See and talk to your friends directly in the browser while playing.",
       },
       {
-        title: "Perfect for Short Breaks",
-        text: "Enjoy quick games like Memory, Minesweeper, Snake, and Bubble Pop whenever you need a little break.",
+        title: "No App Needed",
+        text: "Completely free browser party games to jump right into the action.",
       },
     ],
   },
@@ -114,16 +114,16 @@ const partners = [
       "Free puzzle and arcade games that fit into a short break. No sign-up, no ads, no download. There's a new daily challenge every day, with high scores and streaks to chase. Games include Minesweeper, Waterpipe, Bimaru, Bubble Pop, and more.",
     highlights: [
       {
-        title: "17 Games in One Platform",
-        text: "Enjoy drawing (like Canvas Chaos), trivia, word, and deduction games.",
+        title: "Free Browser Games",
+        text: "Play a growing collection of casual games and puzzles directly in your browser, with no downloads or registration required.",
       },
       {
-        title: "Built-In Video Chat",
-        text: "See and talk to your friends directly in the browser while playing.",
+        title: "Daily Challenges & High Scores",
+        text: "Test your skills with daily challenges, beat your best scores, and compete for a place on the leaderboards.",
       },
       {
-        title: "No App Needed",
-        text: "Completely free browser party games to jump right into the action.",
+        title: "Perfect for Short Breaks",
+        text: "Enjoy quick games like Memory, Minesweeper, Snake, and Bubble Pop whenever you need a little break.",
       },
     ],
   },
