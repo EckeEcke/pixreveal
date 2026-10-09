@@ -63,10 +63,16 @@
           creators, collaborating, or exchanging recommendations. Feel free to
           reach out if you'd like to partner up!
         </p>
-        <ButtonLinkPrimary link="https://discord.gg/NuYwabjXUj">
+        <a
+          href="https://discord.gg/NuYwabjXUj"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+          data-sfx="click"
+        >
           <span>Ping me on Discord</span>
           <Icon icon="selfhst:discord-dark" alt="link to my discord" />
-        </ButtonLinkPrimary>
+        </a>
       </section>
 
       <router-link to="/" class="link">GO TO HOME</router-link>
@@ -76,7 +82,6 @@
 
 <script setup lang="ts">
 import ContentPage from "@/components/page-layout/ContentPage.vue";
-import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
 import { Icon } from "@iconify/vue";
 
 const partners = [
@@ -86,6 +91,27 @@ const partners = [
     image: "/gamebuddies-preview.webp",
     description:
       "A fantastic free Jackbox alternative built by an independent solo developer. GameBuddies offers a collection of 17 multiplayer browser games—including drawing, trivia, social deduction, bingo, and word games—with built-in video chat for seamless party sessions with friends.",
+    highlights: [
+      {
+        title: "Free Browser Games",
+        text: "Play a growing collection of casual games and puzzles directly in your browser, with no downloads or registration required.",
+      },
+      {
+        title: "Daily Challenges & High Scores",
+        text: "Test your skills with daily challenges, beat your best scores, and compete for a place on the leaderboards.",
+      },
+      {
+        title: "Perfect for Short Breaks",
+        text: "Enjoy quick games like Memory, Minesweeper, Snake, and Bubble Pop whenever you need a little break.",
+      },
+    ],
+  },
+  {
+    name: "Pausen Games",
+    url: "https://pausengames.com/",
+    image: "/pausengames-preview.webp",
+    description:
+      "Free puzzle and arcade games that fit into a short break. No sign-up, no ads, no download. There's a new daily challenge every day, with high scores and streaks to chase. Games include Minesweeper, Waterpipe, Bimaru, Bubble Pop, and more.",
     highlights: [
       {
         title: "17 Games in One Platform",
@@ -254,6 +280,35 @@ h2 {
 }
 
 .link-btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* Discord button: styles taken over from ButtonLinkPrimary */
+.btn-primary {
+  display: flex;
+  place-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--primary);
+  padding: 12px 16px;
+  border: none;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: white;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow:
+    rgba(45, 35, 66, 0.4) 0 2px 4px,
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+    rgba(0, 0, 0, 0.3) 0 -3px 0 inset;
+}
+
+.btn-primary:hover {
   filter: brightness(1.1);
   transform: translateY(-4px) scale(1.05);
 }
