@@ -21,10 +21,18 @@
             >MAKE YOUR GUESS!</span
           >
 
-          <span v-else-if="isCorrect" class="msg-bold success" key="c"
-            >NICE!</span
+          <span
+            v-else-if="isCorrect"
+            class="msg-bold success feedback"
+            :class="`tier-${correctTier}`"
+            :key="`c-${correctTier}`"
           >
-          <span v-else-if="isIncorrect" class="msg-bold error" key="i"
+            {{ correctLabels[correctTier] }}
+          </span>
+          <span
+            v-else-if="isIncorrect"
+            class="msg-bold error feedback nope"
+            key="i"
             >NOPE!</span
           >
           <span v-else-if="isSuddenDeath" class="msg-bold pulse-text" key="sd"
@@ -83,6 +91,26 @@ const statusClass = computed(() => ({
     !props.isCorrect &&
     !props.isIncorrect,
 }))
+
+const CLOSE_CALL_SECONDS = 2
+const TIER_AWESOME = 0.66
+const TIER_GREAT = 0.33
+
+const correctLabels = {
+  awesome: "WOW!",
+  great: "GREAT!",
+  nice: "NICE!",
+  close: "PHEW!",
+} as const
+
+const correctTier = computed<keyof typeof correctLabels>(() => {
+  if (props.isSuddenDeath) return "nice"
+  if (props.count <= CLOSE_CALL_SECONDS) return "close"
+  const ratio = props.count / (props.max || 15)
+  if (ratio >= TIER_AWESOME) return "awesome"
+  if (ratio >= TIER_GREAT) return "great"
+  return "nice"
+})
 </script>
 
 <style scoped>
@@ -95,7 +123,6 @@ const statusClass = computed(() => ({
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.4);
   box-shadow:
-    0 0 12px rgba(0, 255, 150, 0.15),
     inset 0 0 10px rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(4px);
   position: relative;
@@ -105,7 +132,7 @@ const statusClass = computed(() => ({
 
 .timer-progress {
   height: 100%;
-  background: linear-gradient(90deg, #39ff14, #00ffa6);
+  background: color-mix(in srgb, var(--neon-success) 95%, white);
   border-radius: 4px;
   box-shadow: 0 0 12px #39ff14;
   transition:
@@ -114,21 +141,21 @@ const statusClass = computed(() => ({
 }
 
 .is-warning {
-  background: linear-gradient(90deg, #fbbf24, #ff9f1a);
+  background: color-mix(in srgb, var(--neon-yellow) 95%, white);
   box-shadow: 0 0 10px #fbbf24;
 }
 
 .is-danger {
-  background: linear-gradient(90deg, #ff4757, #ff1e1e);
+  background: color-mix(in srgb, var(--neon-error) 95%, white);
   box-shadow: 0 0 12px #ff4757;
 }
 
 .is-correct {
-  background: linear-gradient(90deg, #39ff14, #00ffa6);
+  background: color-mix(in srgb, var(--neon-success) 95%, white);
 }
 
 .is-incorrect {
-  background: linear-gradient(90deg, #ff4757, #ff1e1e);
+  background: color-mix(in srgb, var(--neon-error) 95%, white);
 }
 
 .timer-content {
@@ -179,20 +206,130 @@ const statusClass = computed(() => ({
 .sweep-effect {
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 50%;
+  left: 0;
+  width: 14%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  animation: sweep 0.6s ease-out forwards;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    -12px 0 0 rgba(255, 255, 255, 0.28),
+    -24px 0 0 rgba(255, 255, 255, 0.12);
+  transform: translateX(-300%);
+  animation: sweep-pixel 0.5s steps(12) forwards;
+}
+
+@keyframes sweep-pixel {
+  to {
+    transform: translateX(800%);
+  }
 }
 
 .pulse-text {
   animation: text-pulse 1.2s infinite ease-in-out;
   color: var(--white);
+}
+
+.msg-bold.feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.msg-bold.feedback.success {
+  animation: feedback-pop 0.3s steps(6) both;
+}
+
+.msg-bold.feedback.tier-great {
+  font-size: 22px;
+}
+
+.msg-bold.feedback.tier-awesome {
+  font-size: 24px;
+  animation: feedback-pop-big 0.4s steps(8) both;
+}
+
+.msg-bold.feedback.tier-close {
+  animation: feedback-close 0.45s steps(9) both;
+}
+
+.msg-bold.feedback.nope {
+  animation: feedback-shake 0.4s steps(8) both;
+}
+
+@keyframes feedback-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes feedback-pop-big {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes feedback-close {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.1) rotate(-5deg);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1) rotate(4deg);
+  }
+  80% {
+    transform: scale(1) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes feedback-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg-bold.feedback.success,
+  .msg-bold.feedback.nope,
+  .msg-bold.feedback.tier-awesome,
+  .msg-bold.feedback.tier-close {
+    animation: none;
+  }
 }
 </style>

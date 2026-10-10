@@ -62,7 +62,6 @@ onMounted(() => {
 }
 
 .line {
-  overflow: hidden;
   height: 90px;
   display: flex;
   align-items: center;

@@ -46,7 +46,7 @@
             If you want one quick game that everyone can join within seconds, PixReveal is made for exactly that. There is nothing to browse and nothing to set up. You host, everyone scans the QR code, and the first round starts.
           </p>
           <p class="party-desc">
-            PixReveal is free to play, including powerups and bonus rounds, and it runs in the browser of your TV, laptop or tablet.
+            PixReveal is 100% free to play, including powerups and bonus rounds, and it runs in the browser of your TV, laptop or tablet.
           </p>
         </section>
         <FAQComponent :items="phoneControllerFaqs" />

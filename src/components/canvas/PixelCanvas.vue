@@ -84,6 +84,11 @@ const shakeState = ref(null)
 const POP_DURATION = 350
 const popState = ref(null)
 
+const POP_IN_MS = 220
+const POP_IN_START_SCALE = 0.6
+
+const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3)
+
 const animatedPixels = ref([])
 
 // --- Delta-time tracking (fixes ProMotion/120Hz displays running the
@@ -130,6 +135,7 @@ const getAutoMousePos = () => {
 
 const startReveal = () => {
   if (intervalId) clearInterval(intervalId)
+  intervalId = null
   animatedPixels.value = []
   updateFlatPixelList()
   displayedPixels.value = []
@@ -221,8 +227,12 @@ const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
   pixels.forEach((p) => {
     const color = colorPalette[p.val]
     let scaleAmt = 1
+    let alpha = 1
     if (props.isRevealing && p.createdAt) {
-      scaleAmt = Math.min(1, (now - p.createdAt) / 100)
+      const t = Math.min(1, (now - p.createdAt) / POP_IN_MS)
+      const e = easeOutCubic(t)
+      scaleAmt = POP_IN_START_SCALE + (1 - POP_IN_START_SCALE) * e
+      alpha = e
     }
     const currentSize = baseSize * scaleAmt
     const offsetPos = (baseSize - currentSize) / 2
@@ -230,8 +240,9 @@ const drawPixels = (ctx, pixels, baseSize, cellSize, gap, now) => {
     const y = p.y * cellSize + gap + offsetPos
 
     ctx.save()
+    ctx.globalAlpha = alpha
     ctx.shadowColor = color
-    ctx.shadowBlur = p.val === 1 ? 0 : 15 * scaleAmt
+    ctx.shadowBlur = p.val === 1 ? 0 : 15
     ctx.fillStyle = color
     ctx.fillRect(x, y, currentSize, currentSize)
 
