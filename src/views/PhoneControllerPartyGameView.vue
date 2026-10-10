@@ -2,18 +2,18 @@
   <main class="page">
     <ContentPage>
       <h1>
-        <span class="pre-headline">SMARTPHONE CONTROLLER GAME FOR TV</span> <br />
-        TURN ANY PHONE INTO A WIRELESS BUZZER
+        <span class="pre-headline">FREE AIRCONSOLE ALTERNATIVE</span> <br />
+        PHONE CONTROLLER PARTY GAME FOR YOUR TV
       </h1>
       <div class="hero">
         <img class="party-image" src="/assets/images/image-partymode.webp" alt="group of people playing PixReveal" />
 
         <div>
           <p class="hero-desc">
-            PixReveal turns every iOS and Android device into a real-time game controller for your TV or laptop.
+            Looking for a free AirConsole alternative? PixReveal turns every iOS and Android phone into a controller for your TV or laptop.
           </p>
           <p class="hero-desc">
-            Scan the QR code on the main screen to transform your phone browser into a buzzer with powerups and emotes.
+            Scan the QR code on the main screen and your phone browser becomes a buzzer with powerups. No account, no app, no download.
           </p>
           <div class="cta-container">
             <ButtonLinkPrimary link="/play-party?role=host">
@@ -27,6 +27,7 @@
             <span class="badge">2–10 players</span>
             <span class="badge">Phone controllers</span>
             <span class="badge">No app required</span>
+            <span class="badge">No login</span>
           </div>
         </div>
       </div>
@@ -40,15 +41,15 @@
 
       <div class="two-columns">
         <section class="seo-section">
-          <h2>How Mobile Controller Games Work in Your Web Browser</h2>
+          <h2>PixReveal vs. AirConsole</h2>
           <p class="party-desc">
-            Modern browser technology allows smartphones to act as responsive wireless controllers without needing native app installations. One central display—such as a Smart TV, PC monitor, or projector via Chromecast/AirPlay—acts as the main arena where the pixel art reveals itself in real time.
+            AirConsole is a platform with many different games for your TV, played with phones as controllers. PixReveal takes a different route: it is one focused party game built around a single idea. Guess the pixel art while it reveals itself, and buzz in faster than your friends.
           </p>
           <p class="party-desc">
-            Players simply point their phone camera at the screen's QR code. This instantly connects their mobile browser to the live room session over WebSockets, giving each player a personal touch interface to lock in guesses, haptic-feel buzzers, and sabotage options.
+            If you want one quick game that everyone can join within seconds, PixReveal is made for exactly that. There is nothing to browse and nothing to set up. You host, everyone scans the QR code, and the first round starts.
           </p>
           <p class="party-desc">
-            This setup eliminates the friction of traditional console party games. There are no battery charges for extra gamepads, no app store downloads, and zero configuration steps. Anyone with a smartphone can join a local game night within seconds.
+            PixReveal is free to play, including powerups and bonus rounds, and it runs in the browser of your TV, laptop or tablet.
           </p>
         </section>
         <FAQComponent :items="phoneControllerFaqs" />
@@ -56,25 +57,25 @@
 
       <div class="two-columns">
         <section class="seo-section">
-          <h2>Key Advantages of Phone-Controlled Browser Games</h2>
+          <h2>Why Use Phones as Controllers?</h2>
           <ul class="benefit-list">
-            <li>Zero hardware cost: Uses smartphones everyone already owns</li>
-            <li>Instant onboarding via camera QR code scanning</li>
-            <li>Compatible with Smart TVs, Fire TV, Apple TV, and PCs</li>
-            <li>No App Store or Google Play Store downloads required</li>
-            <li>Customized mobile UI that changes with game states</li>
-            <li>Scalable local multiplayer supporting 2 to 10 simultaneous players</li>
+            <li>No extra hardware: everyone already owns a smartphone</li>
+            <li>Instant onboarding by scanning a QR code with the camera</li>
+            <li>No account, no login and no App Store or Google Play download</li>
+            <li>Works on Smart TV browsers, laptops, tablets and via screen casting</li>
+            <li>Controller screen changes with the game state: buzzer, answers, powerups</li>
+            <li>2 to 10 players in one room, locally or on a video call</li>
           </ul>
         </section>
         <section class="seo-section">
           <h2>How to Connect Your TV and Phones</h2>
           <ol class="step-list">
-            <li>Open PixReveal on your Smart TV, laptop, or cast via AirPlay.</li>
-            <li>Click "Host Game" to generate a unique room QR code.</li>
-            <li>Have players scan the QR code using their default phone cameras.</li>
-            <li>Enter player nicknames on the mobile screen to lock in.</li>
-            <li>Watch the TV for pixel art reveals while keeping your eyes on your phone buzzer.</li>
-            <li>Tap your mobile screen to buzz in and submit answers instantly.</li>
+            <li>Open PixReveal on your Smart TV, laptop, or cast your screen via Chromecast or AirPlay.</li>
+            <li>Click "Host a free game" to create a room with its own QR code.</li>
+            <li>Have players scan the QR code with their regular phone camera.</li>
+            <li>Enter a nickname on the phone to join the lobby.</li>
+            <li>Watch the screen for the pixel art reveal while keeping a finger on your buzzer.</li>
+            <li>Tap your phone to buzz in and pick the right answer before the others.</li>
           </ol>
         </section>
       </div>
@@ -95,29 +96,39 @@ import FAQComponent from "@/components/page-ui/FAQComponent.vue";
 
 const phoneControllerFaqs = [
   {
+    question: "Is PixReveal a free alternative to AirConsole?",
+    answer:
+      "PixReveal works in a similar way: one screen shows the game and everyone uses their phone as a controller. The difference is that PixReveal is one focused pixel art guessing game that is free to play without an account.",
+  },
+  {
+    question: "Do I need a special app or device to host?",
+    answer:
+      "No. Open PixReveal in the browser of your Smart TV, laptop or tablet, or cast your screen with Chromecast or AirPlay. Players scan the QR code with their phone camera.",
+  },
+  {
     question: "Do players need to install an app from the App Store or Google Play?",
     answer:
-      "No. PixReveal operates 100% in mobile web browsers. Scanning the host screen QR code opens a lightweight, WebSocket-driven controller UI instantly without downloading software.",
+      "No. PixReveal runs 100% in the mobile browser. Scanning the QR code on the host screen opens the controller instantly, without downloading anything.",
   },
   {
     question: "Which devices can be used as the main display?",
     answer:
-      "Any web browser capable of displaying HTML5 works. You can host the game on a Smart TV browser, a laptop connected via HDMI, an iPad, or stream your desktop using Chromecast or Apple AirPlay.",
+      "Any device with a modern web browser works. You can host on a Smart TV browser, a laptop connected via HDMI, an iPad, or cast your screen with Chromecast or Apple AirPlay.",
   },
   {
     question: "Is there latency between the phone tap and the TV display?",
     answer:
-      "PixReveal uses low-latency WebSockets to transmit player inputs instantly. When a player hits the buzzer on their smartphone, the response registers on the main screen in milliseconds.",
+      "PixReveal uses WebSockets to send player inputs in real time. When a player hits the buzzer on their phone, the main screen reacts almost immediately.",
   },
   {
     question: "What happens if a player's phone screen goes to sleep?",
     answer:
-      "The web controller automatically maintains active connections while open. If a phone locks, simply unlocking it re-establishes the connection to the active lobby without losing score progress.",
+      "If a phone locks, simply unlock it and reopen the page to rejoin the active lobby. Rejoining is supported, so players can get back into the game.",
   },
   {
     question: "Does everyone need to be connected to the same Wi-Fi network?",
     answer:
-      "No. Controllers communicate via cloud servers, meaning phones can be on mobile 4G/5G data or a separate Wi-Fi network while remaining completely synced with the TV host screen.",
+      "No. Controllers communicate through cloud servers, so phones can use mobile data or a different Wi-Fi network and still stay in sync with the host screen.",
   },
 ];
 </script>

@@ -307,9 +307,9 @@ const router = createRouter({
       component: () => import("@/views/PhoneControllerPartyGameView.vue"),
       meta: {
         robots: "index, follow",
-        title: "Free Party Game with Phone Controllers | PixReveal",
+        title: "Free AirConsole Alternative – Phone Controller Party Game | PixReveal",
         description:
-          "Play on a TV and use your phones as controllers in this free browser party game. No app, no login, and no download required – buzz, guess pixel art, and enjoy chaotic multiplayer fun with friends.",
+          "Looking for a free AirConsole alternative? Play PixReveal on your TV or laptop and use your phones as controllers. No app, no login, no download.",
         canonical: "https://www.pixreveal.com/phone-controller-party-game",
       },
     },
