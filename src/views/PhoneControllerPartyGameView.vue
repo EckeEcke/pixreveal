@@ -24,8 +24,7 @@
           <div class="feature-badges">
             <span class="badge">2–10 players</span>
             <span class="badge">Phone controllers</span>
-            <span class="badge">No app required</span>
-            <span class="badge">No login</span>
+            <span class="badge">No app or login required</span>
           </div>
         </div>
       </div>
