@@ -11,9 +11,7 @@
         <div>
           <p class="hero-desc">
             Looking for a free AirConsole alternative? PixReveal turns every iOS and Android phone into a controller for your TV or laptop.
-          </p>
-          <p class="hero-desc">
-            Scan the QR code on the main screen and your phone browser becomes a buzzer with powerups. No account, no app, no download.
+            Scan the QR code on the main screen and your phone browser becomes a quiz buzzer.
           </p>
           <div class="cta-container">
             <ButtonLinkPrimary link="/play-party?role=host">
