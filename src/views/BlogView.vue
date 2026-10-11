@@ -1,8 +1,18 @@
 <template>
+https://www.reddit.com/r/pixreveal/
   <ContentPage class="page">
     <h1 class="logo">BLOG</h1>
     <div class="subline">PixReveal Updates</div>
     <div class="log-grid">
+    <div class="log-card">
+      <div class="log-info">
+        <span class="date">10-11-26</span>
+      </div>
+      <h3 class="log-title">Play PixReveal on Reddit!</h3>
+      <p>
+        PixReveal now has its own sub on Reddit and is available as a Reddit game! <a href="https://www.reddit.com/r/pixreveal/" target="_blank">Join the sub</a> to play the classic mode right in your browser. Once the app is reviewed, PixReveal can be added to other subs as well. Stay tuned!
+      </p>
+    </div>
     <div class="log-card">
       <div class="log-info">
         <span class="date">10-07-26</span>

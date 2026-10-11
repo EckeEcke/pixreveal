@@ -38,6 +38,11 @@ const socialLinks = [
     title: "Subscribe on YouTube",
   },
   {
+    href: "https://www.reddit.com/r/pixreveal/",
+    icon: "pixel:reddit",
+    title: "Play on Reddit",
+  },
+  {
     href: "https://www.tiktok.com/@pixreveal.com",
     icon: "pixel:tiktok",
     title: "Follow on TikTok",
