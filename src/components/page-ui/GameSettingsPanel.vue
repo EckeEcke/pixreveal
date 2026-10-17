@@ -55,7 +55,7 @@
             type="radio"
             name="maxRounds"
             :value="amount"
-            :checked="configStore.maxRounds === amount"
+            :checked="configStore.maxRounds == amount"
             :disabled="configStore.filteredDrawings.length < amount * 4"
             @change="setRounds(amount)"
           />
