@@ -153,7 +153,7 @@ export const useConfigStore = defineStore("config", () => {
       if (filteredDrawings.value.length >= newValue * 4) {
         _maxRounds.value = newValue;
       } else {
-        console.log("Nicht genug Bilder im Pool!");
+        console.log("Not enough images in Pool!");
       }
     },
   });

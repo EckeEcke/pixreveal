@@ -40,14 +40,13 @@
       <div class="setting-heading">
         <span class="selection-label">ROUNDS</span>
       </div>
-
       <div class="value-grid">
         <label
           v-for="amount in [5, 10, 15, 20]"
           :key="amount"
           class="value-item"
           :class="{
-            'is-selected': configStore.maxRounds === amount,
+            'is-selected': configStore.maxRounds == amount,
             'is-disabled':
               configStore.filteredDrawings.length < amount * 4
           }"

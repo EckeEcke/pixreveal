@@ -63,32 +63,167 @@ export const useSoundStore = defineStore("sound", () => {
   };
 
   type SoundName = keyof typeof sources;
-  const cache: Partial<Record<SoundName, HTMLAudioElement>> = {};
 
-  const getAudio = (name: SoundName) => {
-    const existing = cache[name];
-    if (existing) return existing;
-    const audio = new Audio(sources[name]);
-    audio.preload = "auto";
-    cache[name] = audio;
-    return audio;
+  const ALL_SOUNDS = Object.keys(sources) as SoundName[];
+
+  const PRIORITY_SOUNDS: SoundName[] = [
+    "click",
+    "hover",
+    "back",
+    "pop",
+    "correct",
+    "incorrect",
+    "reveal",
+    "timer",
+  ];
+
+  let ctx: AudioContext | null = null;
+  let master: GainNode | null = null;
+
+  const rawCache: Partial<Record<SoundName, Promise<ArrayBuffer | null>>> = {};
+  const buffers: Partial<Record<SoundName, AudioBuffer>> = {};
+  const decoding: Partial<Record<SoundName, Promise<AudioBuffer | null>>> = {};
+  const active: Partial<Record<SoundName, Set<AudioBufferSourceNode>>> = {};
+
+  const getContext = (): AudioContext | null => {
+    if (ctx) return ctx;
+    const Ctor: typeof AudioContext | undefined =
+      window.AudioContext ?? (window as any).webkitAudioContext;
+    if (!Ctor) return null;
+    try {
+      ctx = new Ctor({ latencyHint: "interactive" });
+      master = ctx.createGain();
+      master.connect(ctx.destination);
+    } catch (err) {
+      console.warn("AudioContext could not be created:", err);
+      ctx = null;
+      master = null;
+    }
+    return ctx;
+  };
+
+  const resumeContext = () => {
+    const c = getContext();
+    if (c && c.state !== "running") {
+      c.resume().catch(() => {});
+    }
+  };
+
+  const fetchRaw = (name: SoundName): Promise<ArrayBuffer | null> => {
+    const cached = rawCache[name];
+    if (cached) return cached;
+    const promise = fetch(sources[name])
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.arrayBuffer();
+      })
+      .catch((err) => {
+        console.warn(`Sound "${name}" could not be loaded:`, err);
+        delete rawCache[name];
+        return null;
+      });
+    rawCache[name] = promise;
+    return promise;
+  };
+
+  const loadBuffer = (name: SoundName): Promise<AudioBuffer | null> => {
+    const ready = buffers[name];
+    if (ready) return Promise.resolve(ready);
+    const pending = decoding[name];
+    if (pending) return pending;
+
+    const promise = (async () => {
+      const c = getContext();
+      if (!c) return null;
+      const raw = await fetchRaw(name);
+      if (!raw) return null;
+      try {
+        const buffer = await c.decodeAudioData(raw.slice(0));
+        buffers[name] = buffer;
+        return buffer;
+      } catch (err) {
+        console.warn(`Sound "${name}" could not be decoded:`, err);
+        return null;
+      } finally {
+        delete decoding[name];
+      }
+    })();
+    decoding[name] = promise;
+    return promise;
+  };
+
+  const prefetchRaw = () => {
+    PRIORITY_SOUNDS.forEach((name) => void fetchRaw(name));
+
+    const rest = ALL_SOUNDS.filter((n) => !PRIORITY_SOUNDS.includes(n));
+    const loadRest = () => rest.forEach((name) => void fetchRaw(name));
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(loadRest, { timeout: 4000 });
+    } else {
+      // Safari < 18 kennt requestIdleCallback nicht
+      window.setTimeout(loadRest, 1500);
+    }
+  };
+
+  let warmedUp = false;
+  const warmUp = async () => {
+    if (warmedUp) return;
+    warmedUp = true;
+    await Promise.all(PRIORITY_SOUNDS.map(loadBuffer));
+    await Promise.all(
+      ALL_SOUNDS.filter((n) => !PRIORITY_SOUNDS.includes(n)).map(loadBuffer),
+    );
+  };
+
+  const stopSound = (name: SoundName) => {
+    const set = active[name];
+    if (!set) return;
+    for (const node of Array.from(set)) {
+      try {
+        node.stop();
+      } catch {
+        // bereits beendet
+      }
+    }
+    set.clear();
+  };
+
+  const stopAll = () => ALL_SOUNDS.forEach(stopSound);
+
+  const start = (name: SoundName, buffer: AudioBuffer) => {
+    const c = getContext();
+    if (!c || !master) return;
+
+    stopSound(name);
+
+    const node = c.createBufferSource();
+    node.buffer = buffer;
+    node.connect(master);
+
+    const set = (active[name] ??= new Set());
+    set.add(node);
+    node.onended = () => {
+      set.delete(node);
+      node.disconnect();
+    };
+
+    node.start(0);
   };
 
   const playSound = (name: SoundName) => {
     if (!isAudioEnabled.value) return;
+    if (!getContext()) return;
+    resumeContext();
 
-    const audio = getAudio(name);
-    audio.currentTime = 0;
-    audio.play().catch((err) => {
-      console.warn("Audio could not be played:", err);
+    const buffer = buffers[name];
+    if (buffer) {
+      start(name, buffer);
+      return;
+    }
+
+    void loadBuffer(name).then((loaded) => {
+      if (loaded && isAudioEnabled.value) start(name, loaded);
     });
-  };
-
-  const stopSound = (name: SoundName) => {
-    const audio = cache[name];
-    if (!audio) return;
-    audio.pause();
-    audio.currentTime = 0;
   };
 
   const handleHoverSound = () => {
@@ -99,6 +234,25 @@ export const useSoundStore = defineStore("sound", () => {
 
   watch(isAudioEnabled, (newValue) => {
     localStorage.setItem("pixreveal_audio", newValue.toString());
+    if (!newValue) stopAll();
+  });
+
+  prefetchRaw();
+
+  const unlock = () => {
+    resumeContext();
+    void warmUp();
+  };
+  (["pointerdown", "keydown", "touchend"] as const).forEach((type) =>
+    window.addEventListener(type, unlock, {
+      once: true,
+      capture: true,
+      passive: true,
+    }),
+  );
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && ctx) resumeContext();
   });
 
   window.addEventListener(

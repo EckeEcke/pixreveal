@@ -27,9 +27,16 @@ export const createApinatorClient = (
     cluster,
     authEndpoint: "/api/apinator-auth",
     authHeaders: headers,
+    pongTimeout: 60,
   });
 
-  // THE EXPERIMENT: Wir fangen den Timer ab und setzen ihn extrem hoch
+  clientInstance.bind("state_change", ({ previous, current }: any) => {
+    console.log(`[apinator] ${previous} -> ${current}`, new Date().toISOString());
+  });
+
+  /*
+  // OLD WORKAROUND: removed for now
+
   const internalConnection = (clientInstance as any).connection;
   if (internalConnection) {
     const originalResetTimer = internalConnection.resetActivityTimer;
@@ -41,5 +48,6 @@ export const createApinatorClient = (
     };
   }
 
+  */
   return clientInstance;
 };
