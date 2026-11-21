@@ -1,117 +1,208 @@
 <template>
-  <div class="container">
-    <button class="back-btn" @click="$router.back()" data-sfx="back">
+  <div class="gallery-container">
+    <button class="back-btn" aria-label="Go back" @click="$router.back()" data-sfx="back">
       <Icon icon="pixel:angle-left-solid" />
     </button>
-    <h1 class="logo">USER <span>GALLERY</span></h1>
-    <LoadingOverlay :show="isGenerating" />
-    <InfoBox>
+    <header class="gallery-header">
       <div>
-        Check pixel art submitted by PixReveal players. Activate user generated
-        content to include user art in the game. Use the
-        <router-link to="/editor">editor</router-link> to create and submit your
-        own drawings.
+        <h1 class="logo">USER <span>GALLERY</span></h1>
+        <p class="intro">Pixel art made by PixReveal players.</p>
+        <p class="gallery-hint">Enable user art in settings to play with these drawings.</p>
       </div>
-    </InfoBox>
+      <ButtonLinkPrimary link="/editor">Create pixel art</ButtonLinkPrimary>
+    </header>
 
-    <div v-if="isGenerating" class="hint">Generating previews...</div>
+    <div v-if="isLoading" class="hint" role="status">
+      <LoadingAnimation text="Loading user art..." />
+    </div>
+    <p v-else-if="loadFailed" class="hint" role="alert">
+      Could not load user art. <button class="retry-link" @click="loadDrawings">Try again</button>
+    </p>
+    <p v-else-if="!userDrawings.length" class="hint">No user drawings found.</p>
 
-    <div v-if="userDrawings.length" class="grid">
-      <div v-for="(drawing, index) in userDrawings" :key="index" class="tile">
-        <img
-          v-if="imageUrls[index]"
-          class="preview"
-          :src="imageUrls[index]"
-          :alt="drawing.name"
-          loading="lazy"
-        />
-        <div v-else class="preview placeholder"></div>
-        <div class="tile-title">{{ drawing.name }}</div>
-      </div>
+    <div v-if="userDrawings.length" class="gallery-grid">
+      <figure v-for="(drawing, index) in userDrawings" :key="index" class="tile">
+        <button
+          class="art-button"
+          :disabled="!imageUrls[index]"
+          :aria-label="'View ' + drawing.name"
+          @click="openDrawing(index)"
+        >
+          <img v-if="imageUrls[index]" class="preview" :src="imageUrls[index]" :alt="drawing.name" width="256" height="256" loading="lazy" />
+          <div v-else class="preview placeholder">
+            <LoadingAnimation v-if="isGenerating" size="small" aria-label="Loading preview" />
+            <span v-else>Preview unavailable</span>
+          </div>
+        </button>
+        <figcaption class="tile-caption">
+          <span class="tile-title">{{ drawing.name }}</span>
+          <span v-if="drawing.category" class="tile-category">{{ drawing.category }}</span>
+        </figcaption>
+      </figure>
     </div>
 
-    <div v-else class="hint">No user drawings found.</div>
+    <dialog ref="artDialog" class="art-dialog" aria-labelledby="art-title" @click="closeOnBackdrop" @close="selectedIndex = null" @keydown.left.prevent="navigateDrawing(-1)" @keydown.right.prevent="navigateDrawing(1)" @keydown.esc.stop.prevent="artDialog.close()">
+      <template v-if="selectedDrawing">
+        <header class="dialog-header">
+          <div>
+            <h2 id="art-title">{{ selectedDrawing.name }}</h2>
+            <p class="tile-category">{{ selectedDrawing.category }}</p>
+          </div>
+          <button class="close-button" aria-label="Close drawing" @click="artDialog.close()" autofocus>&times;</button>
+        </header>
+        <img class="preview enlarged-preview" :src="imageUrls[selectedIndex]" :alt="selectedDrawing.name" width="256" height="256" />
+        <nav class="drawing-navigation" aria-label="Browse drawings">
+          <button :disabled="previousIndex === -1" @click="navigateDrawing(-1)">&larr; Previous</button>
+          <span>{{ selectedIndex + 1 }} / {{ userDrawings.length }}</span>
+          <button :disabled="nextIndex === -1" @click="navigateDrawing(1)">Next &rarr;</button>
+        </nav>
+      </template>
+    </dialog>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { Icon } from "@iconify/vue";
 import { useConfigStore } from "@/stores/config";
-import InfoBox from "@/components/game-ui/InfoBox.vue";
-import LoadingOverlay from "@/components/page-layout/LoadingOverlay.vue";
 import { useDrawingImageUrls } from "@/composables/useDrawingImageUrls";
+import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 
 const configStore = useConfigStore();
-
+const isLoading = ref(false);
+const loadFailed = ref(false);
+const artDialog = ref(null);
+const selectedIndex = ref(null);
 const userDrawings = computed(() =>
-  Array.isArray(configStore.ugcDrawings)
-    ? [...configStore.ugcDrawings].reverse()
-    : [],
+  Array.isArray(configStore.ugcDrawings) ? [...configStore.ugcDrawings].reverse() : [],
 );
-
 const { imageUrls, isGenerating } = useDrawingImageUrls(userDrawings);
+const selectedDrawing = computed(() => selectedIndex.value === null ? null : userDrawings.value[selectedIndex.value]);
+
+const loadDrawings = async () => {
+  isLoading.value = true;
+  loadFailed.value = false;
+  try {
+    await configStore.fetchUgcDrawings();
+    loadFailed.value = !configStore.ugcLoaded;
+  } catch {
+    loadFailed.value = true;
+  } finally {
+    isLoading.value = false;
+  }
+};
+onMounted(loadDrawings);
+
+const findAdjacent = (direction) => {
+  if (selectedIndex.value === null) return -1;
+  for (let index = selectedIndex.value + direction; index >= 0 && index < userDrawings.value.length; index += direction) {
+    if (imageUrls.value[index]) return index;
+  }
+  return -1;
+};
+const previousIndex = computed(() => findAdjacent(-1));
+const nextIndex = computed(() => findAdjacent(1));
+const navigateDrawing = (direction) => {
+  const index = findAdjacent(direction);
+  if (index !== -1) selectedIndex.value = index;
+};
+const openDrawing = async (index) => {
+  if (!imageUrls.value[index]) return;
+  selectedIndex.value = index;
+  await nextTick();
+  artDialog.value?.showModal();
+};
+const closeOnBackdrop = (event) => {
+  if (event.target !== artDialog.value) return;
+  const bounds = artDialog.value.getBoundingClientRect();
+  if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+    artDialog.value.close();
+  }
+};
+watch(userDrawings, () => {
+  artDialog.value?.close();
+  selectedIndex.value = null;
+});
 </script>
 
 <style scoped>
-.container {
-  width: 1000px;
-  max-width: 100%;
-  padding-bottom: 64px;
+.gallery-container {
+  width: 100%;
+  max-width: 1000px;
+  margin-inline: auto;
+  padding: 0 16px 64px;
+  box-sizing: border-box;
 }
-
-.hint {
-  margin-top: 24px;
-  opacity: 0.9;
+.gallery-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin: 16px 0 28px;
 }
-
-.grid {
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
-  gap: 12px;
+.logo { margin: 0 0 12px; }
+.intro { margin: 0; line-height: 1.5; }
+.gallery-hint { margin: 6px 0 0; color: var(--color-secondary); font-size: 13px; line-height: 1.5; }
+.hint { margin-block: 24px; color: var(--color-secondary); }
+.retry-link { color: var(--primary); font: inherit; text-decoration: underline; }
+.gallery-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px 20px; }
+.tile { margin: 0; min-width: 0; }
+.art-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  overflow: hidden;
 }
-
-.tile {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 10px;
-  backdrop-filter: blur(4px);
+.art-button:disabled { cursor: default; }
+.art-button:hover:not(:disabled) { outline: 1px solid var(--primary); outline-offset: 3px; }
+.art-button:focus-visible, .art-dialog button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
-
 .preview {
+  display: block;
   width: 100%;
   height: auto;
-  border-radius: 6px;
+  aspect-ratio: 1;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  display: block;
-  background: #0a0b10;
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
 }
-
 .placeholder {
-  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #120f1f;
+  color: var(--color-secondary);
+  font: 13px var(--font-display);
 }
-
-.tile-title {
-  margin-top: 12px;
-  margin-bottom: 4px;
-  font-size: 16px;
-  font-weight: 700;
-  text-transform: uppercase;
+.tile-caption { display: flex; flex-direction: column; gap: 5px; padding-top: 12px; }
+.tile-title { font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--white); overflow-wrap: anywhere; }
+.tile-category { margin: 0; font-size: 12px; color: var(--color-secondary); line-height: 1.5; }
+.art-dialog {
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: #120f1f;
   color: var(--white);
-  opacity: 0.95;
 }
-
-a {
-  color: var(--primary);
-  font-weight: 900;
-}
-
-.logo {
-  margin-top: 16px;
-}
+.art-dialog::backdrop { background: rgba(0, 0, 0, 0.8); }
+.dialog-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.dialog-header h2 { margin: 0 0 4px; font-size: 20px; overflow-wrap: anywhere; }
+.close-button { flex-shrink: 0; width: 40px; height: 40px; padding: 0; color: var(--white); font-size: 30px; line-height: 1; }
+.enlarged-preview { max-height: calc(100dvh - 210px); object-fit: contain; }
+.drawing-navigation { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; font-size: 12px; }
+.drawing-navigation button { min-height: 44px; padding: 8px; color: var(--white); font: inherit; }
+.drawing-navigation button:disabled { opacity: 0.3; }
+@media (min-width: 576px) { .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .gallery-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 </style>

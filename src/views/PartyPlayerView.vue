@@ -22,11 +22,14 @@
         </div>
 
         <div
-          v-else-if="partyStore.connectionStale"
+          v-else-if="partyStore.connectionStale || channelStore.awaitingPartyState || channelStore.isLoading"
           key="reconnecting"
           class="centered placeholder"
         >
-          <p class="waiting-label">RECONNECTING...</p>
+          <p class="waiting-label">{{ channelStore.awaitingPartyState ? "SYNCHRONIZING..." : "RECONNECTING..." }}</p>
+          <button v-if="channelStore.canRetryPartySync" class="neon-buzzer" @click="channelStore.tryReconnect({ force: true })">
+            <span class="buzzer-text">RECONNECT</span>
+          </button>
         </div>
 
         <div
@@ -305,7 +308,7 @@ watch(
 );
 
 const handleBuzz = () => {
-  if (partyStore.connectionStale) return;
+  if (partyStore.connectionStale || channelStore.awaitingPartyState || channelStore.isLoading) return;
   if (partyStore.isFrozen) return;
   if (hasBuzzed.value) return;
   if (
@@ -441,7 +444,7 @@ const POWERUP_BTN_CLASS = {
 };
 
 const isPowerupTypeDisabled = (type) => {
-  if (partyStore.isFrozen || partyStore.connectionStale) return true;
+  if (partyStore.isFrozen || partyStore.connectionStale || channelStore.awaitingPartyState || channelStore.isLoading) return true;
   switch (type) {
     case "darken":
       return partyStore.isDarken;

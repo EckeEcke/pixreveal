@@ -117,13 +117,17 @@ export function useMemberEvents({
 }: UseMemberEventsOptions): void {
   channel.bind("realtime:member_added", (member: RawMember) => {
     const player = buildPlayerFromMember(member);
+    if (mode.value === "regular" && onlineGameRunning.value) {
+      if (isHost.value) channel.trigger("client-join-blocked", { targetId: player.playerId });
+      return;
+    }
     playerMgmt.addPlayer(player);
     messages.value.push(buildJoinMessage(member));
 
     if (!isHost.value && player.isHost && noHostGraceTimeoutId.value !== null) {
       window.clearTimeout(noHostGraceTimeoutId.value);
       noHostGraceTimeoutId.value = null;
-      if (loading.isReconnecting) loading.clear();
+      if (loading.isReconnecting && !(mode.value === "party" && onlineGameRunning.value)) loading.clear();
     }
 
     if (!isHost.value) return;
@@ -146,7 +150,12 @@ export function useMemberEvents({
 
   channel.bind("realtime:member_removed", (member: any) => {
     const id: string = member.user_id ?? member.id;
+    const departed = playerMgmt.playersOnline.value.find((p) => p.playerId === id);
     playerMgmt.removePlayer(id);
+    if (mode.value === "regular" && onlineGameRunning.value && departed?.isHost && !isHost.value) {
+      reset();
+      router.push("/");
+    }
   });
 
   channel.bind(

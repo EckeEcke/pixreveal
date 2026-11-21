@@ -63,6 +63,30 @@ export const useChannelStore = defineStore("channel", () => {
     },
   };
 
+  const awaitingPartyState = ref(false);
+  const canRetryPartySync = ref(false);
+  let partySyncInterval: number | null = null;
+  const completePartySync = () => {
+    awaitingPartyState.value = false;
+    canRetryPartySync.value = false;
+    if (partySyncInterval !== null) workerClearInterval(partySyncInterval);
+    partySyncInterval = null;
+    loading.clear();
+  };
+  const requestPartySync = () => {
+    if (mode.value !== "party" || isHost.value || !activeChannel.value) return;
+    if (!awaitingPartyState.value) {
+      awaitingPartyState.value = true;
+      canRetryPartySync.value = false;
+      const startedAt = Date.now();
+      partySyncInterval = workerSetInterval(() => {
+        canRetryPartySync.value = Date.now() - startedAt >= 12000;
+        activeChannel.value?.trigger("client-party-state-request", { requestedBy: playerId.value });
+      }, 3000);
+    }
+    activeChannel.value.trigger("client-party-state-request", { requestedBy: playerId.value });
+  };
+
   const setMode = (value: "regular" | "party") => {
     mode.value = value;
   };
@@ -81,6 +105,10 @@ export const useChannelStore = defineStore("channel", () => {
   });
 
   const inactivity = useInactivity({
+    getMode: () => mode.value,
+    onPartyVisible: () => {
+      if (onlineGameRunning.value) requestPartySync();
+    },
     getIsHost: () => isHost.value,
     getGameRunning: () => onlineGameRunning.value,
     getActiveChannel: () => activeChannel.value,
@@ -107,6 +135,7 @@ export const useChannelStore = defineStore("channel", () => {
     getPlayerId: () => playerId.value,
     getActiveChannel: () => activeChannel.value,
     onConnectionLost: () => inactivity.handleInactivity(),
+    onPartySyncRequired: requestPartySync,
   });
 
   connection.setForceReconnect(() => tryReconnect({ force: true }));
@@ -142,6 +171,12 @@ export const useChannelStore = defineStore("channel", () => {
     if (subscribeTimeoutId.value) window.clearTimeout(subscribeTimeoutId.value);
     subscribeTimeoutId.value = window.setTimeout(() => {
       if (!loading.isLoading.value) return;
+      if (mode.value === "party" && onlineGameRunning.value) {
+        requestPartySync();
+        canRetryPartySync.value = true;
+        loading.setReconnecting();
+        return;
+      }
       console.error("Subscription timeout");
       toast.error("Connection timeout. Please try again.", { icon: "⏱️" });
       reset();
@@ -166,15 +201,17 @@ export const useChannelStore = defineStore("channel", () => {
     const prevGameRunning = onlineGameRunning.value;
     const prevMode = mode.value;
 
+    completePartySync();
+    // Detach before disconnect: an intentional reset must not handle its own disconnect.
+    if (client.value?.unbind && stateChangeHandler.value) {
+      client.value.unbind("state_change", stateChangeHandler.value);
+      stateChangeHandler.value = null;
+    }
     if (activeChannel.value?.unbind) activeChannel.value.unbind();
     if (client.value && currentRoomId.value) {
       client.value.unsubscribe(`presence-pixreveal-${currentRoomId.value}`);
     }
     if (client.value?.disconnect) client.value.disconnect();
-    if (client.value?.unbind && stateChangeHandler.value) {
-      client.value.unbind("state_change", stateChangeHandler.value);
-      stateChangeHandler.value = null;
-    }
 
     activeChannel.value = null;
     client.value = null;
@@ -253,6 +290,7 @@ export const useChannelStore = defineStore("channel", () => {
       router,
       reset,
       setGameRunning,
+      onPartySyncRequired: requestPartySync,
       onResubscribed: () => {
         if (isHost.value && mode.value === "party" && onlineGameRunning.value) {
           workerSetTimeout(() => {
@@ -334,7 +372,6 @@ export const useChannelStore = defineStore("channel", () => {
     roomId: string,
     role: "host" | "player" = "player",
   ) => {
-    console.log(userData)
     const cluster = parseClusterFromRoomId(roomId);
     const clientInstance = createApinatorClient(userData, cluster);
     client.value = clientInstance;
@@ -355,7 +392,7 @@ export const useChannelStore = defineStore("channel", () => {
       roomId,
       userData,
       mode: mode.value,
-      wasInGame: false,
+      wasInGame: onlineGameRunning.value,
       lastRole: role,
     });
   };
@@ -374,7 +411,7 @@ export const useChannelStore = defineStore("channel", () => {
   const tryReconnect = ({ force = false }: { force?: boolean } = {}) => {
     if ((activeChannel.value || client.value) && !force) return false;
     const persisted = sessionPersistence.readSession();
-    if (!persisted) return false;
+    if (!persisted || persisted.mode !== "party") return false;
 
     if (force) resetConnection();
 
@@ -443,6 +480,10 @@ export const useChannelStore = defineStore("channel", () => {
     mode,
     onlineGameRunning,
     connectionState: connection.connectionState,
+    awaitingPartyState,
+    canRetryPartySync,
+    requestPartySync,
+    completePartySync,
     // Actions
     setMode,
     setGameRunning: setGameRunningWithPersist,

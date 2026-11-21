@@ -240,7 +240,8 @@ const nameEffectClass = computed(() =>
     : `name-effect-${playerStore.playerNameEffect}`,
 );
 
-const hostGame = () => {
+const hostGame = async () => {
+  if (!(await configStore.ensureUgcReady())) return;
   channelStore.setMode("regular");
   soundStore.playSound("click");
 

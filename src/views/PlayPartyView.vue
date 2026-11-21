@@ -252,7 +252,8 @@ const nameEffectClass = computed(() =>
     : `name-effect-${playerStore.playerNameEffect}`,
 )
 
-const hostGame = () => {
+const hostGame = async () => {
+  if (!(await configStore.ensureUgcReady())) return;
   channelStore.setMode("party")
   soundStore.playSound("click")
 

@@ -13,6 +13,7 @@ type ConnectionStateCallbacks = {
   getPlayerId: () => string;
   getActiveChannel: () => any;
   onConnectionLost: () => void;
+  onPartySyncRequired?: () => void;
 };
 
 export function useConnectionState({
@@ -23,6 +24,7 @@ export function useConnectionState({
   getPlayerId,
   getActiveChannel,
   onConnectionLost,
+  onPartySyncRequired,
 }: ConnectionStateCallbacks) {
   const connectionState = ref<string>("unknown");
   const connectWatchdogTimeoutId = ref<number | null>(null);
@@ -61,13 +63,20 @@ export function useConnectionState({
   };
 
   const createStateChangeHandler = () => {
-    return ({ current }: { previous: string; current: string }) => {
+    return ({ previous, current }: { previous: string; current: string }) => {
       connectionState.value = current ?? "unknown";
+
+      if (getMode() === "regular" && getGameRunning() &&
+          (previous === "connected" || current === "disconnected" || current === "unavailable") &&
+          current !== "connected") {
+        onConnectionLost();
+        return;
+      }
 
       if (current === "connected") {
         clearConnectWatchdog();
         clearConnectionLossTimeout();
-        if (getIsLoading()) {
+        if (getIsLoading() && !(getMode() === "party" && getGameRunning())) {
           setIsLoading(false);
         }
         if (getMode() === "party" && getGameRunning() && getActiveChannel()) {
@@ -79,6 +88,7 @@ export function useConnectionState({
       }
 
       if (current === "disconnected" || current === "unavailable") {
+        if (getMode() === "party" && getGameRunning()) onPartySyncRequired?.();
         clearConnectWatchdog();
         if (!getIsLoading()) {
           setIsLoading(true, "RECONNECTING...");
@@ -86,7 +96,7 @@ export function useConnectionState({
         clearConnectionLossTimeout();
         connectionLossTimeoutId.value = window.setTimeout(() => {
           connectionLossTimeoutId.value = null;
-          onConnectionLost();
+          if (getMode() !== "party") onConnectionLost();
         }, CONNECTION_LOSS_TIMEOUT_MS);
       }
 

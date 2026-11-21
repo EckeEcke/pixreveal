@@ -172,6 +172,7 @@ export const usePartyStore = defineStore("party", () => {
 
   const buildPartyState = (): PartyStatePayload => ({
     sentAt: Date.now(),
+    isGameOver: gameStore.isGameOver,
     roundIndex: gameStore.currentRoundIndex,
     buzzerState: buzzerState.value,
     activePlayerId: activePlayerId.value,
@@ -695,7 +696,7 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent("client-player-inactive", (data: { playerId: string }) => {
       heartbeat.markHostActivity()
       if (!isHost.value) return
-      players.value = players.value.filter((p) => p.playerId !== data.playerId)
+      // A controller may return with the same identity; keep its accumulated stats.
       channelStore.removePlayer(data.playerId)
     })
 
@@ -801,9 +802,11 @@ export const usePartyStore = defineStore("party", () => {
       "client-party-state",
       (data: { state?: PartyStatePayload; reason?: string }) => {
         if (isHost.value) return
-        heartbeat.markHostActivity()
         const state = data?.state
-        if (!state) return
+        if (!state || !Array.isArray(state.players) || !Number.isInteger(state.roundIndex) ||
+            !["open", "locked", "answering"].includes(state.buzzerState) ||
+            typeof state.isGameOver !== "boolean") return
+        heartbeat.markHostActivity()
 
         if (Array.isArray(state.players)) players.value = state.players
         if (typeof state.roundTimeLimit === "number")
@@ -972,6 +975,14 @@ export const usePartyStore = defineStore("party", () => {
         if (Array.isArray(state.buzzedPlayerIds)) {
           buzzedPlayerIds.value = state.buzzedPlayerIds
         }
+        channelStore.completePartySync()
+        if (state.isGameOver) {
+          gameStore.isGameOver = true
+          channelStore.setGameRunning(false)
+          if (router.currentRoute.value.path === "/party-player") {
+            router.push("/gameover-party-player")
+          }
+        }
       }
     )
 
@@ -1043,7 +1054,6 @@ export const usePartyStore = defineStore("party", () => {
     bindEvent(
       "client-party-state-request",
       (data: { requestedBy?: string }) => {
-        heartbeat.markHostActivity()
         broadcastPartyState(`state-request:${data?.requestedBy || "unknown"}`)
       }
     )

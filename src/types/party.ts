@@ -40,6 +40,7 @@ export type PartyPlayerStats = {
 
 export type PartyStatePayload = {
   sentAt: number;
+  isGameOver: boolean;
   roundIndex: number;
   buzzerState: BuzzerState;
   activePlayerId: string | null;

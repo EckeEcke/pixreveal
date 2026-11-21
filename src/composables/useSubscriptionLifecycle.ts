@@ -76,6 +76,7 @@ export interface UseSubscriptionLifecycleOptions {
   reset(): void;
   setGameRunning(value: boolean): void;
   onResubscribed?(): void;
+  onPartySyncRequired?(): void;
 }
 
 export function syncPlayersFromHash(
@@ -151,6 +152,7 @@ export function useSubscriptionLifecycle({
   reset,
   setGameRunning,
   onResubscribed,
+  onPartySyncRequired,
 }: UseSubscriptionLifecycleOptions): void {
   channel.bind("realtime:subscription_succeeded", (members: any) => {
     if (subscribeTimeoutId.value) {
@@ -198,15 +200,17 @@ export function useSubscriptionLifecycle({
       playerMgmt.lockAllowedIdsForRunningGame();
     }
 
-    if (loading.isReconnecting) loading.clear();
+    const persisted = sessionPersistence.readSession();
+    if (persisted?.wasInGame && persisted.mode === mode.value) setGameRunning(true);
+    const needsPartySync = mode.value === "party" && !isHost.value && onlineGameRunning.value;
+    if (needsPartySync) onPartySyncRequired?.();
+    else if (loading.isReconnecting) loading.clear();
 
     if (isHost.value && onlineGameRunning.value) {
       onResubscribed?.();
     }
 
-    const persisted = sessionPersistence.readSession();
     if (persisted?.wasInGame && persisted.mode === mode.value) {
-      setGameRunning(true);
 
       if (mode.value === "party") {
         const currentPath = router.currentRoute.value.path;
@@ -241,7 +245,7 @@ export function useSubscriptionLifecycle({
 
     const entryRoutes = ["/", "/play-party", "/play-online"];
     if (entryRoutes.includes(router.currentRoute.value.path)) {
-      loading.clear();
+      if (!needsPartySync) loading.clear();
       router.push(mode.value === "party" ? "/party-lobby" : "/lobby");
     }
   });
@@ -250,6 +254,12 @@ export function useSubscriptionLifecycle({
     if (subscribeTimeoutId.value) {
       window.clearTimeout(subscribeTimeoutId.value);
       subscribeTimeoutId.value = null;
+    }
+
+    if (mode.value === "party" && onlineGameRunning.value && err?.type !== "AuthError") {
+      loading.setReconnecting();
+      onPartySyncRequired?.();
+      return;
     }
 
     if (err?.type === "AuthError") {

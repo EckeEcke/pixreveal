@@ -1,4 +1,4 @@
-import { onBeforeUnmount, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import type { Ref } from "vue";
 // @ts-ignore
 import colorPalette from "@/data/colorPalette";
@@ -83,43 +83,44 @@ export const useDrawingImageUrls = (drawings: Ref<DrawingLike[]>) => {
   const imageUrls = ref<string[]>([]);
   const isGenerating = ref(false);
 
-  const revokeAll = () => {
-    for (const url of imageUrls.value) {
-      try {
-        URL.revokeObjectURL(url);
-      } catch {}
-    }
-  };
-
   watch(
     drawings,
-    async (next) => {
-      revokeAll();
+    async (next, _previous, onCleanup) => {
+      let cancelled = false;
+      const urls: string[] = [];
+      onCleanup(() => {
+        cancelled = true;
+        urls.forEach((url) => { if (url) URL.revokeObjectURL(url); });
+      });
       imageUrls.value = [];
       isGenerating.value = false;
-
       if (!Array.isArray(next) || next.length === 0) return;
 
+      imageUrls.value = new Array(next.length).fill("");
       isGenerating.value = true;
       try {
-        const urls: string[] = new Array(next.length).fill("");
         for (let i = 0; i < next.length; i++) {
+          if (cancelled) return;
           const drawing = next[i];
           if (!drawing?.data) continue;
-          const blob = await renderMatrixToBlob(drawing.data);
-          if (!blob) continue;
-          urls[i] = URL.createObjectURL(blob);
-          await new Promise((r) => setTimeout(r, 0));
+          try {
+            const blob = await renderMatrixToBlob(drawing.data);
+            if (cancelled) return;
+            if (!blob) continue;
+            const url = URL.createObjectURL(blob);
+            urls.push(url);
+            imageUrls.value[i] = url;
+          } catch {
+            // Leave a placeholder for this drawing and continue the gallery.
+          }
+          await new Promise((resolve) => setTimeout(resolve, 0));
         }
-        imageUrls.value = urls;
       } finally {
-        isGenerating.value = false;
+        if (!cancelled) isGenerating.value = false;
       }
     },
     { immediate: true },
   );
-
-  onBeforeUnmount(() => revokeAll());
 
   return { imageUrls, isGenerating };
 };

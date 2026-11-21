@@ -3,6 +3,8 @@ import { INACTIVITY_GRACE_MS } from "@/stores/channel.constants"
 
 type InactivityCallbacks = {
   getIsHost: () => boolean;
+  getMode: () => "regular" | "party";
+  onPartyVisible: () => void;
   getGameRunning: () => boolean;
   getActiveChannel: () => any;
   getPlayerId: () => string;
@@ -11,6 +13,8 @@ type InactivityCallbacks = {
 
 export function useInactivity({
   getIsHost,
+  getMode,
+  onPartyVisible,
   getGameRunning,
   getActiveChannel,
   getPlayerId,
@@ -50,8 +54,10 @@ export function useInactivity({
   const handleVisibilityChange = () => {
     if (document.visibilityState === "visible") {
       clearInactivityGrace();
+      if (getMode() === "party") onPartyVisible();
       return;
     }
+    if (getMode() === "party") return;
     clearInactivityGrace();
     inactivityGraceTimeoutId.value = window.setTimeout(() => {
       inactivityGraceTimeoutId.value = null;
@@ -60,6 +66,7 @@ export function useInactivity({
   };
 
   const handleBeforeUnload = () => {
+    if (getMode() === "party" && !getIsHost()) return;
     handleInactivity({ skipNavigation: true });
   };
 

@@ -7,6 +7,23 @@
     <HeaderApp :show-back-btn="true" sub-title="SINGLEPLAYER MODES" />
     <main v-show="!configStore.showManual" class="singleplayer-container">
       <section class="setup-card">
+        <details class="settings-disclosure">
+          <summary class="settings-summary">
+            <Icon icon="pixel:cog" class="settings-icon" aria-hidden="true" />
+            <span class="settings-values">
+              <span>{{ drawingMixLabel }}</span>
+              <span>{{ configStore.maxRounds }} rounds</span>
+              <span>{{ configStore.revealTime }} sec</span>
+              <span v-if="configStore.includeUgc">User art</span>
+            </span>
+            <span class="settings-action">Settings</span>
+            <Icon icon="pixelarticons:chevron-down" class="settings-chevron" aria-hidden="true" />
+          </summary>
+          <div class="settings-options">
+            <GameSettingsPanel />
+            <p class="settings-note">Round count and time apply to Classic, Gravity and Inspect. Survival uses its own timer.</p>
+          </div>
+        </details>
         <div class="content-wrapper">
           <div class="mode-section">
             <div class="mode-buttons">
@@ -95,15 +112,11 @@
         </article>
 
         <div class="card-grid">
-          <div class="info-card seo-section">
-            <h2>Game settings</h2>
-            <GameSettingsPanel />
-          </div>
           <!-- SEO TEXT SECTION -->
           <article class="info-card seo-section">
             <h2>Free Browser Pixel Image Guessing Game</h2>
             <p>
-              Welcome to the singleplayer arena of <strong>PixReveal</strong>, a free <strong>browser guess the pixel image game</strong>. Test your visual recognition skills under time pressure, earn stars based on your speed, and climb to the top rank — <strong>no download or registration required</strong>.
+              Welcome to the singleplayer modes of <strong>PixReveal</strong>, a free <strong>browser guess the pixel image game</strong>. Test your visual recognition skills under time pressure, earn stars based on your speed, and climb to the top rank — <strong>no download or registration required</strong>.
             </p>
             <p>
               Choose from four unique singleplayer modes tailored to your playstyle:
@@ -123,6 +136,7 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { usePlayerStore } from "@/stores/player";
 import { useGameStore } from "@/stores/game";
@@ -143,6 +157,11 @@ const configStore = useConfigStore();
 const survivalStore = useSurvivalStore();
 const challengeStore = useChallengeStore();
 const { prepareGame } = useGameStore();
+const drawingMixLabel = computed(() => ({
+  general: "General",
+  all: "Mixed",
+  nerdy: "Nerdy",
+}[configStore.activePreset] || "Custom"));
 
 const setUser = () =>
   playerStore.setUser({
@@ -152,28 +171,32 @@ const setUser = () =>
 
 setUser();
 
-const startClassic = () => {
+const startClassic = async () => {
+  if (!(await configStore.ensureUgcReady())) return;
   challengeStore.clearSession();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "classic";
   router.push("/classic");
 };
 
-const startGravity = () => {
+const startGravity = async () => {
+  if (!(await configStore.ensureUgcReady())) return;
   challengeStore.clearSession();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "gravity";
   router.push("/gravity");
 };
 
-const startInspect = () => {
+const startInspect = async () => {
+  if (!(await configStore.ensureUgcReady())) return;
   challengeStore.clearSession();
   prepareGame(configStore.revealTime);
   playerStore.gameMode = "inspect";
   router.push("/inspect");
 };
 
-const startSurvival = () => {
+const startSurvival = async () => {
+  if (!(await configStore.ensureUgcReady())) return;
   challengeStore.clearSession();
   playerStore.gameMode = "survival";
   router.push("/survival");
@@ -222,6 +245,115 @@ h2 {
   box-sizing: border-box;
 }
 
+.settings-disclosure {
+  margin-top: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.settings-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  cursor: pointer;
+  list-style: none;
+  color: var(--color-secondary);
+  font-size: 13px;
+}
+
+.settings-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-summary:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.settings-summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -3px;
+}
+
+.settings-icon {
+  flex: 0 0 auto;
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.settings-values {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  flex: 1;
+}
+
+.settings-values span {
+  white-space: nowrap;
+}
+
+.settings-values span + span::before {
+  content: "\00b7";
+  margin-right: 12px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.settings-action {
+  font-weight: 600;
+  color: var(--white);
+}
+
+.settings-chevron {
+  flex: 0 0 auto;
+  transition: transform 0.15s ease;
+}
+
+.settings-disclosure[open] .settings-chevron {
+  transform: rotate(180deg);
+}
+
+.settings-options {
+  padding: 20px 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-note {
+  margin: 16px 0 0;
+  color: var(--color-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (min-width: 700px) {
+  .settings-options :deep(.game-settings-panel) {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 380px) {
+  .settings-summary {
+    gap: 8px;
+    padding-inline: 12px;
+    font-size: 12px;
+  }
+
+  .settings-action {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+
 .content-wrapper {
   margin: 0;
   margin-bottom: 24px;
@@ -250,10 +382,6 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
-  @media (min-width: 700px) {
-    gap: 16px;
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 .info-card {

@@ -33,6 +33,16 @@
           </span>
         </label>
       </div>
+      <div class="setting-heading user-art-heading">
+        <span class="selection-label">USER ART</span>
+        <LoadingAnimation v-if="configStore.ugcLoading && configStore.includeUgc" size="small" aria-label="Loading user art" />
+      </div>
+      <div class="value-grid user-art-options">
+        <label v-for="option in [{ value: false, label: 'Original only' }, { value: true, label: 'Include user art' }]" :key="String(option.value)" class="value-item" :class="{ 'is-selected': configStore.includeUgc === option.value }">
+          <input type="radio" name="includeUgc" :value="String(option.value)" :checked="configStore.includeUgc === option.value" :disabled="configStore.ugcLoading && configStore.includeUgc" @change="setUserArt(option.value)" />
+          <span class="value-button">{{ option.label }}</span>
+        </label>
+      </div>
     </section>
 
     <!-- ROUNDS -->
@@ -104,6 +114,7 @@
 import { useConfigStore, PRESETS } from "@/stores/config"
 import { useSoundStore } from "@/stores/sound"
 import drawings from "@/data/drawings.json"
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue"
 
 const configStore = useConfigStore()
 const soundStore = useSoundStore()
@@ -147,6 +158,11 @@ const setPreset = (presetKey) => {
   configStore.setPreset(presetKey)
 }
 
+const setUserArt = (value) => {
+  soundStore.playSound("click")
+  void configStore.setIncludeUgc(value)
+}
+
 const setRounds = (amount) => {
   soundStore.playSound("click")
   configStore.maxRounds = amount
@@ -163,6 +179,14 @@ const setRevealTime = (duration) => {
   display: flex;
   flex-direction: column;
   gap: 22px;
+}
+
+.user-art-heading { margin-top: 8px; min-height: 20px; }
+.user-art-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.value-item input:focus-visible + .value-button,
+.preset-item input:focus-visible + .preset-content {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* --------------------------------

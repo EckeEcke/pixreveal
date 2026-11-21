@@ -49,7 +49,10 @@ export const useSurvivalStore = defineStore("survival", () => {
     const configStore = useConfigStore();
     newHighscore.value = false;
 
-    uniqueDrawings.value = dedupeByName(allDrawings as Drawing[]);
+    const pool = configStore.includeUgc
+      ? [...allDrawings, ...configStore.ugcDrawings]
+      : allDrawings;
+    uniqueDrawings.value = dedupeByName(pool as Drawing[]);
 
     const preferred = uniqueDrawings.value.filter((d) =>
       configStore.selectedCategories.includes(d.category),

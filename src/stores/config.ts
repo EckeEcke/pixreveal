@@ -51,6 +51,7 @@ export const useConfigStore = defineStore("config", () => {
   };
 
   const ugcLoaded = ref(false);
+  const ugcLoading = ref(false);
   
   let ugcRequest: Promise<void> | null = null;
 
@@ -58,21 +59,38 @@ export const useConfigStore = defineStore("config", () => {
     if (ugcLoaded.value) return Promise.resolve();
     if (ugcRequest) return ugcRequest;
 
-    ugcRequest = fetch("/data/approved.json")
+    ugcLoading.value = true;
+    ugcRequest = fetch("/api/user-art")
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((data) => {
+        if (!Array.isArray(data)) throw new Error("Invalid user art collection");
         ugcDrawings.value = data;
         ugcLoaded.value = true;
       })
       .catch((err) => console.error("UGC fetch fehlgeschlagen:", err))
       .finally(() => {
         ugcRequest = null;
+        ugcLoading.value = false;
       });
 
     return ugcRequest;
+  };
+
+  const ensureUgcReady = async () => {
+    if (!includeUgc.value) return true;
+    await fetchUgcDrawings();
+    return ugcLoaded.value;
+  };
+
+  const setIncludeUgc = async (value: boolean) => {
+    includeUgc.value = value;
+    if (value && !(await ensureUgcReady())) {
+      includeUgc.value = false;
+      toast.error("User art could not be loaded. Please try again.");
+    }
   };
 
   const filteredDrawings: Ref<Drawing[]> = computed(() => {
@@ -182,6 +200,10 @@ export const useConfigStore = defineStore("config", () => {
     revealTime,
     includeUgc,
     ugcDrawings,
+    ugcLoaded,
+    ugcLoading,
+    setIncludeUgc,
+    ensureUgcReady,
     selectedCategories,
     isCategorySelected,
     hasActiveFilters,
