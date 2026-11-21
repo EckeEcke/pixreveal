@@ -6,32 +6,61 @@
       </button>
     </div>
     <div class="card">
+      <header class="hall-header">
+      <div>
       <h1 class="logo">
-        PIX<span>REVEAL</span><br />HALL OF <span>FAME</span>
+        HALL OF <span>FAME</span>
       </h1>
       <p class="subline">
         <Icon icon="pixel:sparkles" /> All winners of Daily Challenge
         <Icon icon="pixel:sparkles" />
       </p>
-      <p class="desc">
-        Welcome to the Hall of Fame! These players successfully solved
-        the daily challenge with the highest scores. Want to enter the
-        Hall of Fame? Play today's challenge, guess the revealing drawing and secure your place among the best!
-      </p>
+      <p class="desc">A place for every Daily Challenge champion. Set today's highest score to join them.</p>
+      </div>
+      <ButtonLinkPrimary :link="dailyStore.hasPlayedToday ? '/rankings-daily' : '/daily'" class="daily-link">{{ dailyStore.hasPlayedToday ? "Today's results" : "Play today's Daily" }}</ButtonLinkPrimary>
+      </header>
+
+      <section v-if="topChampions.length" class="top-champions" aria-labelledby="top-champions-heading">
+        <h2 id="top-champions-heading">MOST DAILY WINS</h2>
+        <ol class="champions-grid">
+          <li v-for="(champion, index) in topChampions" :key="champion.profileId" class="champion-entry" :class="`champion-place-${index + 1}`">
+            <div class="champion-standing">
+              <PositionInfo :position="index + 1" />
+              <span v-if="champion.profileId === playerStore.playerId" class="champion-you">YOU</span>
+            </div>
+            <TopPlayerDisplay
+              :name="champion.latest.winner.name"
+              :avatar-index="champion.latest.winner.avatarIndex"
+              :avatar-sprite-sheet="champion.latest.winner.avatarSpriteSheet"
+              :name-effect="champion.latest.winner.nameEffect"
+              :avatar-effect="champion.latest.winner.avatarEffect"
+              class="champion-profile"
+            />
+            <div class="champion-wins"><strong>{{ champion.wins }}</strong><span>DAILY {{ champion.wins === 1 ? 'WIN' : 'WINS' }}</span></div>
+          </li>
+        </ol>
+      </section>
 
       <div v-if="groupedWinners.length" class="month-nav">
         <button
           class="pagination-btn"
           :disabled="currentMonthIndex >= groupedWinners.length - 1"
+          aria-label="Previous month"
           @click="currentMonthIndex++"
           data-sfx="click"
         >
           <Icon icon="pixel:angle-left-solid" />
         </button>
-        <span class="month-label"><Icon icon="pixel:calender" class="month-icon" /> {{ currentGroup.label }}</span>
+        <label class="month-label">
+          <span class="sr-only">Choose month</span>
+          <select v-model="currentMonthIndex" aria-label="Choose month">
+            <option v-for="(group, index) in groupedWinners" :key="group.monthKey" :value="index">{{ group.label }}</option>
+          </select>
+        </label>
         <button
           class="pagination-btn"
           :disabled="currentMonthIndex <= 0"
+          aria-label="Next month"
           @click="currentMonthIndex--"
           data-sfx="click"
         >
@@ -44,10 +73,11 @@
           v-for="entry in currentGroup.entries"
           :key="entry.date"
           class="trophy-tile"
-          :class="{ latest: isLatest(entry) }"
+          :class="{ latest: isLatest(entry), own: isOwnWinner(entry) }"
           :style="{ '--glow': glowColor(entry.winner.avatarIndex) }"
         >
-          <span class="day-badge"><Icon icon="pixel:calender" /> {{ dayNumber(entry.date) }}</span>
+          <span v-if="isLatest(entry)" class="champion-label">CURRENT CHAMPION</span>
+          <time class="day-badge" :datetime="entry.date" :title="fullDate(entry.date)">{{ dayNumber(entry.date) }}</time>
           <TopPlayerDisplay
             :name="entry.winner.name"
             :avatar-index="entry.winner.avatarIndex"
@@ -57,6 +87,7 @@
             :avatar-effect="entry.winner.avatarEffect"
             class="player-card"
           />
+          <span v-if="isOwnWinner(entry)" class="you-label">YOU</span>
         </div>
       </div>
 
@@ -66,14 +97,25 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { Icon } from "@iconify/vue"
 import { useDailyStore } from "@/stores/daily"
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
+import PositionInfo from "@/components/game-ui/PositionInfo.vue"
+
+import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue"
+import { usePlayerStore } from "@/stores/player"
+import { getTopChampions, getWinnerProfileId } from "@/utils/championStats"
 
 const dailyStore = useDailyStore()
+const playerStore = usePlayerStore()
+const fullDate = date => new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+const isOwnWinner = entry => {
+  return getWinnerProfileId(entry) === playerStore.playerId
+}
 
-const winners = computed(() => dailyStore.winners)
+const winners = computed(() => dailyStore.winners.filter(entry => entry.winner).slice().sort((a, b) => b.date.localeCompare(a.date)))
+const topChampions = computed(() => getTopChampions(winners.value))
 
 const groupedWinners = computed(() => {
   const groups = {}
@@ -107,6 +149,10 @@ const currentMonthIndex = ref(0)
 const currentGroup = computed(
   () => groupedWinners.value[currentMonthIndex.value]
 )
+
+watch(groupedWinners, groups => {
+  currentMonthIndex.value = Math.max(0, Math.min(currentMonthIndex.value, groups.length - 1))
+})
 
 const latestDate = computed(() => winners.value[0]?.date)
 
@@ -142,6 +188,88 @@ function glowColor(avatarIndex) {
 </script>
 
 <style scoped>
+.top-champions {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  margin-bottom: 56px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.top-champions h2 {
+  margin: 0 0 24px;
+  font-size: 14px;
+  text-align: left;
+}
+.champions-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+.champion-entry {
+  --medal: #ffd24d;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--medal) 28%, #0f0c1d);
+}
+.champion-place-1 { grid-column: 2; grid-row: 1; padding-block: 28px; }
+.champion-place-2 { --medal: #bfc9de; grid-column: 1; grid-row: 1; margin-top: 24px; }
+.champion-place-3 { --medal: #d79a70; grid-column: 3; grid-row: 1; margin-top: 40px; }
+.champion-standing { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--medal); }
+.champion-you { font-size: 10px; color: var(--neon-cyan); }
+.champion-profile { min-width: 0; gap: 16px; }
+.champion-profile :deep(.player-pill) { min-width: 0; max-width: 100%; box-sizing: border-box; padding: 8px 12px; }
+.champion-profile :deep(.player-name) { font-size: 14px; }
+.top-champions .champion-profile :deep(.player-pill) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.top-champions .champion-profile :deep(.player-name) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  line-height: 1.4;
+}
+.champion-profile :deep(.avatar-container) { width: 64px; height: 64px; }
+.champion-place-1 .champion-profile :deep(.avatar-container) { width: 88px; height: 88px; }
+.champion-wins { display: flex; align-items: baseline; justify-content: center; gap: 8px; color: var(--medal); }
+.champion-wins strong { font-size: 32px; line-height: 1; font-weight: 900; }
+.champion-wins span { font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.champion-place-1 .champion-wins strong { font-size: 40px; }
+@media (max-width: 700px) {
+  .top-champions { padding: 16px 12px; }
+  .top-champions h2 { margin-bottom: 16px; font-size: 13px; }
+  .champions-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .champion-entry { grid-column: auto; grid-row: auto; margin: 0; padding: 14px 12px; display: grid; grid-template-columns: 34px minmax(0, 1fr) max-content; gap: 8px; column-gap: 12px; align-items: center; }
+  .champion-standing { flex-direction: column; gap: 6px; }
+  .champion-profile { display: flex; flex-direction: row; justify-content: flex-start; grid-column: 2; grid-row: 1; gap: 12px; }
+  .champion-standing { grid-column: 1; grid-row: 1; }
+  .champion-profile :deep(.player-pill) { flex: 1; min-width: 0; justify-content: flex-start; }
+  .champion-profile :deep(.avatar-container), .champion-place-1 .champion-profile :deep(.avatar-container) { width: 56px; height: 56px; flex-shrink: 0; }
+  .champion-profile :deep(.player-pill) { padding: 0; border: 0; background: none; box-shadow: none; }
+  .champion-profile :deep(.player-name) { font-size: 13px; letter-spacing: 0; }
+  .top-champions .champion-profile :deep(.player-name) { text-align: left; overflow-wrap: anywhere; font-size: 12px; }
+  .champion-wins { grid-column: 3; grid-row: 1; justify-self: end; flex-direction: column; align-items: flex-end; text-align: right; gap: 4px; }
+  .champion-wins strong, .champion-place-1 .champion-wins strong { font-size: 28px; }
+  .champion-wins span { font-size: 8px; letter-spacing: 0; white-space: nowrap; }
+}
+@media (max-width: 380px) {
+  .champion-entry { padding: 12px 8px; row-gap: 6px; grid-template-columns: 34px minmax(0, 1fr) max-content; }
+  .champion-profile :deep(.avatar-container), .champion-place-1 .champion-profile :deep(.avatar-container) { width: 48px; height: 48px; }
+}
+
 main {
   display: flex;
   flex-direction: column;
@@ -247,7 +375,7 @@ h1 {
 .player-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
 }
@@ -321,7 +449,7 @@ h1 {
 
 .player-card {
   background: transparent;
-  padding: 32px 0;
+  padding: 48px 0 24px;
   border-radius: 8px;
 }
 
@@ -348,4 +476,44 @@ h1 {
     padding: 0 6px;
   }
 }
+
+.daily-link { margin-bottom: 32px; }
+.desc { max-width: 65ch; line-height: 1.6; margin-bottom: 20px; }
+.month-nav { width: 100%; }
+.month-label { position: relative; min-width: 0; }
+.month-label select { appearance: none; max-width: 100%; min-width: 0; background: #0d0a14; color: inherit; font: inherit; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px 12px; text-align: center; text-align-last: center; cursor: pointer; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.trophy-tile.latest { outline: 1px solid var(--neon-yellow); }
+.champion-label { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 900; color: var(--neon-yellow); }
+.you-label { display: block; text-align: center; font-size: 11px; font-weight: 900; color: var(--neon-cyan); margin: 0 0 12px; }
+.own { border: 1px solid var(--neon-cyan); }
+.player-card :deep(.player-pill) { min-width: 0; box-sizing: border-box; }
+.player-card :deep(.player-score) { flex-shrink: 0; }
+@media (max-width: 640px) {
+ .card { padding: 20px 16px; }
+ .month-nav { gap: 8px; }
+ .pagination-btn { flex-shrink: 0; }
+ .month-label { flex: 1; }
+ .month-label select { width: 100%; font-size: 11px; padding-inline: 4px; }
+ .trophy-tile { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 12px; padding: 14px 12px; }
+ .champion-label { position: static; grid-column: 1 / -1; }
+ .day-badge { position: static; min-width: 0; padding: 0; height: auto; background: none; border: 0; font-size: 12px; }
+ .player-card { flex-direction: row; gap: 12px; padding: 0; }
+ .player-card :deep(.avatar-container) { width: 44px; height: 44px; border-radius: 6px; }
+ .player-card :deep(.player-pill) { flex: 1; max-width: none; padding: 0; border: 0; background: none; box-shadow: none; justify-content: flex-start; gap: 8px; }
+ .player-card :deep(.player-name) { font-size: 13px; letter-spacing: 0; }
+ .player-card :deep(.player-score) { margin-left: auto; font-size: 14px; gap: 4px; }
+ .player-card :deep(.score-divider) { display: none; }
+ .trophy-tile .you-label { grid-column: 2; margin: 0; text-align: left; }
+}
+
+.card, .back-btn-wrapper { max-width: 1100px; }
+.hall-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 32px; width: 100%; }
+.hall-header > div { min-width: 0; }
+.hall-header .logo { margin: 0 0 12px; font-size: 28px; text-align: left; }
+.hall-header .subline { margin: 0 0 8px; font-size: 13px; }
+.hall-header .desc { margin: 0; text-align: left; font-size: 13px; }
+.hall-header .daily-link { margin: 0; flex-shrink: 0; }
+@media (max-width: 800px) { .hall-header { align-items: flex-start; flex-direction: column; gap: 16px; } }
+@media (max-width: 640px) { .hall-header .logo { font-size: 24px; } .hall-header .subline { font-size: 12px; } }
 </style>

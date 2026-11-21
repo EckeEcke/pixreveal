@@ -19,6 +19,7 @@
         :highscore="survivalStore.highscore"
       />
       <PixelCanvas
+        v-if="survivalStore.currentDrawing"
         :key="canvasKey"
         ref="pixelCanvasRef"
         :pixel-array="pixelData"
@@ -49,6 +50,7 @@ import { useSurvivalStore } from "@/stores/survival"
 import { useGameStore } from "@/stores/game"
 import { useConfigStore } from "@/stores/config"
 import { useSoundStore } from "@/stores/sound"
+import { usePlayerStore } from "@/stores/player"
 import PixelCanvas from "@/components/canvas/PixelCanvas.vue"
 import CountdownTransition from "@/components/page-layout/CountdownTransition.vue"
 import GameHeader from "@/components/game-ui/GameHeader.vue"
@@ -81,9 +83,15 @@ const gameStore = useGameStore()
 const configStore = useConfigStore()
 const soundStore = useSoundStore()
 
+survivalStore.reset()
+gameStore.reset()
+usePlayerStore().gameMode = "survival"
+let disposed = false
+let starting = false
+
 const pixelCanvasRef = ref(null)
 const resolution = ref(16)
-const pixelData = ref(Array(256).fill(0))
+const pixelData = ref([])
 const isRevealing = ref(true)
 const canvasKey = ref(0)
 
@@ -104,7 +112,7 @@ const setupDrawing = () => {
   survivalStore.hasAnswered = false
   isRevealing.value = true
   pixelData.value = survivalStore.currentDrawing.data
-  resolution.value = Math.sqrt(pixelData.value.length)
+  resolution.value = pixelData.value.length
   canvasKey.value++
 }
 
@@ -124,12 +132,10 @@ const handleAnswer = (answer) => {
 
   if (isCorrect) {
     survivalStore.handleCorrectAnswer()
-    soundStore.playSound("correct")
     pixelCanvasRef.value?.triggerCorrectAnswer()
     if (survivalStore.solvedCount === 11) soundStore.playSound("devil")
   } else {
     survivalStore.handleWrongAnswer()
-    soundStore.playSound("incorrect")
     pixelCanvasRef.value?.triggerIncorrectAnswer()
   }
 
@@ -146,15 +152,24 @@ const handleAnswer = (answer) => {
       if (survivalStore.isGameOver) return
 
       survivalStore.setNextDrawing()
+      if (survivalStore.isGameOver) return
       setupDrawing()
       gameStore.setGameState("revealing")
     }, isCorrect ? 400 : 200)
   }, 600)
 }
 
-const start = () => {
+const start = async () => {
+  if (starting || disposed) return
+  starting = true
+  const ready = await configStore.ensureUgcReady()
+  if (disposed) return
+  if (!ready) {
+    router.push("/singleplayer")
+    return
+  }
   survivalStore.startSurvival()
-  gameStore.setGameState("revealing")
+  if (survivalStore.isGameOver) return
   setupDrawing()
 }
 
@@ -174,7 +189,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  disposed = true
   clearAllLocalTimers()
+  survivalStore.stop()
   window.removeEventListener("resize", resizeGame)
 })
 </script>

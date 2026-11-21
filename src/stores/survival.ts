@@ -46,6 +46,7 @@ export const useSurvivalStore = defineStore("survival", () => {
   );
 
   const startSurvival = () => {
+    reset();
     const configStore = useConfigStore();
     newHighscore.value = false;
 
@@ -79,11 +80,12 @@ export const useSurvivalStore = defineStore("survival", () => {
     if (drawings.value.length > 0) {
       const next = drawings.value.pop();
       if (next) {
-        next.options = generateOptions(next);
-        currentDrawing.value = next;
+        currentDrawing.value = { ...next, options: generateOptions(next) };
+        hasAnswered.value = false;
         gameStore.setGameState("revealing");
       }
     } else {
+      currentDrawing.value = undefined;
       triggerGameOver();
     }
   };
@@ -109,6 +111,7 @@ export const useSurvivalStore = defineStore("survival", () => {
       if (timeLeft.value > 0) {
         timeLeft.value--;
         if (timeLeft.value <= 3) useSoundStore().playSound("timer");
+        if (timeLeft.value === 0) triggerGameOver();
       } else {
         triggerGameOver();
       }
@@ -126,7 +129,6 @@ export const useSurvivalStore = defineStore("survival", () => {
   };
 
   const handleWrongAnswer = () => {
-    useSoundStore().playSound("incorrect");
     reduceTime(5);
   };
 
@@ -155,12 +157,22 @@ export const useSurvivalStore = defineStore("survival", () => {
     localStorage.setItem("survival_highscore", highscore.value.toString());
   };
 
-  const reset = () => {
+  const stop = () => {
     workerClearInterval(timerInterval.value);
     timerInterval.value = null;
     isActive.value = false;
+  };
+
+  const reset = () => {
+    stop();
     isGameOver.value = false;
     solvedCount.value = 0;
+    hasAnswered.value = false;
+    newHighscore.value = false;
+    timeLeft.value = maxTime.value;
+    currentDrawing.value = undefined;
+    drawings.value = [];
+    uniqueDrawings.value = [];
   };
 
   return {
@@ -181,5 +193,6 @@ export const useSurvivalStore = defineStore("survival", () => {
     setNextDrawing,
     triggerGameOver,
     reset,
+    stop,
   };
 });

@@ -140,6 +140,7 @@ const checkAnswer = (answer, event, index) => {
   if (props.devilMode) stopDevilRotation();
 
   if (isDevilHit) {
+    soundStore.playSound("incorrect");
     console.log(
       "[DevilMode] Devil button clicked - forcing incorrect answer",
       answer
