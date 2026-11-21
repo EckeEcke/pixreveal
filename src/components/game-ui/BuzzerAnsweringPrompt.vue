@@ -30,7 +30,7 @@
       <span v-if="index === options.length - 2">
         &nbsp;<span class="white-text">or</span>&nbsp;
       </span>
-      <span v-else-if="index === options.length - 1">?</span>
+      <span v-else-if="index === options.length - 1" class="white-text">?</span>
     </span>
     <span v-if="isXlzActive">&nbsp;Hmm.. this looks off.</span>
   </template>
@@ -82,9 +82,9 @@ const showOptionsEarly = computed(() => {
 
 const buttonColors = [
   { color: "var(--neon-pink)", glow: "var(--pink-glow)" },
-  { color: "var(--neon-blue)", glow: "var(--blue-glow)" },
-  { color: "var(--neon-purple)", glow: "var(--purple-glow)" },
+  { color: "var(--neon-mint)", glow: "var(--mint-glow)" },
   { color: "var(--neon-yellow)", glow: "var(--yellow-glow)" },
+  { color: "var(--neon-cyan)", glow: "var(--cyan-glow)" },
 ] as const
 
 const getOptionStyle = (index: number) => {
@@ -107,5 +107,10 @@ const getOptionStyle = (index: number) => {
 
 .prompt-option {
   font-weight: 700;
+}
+
+.white-text {
+  color: var(--white);
+  text-shadow: none;
 }
 </style>
