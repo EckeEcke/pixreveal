@@ -236,7 +236,6 @@ const handleAnswer = (selectedAnswer: any) => {
 
     const multiplier = isFinalRound.value || !!bonusRoundType.value ? 2 : 1
     playerStore.addPoints(timer.value * multiplier)
-    soundStore.playSound("correct")
 
     feedbackTimeoutId = workerSetTimeout(() => {
       goToNextRound()
@@ -244,7 +243,7 @@ const handleAnswer = (selectedAnswer: any) => {
   } else {
     hasAnsweredCorrectly.value = false
     pixelCanvasRef.value?.triggerIncorrectAnswer()
-    soundStore.playSound("incorrect")
+    if (selectedAnswer == null) soundStore.playSound("incorrect")
 
     feedbackTimeoutId = workerSetTimeout(() => {
       goToNextRound()

@@ -136,70 +136,29 @@
 
 <script setup>
 import { computed } from "vue";
-import { useRouter } from "vue-router";
-import { usePlayerStore } from "@/stores/player";
-import { useGameStore } from "@/stores/game";
 import { useConfigStore } from "@/stores/config";
-import { getRandomUserName } from "@/utils/random";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
 import GameManual from "@/components/modals/GameManual.vue";
 import HeaderApp from "@/components/page-layout/HeaderApp.vue";
 import GameSettingsPanel from "@/components/page-ui/GameSettingsPanel.vue";
 import { useSurvivalStore } from "@/stores/survival";
-import { useChallengeStore } from "@/stores/challenge";
+import { useSingleplayerStart } from "@/composables/useSingleplayerStart";
 import { Icon } from "@iconify/vue";
 
-const router = useRouter();
-const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const survivalStore = useSurvivalStore();
-const challengeStore = useChallengeStore();
-const { prepareGame } = useGameStore();
+const { startSingleplayer } = useSingleplayerStart();
 const drawingMixLabel = computed(() => ({
   general: "General",
   all: "Mixed",
   nerdy: "Nerdy",
 }[configStore.activePreset] || "Custom"));
 
-const setUser = () =>
-  playerStore.setUser({
-    username: playerStore.playerName || getRandomUserName(),
-    avatar: playerStore.avatarIndex,
-  });
-
-setUser();
-
-const startClassic = async () => {
-  if (!(await configStore.ensureUgcReady())) return;
-  challengeStore.clearSession();
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "classic";
-  router.push("/classic");
-};
-
-const startGravity = async () => {
-  if (!(await configStore.ensureUgcReady())) return;
-  challengeStore.clearSession();
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "gravity";
-  router.push("/gravity");
-};
-
-const startInspect = async () => {
-  if (!(await configStore.ensureUgcReady())) return;
-  challengeStore.clearSession();
-  prepareGame(configStore.revealTime);
-  playerStore.gameMode = "inspect";
-  router.push("/inspect");
-};
-
-const startSurvival = async () => {
-  if (!(await configStore.ensureUgcReady())) return;
-  challengeStore.clearSession();
-  playerStore.gameMode = "survival";
-  router.push("/survival");
-};
+const startClassic = () => startSingleplayer("classic");
+const startGravity = () => startSingleplayer("gravity");
+const startInspect = () => startSingleplayer("inspect");
+const startSurvival = () => startSingleplayer("survival");
 </script>
 
 <style scoped>

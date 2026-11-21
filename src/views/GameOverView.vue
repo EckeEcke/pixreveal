@@ -126,6 +126,7 @@ import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { useConfetti } from "@/composables/useConfetti";
 import ChallengeModal from "@/components/modals/ChallengeModal.vue";
+import { useSingleplayerStart } from "@/composables/useSingleplayerStart";
 import { useAchievementsStore } from "@/stores/achievements";
 import { useChallengeStore } from "@/stores/challenge";
 
@@ -136,7 +137,7 @@ const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const achievementsStore = useAchievementsStore();
 const challengeStore = useChallengeStore();
-const isRestarting = ref(false);
+const { startSingleplayer, isStarting: isRestarting } = useSingleplayerStart();
 const router = useRouter();
 const showIntro = ref(true);
 const wrapperRef = ref(null);
@@ -235,33 +236,7 @@ const getShareMessage = (score, mode) => {
   return "Check out PixReveal!";
 };
 
-const playAgainSingleplayer = async () => {
-  if (isRestarting.value) return;
-  const mode = playerStore.gameMode;
-  if (!["classic", "gravity", "inspect", "survival"].includes(mode)) {
-    await router.push("/singleplayer");
-    return;
-  }
-
-  isRestarting.value = true;
-  try {
-    if (!(await configStore.ensureUgcReady())) return;
-    challengeStore.clearSession();
-    playerStore.setUser({
-      username: playerStore.playerName,
-      avatar: playerStore.avatarIndex,
-    });
-    if (mode === "survival") {
-      survivalStore.reset();
-      gameStore.reset();
-    } else {
-      gameStore.prepareGame(configStore.revealTime);
-    }
-    await router.push(`/${mode}`);
-  } finally {
-    isRestarting.value = false;
-  }
-};
+const playAgainSingleplayer = () => startSingleplayer(playerStore.gameMode);
 
 const goBackSingleplayer = () => {
   challengeStore.clearSession();

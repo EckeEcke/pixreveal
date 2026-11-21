@@ -20,6 +20,16 @@
       <ButtonLinkPrimary :link="dailyStore.hasPlayedToday ? '/rankings-daily' : '/daily'" class="daily-link">{{ dailyStore.hasPlayedToday ? "Today's results" : "Play today's Daily" }}</ButtonLinkPrimary>
       </header>
 
+      <div v-if="dailyStore.isLoading && !winners.length" class="hall-status" role="status">
+        <LoadingAnimation text="Loading champions..." />
+      </div>
+      <div v-else-if="dailyStore.error" class="hall-status" role="alert">
+        <p>{{ winners.length ? 'Could not refresh the Hall of Fame. Showing the last loaded results.' : 'Could not load the Hall of Fame. Please try again.' }}</p>
+        <ButtonSecondary :disabled="dailyStore.isLoading" data-sfx="click" @clicked="dailyStore.fetchDailyData()">
+          {{ dailyStore.isLoading ? 'Retrying...' : 'Try again' }}
+        </ButtonSecondary>
+      </div>
+
       <section v-if="topChampions.length" class="top-champions" aria-labelledby="top-champions-heading">
         <h2 id="top-champions-heading">MOST DAILY WINS</h2>
         <ol class="champions-grid">
@@ -91,7 +101,7 @@
         </div>
       </div>
 
-      <p v-else class="desc">No winners yet — be the first!</p>
+      <p v-else-if="!dailyStore.isLoading && !dailyStore.error" class="desc">No winners yet — be the first!</p>
     </div>
   </main>
 </template>
@@ -102,6 +112,8 @@ import { Icon } from "@iconify/vue"
 import { useDailyStore } from "@/stores/daily"
 import TopPlayerDisplay from "@/components/game-ui/TopPlayerDisplay.vue"
 import PositionInfo from "@/components/game-ui/PositionInfo.vue"
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue"
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
 
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue"
 import { usePlayerStore } from "@/stores/player"
@@ -188,6 +200,8 @@ function glowColor(avatarIndex) {
 </script>
 
 <style scoped>
+.hall-status { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px 0; margin-bottom: 24px; text-align: center; }
+.hall-status p { margin: 0; max-width: 60ch; line-height: 1.5; }
 .top-champions {
   width: 100%;
   box-sizing: border-box;
