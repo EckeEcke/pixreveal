@@ -48,13 +48,19 @@
             <h2 id="art-title">{{ selectedDrawing.name }}</h2>
             <p class="tile-category">{{ selectedDrawing.category }}</p>
           </div>
-          <button class="close-button" aria-label="Close drawing" @click="artDialog.close()" autofocus>&times;</button>
+          <button class="close-btn" type="button" aria-label="Close drawing" data-sfx="back" @click="artDialog.close()" autofocus>
+            <Icon icon="pixel:window-close-solid" />
+          </button>
         </header>
         <img class="preview enlarged-preview" :src="imageUrls[selectedIndex]" :alt="selectedDrawing.name" width="256" height="256" />
         <nav class="drawing-navigation" aria-label="Browse drawings">
-          <button :disabled="previousIndex === -1" @click="navigateDrawing(-1)">&larr; Previous</button>
+          <ButtonSecondary :disabled="previousIndex === -1" data-sfx="click" @clicked="navigateDrawing(-1)">
+            <Icon icon="pixel:angle-left-solid" /> Previous
+          </ButtonSecondary>
           <span>{{ selectedIndex + 1 }} / {{ userDrawings.length }}</span>
-          <button :disabled="nextIndex === -1" @click="navigateDrawing(1)">Next &rarr;</button>
+          <ButtonSecondary :disabled="nextIndex === -1" data-sfx="click" @clicked="navigateDrawing(1)">
+            Next <Icon icon="pixel:angle-right-solid" />
+          </ButtonSecondary>
         </nav>
       </template>
     </dialog>
@@ -67,6 +73,7 @@ import { Icon } from "@iconify/vue";
 import { useConfigStore } from "@/stores/config";
 import { useDrawingImageUrls } from "@/composables/useDrawingImageUrls";
 import ButtonLinkPrimary from "@/components/page-ui/ButtonLinkPrimary.vue";
+import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 
 const configStore = useConfigStore();
@@ -197,12 +204,19 @@ watch(userDrawings, () => {
 }
 .art-dialog::backdrop { background: rgba(0, 0, 0, 0.8); }
 .dialog-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.dialog-header { padding-right: 32px; }
 .dialog-header h2 { margin: 0 0 4px; font-size: 20px; overflow-wrap: anywhere; }
-.close-button { flex-shrink: 0; width: 40px; height: 40px; padding: 0; color: var(--white); font-size: 30px; line-height: 1; }
 .enlarged-preview { max-height: calc(100dvh - 210px); object-fit: contain; }
 .drawing-navigation { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; font-size: 12px; }
-.drawing-navigation button { min-height: 44px; padding: 8px; color: var(--white); font: inherit; }
-.drawing-navigation button:disabled { opacity: 0.3; }
+.drawing-navigation :deep(.btn-secondary:disabled) {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+}
+@media (max-width: 400px) {
+  .drawing-navigation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .drawing-navigation > span { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+}
 @media (min-width: 576px) { .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 900px) { .gallery-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 </style>

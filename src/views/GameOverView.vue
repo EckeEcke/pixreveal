@@ -79,6 +79,7 @@
             <div class="gameover-actions">
               <ButtonSecondary
                 class="btn-primary pulse-btn"
+                :disabled="isRestarting"
                 data-sfx="click"
                 @mouseenter="soundStore.handleHoverSound"
                 @clicked="playAgainSingleplayer"
@@ -126,6 +127,7 @@ import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { useConfetti } from "@/composables/useConfetti";
 import ChallengeModal from "@/components/modals/ChallengeModal.vue";
 import { useAchievementsStore } from "@/stores/achievements";
+import { useChallengeStore } from "@/stores/challenge";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -133,6 +135,8 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const achievementsStore = useAchievementsStore();
+const challengeStore = useChallengeStore();
+const isRestarting = ref(false);
 const router = useRouter();
 const showIntro = ref(true);
 const wrapperRef = ref(null);
@@ -231,14 +235,39 @@ const getShareMessage = (score, mode) => {
   return "Check out PixReveal!";
 };
 
-const playAgainSingleplayer = () => {
-  gameStore.reset?.();
-  router.push("/singleplayer");
+const playAgainSingleplayer = async () => {
+  if (isRestarting.value) return;
+  const mode = playerStore.gameMode;
+  if (!["classic", "gravity", "inspect", "survival"].includes(mode)) {
+    await router.push("/singleplayer");
+    return;
+  }
+
+  isRestarting.value = true;
+  try {
+    if (!(await configStore.ensureUgcReady())) return;
+    challengeStore.clearSession();
+    playerStore.setUser({
+      username: playerStore.playerName,
+      avatar: playerStore.avatarIndex,
+    });
+    if (mode === "survival") {
+      survivalStore.reset();
+      gameStore.reset();
+    } else {
+      gameStore.prepareGame(configStore.revealTime);
+    }
+    await router.push(`/${mode}`);
+  } finally {
+    isRestarting.value = false;
+  }
 };
 
 const goBackSingleplayer = () => {
-  gameStore.reset?.();
-  router.push("/");
+  challengeStore.clearSession();
+  survivalStore.reset();
+  gameStore.reset();
+  router.push("/singleplayer");
 };
 
 const submitSingleplayerScore = () => {

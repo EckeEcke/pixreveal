@@ -371,7 +371,7 @@ const joinGame = () => {
 }
 
 .host-settings {
-  margin: 32px 0;
+  margin: 20px 0;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -470,7 +470,7 @@ const joinGame = () => {
 }
 
 .setup-section {
-  margin: 32px 0;
+  margin: 20px 0;
 }
 
 .host-info {
@@ -648,6 +648,16 @@ const joinGame = () => {
     grid-template-columns: 1fr 1fr;
     gap: 64px;
     align-items: start;
+  }
+
+  .host-settings :deep(.game-settings-panel) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+
+  .host-settings :deep(.preset-group) {
+    grid-column: 1 / -1;
   }
 
   .setup-card h1 {

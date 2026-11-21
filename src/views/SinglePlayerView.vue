@@ -21,7 +21,6 @@
           </summary>
           <div class="settings-options">
             <GameSettingsPanel />
-            <p class="settings-note">Round count and time apply to Classic, Gravity and Inspect. Survival uses its own timer.</p>
           </div>
         </details>
         <div class="content-wrapper">
@@ -321,13 +320,6 @@ h2 {
 .settings-options {
   padding: 20px 16px 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.settings-note {
-  margin: 16px 0 0;
-  color: var(--color-secondary);
-  font-size: 12px;
-  line-height: 1.5;
 }
 
 @media (min-width: 700px) {

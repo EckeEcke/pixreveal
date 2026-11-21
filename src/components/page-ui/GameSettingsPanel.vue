@@ -182,7 +182,20 @@ const setRevealTime = (duration) => {
 }
 
 .user-art-heading { margin-top: 8px; min-height: 20px; }
-.user-art-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.value-grid.user-art-options {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.user-art-options .value-item {
+  flex: 1 1 max-content;
+}
+
+.user-art-options .value-button {
+  padding-inline: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
 .value-item input:focus-visible + .value-button,
 .preset-item input:focus-visible + .preset-content {
   outline: 2px solid var(--primary);

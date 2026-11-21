@@ -478,6 +478,15 @@ router.beforeEach((to, from) => {
       from.path === "/gameover-party-host") &&
     (validPathsForGameOver.includes(to.path) || to.path === "/daily")
   ) {
+    const isSingleplayerReplayNavigation =
+      from.path === "/gameover" &&
+      ["/classic", "/gravity", "/inspect", "/survival"].includes(to.path) &&
+      gameStore.gameState === "starting" &&
+      !gameStore.isGameOver &&
+      gameStore.currentRoundIndex === 0;
+
+    if (isSingleplayerReplayNavigation) return true;
+
     const isPartyReplayNavigation =
       (from.path === "/gameover-party-host" || from.path === "/gameover-party-player") &&
       (to.path === "/party-player" || to.path === "/party-host") &&
