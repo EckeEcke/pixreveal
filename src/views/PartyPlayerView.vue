@@ -63,6 +63,7 @@
           class="centered"
         >
           <AnswerButtons
+            :reveal-correct-answer="!!partyStore.roundResult"
             :hasAnswered="hasAnswered"
             :answers="answersForUi"
             :inputDisabled="!isMyTurn"

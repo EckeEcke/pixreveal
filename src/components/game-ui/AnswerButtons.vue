@@ -19,6 +19,7 @@
             (devilResult || !answer.isCorrect),
           'is-correct':
             hasAnswered &&
+            (revealCorrectAnswer || selectedAnswer === answer) &&
             answer.isCorrect &&
             !(devilResult && selectedAnswer === answer),
           'is-devil': devilMode && index === devilIndex,
@@ -57,6 +58,10 @@ const props = defineProps({
   answers: Array,
   hasAnswered: Boolean,
   inputDisabled: Boolean,
+  revealCorrectAnswer: {
+    type: Boolean,
+    default: true,
+  },
   devilMode: {
     type: Boolean,
     default: false,
@@ -75,6 +80,16 @@ const buttonColors = [
 const configStore = useConfigStore();
 const soundStore = useSoundStore();
 const selectedAnswer = ref(undefined);
+
+watch(
+  [() => props.hasAnswered, () => props.answers],
+  ([answered], previous) => {
+    if (!answered || (previous && previous[1] !== props.answers)) {
+      selectedAnswer.value = undefined;
+      devilResult.value = false;
+    }
+  },
+);
 
 // --- Devil Mode state ---
 const devilIndex = ref(0);
