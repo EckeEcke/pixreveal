@@ -1,6 +1,12 @@
 <template>
   <main class="player-layout">
     <div v-if="partyStore.isFrozen" class="freeze-overlay" aria-hidden="true" />
+    <Transition name="fade">
+      <aside v-if="powerupNotice" class="powerup-notice" role="status">
+        <strong>{{ POWERUP_ICON[powerupNotice] }} YOU GOT {{ POWERUP_LABEL[powerupNotice] }}!</strong>
+        <span>{{ POWERUP_DESCRIPTION[powerupNotice] }}</span>
+      </aside>
+    </Transition>
     <PlayerDisplay
       :name="player.username"
       :avatar-index="player.avatarIndex"
@@ -90,7 +96,7 @@
           key="waiting"
           class="centered placeholder"
         >
-          <p class="waiting-label">{{ activePlayerDisplay }} IS ANSWERING...</p>
+          <p class="waiting-label">{{ fasterPlayer ? `${fasterPlayer} WAS FASTER!` : `${activePlayerDisplay} IS ANSWERING...` }}</p>
         </div>
 
         <div
@@ -98,7 +104,7 @@
           key="result"
           class="centered"
         >
-          <p class="waiting-label">Waiting for host...</p>
+          <p class="waiting-label">{{ fasterPlayer ? `${fasterPlayer} WAS FASTER!` : "Waiting for host..." }}</p>
         </div>
       </Transition>
     </div>
@@ -176,6 +182,42 @@ let lingerTimeoutId = null;
 const lingerAnswerUi = ref(false);
 let hardReconnectIntervalId = null;
 let lastHardReconnectAt = 0;
+const powerupNotice = ref(null);
+const fasterPlayer = ref("");
+let powerupNoticeTimer = null;
+let fasterPlayerTimer = null;
+let buzzAttemptedAt = null;
+
+watch(() => partyStore.powerupInventory.slice(), (inventory, previous) => {
+  const awarded = inventory.find((type) => !previous.includes(type));
+  if (!awarded) return;
+  powerupNotice.value = awarded;
+  workerClearTimeout(powerupNoticeTimer);
+  powerupNoticeTimer = workerSetTimeout(() => {
+    powerupNotice.value = null;
+  }, 3000);
+});
+
+watch(() => partyStore.activePlayerId, (playerId) => {
+  if (!playerId || buzzAttemptedAt === null) return;
+  const wasRecent = Date.now() - buzzAttemptedAt < 8000;
+  buzzAttemptedAt = null;
+  if (!wasRecent || playerId === channelStore.playerId) return;
+  fasterPlayer.value = (partyStore.players.find((p) => p.playerId === playerId)?.username || "Another player").toUpperCase();
+  workerClearTimeout(fasterPlayerTimer);
+  fasterPlayerTimer = workerSetTimeout(() => {
+    fasterPlayer.value = "";
+  }, 2000);
+});
+
+watch(() => partyStore.buzzerState, (state) => {
+  if (state === "open") fasterPlayer.value = "";
+});
+
+watch(() => gameStore.currentRoundIndex, () => {
+  buzzAttemptedAt = null;
+  fasterPlayer.value = "";
+});
 
 const startLinger = () => {
   lingerAnswerUi.value = true;
@@ -318,6 +360,7 @@ const handleBuzz = () => {
   )
     return;
   if (!channelStore.activeChannel) return;
+  buzzAttemptedAt = Date.now();
   vibrateBuzz();
 
   // Fart-Powerup: aktiv, jemand hat es ausgelöst, und ich bin nicht der
@@ -332,6 +375,8 @@ const handleBuzz = () => {
 };
 
 onBeforeUnmount(() => {
+  workerClearTimeout(powerupNoticeTimer);
+  workerClearTimeout(fasterPlayerTimer);
   cancelTimer();
   if (lingerTimeoutId) {
     workerClearTimeout(lingerTimeoutId);
@@ -435,6 +480,15 @@ const POWERUP_LABEL = {
   fart: "FART",
 };
 
+const POWERUP_DESCRIPTION = {
+  darken: "Darken the drawing on the big screen.",
+  freeze: "Block the other players from acting for 4 seconds.",
+  xlz: "Scramble the letters of the answer options.",
+  devil: "Make a devil move between the answer buttons. Hitting it counts as wrong!",
+  rotate: "Turn the drawing upside down.",
+  fart: "Turn another player's buzzer sound into a fart.",
+};
+
 const POWERUP_BTN_CLASS = {
   darken: "lightsout-btn",
   freeze: "freeze-btn",
@@ -534,6 +588,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.powerup-notice {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 12px 16px;
+  display: grid;
+  gap: 6px;
+  border: 2px solid var(--neon-yellow);
+  border-radius: 8px;
+  background: #141026;
+  color: var(--white);
+  box-shadow: 0 0 16px var(--yellow-glow);
+  z-index: 100;
+  pointer-events: none;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.powerup-notice strong {
+  color: var(--neon-yellow);
+}
+
 .player-layout {
   display: flex;
   flex-direction: column;
