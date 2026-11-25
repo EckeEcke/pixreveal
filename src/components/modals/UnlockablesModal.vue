@@ -54,7 +54,7 @@
         <div class="section-heading">
           <div>
             <h3>Name Effects</h3>
-            <p>Unlock all 3 effects by collecting 6/9/12 achievements.</p>
+            <p>Unlock all 3 effects by collecting {{ NAME_EFFECTS.map(effect => effect.unlockAt).join('/') }} achievements.</p>
           </div>
           <span class="section-progress">
             {{ achievementsStore.hasNameEffects ? "UNLOCKED" : `${achievementsStore.unlockedCount}/${ACHIEVEMENTS.length}` }}

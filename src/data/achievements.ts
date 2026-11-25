@@ -4,8 +4,6 @@ export type AchievementId =
   | "survivor"
   | "perfect-round"
   | "play-daily"
-  | "create-challenge"
-  | "win-challenge"
   | "play-party"
   | "play-online"
   | "win-party"
@@ -49,18 +47,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     title: "Daily Challenger",
     description: "Play the Daily Challenge.",
     icon: "📅",
-  },
-  {
-    id: "create-challenge",
-    title: "Challenge a friend",
-    description: "Create a challenge link to share with a friend.",
-    icon: "⚔️",
-  },
-  {
-    id: "win-challenge",
-    title: "Win a Friend Challenge",
-    description: "Finish a friend challenge with a higher score than your opponent.",
-    icon: "💪",
   },
   {
     id: "play-party",

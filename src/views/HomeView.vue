@@ -19,8 +19,6 @@
                 btn-text="PLAY NOW"
                 sub-title="Guess what it is as the drawing is revealed"
                 btn-color="var(--primary)"
-                :challengeable="true"
-                :challenge-tooltip="'Challenge a friend to beat your score'"
                 :max-players="1"
                 :feature-badges="['~1 min per round', '5 random drawings']"
               />
@@ -128,13 +126,11 @@ import QuickLinks from "@/components/page-ui/QuickLinks.vue";
 import { useDailyStore } from "@/stores/daily";
 import { useRouter } from "vue-router";
 import { useDailyCountDown } from "@/composables/useDailyCountDown";
-import { useChallengeStore } from "@/stores/challenge";
 
 const channelStore = useChannelStore();
 const playerStore = usePlayerStore();
 const configStore = useConfigStore();
 const dailyStore = useDailyStore();
-const challengeStore = useChallengeStore();
 const isFullscreen = ref(!!document.documentElement.fullscreenElement);
 channelStore.playerId = playerStore.controllerId;
 const { prepareGame, createRounds, resetAndStartGame } = useGameStore();
@@ -176,7 +172,6 @@ const startDaily = () => {
 };
 
 const startClassic = () => {
-  challengeStore.clearSession();
   resetAndStartGame(createRounds(5));
   playerStore.gameMode = "classic";
   router.push("/classic");

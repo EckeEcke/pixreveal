@@ -53,9 +53,6 @@ const MUSIC_ROUTES = new Set([
   "online",
   "survival",
   "daily",
-  "challenge-classic",
-  "challenge-gravity",
-  "challenge-inspect",
 ])
 
 const tracklist = [

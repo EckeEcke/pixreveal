@@ -8,6 +8,7 @@ import { useSoundStore } from "@/stores/sound";
 const DATABASE_NAME = "pixreveal-achievements";
 const DATABASE_VERSION = 1;
 const STORE_NAME = "unlocked";
+const achievementIds = new Set(ACHIEVEMENTS.map((achievement) => achievement.id));
 
 type AchievementUnlock = {
   id: AchievementId;
@@ -59,16 +60,19 @@ const transactionResult = (transaction: IDBTransaction): Promise<void> =>
 export const useAchievementsStore = defineStore("achievements", () => {
   const soundStore = useSoundStore();
   const unlockedAtById = ref<Partial<Record<AchievementId, number>>>({});
+  const retiredUnlockCount = ref(0);
   const isLoaded = ref(false);
   const unlockedCount = computed(() => Object.keys(unlockedAtById.value).length);
+  // Keep previously earned cosmetic rewards when achievements are retired.
+  const cosmeticProgress = computed(() => unlockedCount.value + retiredUnlockCount.value);
   const hasBonusAvatars = computed(
-    () => unlockedCount.value >= BONUS_AVATAR_ACHIEVEMENT_THRESHOLD,
+    () => cosmeticProgress.value >= BONUS_AVATAR_ACHIEVEMENT_THRESHOLD,
   );
   const hasNameEffects = computed(
-    () => unlockedCount.value >= (NAME_EFFECTS[0]?.unlockAt ?? Number.POSITIVE_INFINITY),
+    () => cosmeticProgress.value >= (NAME_EFFECTS[0]?.unlockAt ?? Number.POSITIVE_INFINITY),
   );
   const hasAvatarEffects = computed(
-    () => unlockedCount.value >= (AVATAR_EFFECTS[0]?.unlockAt ?? Number.POSITIVE_INFINITY),
+    () => cosmeticProgress.value >= (AVATAR_EFFECTS[0]?.unlockAt ?? Number.POSITIVE_INFINITY),
   );
   let loadPromise: Promise<void> | null = null;
   const unlocking = new Set<AchievementId>();
@@ -87,8 +91,10 @@ export const useAchievementsStore = defineStore("achievements", () => {
           transaction.objectStore(STORE_NAME).getAll() as IDBRequest<AchievementUnlock[]>,
         );
         await completion;
+        const activeRecords = records.filter((record) => achievementIds.has(record.id));
+        retiredUnlockCount.value = records.length - activeRecords.length;
         unlockedAtById.value = Object.fromEntries(
-          records.map((record) => [record.id, record.unlockedAt]),
+          activeRecords.map((record) => [record.id, record.unlockedAt]),
         );
         shouldUnlockCompletionist = ACHIEVEMENTS
           .filter((achievement) => achievement.id !== "completionist")
@@ -156,6 +162,7 @@ export const useAchievementsStore = defineStore("achievements", () => {
   return {
     unlockedAtById,
     unlockedCount,
+    cosmeticProgress,
     hasBonusAvatars,
     hasNameEffects,
     hasAvatarEffects,

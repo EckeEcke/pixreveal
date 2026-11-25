@@ -77,15 +77,6 @@
 
       </section>
       <section class="manual-section">
-      <h3>Challenge a friend</h3>
-      <p>
-        After playing a round of <strong>Classic</strong>, <strong>Gravity</strong>, or <strong>Inspect</strong>, you can create a challenge to test your friends! Simply copy the generated link and send it over. Your friend will play the exact same set of drawings. Once finished, a detailed comparison screen reveals who won the match. <strong>No signup required</strong>, and every challenge link stays active for <strong>7 days</strong>.
-      </p>
-
-      <YoutubeEmbed video-id="Prz-jTEg7fU" thumbnail-url="/assets/images/demo-preview.webp" class="content-container" />
-
-      </section>
-      <section class="manual-section">
       <h3>Multiplayer & Content</h3>
       <div class="two-columns">
         <div>
@@ -184,7 +175,6 @@
 <script setup>
 import { Icon } from "@iconify/vue"
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue"
-import YoutubeEmbed from "@/components/page-ui/YoutubeEmbed.vue"
 import PowerUpInfo from "../game-ui/PowerUpInfo.vue"
 import StepsComponent from "../page-ui/StepsComponent.vue"
 

@@ -15,7 +15,6 @@ function setup(ready = async () => true) {
     '@/stores/config':{useConfigStore:()=>config},
     '@/stores/game':{useGameStore:()=>game},
     '@/stores/survival':{useSurvivalStore:()=>({reset:()=>calls.push(['survival-reset'])})},
-    '@/stores/challenge':{useChallengeStore:()=>({clearSession:()=>calls.push(['clear-challenge'])})},
     '@/utils/random':{getRandomUserName:()=> 'Random'}
   };
   const code=ts.transpileModule(fs.readFileSync('src/composables/useSingleplayerStart.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
@@ -48,7 +47,7 @@ test('pending start rejects double clicks and waits for user art before resettin
  resolve(true);await first;assert.deepEqual(h.calls.filter(x=>x[0]==='route'),[['route','/gravity']]);
 });
 
-test('daily and challenge modes cannot enter normal singleplayer preparation',async()=>{
+test('daily mode cannot enter normal singleplayer preparation',async()=>{
  const h=setup();await h.startSingleplayer('daily');assert.deepEqual(h.calls,[['route','/singleplayer']]);assert.equal(h.player.points,42);
 });
 

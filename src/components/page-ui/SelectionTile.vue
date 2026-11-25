@@ -28,25 +28,17 @@
       </div>
     </div>
 
-    <div v-if="maxPlayers || highScore || challengeable" class="top-badges">
+    <div v-if="maxPlayers || highScore || highscorePossible" class="top-badges">
       <span v-if="highScore" class="player-info"
         ><Icon icon="fa6-solid:crown" /> {{ highScore }}</span
       >
       <span
         v-if="highscorePossible && !highScore"
-        class="player-info challenge-badge"
+        class="player-info tooltip-badge"
         tabindex="0"
         data-tooltip="Set your own highscore"
       >
         <Icon icon="fa6-solid:crown" />
-      </span>
-      <span
-        v-if="challengeable"
-        class="player-info challenge-badge"
-        tabindex="0"
-        data-tooltip="Challenge a friend to beat your score"
-      >
-        <Icon icon="at-icons:swords" />
       </span>
       <span v-if="maxPlayers && maxPlayers > 1" class="player-info"
         ><Icon icon="heroicons:user-group-solid" /> 2-10</span
@@ -83,8 +75,6 @@ const props = defineProps<{
   cornerText?: string;
   size?: "default" | "lg";
   featureBadges?: string[];
-  challengeable?: boolean;
-  challengeTooltip?: string;
 }>();
 
 const soundStore = useSoundStore();
@@ -281,12 +271,12 @@ const handleClick = (event: MouseEvent) => {
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-.challenge-badge {
+.tooltip-badge {
   position: relative;
   cursor: help;
 }
 
-.challenge-badge::after {
+.tooltip-badge::after {
   content: attr(data-tooltip);
   position: absolute;
   top: calc(100% + 6px);
@@ -307,8 +297,8 @@ const handleClick = (event: MouseEvent) => {
   z-index: 5;
 }
 
-.challenge-badge:hover::after,
-.challenge-badge:focus-visible::after {
+.tooltip-badge:hover::after,
+.tooltip-badge:focus-visible::after {
   opacity: 1;
   transform: translateY(0);
 }

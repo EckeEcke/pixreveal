@@ -53,29 +53,6 @@
               <Icon icon="pixel:sparkles" />
             </div>
 
-            <div
-              v-if="showChallengeButton"
-              class="challenge-slot"
-              data-sfx="click"
-              @mouseenter="soundStore.handleHoverSound"
-              @click="showChallengeModal = true"
-            >
-              <Icon icon="at-icons:swords" class="swords-icon" />
-
-              <div class="challenge-content">
-                <div class="challenge-title">Challenge a Friend</div>
-
-                <div class="challenge-subtitle">
-                  Can they beat your
-                  <Icon icon="pixel:star-solid" class="score-star" />
-                  <span>{{ playerStore.points }}</span
-                  >?
-                </div>
-              </div>
-
-              <Icon icon="at-icons:swords" class="swords-icon" />
-            </div>
-
             <div class="gameover-actions">
               <ButtonSecondary
                 class="btn-primary pulse-btn"
@@ -99,11 +76,6 @@
         </div>
       </div>
     </main>
-
-    <ChallengeModal
-      v-if="showChallengeModal"
-      @close="showChallengeModal = false"
-    />
   </div>
 </template>
 
@@ -125,10 +97,8 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import GameOverStar from "@/components/game-ui/GameOverStar.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { useConfetti } from "@/composables/useConfetti";
-import ChallengeModal from "@/components/modals/ChallengeModal.vue";
 import { useSingleplayerStart } from "@/composables/useSingleplayerStart";
 import { useAchievementsStore } from "@/stores/achievements";
-import { useChallengeStore } from "@/stores/challenge";
 
 const playerStore = usePlayerStore();
 const survivalStore = useSurvivalStore();
@@ -136,13 +106,11 @@ const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const achievementsStore = useAchievementsStore();
-const challengeStore = useChallengeStore();
 const { startSingleplayer, isStarting: isRestarting } = useSingleplayerStart();
 const router = useRouter();
 const showIntro = ref(true);
 const wrapperRef = ref(null);
 
-const showChallengeModal = ref(false);
 const starDone = ref(false);
 
 const { fireConfetti } = useConfetti();
@@ -199,12 +167,6 @@ const showSingleplayerRank = computed(() => {
   );
 });
 
-const showChallengeButton = computed(
-  () =>
-    ["classic", "inspect", "gravity"].includes(playerStore.gameMode) &&
-    playerStore.points > 10,
-);
-
 const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
@@ -239,7 +201,6 @@ const getShareMessage = (score, mode) => {
 const playAgainSingleplayer = () => startSingleplayer(playerStore.gameMode);
 
 const goBackSingleplayer = () => {
-  challengeStore.clearSession();
   survivalStore.reset();
   gameStore.reset();
   router.push("/singleplayer");
@@ -408,142 +369,6 @@ main {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(30deg);
   animation: shine 4s infinite;
-}
-
-.btn-challenge {
-  margin-top: 32px;
-  width: 100%;
-  animation: pulse 2s infinite ease-in-out;
-}
-
-.swords-icon {
-  font-size: 24px;
-  margin: 0 8px;
-  display: none;
-  @media (min-width: 500px) {
-    display: block;
-  }
-}
-
-.challenge-slot {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-
-  width: 100%;
-  min-height: 86px;
-  margin-top: 32px;
-  padding: 14px 24px;
-  box-sizing: border-box;
-
-  background: var(--purple-glow);
-  border: 2px solid rgba(0, 0, 0, 0.75);
-  border-radius: 6px;
-
-  color: #fff;
-  cursor: pointer;
-
-  box-shadow:
-    0 5px 0 rgba(0, 0, 0, 0.65),
-    0 10px 20px rgba(0, 0, 0, 0.25);
-
-  transition:
-    transform 0.12s ease,
-    filter 0.12s ease,
-    box-shadow 0.12s ease;
-
-  &:hover {
-    filter: brightness(1.08);
-    transform: translateY(-2px);
-
-    box-shadow:
-      0 7px 0 rgba(0, 0, 0, 0.65),
-      0 14px 24px rgba(0, 0, 0, 0.3);
-  }
-
-  &:active {
-    transform: translateY(3px);
-
-    box-shadow:
-      0 2px 0 rgba(0, 0, 0, 0.65),
-      0 5px 12px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.challenge-content {
-  min-width: 0;
-  text-align: center;
-}
-
-.challenge-title {
-  font-size: 21px;
-  line-height: 1.1;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.challenge-subtitle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-
-  margin-top: 5px;
-
-  font-size: 14px;
-  line-height: 1.2;
-  font-weight: 700;
-  opacity: 0.72;
-
-  span {
-    font-size: 16px;
-    font-weight: 900;
-    opacity: 1;
-  }
-}
-
-.swords-icon {
-  flex: 0 0 auto;
-  font-size: 38px;
-  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.25));
-}
-
-.score-star {
-  flex: 0 0 auto;
-  font-size: 17px;
-  color: #ffcc00;
-  opacity: 1;
-  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3));
-}
-
-@media (max-width: 419px) {
-  .challenge-slot {
-    gap: 12px;
-    min-height: 78px;
-    padding: 12px 14px;
-  }
-
-  .challenge-title {
-    font-size: 17px;
-  }
-
-  .challenge-subtitle {
-    font-size: 12px;
-
-    span {
-      font-size: 14px;
-    }
-  }
-
-  .swords-icon {
-    font-size: 30px;
-  }
-
-  .score-star {
-    font-size: 15px;
-  }
 }
 
 .full-width {

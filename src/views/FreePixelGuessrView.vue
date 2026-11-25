@@ -43,7 +43,7 @@
           <h2>How does this Pixel Guess Game work?</h2>
           <p class="party-desc">
             How fast can you spot the hidden picture? As the blocks appear pixel by
-            pixel, the rush is on. Challenge your friends or coworkers in a competitive
+            pixel, the rush is on. Compete with friends or coworkers in a competitive
             <strong>pixel guessing game</strong> directly in your browser — no login or
             app required.
           </p>

@@ -79,7 +79,6 @@ import GameHeader from "@/components/game-ui/GameHeader.vue";
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import { useBonusRounds } from "@/composables/useBonusRounds";
-import { useChallengeStore } from "@/stores/challenge";
 import type { OnlineHighlight } from "@/types/player";
 import {
   workerClearInterval,
@@ -113,7 +112,6 @@ const onlineStore = useOnlineStore();
 const configStore = useConfigStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
-const challengeStore = useChallengeStore();
 
 const pixelCanvasRef = ref<{
   playShine: () => void;
@@ -216,19 +214,10 @@ const setupDrawing = () => {
   });
 };
 
-const goToNextRound = async () => {
+const goToNextRound = () => {
   gameStore.nextRound();
 
   if (gameStore.isGameOver) {
-    if (challengeStore.active) {
-      await challengeStore.submitOpponentResult();
-      router.push(
-        `/gameover-challenge?sessionId=${encodeURIComponent(
-          challengeStore.session?.sessionId || "",
-        )}`,
-      );
-      return;
-    }
     onlineStore.broadcastScore();
     const isOnlineRoute =
       router.currentRoute.value.name === "online" ||

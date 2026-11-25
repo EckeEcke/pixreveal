@@ -4,7 +4,6 @@ import { usePlayerStore } from "@/stores/player";
 import { useConfigStore } from "@/stores/config";
 import { useGameStore } from "@/stores/game";
 import { useSurvivalStore } from "@/stores/survival";
-import { useChallengeStore } from "@/stores/challenge";
 import { getRandomUserName } from "@/utils/random";
 
 export function useSingleplayerStart() {
@@ -13,7 +12,6 @@ export function useSingleplayerStart() {
   const config = useConfigStore();
   const game = useGameStore();
   const survival = useSurvivalStore();
-  const challenge = useChallengeStore();
   const isStarting = ref(false);
 
   const startSingleplayer = async (mode: string) => {
@@ -26,7 +24,6 @@ export function useSingleplayerStart() {
     isStarting.value = true;
     try {
       if (!(await config.ensureUgcReady())) return false;
-      challenge.clearSession();
       survival.reset();
       game.reset();
       player.setUser({

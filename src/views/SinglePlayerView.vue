@@ -35,8 +35,6 @@
                 btn-color="var(--neon-mint)"
                 :feature-badges="['Bottom to Top', 'Left to Right']"
                 :max-players="1"
-                :challengeable="true"
-                :challenge-tooltip="'Challenge a friend to beat your score'"
               />
               <SelectionTile
                 size="lg"
@@ -47,8 +45,6 @@
                 btn-color="var(--neon-cyan)"
                 :max-players="1"
                 :feature-badges="['Control the Lens', 'Touch or Mouse']"
-                :challengeable="true"
-                :challenge-tooltip="'Challenge a friend to beat your score'"
               />
               <SelectionTile
                 size="lg"
@@ -71,44 +67,10 @@
                 btn-color="var(--primary)"
                 :feature-badges="['Random reveal', 'Default mode']"
                 :max-players="1"
-                :challengeable="true"
-                :challenge-tooltip="'Challenge a friend to beat your score'"
               />
             </div>
           </div>
         </div>
-
-        <!-- CHALLENGE MODE PROMO CARD -->
-        <article class="info-card challenge-promo">
-          <div class="card-header">
-            <Icon icon="at-icons:swords" class="promo-icon" />
-            <div>
-              <h2>Challenge a Friend</h2>
-              <p class="subtitle">1v1 Asynchronous Pixel Art Quiz Duel</p>
-            </div>
-          </div>
-          <p class="promo-description">
-            Prove who has the fastest eyes! Finish a round in <strong>Classic</strong>, <strong>Gravity</strong>, or <strong>Inspect</strong> mode and generate a unique challenge link on the game-over screen. Send it to a friend—they will guess the <em>exact same drawings</em> under identical conditions.
-          </p>
-          <div class="challenge-steps">
-            <div class="step">
-              <span class="step-num">1</span>
-              <span>Play a singleplayer mode</span>
-            </div>
-            <div class="step">
-              <span class="step-num">2</span>
-              <span>Create and share your challenge link</span>
-            </div>
-            <div class="step">
-              <span class="step-num">3</span>
-              <span>Compare scores & declare the winner</span>
-            </div>
-          </div>
-          <div class="badge-list">
-            <span class="badge"><Icon icon="pixel:check" /> No registration required</span>
-            <span class="badge"><Icon icon="pixel:clock" /> Link valid for 7 days</span>
-          </div>
-        </article>
 
         <div class="card-grid">
           <!-- SEO TEXT SECTION -->
@@ -355,100 +317,6 @@ h2 {
   padding: 24px;
   margin-bottom: 24px;
   color: #cccccc;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-
-  h2 {
-    color: var(--white);
-    font-size: 20px;
-  }
-
-  .subtitle {
-    color: var(--primary);
-    font-size: 14px;
-    margin: 2px 0 0 0;
-    font-weight: bold;
-  }
-}
-
-.promo-icon {
-  font-size: 32px;
-  color: var(--primary);
-}
-
-.promo-description {
-  line-height: 1.5;
-  margin-bottom: 20px;
-
-  strong {
-    color: var(--white);
-  }
-}
-
-.challenge-steps {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-
-  @media (min-width: 650px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.step-num {
-  background: var(--primary);
-  color: #000000;
-  font-weight: bold;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 12px;
-}
-
-.badge-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-display);
-  font-size: 13px;
-  line-height: 1;
-  color: #ffffffaa;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 6px 12px;
-  border-radius: 6px;
-  white-space: nowrap;
-
-  svg {
-    color: var(--primary);
-  }
 }
 
 .seo-section {

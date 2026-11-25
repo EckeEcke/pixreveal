@@ -60,47 +60,11 @@ const router = createRouter({
       meta: {
         robots: "index, follow",
         title:
-          "Free Singleplayer Pixel Image Guessing Game & 1v1 Challenges | PixReveal",
+          "Free Singleplayer Pixel Image Guessing Game | PixReveal",
         description:
-          "Play free browser pixel art guessing games: Classic, Gravity, Inspect & Survival. Test your visual speed or challenge friends to 1v1 duels!",
+          "Play free browser pixel art guessing games: Classic, Gravity, Inspect & Survival. Test your visual recognition and beat your best score!",
         canonical: "https://www.pixreveal.com/singleplayer",
       },
-    },
-    {
-      path: "/challenge",
-      name: "challenge",
-      component: () => import("@/views/ChallengeView.vue"),
-      meta: { robots: "noindex" },
-    },
-    {
-      path: "/challenge-game",
-      name: "challenge-game",
-      component: () => import("@/views/GameView.vue"),
-      meta: { robots: "noindex" },
-    },
-    {
-      path: "/challenge-classic",
-      name: "challenge-classic",
-      component: () => import("@/views/GameView.vue"),
-      meta: { robots: "noindex" },
-    },
-    {
-      path: "/challenge-inspect",
-      name: "challenge-inspect",
-      component: () => import("@/views/InspectView.vue"),
-      meta: { robots: "noindex" },
-    },
-    {
-      path: "/challenge-gravity",
-      name: "challenge-gravity",
-      component: () => import("@/views/GravityView.vue"),
-      meta: { robots: "noindex" },
-    },
-    {
-      path: "/gameover-challenge",
-      name: "gameover-challenge",
-      component: () => import("@/views/GameOverChallengeView.vue"),
-      meta: { robots: "noindex" },
     },
     {
       path: "/classic",

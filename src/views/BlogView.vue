@@ -15,20 +15,11 @@ https://www.reddit.com/r/pixreveal/
     </div>
     <div class="log-card">
       <div class="log-info">
-        <span class="date">10-07-26</span>
-      </div>
-      <h3 class="log-title">Improved friend challenges!</h3>
-      <p>
-        Friend challenges allow you to play against a friend in an asynchronous duel multiplayer. Play a set of drawings in singleplayer, create a challenge link and share it with a friend. They get to play the same drawings and you can check who scored more stars. The new feature: in the profile section you find a new Challenges button. There you find an overview of all your created challenges, if your friend already played it and who won. You can also share your link once more if needed.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
         <span class="date">10-04-26</span>
       </div>
       <h3 class="log-title">New achievement system and unlockable content!</h3>
       <p>
-        I just added a new big update to PixReveal! 12 achievements are waiting for you to complete. Leading you through the most relevant features of the game and giving you some neat little challenges. By completing achievements you unlock new bonus content to make your avatar more unique. Unlock a collection of new avatars and text animations for your player name. People will be like "How did they do that?!". The complete achievement system works without any signup or login. To see your progress, simply click on the avatar in the page header.
+        Achievements now guide you through PixReveal's main features. Complete them to unlock bonus avatars and text animations for your player name. The achievement system works without any signup or login. To see your progress, simply click on the avatar in the page header.
       </p>
     </div>
     <div class="log-card">
@@ -48,15 +39,6 @@ https://www.reddit.com/r/pixreveal/
       <p>
         You are playing with your grandparents and they have no idea, who Mario and Luigi are? Or you are hanging out with your gaming buddies, who find guessing animals rather boring? PixReveal now has an easy way to configure the game: set the drawing mix to <strong>nerdy, mixed or general.</strong>. Nerdy only shows you drawings from the categories anime, cartoons, movies or gaming. While general contains only objects, people, nature and food.
         Additionally the filter settings are now available in the different game mode hubs. When setting up a party or online game. And in the hub page for the singleplayer modes. So for your next round of PixReveal, don't forget to adjust the game to your likings.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-08-26</span>
-      </div>
-      <h3 class="log-title">Asynchronous challenge mode added!</h3>
-      <p>
-        Just added a new big feature to PixReveal: play a single player round of Classic, Gravity or Inspect, then challenge a friend to beat your score! The friend will play the same drawings as you. Can they beat your score? The new Game Over screen shows who won the challenge, how many points they scored and who guessed which round correctly.    
       </p>
     </div>
     <div class="log-card">

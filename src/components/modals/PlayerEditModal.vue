@@ -70,7 +70,7 @@
             v-for="effect in AVATAR_EFFECTS"
             :key="effect.id"
             :value="effect.id"
-            :disabled="achievementsStore.unlockedCount < effect.unlockAt"
+            :disabled="achievementsStore.cosmeticProgress < effect.unlockAt"
           >
             {{ effect.title }}
           </option>
@@ -87,7 +87,7 @@
             v-for="effect in availableNameEffects"
             :key="effect.id"
             :value="effect.id"
-            :disabled="achievementsStore.unlockedCount < effect.unlockAt"
+            :disabled="achievementsStore.cosmeticProgress < effect.unlockAt"
           >
             {{ effect.title }}
           </option>

@@ -52,7 +52,7 @@ export const NAME_EFFECTS: Array<{
     id: "glitcher",
     title: "Glitcher",
     description: "A glitched text effect.",
-    unlockAt: 12,
+    unlockAt: 10,
   },
 ];
 
