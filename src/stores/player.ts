@@ -106,12 +106,18 @@ export const usePlayerStore = defineStore("player", () => {
   };
 
   const setPlayerNameEffect = (effect: PlayerNameEffect) => {
-    if (effect !== "none" && !achievementsStore.hasNameEffects) return;
+    if (effect !== "none") {
+      const reward = NAME_EFFECTS.find((item) => item.id === effect);
+      if (!reward || achievementsStore.cosmeticProgress < reward.unlockAt) return;
+    }
     playerNameEffect.value = effect;
   };
 
   const setPlayerAvatarEffect = (effect: PlayerAvatarEffect) => {
-    if (effect !== "none" && !achievementsStore.hasAvatarEffects) return;
+    if (effect !== "none") {
+      const reward = AVATAR_EFFECTS.find((item) => item.id === effect);
+      if (!reward || achievementsStore.cosmeticProgress < reward.unlockAt) return;
+    }
     playerAvatarEffect.value = effect;
   };
 

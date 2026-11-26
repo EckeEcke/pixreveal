@@ -54,15 +54,15 @@
             </div>
 
             <div class="gameover-actions">
-              <ButtonSecondary
-                class="btn-primary pulse-btn"
+              <ButtonPrimary
+                class="pulse-btn"
                 :disabled="isRestarting"
                 data-sfx="click"
                 @mouseenter="soundStore.handleHoverSound"
                 @clicked="playAgainSingleplayer"
               >
                 <Icon icon="pixel:refresh-solid" /> Play Again
-              </ButtonSecondary>
+              </ButtonPrimary>
 
               <ButtonSecondary
                 data-sfx="back"

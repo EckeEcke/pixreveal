@@ -393,6 +393,86 @@ input[type="text"]:focus {
   filter: sepia(1)!important;
 }
 
+.avatar-effect-hologram {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  filter: grayscale(1) sepia(1) saturate(3.4) hue-rotate(125deg) brightness(1.2);
+  opacity: 0.9;
+  box-shadow: inset 0 0 0 1px rgba(164, 255, 255, 0.6), 0 0 12px rgba(0, 242, 255, 0.25);
+}
+
+.avatar-effect-hologram::before,
+.avatar-effect-hologram::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.avatar-effect-hologram::before {
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(180, 255, 255, 0.1) 0 2px,
+    rgba(0, 15, 25, 0.4) 2px 4px
+  );
+}
+
+.avatar-effect-hologram::after {
+  z-index: 2;
+  bottom: auto;
+  height: 28%;
+  background: linear-gradient(to bottom, transparent, rgba(220, 255, 255, 0.85), transparent);
+  animation: hologram-scan 4.8s linear infinite;
+}
+
+.name-effect-stardust {
+  background-image: linear-gradient(
+    110deg,
+    currentColor 35%,
+    #e6a83e 44%,
+    #ffdf91 49%,
+    #fff9e8 52%,
+    #fff 54%,
+    currentColor 61%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: stardust-swipe 4s ease-in-out infinite;
+}
+
+@keyframes hologram-scan {
+  0% { transform: translateY(-110%); opacity: 0; }
+  8% { opacity: 0.8; }
+  65% { transform: translateY(390%); opacity: 0.6; }
+  75%, 100% { transform: translateY(390%); opacity: 0; }
+}
+
+@keyframes stardust-swipe {
+  0%, 10% { background-position: 100% 0; }
+  65%, 100% { background-position: 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-effect-hologram::after {
+    animation: none;
+    transform: translateY(140%);
+    opacity: 0.35;
+  }
+
+  .name-effect-stardust {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
 .avatar-effect-blur {
   transition: all 0.3s;
   filter: blur(0px);

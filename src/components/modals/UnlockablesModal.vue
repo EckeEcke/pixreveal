@@ -16,10 +16,10 @@
         <div class="section-heading">
           <div>
             <h3>Bonus Avatars</h3>
-            <p>Unlock new avatars by collecting 3 achievements.</p>
+            <p>Unlock new avatars by collecting {{ AVATAR_UNLOCK_THRESHOLD }} achievements.</p>
           </div>
-          <span class="section-progress">
-            {{ achievementsStore.hasBonusAvatars ? "UNLOCKED" : `${Math.min(achievementsStore.unlockedCount, AVATAR_UNLOCK_THRESHOLD)}/${AVATAR_UNLOCK_THRESHOLD}` }}
+          <span class="section-progress" :class="{ 'section-progress--unlocked': achievementsStore.hasBonusAvatars }">
+            {{ achievementsStore.hasBonusAvatars ? "UNLOCKED" : `${Math.min(achievementsStore.cosmeticProgress, AVATAR_UNLOCK_THRESHOLD)}/${AVATAR_UNLOCK_THRESHOLD}` }}
           </span>
         </div>
         <div class="avatar-preview-grid">
@@ -32,38 +32,44 @@
         </div>
       </section>
 
-      <section class="unlockable-section" :class="{ locked: !achievementsStore.hasAvatarEffects }">
+      <section class="unlockable-section">
         <div class="section-heading">
           <div>
             <h3>Avatar Effects</h3>
-            <p>Unlock special visual effects for your avatar at 4, 7, and 10 achievements.</p>
+            <p>Collect achievements to unlock {{ AVATAR_EFFECTS.length }} avatar effects.</p>
           </div>
           <span class="section-progress">
-            {{ achievementsStore.hasAvatarEffects ? "UNLOCKED" : `${achievementsStore.unlockedCount}/10` }}
+            {{ Math.min(achievementsStore.cosmeticProgress, avatarEffectsTarget) }}/{{ avatarEffectsTarget }}
           </span>
         </div>
         <div class="effect-preview-list">
-          <div v-for="effect in AVATAR_EFFECTS" :key="effect.id" class="effect-preview">
-            <span class="avatar-preview preview-sample" :class="`avatar-effect-${effect.id}`" :style="getAvatarStyle(0, 'unlockables')" />
-            <span>{{ effect.title }}</span>
+          <div v-for="effect in AVATAR_EFFECTS" :key="effect.id" class="effect-preview" :class="{ 'effect-preview--unlocked': achievementsStore.cosmeticProgress >= effect.unlockAt }" :title="effect.description">
+            <span class="avatar-preview preview-sample" :class="effect.id" :style="getAvatarStyle(0, 'unlockables')" aria-hidden="true" />
+            <div class="effect-copy">
+              <span>{{ effect.title }}</span>
+              <small>{{ achievementsStore.cosmeticProgress >= effect.unlockAt ? 'UNLOCKED' : `${effect.unlockAt} achievements` }}</small>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="unlockable-section" :class="{ locked: !achievementsStore.hasNameEffects }">
+      <section class="unlockable-section">
         <div class="section-heading">
           <div>
             <h3>Name Effects</h3>
-            <p>Unlock all 3 effects by collecting {{ NAME_EFFECTS.map(effect => effect.unlockAt).join('/') }} achievements.</p>
+            <p>Collect achievements to unlock {{ NAME_EFFECTS.length }} name effects.</p>
           </div>
           <span class="section-progress">
-            {{ achievementsStore.hasNameEffects ? "UNLOCKED" : `${achievementsStore.unlockedCount}/${ACHIEVEMENTS.length}` }}
+            {{ Math.min(achievementsStore.cosmeticProgress, nameEffectsTarget) }}/{{ nameEffectsTarget }}
           </span>
         </div>
         <div class="effect-preview-list">
-          <div v-for="effect in NAME_EFFECTS" :key="effect.id" class="effect-preview">
+          <div v-for="effect in NAME_EFFECTS" :key="effect.id" class="effect-preview" :class="{ 'effect-preview--unlocked': achievementsStore.cosmeticProgress >= effect.unlockAt }" :title="effect.description">
             <strong :class="`name-effect-${effect.id}`">PLAYER</strong>
-            <span>{{ effect.title }}</span>
+            <div class="effect-copy">
+              <span>{{ effect.title }}</span>
+              <small>{{ achievementsStore.cosmeticProgress >= effect.unlockAt ? 'UNLOCKED' : `${effect.unlockAt} achievements` }}</small>
+            </div>
           </div>
         </div>
       </section>
@@ -75,9 +81,9 @@
 import { onMounted } from "vue"
 import { Icon } from "@iconify/vue"
 import ModalWrapper from "@/components/modals/ModalWrapper.vue"
-import { ACHIEVEMENTS } from "@/data/achievements"
 import {
   BONUS_AVATAR_ACHIEVEMENT_THRESHOLD,
+  AVATAR_EFFECTS,
   NAME_EFFECTS,
 } from "@/data/unlockables"
 import { useAchievementsStore } from "@/stores/achievements"
@@ -89,11 +95,8 @@ const achievementsStore = useAchievementsStore()
 const AVATAR_UNLOCK_THRESHOLD = BONUS_AVATAR_ACHIEVEMENT_THRESHOLD
 const bonusAvatarPreviews = Array.from({ length: 6 }, (_, index) => index)
 
-const AVATAR_EFFECTS = [
-  { id: "inverted", title: "Inverted Filter" },
-  { id: "sepia", title: "Sepia Tone" },
-  { id: "blur", title: "Glitch Blur" }
-]
+const avatarEffectsTarget = Math.max(...AVATAR_EFFECTS.map(effect => effect.unlockAt))
+const nameEffectsTarget = Math.max(...NAME_EFFECTS.map(effect => effect.unlockAt))
 
 onMounted(() => {
   void achievementsStore.loadAchievements()
@@ -170,8 +173,8 @@ h3 {
 }
 
 .preview-sample {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
 }
 
 .effect-preview-list {
@@ -186,6 +189,7 @@ h3 {
   gap: 12px;
   min-width: 0;
   padding: 7px 9px;
+  border: 1px solid transparent;
   border-radius: 3px;
   background: rgba(0, 0, 0, 0.22);
 }
@@ -193,7 +197,7 @@ h3 {
 .effect-preview strong {
   overflow: hidden;
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -204,17 +208,24 @@ h3 {
   font-size: 11px;
 }
 
-.avatar-effect-inverted {
-  filter: invert(1);
+.effect-copy {
+  display: grid;
+  gap: 3px;
+  text-align: right;
 }
 
-.avatar-effect-sepia {
-  filter: sepia(1);
+.effect-copy small {
+  color: var(--primary);
+  font-size: 10px;
 }
 
-.avatar-effect-blur {
-  filter: blur(0px);
-  animation: glitch-blur 4s infinite steps(1, start);
+.effect-preview--unlocked {
+  border-color: rgba(0, 255, 179, 0.18);
+}
+
+.section-progress--unlocked,
+.effect-preview--unlocked small {
+  color: var(--neon-mint);
 }
 
 @media (max-width: 420px) {

@@ -75,13 +75,15 @@ test('retired records keep earned cosmetics without inflating active achievement
   assert.equal(store.unlockedCount.value, 1);
   assert.equal(store.cosmeticProgress.value, 3);
   assert.equal(store.hasBonusAvatars.value, true);
-  assert.equal(store.hasAvatarEffects.value, false);
+  assert.equal(store.hasAvatarEffects.value, true);
+  assert.equal(store.hasNameEffects.value, false);
   assert.deepEqual(Object.keys(store.unlockedAtById.value), ['edit-player']);
 
   assert.equal(await store.unlock('play-singleplayer'), true);
   assert.equal(store.unlockedCount.value, 2);
   assert.equal(store.cosmeticProgress.value, 4);
   assert.equal(store.hasAvatarEffects.value, true);
+  assert.equal(store.hasNameEffects.value, true);
 });
 
 test('retired records cannot prematurely grant completionist', async () => {

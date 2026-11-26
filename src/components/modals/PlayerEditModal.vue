@@ -53,15 +53,23 @@
             data-sfx="click"
             @click="selectAvatar(avatar.id)"
           >
-            <div class="avatar-image" :style="getAvatarStyle(avatar.id)" :class="playerStore.avatarEffect ? `avatar-effect-${playerStore.avatarEffect}` : ''"></div>
+            <div class="avatar-image" :style="getAvatarStyle(avatar.id)" :class="avatar.id === playerStore.avatarIndex ? playerStore.playerAvatarEffect : undefined"></div>
           </div>
         </div>
+      </div>
+    </div>
+    <div v-if="achievementsStore.hasNameEffects || achievementsStore.hasAvatarEffects" class="cosmetic-preview">
+      <span class="preview-avatar" :class="playerStore.playerAvatarEffect" :style="getAvatarStyle(playerStore.avatarIndex)" aria-hidden="true" />
+      <div>
+        <span class="preview-label">PREVIEW</span>
+        <strong :class="`name-effect-${playerStore.playerNameEffect}`">{{ playerStore.playerName || 'PLAYER' }}</strong>
       </div>
     </div>
     <div v-if="achievementsStore.hasNameEffects || achievementsStore.hasAvatarEffects" class="cosmetic-selects">
       <div v-if="achievementsStore.hasAvatarEffects" class="input-group">
         <h3>Avatar Effect</h3>
         <select
+          aria-label="Avatar effect"
           :value="playerStore.playerAvatarEffect"
           @change="setAvatarEffect"
         >
@@ -79,6 +87,7 @@
       <div v-if="achievementsStore.hasNameEffects" class="input-group">
         <h3>Player Name Effect</h3>
         <select
+          aria-label="Player name effect"
           :value="playerStore.playerNameEffect"
           @change="setPlayerNameEffect"
         >
@@ -130,7 +139,8 @@ const originalProfile = {
   name: playerStore.playerName,
   avatarIndex: playerStore.avatarIndex,
   spriteSheet: playerStore.avatarSpriteSheet,
-  avatarEffect: playerStore.avatarEffect,
+  avatarEffect: playerStore.playerAvatarEffect,
+  nameEffect: playerStore.playerNameEffect,
 };
 
 const avatars = Array.from({ length: 36 }, (_, i) => ({ id: i }));
@@ -182,7 +192,8 @@ const unlockIfProfileChanged = () => {
     playerStore.playerName !== originalProfile.name ||
     playerStore.avatarIndex !== originalProfile.avatarIndex ||
     playerStore.avatarSpriteSheet !== originalProfile.spriteSheet ||
-    playerStore.avatarEffect !== originalProfile.avatarEffect;
+    playerStore.playerAvatarEffect !== originalProfile.avatarEffect ||
+    playerStore.playerNameEffect !== originalProfile.nameEffect;
 
   if (changed) void achievementsStore.unlock("edit-player");
 };
@@ -292,6 +303,41 @@ h3 {
 .cosmetic-selects select:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.cosmetic-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 14px;
+  border: 1px solid rgba(0, 242, 255, 0.16);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.preview-avatar {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 5px;
+}
+
+.cosmetic-preview > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.preview-label {
+  color: var(--color-secondary);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.cosmetic-preview strong {
+  color: var(--white);
+  overflow-wrap: anywhere;
 }
 
 .locked-sheet-icon {
