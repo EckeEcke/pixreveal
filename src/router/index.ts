@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { blogRoute, seoLandingRoutes } from "@/data/seoLandingMeta";
 import GameOverView from "../views/GameOverView.vue";
 import GameOverOnlineView from "../views/GameOverOnlineView.vue";
 import GameOverPartyHostView from "../views/GameOverPartyHostView.vue";
@@ -13,6 +14,7 @@ import { useOnlineStore } from "@/stores/online";
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
+    if (to.path === "/blog" && to.hash) return { el: to.hash, top: 24 };
     return { top: 0 };
   },
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -220,74 +222,37 @@ const router = createRouter({
       path: "/free-jackbox-alternative",
       name: "free-jackbox-alternative",
       component: () => import("@/views/FreeJackboxAlternativeView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "Free Jackbox Alternative for TV & Phones | PixReveal",
-        description:
-          "Looking for a free game like Jackbox? Turn your smartphones into controllers and host PixReveal on your TV or laptop for your next party.",
-        canonical: "https://www.pixreveal.com/free-jackbox-alternative",
-      },
+      meta: seoLandingRoutes["/free-jackbox-alternative"].meta,
     },
     {
       path: "/free-skribbl-and-gartic-alternative",
       name: "free-skribbl-and-gartic-alternative",
       component: () => import("@/views/FreeGarticAlternativeView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "Free Alternative to Skribbl.io & Gartic Phone | PixReveal",
-        description:
-          "Tired of bad mouse drawings? PixReveal is the ultimate free alternative to Skribbl.io and Gartic Phone. Play this multiplayer pixel quiz directly in your browser!",
-        canonical:
-          "https://www.pixreveal.com/free-skribbl-and-gartic-alternative",
-      },
+      meta: seoLandingRoutes["/free-skribbl-and-gartic-alternative"].meta,
     },
     {
       path: "/free-pixel-guessr-alternative",
       name: "free-pixel-guessr-alternative",
       component: () => import("@/views/FreePixelGuessrView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "Free Pixel Guessing Game Online | PixReveal",
-        description:
-          "Looking for a free online pixel guessing game? Play PixReveal to guess pixel art pictures with daily challenges, singleplayer modes, and live multiplayer.",
-        canonical: "https://www.pixreveal.com/free-pixel-guessr-alternative",
-      },
+      meta: seoLandingRoutes["/free-pixel-guessr-alternative"].meta,
     },
     {
       path: "/picture-reveal-game",
       name: "picture-reveal-game",
       component: () => import("@/views/OnlineRevealGameView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "Free Online Picture Reveal Game & Image Quiz | PixReveal",
-        description:
-          "Test your recognition skills in PixReveal: a free online picture reveal quiz where you guess the hidden image pixel by pixel!",
-        canonical: "https://www.pixreveal.com/picture-reveal-game",
-      },
+      meta: seoLandingRoutes["/picture-reveal-game"].meta,
     },
     {
       path: "/phone-controller-party-game",
       name: "phone-controller-party-game",
       component: () => import("@/views/PhoneControllerPartyGameView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "Free AirConsole Alternative – Phone Controller Party Game | PixReveal",
-        description:
-          "Looking for a free AirConsole alternative? Play PixReveal on your TV or laptop and use your phones as controllers. No app, no login, no download.",
-        canonical: "https://www.pixreveal.com/phone-controller-party-game",
-      },
+      meta: seoLandingRoutes["/phone-controller-party-game"].meta,
     },
     {
       path: "/friday-afterwork-game",
       name: "friday-afterwork-game",
       component: () => import("@/views/FridayGameView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "Free Friday Afterwork Game for Teams & Coworkers | PixReveal",
-        description:
-          "The perfect free, safe-for-work team bonding game! No login or registration required – jump straight into a quick picture reveal quiz in your browser.",
-        canonical: "https://www.pixreveal.com/friday-afterwork-game",
-      },
+      meta: seoLandingRoutes["/friday-afterwork-game"].meta,
     },
     {
       path: "/about",
@@ -316,13 +281,7 @@ const router = createRouter({
       path: "/blog",
       name: "blog",
       component: () => import("@/views/BlogView.vue"),
-      meta: {
-        robots: "index, follow",
-        title: "PixReveal Blog - Updates & News",
-        description:
-          "Stay up to date with the latest features, patch notes, and multiplayer announcements from PixReveal.",
-        canonical: "https://www.pixreveal.com/blog",
-      },
+      meta: blogRoute.meta,
     },
     {
       path: "/user-gallery",
@@ -534,6 +493,24 @@ router.afterEach((to) => {
     canonicalLink.setAttribute("href", String(to.meta.canonical));
   } else if (canonicalLink) {
     canonicalLink.remove();
+  }
+
+  const socialValues = {
+    title: String(to.meta.title ?? "PixReveal – Free Pixel Art Guessing Game"),
+    description: String(to.meta.description ?? "Guess pixel art in your browser, solo or with friends."),
+    url: String(to.meta.canonical ?? "https://www.pixreveal.com/"),
+  };
+  for (const prefix of ["og", "twitter"]) {
+    for (const [key, value] of Object.entries(socialValues)) {
+      const property = `${prefix}:${key}`;
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("property", property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", value);
+    }
   }
 });
 

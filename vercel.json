@@ -14,7 +14,7 @@
       "destination": "https://pixreveal.com/_vercel/speed-insights/:match*"
     },
     {
-      "source": "/((?!api|@|.*\\..*).*)",
+      "source": "/((?!api|@|.*\\..*|(?:blog|free-jackbox-alternative|free-skribbl-and-gartic-alternative|free-pixel-guessr-alternative|picture-reveal-game|phone-controller-party-game|friday-afterwork-game)(?:/|$)).*)",
       "destination": "/"
     }
   ],

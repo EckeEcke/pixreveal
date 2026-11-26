@@ -19,4 +19,8 @@ app.use(Vue3Toastify, {
   transition: "bounce",
 });
 
-app.mount("#app");
+// Keep prerendered content visible until the initial route is ready to mount.
+router.isReady().then(() => {
+  app.mount("#app");
+  document.getElementById("app")?.removeAttribute("data-prerendered");
+});

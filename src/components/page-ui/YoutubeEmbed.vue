@@ -1,10 +1,16 @@
 <template>
   <div class="video-wrapper" @click="isLoaded = true">
-    <component :is="'script'" type="application/ld+json">
-      {{ JSON.stringify(schemaData) }}
-    </component>
+    <JsonLd :data="schemaData" />
 
-    <div v-if="!isLoaded" class="video-placeholder">
+    <div
+      v-if="!isLoaded"
+      class="video-placeholder"
+      role="button"
+      tabindex="0"
+      aria-label="Play video"
+      @keydown.enter="isLoaded = true"
+      @keydown.space.prevent="isLoaded = true"
+    >
       <picture>
         <source
           v-if="thumbnailUrl"
@@ -12,7 +18,7 @@
           :srcset="thumbnailUrl"
         />
         <img
-          :src="youtubeThumbnail"
+          :src="thumbnailUrl || youtubeThumbnail"
           alt="PixReveal Gameplay Video"
           width="640"
           height="360"
@@ -55,6 +61,7 @@
 
 <script setup>
 import { ref, computed } from "vue"
+import JsonLd from "@/components/page-ui/JsonLd"
 
 const props = defineProps({
   videoId: {
@@ -86,7 +93,7 @@ const schemaData = computed(() => ({
   "@type": "VideoObject",
   "name": "PixReveal Gameplay Trailer",
   "description": "Watch the official gameplay trailer of PixReveal, the free pixel art party game.",
-  "thumbnailUrl": [props.thumbnailUrl || youtubeThumbnail.value],
+  "thumbnailUrl": [new URL(props.thumbnailUrl || youtubeThumbnail.value, "https://www.pixreveal.com").href],
   "uploadDate": "2026-03-01T08:00:00+01:00",
   "duration": "PT48S",
   "expires": "2040-01-01T00:00:00+01:00",
@@ -120,6 +127,11 @@ const schemaData = computed(() => ({
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.video-placeholder:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -4px;
 }
 
 noscript a {

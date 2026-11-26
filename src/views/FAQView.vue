@@ -6,9 +6,7 @@
         <br />
         PIXREVEAL
       </h1>
-      <FAQComponent class="faq-section" :items="generalFaqs" />
-
-      <router-link to="/" class="link">GO TO HOME</router-link>
+      <FAQComponent :items="generalFaqs" two-columns />
     </ContentPage>
   </main>
 </template>
@@ -87,14 +85,9 @@ h1 {
   color: var(--primary);
 }
 
-.faq-section {
-  max-width: 600px;
+.page {
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.link {
-  display: block;
-  text-align: center;
-  margin-top: 32px;
-  color: var(--color-secondary);
-}
 </style>

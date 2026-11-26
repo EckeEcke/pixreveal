@@ -1,573 +1,108 @@
 <template>
-https://www.reddit.com/r/pixreveal/
-  <ContentPage class="page">
-    <h1 class="logo">BLOG</h1>
-    <div class="subline">PixReveal Updates</div>
-    <div class="log-grid">
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">10-11-26</span>
-      </div>
-      <h3 class="log-title">Play PixReveal on Reddit!</h3>
-      <p>
-        PixReveal now has its own sub on Reddit and is available as a Reddit game! <a href="https://www.reddit.com/r/pixreveal/" target="_blank">Join the sub</a> to play the classic mode right in your browser. Once the app is reviewed, PixReveal can be added to other subs as well. Stay tuned!
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">10-04-26</span>
-      </div>
-      <h3 class="log-title">New achievement system and unlockable content!</h3>
-      <p>
-        Achievements now guide you through PixReveal's main features. Complete them to unlock bonus avatars and text animations for your player name. The achievement system works without any signup or login. To see your progress, simply click on the avatar in the page header.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-20-26</span>
-      </div>
-      <h3 class="log-title">Improded pixel art editor</h3>
-      <p>
-        The editor got a big upgrade today. Better controls with visual feedback, a visual overhaul and new features: a flood feature letting you fill all adjecent pixels, a mirror feature mirroring the pixels you draw horizontally and a forwards/backwards feature letting you revert or return your last drawn pixels. Check out the new <router-link to="/editor">Editor</router-link> now!
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-09-26</span>
-      </div>
-      <h3 class="log-title">New category filter and settings</h3>
-      <p>
-        You are playing with your grandparents and they have no idea, who Mario and Luigi are? Or you are hanging out with your gaming buddies, who find guessing animals rather boring? PixReveal now has an easy way to configure the game: set the drawing mix to <strong>nerdy, mixed or general.</strong>. Nerdy only shows you drawings from the categories anime, cartoons, movies or gaming. While general contains only objects, people, nature and food.
-        Additionally the filter settings are now available in the different game mode hubs. When setting up a party or online game. And in the hub page for the singleplayer modes. So for your next round of PixReveal, don't forget to adjust the game to your likings.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-07-26</span>
-      </div>
-      <h3 class="log-title">New highlight images in Online Gameover</h3>
-      <p>
-        Online mode is played in parallel. But you want to see how your friends actually did? Online mode now shows what your friends answered and what they saw while answering. The game over screen now shows a toggling gallery for you to discuss, amaze and laugh.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-07-26</span>
-      </div>
-      <h3 class="log-title">New highlight images in Party Gameover</h3>
-      <p>
-        We all know this kind of moment: the image is practically completely revealed, yet your friend guessed wrong. Or that one friend, who sees only two pixels and immidiately knows the answer. To make these moments more memorable, I added a highlight image to the game over screen in Partymode. The image is a snapshot of the moment when the player guessed correctly or incorrectly. This way you can relive the moment and see how your friends reacted to it.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-06-26</span>
-      </div>
-      <h3 class="log-title">New Live Badge for Twitch Stream!</h3>
-      <p>
-        You can now see a live badge next to the player avatar whenever I am
-        streaming PixReveal on Twitch. Viewers can join the game directly
-        through the stream chat and compete by guessing the pixel art in real
-        time. My channel is still brand new, so for now this is mostly a
-        just-for-fun test to see how Stream Mode works with a live audience.
-        <a href="https://www.twitch.tv/eckeeckeecke" target="_blank" rel="noopener noreferrer">Watch the stream</a>
-        and play along!
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-05-26</span>
-      </div>
-      <h3 class="log-title">New Stream Mode for YouTube and Twitch!</h3>
-      <p>
-        PixReveal now has a dedicated Stream Mode for YouTube and Twitch! Let
-        your viewers play along directly through the chat: they can answer with
-        the full word or simply type 1, 2, 3 or 4. Each stream round runs for
-        15 minutes, with live scoring and a leaderboard for everyone taking
-        part. The setup is simple: choose your platform, connect your chat and
-        start playing. <router-link to="/stream">Try Stream Mode</router-link>
-        now!
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">09-05-26</span>
-      </div>
-      <h3 class="log-title">Edit avatar on lobby screen</h3>
-      <p>
-        Finally added a feature that I had on my list for quite a while: enabling you to edit your avatar on the lobby screen! Before you could only edit your avatar before joining. Now you can change your avatar and player name while waiting for the game to start. Just click on your player card and the edit modal will open. This QOL feature is available for both party and online mode.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">08-31-26</span>
-      </div>
-      <h3 class="log-title">Screen Scaling and Party Game Over emotes available now!</h3>
-      <p>
-        Since Partymode is best hosted on a TV, I added scaling to PixReveal. The game will now scale to fit your screen, so you can enjoy the game on any device. Additionally I added emotes to the Game Over screen in Partymode. You can now react to the game's outcome with emojis.
-      </p>
-    </div>
-    <div class="log-card">
-      <div class="log-info">
-        <span class="date">08-16-26</span>
-      </div>
-      <h3 class="log-title">Join party game in progress possible now!</h3>
-      <p>
-        Partymode supports up to 10 players. If you wanted to join a running game, you had to wait until the end of the round. Now you can see the QR code/room id right on the host screen, join the game and start playing immidiately!
-      </p>
-    </div>
-    <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-15-26</span>
-        </div>
-        <h3 class="log-title">Improved canvas contrast</h3>
-        <p>
-          One topic that I had on my list for quite a while: black pixels on the canvas were really hard to see. How solve it? Coloring the background lighter? Breaks the design. Making black pixels lighter? Also did not look appealing. In the end I went with a slightly brighter background plus a simple pattern to get the black pixels to pop out more, making it way easier to figure out the pixel drawing.     
-        </p>
-      </div>
-    <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-15-26</span>
-        </div>
-        <h3 class="log-title">New hint system for Partymode!</h3>
-        <p>
-          In the past Partymode worked like this: the pixel art gets revealed pixel by pixel, but players could only see the answers once they buzzered. To make it more player friendly and give players a better chance to guess, I added a new hint mechanic. Once the timer reaches 5, the robot moderator (I will call him PixBot from now on) will tell the 4 answer options. This should give players the confidence to hit the buzzer and score some precious stars.      
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-11-26</span>
-        </div>
-        <h3 class="log-title">Major update to party mode!</h3>
-        <p>
-          PixReveal's most popular game mode, Partymode, has received a massive local multiplayer upgrade with three new powerups, bringing the total to six. Instead of starting with all abilities, a dynamic balancing mechanic now grants a random powerup exclusively to the player in last place, introducing a layer of strategic mystery to matches. Players can hold up to three powerups at a time, with new acquisitions automatically replacing the oldest one if the inventory is full.        
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-07-26</span>
-        </div>
-        <h3 class="log-title">New game stats and animations</h3>
-        <p>
-          Thanks to everyone playing Singleplayer mode, a brand-new feature is
-          here! You can now see how your score stacks up against other players
-          at the end of every round (e.g., "Better than 90% of players"). Plus,
-          a huge visual overhaul is live: feel the thrill with a satisfying zoom
-          on correct answers and watch pixels collapse when you miss!
-        </p>
-      </div>
-    </div>
-    <div class="log-grid">
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-06-26</span>
-        </div>
-        <h3 class="log-title">New navigation for singleplayer</h3>
-        <p>
-          The Daily Challenge and Classic mode are by far the most popular
-          singleplayer options on PixReveal. So I've given the homepage a
-          refresh: instead of a single "Singleplayer" tile, you'll now find a
-          "Play Now" option that takes you straight into the action. The Daily
-          Challenge takes its place right on the homepage too, so you can jump
-          into it directly without any extra clicks. "Submit Your Art" and the
-          full singleplayer mode selection have moved further down the page to
-          make room.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-05-26</span>
-        </div>
-        <h3 class="log-title">
-          Maximum amount of players in multiplayer raised to 10!
-        </h3>
-        <p>
-          Now up to 10 people can play together in local party or online
-          multiplayer. This means more chaos, more powerups, more competition,
-          more fun! I also added a daily champion card that you see on the
-          homepage if you won yesterday's daily challenge. Have you already
-          played today's daily challenge?
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">08-01-26</span>
-        </div>
-        <h3 class="log-title">Major Update for Party Multiplayer!</h3>
-        <p>
-          The party mode is the core element of PixReveal. To increase the
-          quality of the multiplayer, I tweaked the mechanics: if a player
-          buzzers and gives a wrong answer, the round continues and the other
-          players get a chance to buzzer themselves. This way buzzer spamming
-          gets less rewarding, all players are more involved and the game
-          becomes more dynamic.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">07-31-26</span>
-        </div>
-        <h3 class="log-title">Keyboard Controls added</h3>
-        <p>
-          To enable better highscore strats, I added keyboard controls to the
-          answer buttons in PixReveal. Press 1, 2, 3 or 4 on your keyboard to
-          select the according answer. You can also display small key hints on
-          the answer buttons by clicking the "⌨️" icon on the top right of the
-          game screen. Especially in Inspect mode this should come in quite
-          handy. On mobile this option is not available.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">07-30-26</span>
-        </div>
-        <h3 class="log-title">Confetti Effect added</h3>
-        <p>
-          Victories deserve a proper celebration! Setting a new highscore in
-          Survival Mode, winning a local party game or beat your friends in an
-          online match. Any of these achievements now trigger a confetti
-          animation to reward you for your achievements in PixReveal. I will
-          also add an info soon to inform you, if you won the Daily Challenge of
-          the previous day. Stay tuned.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">07-24-26</span>
-        </div>
-        <h3 class="log-title">Support PixReveal on Ko-fi</h3>
-        <p>
-          My priority remains keeping PixReveal 100% free for everyone. Still I
-          have running costs to host PixReveal. If you enjoy playing and want to
-          support the project, I’ve set up a Ko-fi page! Any support helps cover
-          server costs and fuels future updates.
-          <a href="https://ko-fi.com/pixreveal" target="_blank"
-            >PixReveal on Ko-fi</a
-          >
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">07-20-26</span>
-        </div>
-        <h3 class="log-title">Fill button for the pixel art editor</h3>
-        <p>
-          I highly appreciate users submitting pixel art to PixReveal via my
-          <router-link to="/editor">Editor</router-link>! Thank you all! Since I
-          saw some users coloring the background, I added a fill button. By
-          clicking it every pixel without a set color will be turned into the
-          currently selected color.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">07-14-26</span>
-        </div>
-        <h3 class="log-title">Adding more juice: Shake effect on low timer</h3>
-        <p>
-          To make the gameplay more exciting I added a shake effect. When the
-          timer reaches 3 or lower, the canvas starts shaking. Increasing the
-          tension and dynamics of PixReveal. The shake effect is available in
-          all game modes.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">07-09-26</span>
-        </div>
-        <h3 class="log-title">
-          Adding more juice: Shine effect after answering
-        </h3>
-        <p>
-          "Juice" describes audio visual elements that make a game feel more
-          "gamey". To achieve this I added a shine effect on the feedback
-          animation after giving an answer ✅/❌ and on the revealed drawing.
-          The effect is available in all game modes.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">06-10-26</span>
-        </div>
-        <h3 class="log-title">Improved game round generation</h3>
-        <p>
-          When you start a game of PixReveal, a random set of quiz rounds is
-          being generated for you. To increase the fun and avoid annoying early
-          repetition of drawings between rounds, I tweaked the algorithm to
-          create as many unique sets of drawings as possible before repeating
-          one. Since PixReveal now has over 200 unique drawings including user
-          generated content, it will take you a while until you see a drawing
-          you already know.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">06-05-26</span>
-        </div>
-        <h3 class="log-title">Hall of Fame for Daily Challenge winners</h3>
-        <p>
-          So far PixReveal only had a daily leaderboard for the current day and
-          the day before. This felt a bit lame. I wanted to honor the winners
-          more. Therefore I added a Hall of Fame, where each daily winner is
-          displayed with their name, avatar, score and the date they won. You
-          can check it out here:
-          <router-link to="/hall-of-fame">enter Hall of Fame</router-link>
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-28-26</span>
-        </div>
-        <h3 class="log-title">New sudden death added to party mode!</h3>
-        <p>
-          For the case of multiple players having the most points at the end of
-          party mode, I added sudden death. Keep playing until there is only one
-          winner! If you were not among the top players, you can still react to
-          the game using emotes or influence the outcome by using your remaining
-          powerups. Along with new sudden death there also is a new party title
-          awarded for the survivor.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-27-26</span>
-        </div>
-        <h3 class="log-title">More music and adjusted difficulty!</h3>
-        <p>
-          Listening to the same music over and over again gets tedious, right?
-          To keep things fresh I added a random song selection, choosing one of
-          four songs to play during gameplay. Additionally as a consequence of
-          player feedback I adjusted the difficulty of Inspect mode. By making
-          the lens larger, it is now easier to spot the hidden pixel art and
-          more enjoyable for all players.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-23-26</span>
-        </div>
-        <h3 class="log-title">
-          New Bonus rounds in singleplayer and online multiplayer!
-        </h3>
-        <p>
-          Local party multiplayer already had them. Now singleplayer and online
-          mutlplayer have them, too! Bonus rounds mix up the gameplay by making
-          it harder to guess. But at the same time you get the chance to score
-          twice as much! Inspect mode and Survival won't have these bonus
-          rounds, since it does not fit the gameplay style. These will get their
-          own additional mechanics. Stay tuned!
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-17-26</span>
-        </div>
-        <h3 class="log-title">Bonus rounds in party multiplayer</h3>
-        <p>
-          Jackbox style party mode becomes more dynamic! New bonus rounds added:
-          blur, sepia and black&white. On top of that in a bonus round points
-          and malus are doubled. You can win 2 points, but you could also lose 4
-          points! Classic risk versus reward. In the final round points are also
-          doubled now to guarantee an exciting finish!
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-16-26</span>
-        </div>
-        <h3 class="log-title">
-          Party multiplayer titles and moderator improvements
-        </h3>
-        <p>
-          The game over view for the party mode got an upgrade! The moderator
-          now comments on the results of the game. Players earn titles based on
-          the way they played. The saboteur used the most powerups while the
-          pacifist did not use any at all. Manage to answer correctly while
-          scrambled powerup is active to earn a title. Or the spammer title for
-          spamming emojis. We all know a person like that... Additionally the
-          game over screen now provides emoji statistics: how many emojis were
-          clicked and which emoji was the most popular. Upcoming multiplayer
-          feature will be bonus rounds, mixing up the gameplay and offering a
-          chance to gain bonus points.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-15-26</span>
-        </div>
-        <h3 class="log-title">Powerups in multiplayer</h3>
-        <p>
-          Next step to give the local party multiplayer more of a jackbox vibe:
-          I just added powerups! Use the freeze powerup to stop your friends
-          from hitting the buzzer. Turn the lights out for a few seconds to make
-          it harder to guess. Or sabotage them even further by scrambling up the
-          answer options. Besides that the first version of my moderator robot
-          (not AI) is introduced. In the future it will be more prominent on
-          PixReveal. Stay tuned!
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-14-26</span>
-        </div>
-        <h3 class="log-title">Emotes in Party Multiplayer</h3>
-        <p>
-          To improve the "party feeling" of the jackbox style party multiplayer,
-          I added an emote feature. Send reactions from your phone to the host
-          device to react to the current game (or distract other players).
-          Following soon is statistics about used emotes in the end of the
-          round.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-12-26</span>
-        </div>
-        <h3 class="log-title">User Art Gallery</h3>
-        <p>
-          PixReveal features a pixel art editor to submit your own pixel art to
-          be added to the game. Out of appreciation for art created, I built a
-          <router-link to="/user-gallery">user art gallery</router-link> page
-          displaying all (approved) user generated drawings. You can also use
-          the gallery to check if your drawing was already approved. If it is
-          not listed yet, then approval is still pending.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-11-26</span>
-        </div>
-        <h3 class="log-title">QR codes for sharing multiplayer invite link</h3>
-        <p>
-          Multiplayer mode is one of the most popular features on PixReveal! To
-          make it easier to play together, I added QR codes as option to share
-          the invite link. This becomes especially handy in Local Party Mode.
-          When the game is displayed on the home device, simply scan the QR code
-          from the TV/monitor and you can join immidiately. No need to type in
-          the room id manually or trying to figure out how to get the invite
-          link sent from PC to a smartphone. I am also working on further
-          improving the connection handling and adding more gameplay features to
-          the multiplayer. So stay tuned!
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">05-01-26</span>
-        </div>
-        <h3 class="log-title">Daily Challenges added</h3>
-        <p>
-          It was in planning for a while, now I can finally announce that daily
-          challenges are available on PixReveal! Solve a new set of pixel art
-          drawings every day and put your name on the leaderboard! All players
-          play the same set per day. The game mode varies between Classic
-          Reveal, Gravity and Inspect. Check every day for a new quick challenge
-          and compete with the world for the top rank.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">04-24-26</span>
-        </div>
-        <h3 class="log-title">UI & Aesthetics Update: Tile Refinement</h3>
-        <p>
-          I’ve overhauled the main menu and mode selection grids to enhance
-          visual clarity and player intuition. By introducing a dynamic
-          color-coding system, each game mode now carries its own distinct
-          visual identity—ranging from vibrant "Survival Red" to "Gravity
-          Green." I also refined the Relative Color Syntax in CSS to ensure that
-          every tile maintains its signature neon glow while improving contrast
-          against the dark, pixel background. This adjustment doesn't just make
-          the interface pop. It streamlines navigation, allowing you to identify
-          your favorite game modes at a single glance.
-        </p>
-      </div>
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">04-17-26</span>
-        </div>
-        <h3 class="log-title">
-          New User Generated Content: Submit your own pixel art
-        </h3>
-        <p>
-          The core of PixReveal is its art, and now you can be a part of it. I
-          have officially launched the User-Generated Content (UGC)
-          <router-link to="/editor">Editor</router-link>, allowing players to
-          create and submit their own pixel art masterpieces directly within
-          pixreveal.com. Once a design is submitted, it enters my moderation
-          queue for a quick quality check. As soon as I’ve approved the
-          submission, your artwork will be seamlessly integrated into the game,
-          making it playable for everyone in both Solo and Multiplayer modes. To
-          include user generated content, activate UGC in the settings. The
-          bridge between the editor and the live game ensures a constantly
-          evolving library of fresh, high-quality challenges for the community.
-        </p>
-      </div>
+  <ContentPage>
+    <main aria-labelledby="blog-heading">
+      <h1 id="blog-heading" class="logo">BLOG</h1>
+      <div class="subline">PixReveal Updates</div>
 
-      <div class="log-card">
-        <div class="log-info">
-          <span class="date">04-10-26</span>
+      <div class="blog-layout">
+        <aside class="blog-sidebar" aria-label="Browse blog updates">
+          <nav class="latest-updates" aria-labelledby="latest-heading">
+            <h2 id="latest-heading">Latest updates</h2>
+            <a v-for="post in latestPosts" :key="post.id" :href="`#${post.id}`">
+              <span>{{ post.title }}</span>
+              <time :datetime="post.date">{{ formatDate(post.date) }}</time>
+            </a>
+          </nav>
+
+          <details class="archive-mobile">
+            <summary>Archive</summary>
+            <nav class="archive-links" aria-label="Updates by month">
+              <a v-for="month in months" :key="month.id" :href="`#${month.id}`">
+                <span>{{ month.label }}</span>
+                <span class="post-count" :aria-label="`${month.posts.length} updates`">{{ month.posts.length }}</span>
+              </a>
+            </nav>
+          </details>
+
+          <nav class="archive archive-desktop" aria-labelledby="archive-heading">
+            <h2 id="archive-heading">Archive</h2>
+            <div class="archive-links">
+              <a v-for="month in months" :key="month.id" :href="`#${month.id}`">
+                <span>{{ month.label }}</span>
+                <span class="post-count" :aria-label="`${month.posts.length} updates`">{{ month.posts.length }}</span>
+              </a>
+            </div>
+          </nav>
+
+          <section class="community-box">
+            <h2>Feedback or a bug?</h2>
+            <p>Share your feedback and talk about PixReveal with other players.</p>
+            <a href="https://discord.gg/NuYwabjXUj" target="_blank" rel="noopener noreferrer">Join the Discord <span aria-hidden="true">↗</span></a>
+            <a href="https://www.reddit.com/r/pixreveal/" target="_blank" rel="noopener noreferrer">Visit r/pixreveal <span aria-hidden="true">↗</span></a>
+          </section>
+        </aside>
+
+        <div class="blog-posts">
+          <section v-for="month in months" :id="month.id" :key="month.id" class="month-section" :aria-labelledby="`${month.id}-heading`">
+            <h2 :id="`${month.id}-heading`" class="month-heading">{{ month.label }}</h2>
+            <div class="log-grid">
+              <article v-for="post in month.posts" :id="post.id" :key="post.id" class="log-card" :aria-labelledby="`${post.id}-heading`">
+                <time class="date" :datetime="post.date">{{ formatDate(post.date) }}</time>
+                <h3 :id="`${post.id}-heading`" class="log-title">{{ post.title }}</h3>
+                <p><template v-for="(part, index) in post.content" :key="index"><router-link v-if="part.to" :to="part.to">{{ part.text }}</router-link><a v-else-if="part.href" :href="part.href" target="_blank" rel="noopener noreferrer">{{ part.text }}</a><strong v-else-if="part.strong">{{ part.text }}</strong><template v-else>{{ part.text }}</template></template></p>
+              </article>
+            </div>
+          </section>
         </div>
-        <h3 class="log-title">
-          Local Party Mode Added: The Free Jackbox Alternative
-        </h3>
-        <p>
-          Bring the party to your living room with the new Local Party Mode — a
-          completely free alternative to classic party games. The perfect game
-          for your weekend! It works just like a classic Jackbox session: one
-          central device, like your laptop or TV, acts as the Big Screen to
-          display the drawing reveal and live rankings. Meanwhile, everyone else
-          joins the fun using their smartphones as controllers. Internet
-          connection required. The gameplay is fast and frantic: your phone
-          displays a massive buzzer. The moment you think you recognize the
-          pixel art, hit it! Only then will the four answer possibilities appear
-          on your device. It’s a high-stakes race of speed and recognition that
-          turns any gathering into a competitive pixel-guessing arena — no
-          expensive consoles or extra controllers/apps required.
-        </p>
       </div>
-    </div>
-    <div class="devlog-footer">
-      <ButtonPrimary
-        data-sfx="click"
-        class="btn-primary"
-        @clicked="$router.back()"
-      >
-        <Icon icon="pixel:arrow-circle-left-solid" /> BACK
-      </ButtonPrimary>
-    </div>
+    </main>
+    <JsonLd :data="blogSchema" />
   </ContentPage>
 </template>
 
-<script setup>
-import { Icon } from "@iconify/vue";
+<script setup lang="ts">
 import ContentPage from "@/components/page-layout/ContentPage.vue";
-import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
+import JsonLd from "@/components/page-ui/JsonLd";
+import { blogPosts } from "@/data/blogPosts";
+import type { BlogPost } from "@/data/blogPosts";
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short", day: "numeric", year: "numeric", timeZone: "UTC",
+});
+const monthFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "long", year: "numeric", timeZone: "UTC",
+});
+const formatDate = (date: string) => dateFormatter.format(new Date(`${date}T00:00:00Z`));
+const latestPosts = blogPosts.slice(0, 4);
+const months: { id: string; label: string; posts: BlogPost[] }[] = [];
+for (const post of blogPosts) {
+  const id = `updates-${post.date.slice(0, 7)}`;
+  let month = months.find(group => group.id === id);
+  if (!month) {
+    month = { id, label: monthFormatter.format(new Date(`${post.date}T00:00:00Z`)), posts: [] };
+    months.push(month);
+  }
+  month.posts.push(post);
+}
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "PixReveal Blog",
+  description: "Features, patch notes, and multiplayer announcements from PixReveal.",
+  url: "https://www.pixreveal.com/blog",
+  inLanguage: "en",
+  blogPost: blogPosts.map(post => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    datePublished: post.date,
+    url: `https://www.pixreveal.com/blog#${post.id}`,
+    author: { "@type": "Person", name: "Christian Eckardt", url: "https://www.pixreveal.com/about" },
+  })),
+};
 </script>
 
 <style scoped>
-.page {
-  max-width: 700px;
-}
-.log-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  margin-top: 32px;
-  overflow-y: auto;
-}
-
-.log-card {
-  padding: 0 0 16px;
-  border-bottom: 1px solid rgb(from var(--primary) r g b / 0.25);
-  box-sizing: border-box;
-
-  p {
-    margin: 0;
-    line-height: 1.5;
-    opacity: 0.9;
-  }
-}
-
 .logo {
   font-family: inherit;
   text-align: start;
@@ -582,48 +117,235 @@ import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
   text-transform: uppercase;
 }
 
-.log-info {
+.blog-layout {
+  display: grid;
+  gap: 32px;
+  margin-top: 32px;
+  align-items: start;
+}
+
+.blog-posts,
+.blog-sidebar {
+  min-width: 0;
+}
+
+.blog-sidebar {
+  display: grid;
+  gap: 32px;
+}
+
+.blog-sidebar h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.latest-updates,
+.archive-desktop,
+.community-box {
+  display: none;
+}
+
+.archive-links {
+  display: grid;
+}
+
+.archive-links a {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-family: monospace;
+  gap: 8px;
+  padding: 10px 0;
+  font-size: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.archive-mobile {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.archive-mobile summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.archive-mobile summary::-webkit-details-marker {
+  display: none;
+}
+
+.archive-mobile summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin: 0 3px 4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.archive-mobile[open] summary::after {
+  transform: rotate(225deg);
+  margin-bottom: -4px;
+}
+
+.archive-mobile .archive-links {
+  padding-bottom: 12px;
+}
+
+.post-count {
+  font-size: 12px;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.month-section,
+.log-card {
+  scroll-margin-top: 24px;
+}
+
+.month-section + .month-section {
+  margin-top: 40px;
+}
+
+.month-heading {
+  margin: 0 0 20px;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.log-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.log-card {
+  padding: 0 0 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.log-card p {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.9;
 }
 
 .date {
+  display: block;
+  margin-bottom: 10px;
   opacity: 0.65;
-  font-size: 0.9rem;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 .log-title {
-  margin: 0 0 10px 0;
-  letter-spacing: 1px;
-  font-size: 1.4rem;
-  text-transform: uppercase;
-}
-
-@media (min-width: 576px) {
-  .log-grid {
-    gap: 24px;
-  }
-
-  .log-card {
-    padding: 32px;
-    border-radius: 8px;
-    background: rgba(15, 12, 29, 0.75);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 
-      inset 0 1px 1px rgba(255, 255, 255, 0.15),
-      0 8px 32px rgba(0, 0, 0, 0.4);
-  }
-}
-
-.btn-primary {
-  margin-top: 32px;
+  margin: 0 0 12px;
+  font-size: 21px;
+  line-height: 1.4;
 }
 
 a {
   color: var(--primary);
   font-weight: 700;
+}
+
+a:focus-visible,
+.archive-mobile summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+@media (min-width: 1024px) {
+  .blog-layout {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    column-gap: 48px;
+  }
+
+  .blog-posts {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .blog-sidebar {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .latest-updates,
+  .archive-desktop,
+  .community-box {
+    display: block;
+  }
+
+  .archive-mobile {
+    display: none;
+  }
+
+  .latest-updates a {
+    display: grid;
+    gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .latest-updates a:first-of-type {
+    padding-top: 0;
+  }
+
+  .latest-updates time {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+
+  .archive-links {
+    display: grid;
+    gap: 0;
+  }
+
+  .archive-links a {
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .blog-sidebar a:hover {
+    color: var(--primary);
+  }
+
+  .community-box {
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(15, 12, 29, 0.75);
+  }
+
+  .community-box p {
+    margin: 0 0 16px;
+    font-size: 14px;
+  }
+
+  .community-box a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 14px;
+    text-decoration: none;
+  }
 }
 </style>

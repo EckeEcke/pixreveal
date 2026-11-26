@@ -32,6 +32,7 @@ import { Analytics } from "@vercel/analytics/vue"
 import { useRoute } from "vue-router"
 import { useConfigStore } from "./stores/config"
 import { useDailyStore } from "./stores/daily"
+import { createGameDataBootstrap } from "./utils/gameDataBootstrap"
 
 const route = useRoute()
 
@@ -42,6 +43,20 @@ const configStore = useConfigStore()
 const soundStore = useSoundStore()
 const dailyStore = useDailyStore()
 const gameStore = useGameStore()
+
+const gameData = createGameDataBootstrap({
+  daily: () => dailyStore.fetchDailyData(),
+  scores: () => gameStore.fetchScores(),
+  userArt: () => configStore.fetchUgcDrawings(),
+  defer: (load) => {
+    if ("requestIdleCallback" in window) {
+      const handle = window.requestIdleCallback(load, { timeout: 3000 })
+      return () => window.cancelIdleCallback(handle)
+    }
+    const handle = window.setTimeout(load, 1000)
+    return () => window.clearTimeout(handle)
+  },
+})
 
 const audio = ref(null)
 
@@ -146,12 +161,7 @@ const handleVisibilityChange = () => {
 }
 
 onMounted(() => {
-  dailyStore.fetchDailyData()
-  gameStore.fetchScores()
-
-  const load = () => configStore.fetchUgcDrawings();
-  if ("requestIdleCallback" in window) requestIdleCallback(load, { timeout: 3000 });
-  else setTimeout(load, 1000);
+  if (route.name) gameData.enterRoute(route.meta.seoLanding === true || route.meta.staticContent === true)
 
   requestWakeLock()
   document.addEventListener("visibilitychange", handleVisibilityChange)
@@ -186,12 +196,14 @@ onMounted(() => {
 watch(
   () => route.name,
   (name) => {
+    if (name) gameData.enterRoute(route.meta.seoLanding === true || route.meta.staticContent === true)
     if (document.visibilityState === "visible") requestWakeLock()
   },
   { immediate: true },
 )
 
 onBeforeUnmount(() => {
+  gameData.dispose()
   document.removeEventListener("visibilitychange", handleVisibilityChange)
   releaseWakeLock()
 })

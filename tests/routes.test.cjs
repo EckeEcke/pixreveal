@@ -6,6 +6,11 @@ const { createRouter, createMemoryHistory } = require('vue-router');
 
 function routes() {
   let options;
+  const landingModule = { exports: {} };
+  new Function('exports', ts.transpileModule(
+    fs.readFileSync('src/data/seoLandingMeta.ts', 'utf8'),
+    { compilerOptions: { module: ts.ModuleKind.CommonJS } },
+  ).outputText)(landingModule.exports);
   const source = fs.readFileSync('src/router/index.ts', 'utf8')
     .replace('import.meta.env.BASE_URL', '"/"');
   const code = ts.transpileModule(source, {
@@ -20,7 +25,8 @@ function routes() {
     },
   };
   new Function('exports', 'require', code)(module.exports, id =>
-    id === 'vue-router' ? dependencies : { default: { render: () => null } },
+    id === 'vue-router' ? dependencies : id === '@/data/seoLandingMeta'
+      ? landingModule.exports : { default: { render: () => null } },
   );
   return createRouter({ ...options, history: createMemoryHistory() });
 }

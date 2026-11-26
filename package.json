@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only -- {@}\" --",
     "preview": "vite preview",
-    "build-only": "vite build",
+    "build-only": "run-s \"build-client -- {@}\" prerender --",
+    "build-client": "vite build",
+    "prerender": "node scripts/prerender.mjs",
     "type-check": "vue-tsc --build",
     "test": "node --test tests/*.test.cjs tests/*.test.mjs"
   },
