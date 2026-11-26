@@ -50,7 +50,7 @@
 
     <span v-if="cornerText" class="corner-info"><Icon icon="pixel:clock" /> Ends in {{ cornerText }}</span>
     <div v-if="loading" class="loading-overlay">
-      <span class="spinner"></span>
+      <LoadingAnimation size="small" />
     </div>
   </button>
 </template>
@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import { useSoundStore } from "@/stores/sound";
 import { Icon } from "@iconify/vue";
+import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 
 const props = defineProps<{
   iconName?: string;
@@ -358,21 +359,6 @@ const handleClick = (event: MouseEvent) => {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: var(--btn-color);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .feature-badges {

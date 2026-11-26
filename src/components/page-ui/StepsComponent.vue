@@ -1,10 +1,10 @@
 <template>
-  <section class="how-it-works">
+  <section class="how-it-works" :class="{ 'how-it-works--compact': compact }" aria-label="Three steps to play">
     <div class="steps-grid">
       <!-- Step 1 -->
       <div class="step-card">
         <div class="video-container">
-          <video autoplay loop muted playsinline>
+          <video autoplay loop muted playsinline aria-label="Pixel art being revealed">
             <source src="/assets/videos/classic-demo.webm" type="video/webm" />
             <source src="/assets/videos/classic-demo.mp4" type="video/mp4" />
           </video>
@@ -23,14 +23,14 @@
       <!-- Step 2 -->
       <div class="step-card">
         <div class="video-container">
-          <video autoplay loop muted playsinline>
+          <video autoplay loop muted playsinline aria-label="Choosing an answer">
             <source src="/assets/videos/answer-demo.webm" type="video/webm" />
             <source src="/assets/videos/answer-demo.mp4" type="video/mp4" />
           </video>
         </div>
         <h3 class="step"><span class="step-num">2</span> Make a guess</h3>
         <p>
-          Hit the buzzer and select the correct answer before time runs out!
+          Select an answer before time runs out. In Party Mode, buzz in first.
         </p>
       </div>
 
@@ -42,7 +42,7 @@
       <!-- Step 3 -->
       <div class="step-card">
         <div class="video-container">
-          <video autoplay loop muted playsinline>
+          <video autoplay loop muted playsinline aria-label="End of game scores">
             <source src="/assets/videos/gameover-demo.webm" type="video/webm" />
             <source src="/assets/videos/gameover-demo.mp4" type="video/mp4" />
           </video>
@@ -56,6 +56,8 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
+
+defineProps<{ compact?: boolean }>()
 </script>
 
 <style scoped>
@@ -188,5 +190,81 @@ import { Icon } from "@iconify/vue"
   flex-shrink: 0;
   font-size: 16px;
   line-height: 1;
+}
+
+.how-it-works--compact .steps-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.how-it-works--compact .step-divider {
+  display: none;
+}
+
+.how-it-works--compact .step-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 12px;
+  max-width: none;
+  padding: 12px;
+  box-shadow: none;
+}
+
+.how-it-works--compact .video-container {
+  grid-row: span 2;
+  max-width: none;
+  border-radius: 4px;
+}
+
+.how-it-works--compact .step {
+  margin: 0;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.how-it-works--compact .step-num {
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+}
+
+.how-it-works--compact .step-card p {
+  margin: 0;
+  max-width: none;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 359px) {
+  .how-it-works--compact .step-card {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 6px 10px;
+    padding: 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .how-it-works--compact .steps-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .how-it-works--compact .step-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    align-content: start;
+    align-items: start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .how-it-works--compact .video-container {
+    grid-row: auto;
+    max-width: 140px;
+  }
 }
 </style>

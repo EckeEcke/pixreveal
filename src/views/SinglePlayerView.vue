@@ -30,6 +30,9 @@
                 size="lg"
                 icon-name="pixelarticons:blocks"
                 :btn-function="startGravity"
+                :loading="isStarting && startingMode === 'gravity'"
+                :disabled="isStarting"
+                :aria-busy="isStarting && startingMode === 'gravity'"
                 btn-text="GRAVITY"
                 sub-title="Pixels dropping in from the top in Tetris style"
                 btn-color="var(--neon-mint)"
@@ -40,6 +43,9 @@
                 size="lg"
                 icon-name="pixel:search"
                 :btn-function="startInspect"
+                :loading="isStarting && startingMode === 'inspect'"
+                :disabled="isStarting"
+                :aria-busy="isStarting && startingMode === 'inspect'"
                 btn-text="INSPECT"
                 sub-title="Use your lens to spot the art in the dark"
                 btn-color="var(--neon-cyan)"
@@ -50,6 +56,9 @@
                 size="lg"
                 icon-name="pixel:hockey-mask-solid"
                 :btn-function="startSurvival"
+                :loading="isStarting && startingMode === 'survival'"
+                :disabled="isStarting"
+                :aria-busy="isStarting && startingMode === 'survival'"
                 btn-text="SURVIVAL"
                 sub-title="Answer correctly to gain more time"
                 btn-color="var(--neon-error)"
@@ -62,6 +71,9 @@
                 size="lg"
                 icon-name="pixel:sparkles"
                 :btn-function="startClassic"
+                :loading="isStarting && startingMode === 'classic'"
+                :disabled="isStarting"
+                :aria-busy="isStarting && startingMode === 'classic'"
                 btn-text="CLASSIC REVEAL"
                 sub-title="Drawing gets revealed pixel by pixel"
                 btn-color="var(--primary)"
@@ -69,25 +81,29 @@
                 :max-players="1"
               />
             </div>
+            <p v-if="isStarting" class="start-status" role="status">Starting game…</p>
+            <p v-if="startError" class="start-error" role="alert">{{ startError }}</p>
           </div>
         </div>
 
         <div class="card-grid">
           <!-- SEO TEXT SECTION -->
           <article class="info-card seo-section">
-            <h2>Free Browser Pixel Image Guessing Game</h2>
+            <h2>Free Singleplayer Pixel Art Guessing Game</h2>
             <p>
-              Welcome to the singleplayer modes of <strong>PixReveal</strong>, a free <strong>browser guess the pixel image game</strong>. Test your visual recognition skills under time pressure, earn stars based on your speed, and climb to the top rank — <strong>no download or registration required</strong>.
+              Play <strong>PixReveal</strong>, a free pixel art guessing game, on your
+              own in a desktop or mobile browser. Identify the hidden picture and
+              choose from four possible answers before time runs out. No account,
+              app or download is needed.
             </p>
             <p>
-              Choose from four unique singleplayer modes tailored to your playstyle:
+              Watch pixels appear in <strong>Classic Reveal</strong>, recognize
+              falling blocks in <strong>Gravity</strong>, or search the dark canvas
+              with a movable lens in <strong>Inspect</strong>. In
+              <strong>Survival</strong>, correct answers add time as you try to beat
+              your personal best. Choose a drawing mix with everyday objects,
+              animals and food, or test your knowledge of movies, anime and gaming.
             </p>
-            <ul>
-              <li><strong>Classic Reveal:</strong> Guess the drawing as it uncovers pixel by pixel.</li>
-              <li><strong>Gravity:</strong> Identify the pixel art as blocks fall Tetris-style from top to bottom.</li>
-              <li><strong>Inspect:</strong> Use a magnifying lens to explore the hidden image in the dark.</li>
-              <li><strong>Survival:</strong> Answer fast to gain extra time and push for a new highscore.</li>
-            </ul>
           </article>
         </div>
       </section>
@@ -97,7 +113,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useConfigStore } from "@/stores/config";
 import FooterApp from "@/components/page-layout/FooterApp.vue";
 import SelectionTile from "@/components/page-ui/SelectionTile.vue";
@@ -110,17 +126,33 @@ import { Icon } from "@iconify/vue";
 
 const configStore = useConfigStore();
 const survivalStore = useSurvivalStore();
-const { startSingleplayer } = useSingleplayerStart();
+const { startSingleplayer, isStarting } = useSingleplayerStart();
+const startingMode = ref("");
+const startError = ref("");
 const drawingMixLabel = computed(() => ({
   general: "General",
   all: "Mixed",
   nerdy: "Nerdy",
 }[configStore.activePreset] || "Custom"));
 
-const startClassic = () => startSingleplayer("classic");
-const startGravity = () => startSingleplayer("gravity");
-const startInspect = () => startSingleplayer("inspect");
-const startSurvival = () => startSingleplayer("survival");
+const startMode = async (mode) => {
+  if (isStarting.value) return;
+  startingMode.value = mode;
+  startError.value = "";
+  try {
+    if (await startSingleplayer(mode)) return;
+  } catch {
+    // Allow another attempt if game data or navigation could not be loaded.
+  } finally {
+    startingMode.value = "";
+  }
+  startError.value = "The game couldn't load. Please try again.";
+};
+
+const startClassic = () => startMode("classic");
+const startGravity = () => startMode("gravity");
+const startInspect = () => startMode("inspect");
+const startSurvival = () => startMode("survival");
 </script>
 
 <style scoped>
@@ -291,6 +323,31 @@ h2 {
   }
 }
 
+.mode-buttons :deep(.neon-btn[aria-busy="true"]) {
+  opacity: 1;
+}
+
+.mode-buttons :deep(.neon-btn[aria-busy="true"] .btn-content),
+.mode-buttons :deep(.neon-btn[aria-busy="true"] .top-badges) {
+  opacity: 0.25;
+}
+
+.start-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.start-error {
+  margin: 0;
+  color: var(--neon-error);
+  font-size: 14px;
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -331,9 +388,9 @@ h2 {
     font-size: 14px;
     margin: 0;
   }
-}
 
-ul {
-  padding-inline-start: 20px;
+  p + p {
+    margin-top: 16px;
+  }
 }
 </style>

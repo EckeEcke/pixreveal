@@ -56,8 +56,8 @@ test('mode selection connects all four tile handlers to the shared starter',asyn
  const view=fs.readFileSync('src/views/SinglePlayerView.vue','utf8');
  const script=view.match(/<script setup>([\s\S]*?)<\/script>/)[1].replace(/^import .*;\r?$/gm,'');
  const calls=[];
- const actions=new Function('computed','useConfigStore','useSurvivalStore','useSingleplayerStart',script+';return [startClassic,startGravity,startInspect,startSurvival];')(
-  require('vue').computed,()=>({activePreset:'general'}),()=>({highscore:10}),()=>({startSingleplayer:async mode=>calls.push(mode)})
+ const actions=new Function('computed','ref','useConfigStore','useSurvivalStore','useSingleplayerStart',script+';return [startClassic,startGravity,startInspect,startSurvival];')(
+  require('vue').computed,require('vue').ref,()=>({activePreset:'general'}),()=>({highscore:10}),()=>({isStarting:require('vue').ref(false),startSingleplayer:async mode=>{calls.push(mode);return true;}})
  );
  for(const action of actions) await action();
  assert.deepEqual(calls,['classic','gravity','inspect','survival']);
