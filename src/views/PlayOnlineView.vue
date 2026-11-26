@@ -49,6 +49,7 @@
               </div>
 
               <div class="setup-section">
+                <h3>YOUR PLAYER</h3>
                 <div class="player-info-wrapper">
                   <div
                     class="player-avatar"
@@ -87,7 +88,7 @@
                 v-else
                 class="join-container"
               >
-                <h3>ENTER ROOM ID TO JOIN A GAME</h3>
+                <h3>ROOM ID</h3>
 
                 <div>
                   <RoomIdInput
@@ -340,7 +341,6 @@ const joinGame = () => {
   text-align: left;
   @media (min-width: 1024px) {
     text-align: center;
-    margin-bottom: 64px;
   }
 }
 
@@ -363,7 +363,6 @@ const joinGame = () => {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
-  row-gap: 64px;
 }
 
 .panel {
@@ -470,7 +469,14 @@ const joinGame = () => {
 }
 
 .setup-section {
-  margin: 20px 0;
+  margin: 24px 0;
+}
+
+.setup-section h3,
+.join-container h3 {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .host-info {

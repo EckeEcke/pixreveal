@@ -55,7 +55,7 @@
               </div>
 
               <div v-if="selectedRole !== 'host'" class="setup-section">
-                <h3>SET YOUR NAME AND AVATAR</h3>
+                <h3>YOUR PLAYER</h3>
 
                 <div class="player-info-wrapper">
                   <div
@@ -87,7 +87,7 @@
               </ButtonPrimary>
 
               <div v-else class="join-container">
-                <h3>ENTER ROOM ID TO JOIN A GAME</h3>
+                <h3>ROOM ID</h3>
 
                 <div>
                   <RoomIdInput
@@ -343,12 +343,6 @@ const joinGame = () => {
   box-sizing: border-box;
 }
 
-.pre-headline {
-  display: block;
-  text-align: center;
-  color: var(--primary);
-}
-
 h2 {
   margin-top: 0;
   margin-bottom: 32px;
@@ -363,7 +357,6 @@ h2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
-  row-gap: 64px;
 }
 
 .host-settings {
@@ -500,7 +493,14 @@ h2 {
 }
 
 .setup-section {
-  margin: 48px 0;
+  margin: 24px 0;
+}
+
+.setup-section h3,
+.join-container h3 {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .host-info {
@@ -660,7 +660,6 @@ h2 {
 
   @media (min-width: 1024px) {
     text-align: center;
-    margin-bottom: 64px;
   }
 }
 

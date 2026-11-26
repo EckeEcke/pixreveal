@@ -268,10 +268,10 @@ const setRevealTime = (duration) => {
   overflow: hidden;
   border: 2px solid var(--border-color);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.015);
+  background-color: rgba(255, 255, 255, 0.015);
   color: rgba(255, 255, 255, 0.75);
   transition:
-    background 0.15s ease,
+    background-color 0.15s ease,
     border-color 0.15s ease,
     color 0.15s ease,
     transform 0.15s ease;
@@ -285,9 +285,7 @@ const setRevealTime = (duration) => {
   width: 3px;
   background: var(--preset-color);
   opacity: 0.45;
-  transition:
-    width 0.15s ease,
-    opacity 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
 .preset-label {
@@ -309,7 +307,7 @@ const setRevealTime = (duration) => {
 }
 
 .preset-item.is-selected .preset-content {
-  background: var(--preset-color);
+  background-color: var(--preset-color);
   border-color: #fff;
   color: #000;
   box-shadow: 0 0 14px color-mix(
@@ -320,8 +318,7 @@ const setRevealTime = (duration) => {
 }
 
 .preset-item.is-selected .preset-indicator {
-  width: 100%;
-  opacity: 0.12;
+  opacity: 0;
 }
 
 .preset-item.is-disabled {
