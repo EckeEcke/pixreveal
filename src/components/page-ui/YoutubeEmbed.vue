@@ -31,6 +31,7 @@
       <div class="play-overlay">
         <div class="play-button"></div>
       </div>
+      <span v-if="badge" class="video-badge">{{ badge }}</span>
     </div>
 
     <iframe
@@ -61,6 +62,10 @@ const props = defineProps({
     required: true,
   },
   thumbnailUrl: {
+    type: String,
+    default: "",
+  },
+  badge: {
     type: String,
     default: "",
   },
@@ -139,6 +144,33 @@ noscript a {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.video-badge {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1;
+  padding: 6px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  background: rgba(10, 10, 12, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: var(--font-display), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .video-badge {
+    right: 6px;
+    bottom: 6px;
+  }
 }
 
 .play-button {

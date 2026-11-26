@@ -1,7 +1,8 @@
 import { ref, computed } from "vue";
 import type { Ref } from "vue";
 import { defineStore } from "pinia";
-import type { Drawing, RoundOption } from "@/types/game";
+import type { Drawing } from "@/types/game";
+import { createRoundOptions } from "@/utils/roundOptions";
 import allDrawings from "@/data/drawings.json";
 import { useConfigStore } from "./config";
 import { useSoundStore } from "./sound";
@@ -80,7 +81,10 @@ export const useSurvivalStore = defineStore("survival", () => {
     if (drawings.value.length > 0) {
       const next = drawings.value.pop();
       if (next) {
-        currentDrawing.value = { ...next, options: generateOptions(next) };
+        currentDrawing.value = {
+          ...next,
+          options: createRoundOptions(next, uniqueDrawings.value),
+        };
         hasAnswered.value = false;
         gameStore.setGameState("revealing");
       }
@@ -88,19 +92,6 @@ export const useSurvivalStore = defineStore("survival", () => {
       currentDrawing.value = undefined;
       triggerGameOver();
     }
-  };
-
-  const generateOptions = (correctDrawing: Drawing): RoundOption[] => {
-    const selectedDistractors = uniqueDrawings.value
-      .filter((d) => d.name !== correctDrawing.name)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map((d) => ({ title: d.name, isCorrect: false }));
-
-    return [
-      ...selectedDistractors,
-      { title: correctDrawing.name, isCorrect: true },
-    ].sort(() => Math.random() - 0.5);
   };
 
   const runTimer = () => {

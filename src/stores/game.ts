@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { shuffle } from "@/utils/random";
+import { createRoundOptions } from "@/utils/roundOptions";
 import { useConfigStore } from "./config";
 import type { Drawing, RoundOption, Round, GameState } from "@/types/game";
 
@@ -78,41 +79,6 @@ export const useGameStore = defineStore("game", () => {
     () => rounds.value[currentRoundIndex.value] ?? null,
   );
 
-  function getDistractors(drawing: Drawing, pool: Drawing[]): Drawing[] {
-    const sameCategoryAndColor: Drawing[] = [];
-    const sameColor: Drawing[] = [];
-    const sameCategory: Drawing[] = [];
-    const fallback: Drawing[] = [];
-
-    for (const d of pool) {
-      if (d.name === drawing.name) {
-        continue;
-      }
-
-      if (
-        d.category === drawing.category &&
-        d.primaryColor === drawing.primaryColor
-      ) {
-        sameCategoryAndColor.push(d);
-      } else if (d.primaryColor === drawing.primaryColor) {
-        sameColor.push(d);
-      } else if (d.category === drawing.category) {
-        sameCategory.push(d);
-      } else {
-        fallback.push(d);
-      }
-    }
-
-    const candidates = [
-      ...shuffle(sameCategoryAndColor),
-      ...shuffle(sameColor),
-      ...shuffle(sameCategory),
-      ...shuffle(fallback),
-    ];
-
-    return candidates.slice(0, 3);
-  }
-
   function createRound(
     drawing: Drawing,
     allDrawings: Drawing[],
@@ -125,17 +91,10 @@ export const useGameStore = defineStore("game", () => {
       ),
     );
 
-    const distractors = getDistractors(drawing, pool);
-
-    const options: RoundOption[] = shuffle([
-      { title: drawing.name, isCorrect: true },
-      ...distractors.map((d) => ({ title: d.name, isCorrect: false })),
-    ]);
-
     return {
       answer: drawing.name,
       data: drawing.data,
-      options,
+      options: createRoundOptions(drawing, pool),
     };
   }
 

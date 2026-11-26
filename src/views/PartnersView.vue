@@ -6,76 +6,90 @@
       </h1>
       <div class="subline">RECOMMENDED GAMING PLATFORMS</div>
 
-      <p class="party-desc">
-        Gaming is always better together. As a solo developer, I love teaming up
-        with other awesome indie multiplayer platforms, community hubs, and
-        browser game creators to help you discover fresh party games and elevate
-        your game nights.
-      </p>
+      <div class="partners-layout">
+        <section class="partners-section">
+          <p class="party-desc partners-intro">
+            Gaming is always better together. As a solo developer, I love teaming up
+            with other awesome indie multiplayer platforms, community hubs, and
+            browser game creators to help you discover fresh party games and elevate
+            your game nights.
+          </p>
+          <h2>My Featured Partners</h2>
+          <div class="partners-grid">
+            <div
+              v-for="partner in partners"
+              :key="partner.name"
+              class="partner-card"
+            >
+              <a
+                :href="partner.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  :src="partner.image"
+                  :alt="`Preview of ${partner.name}`"
+                  class="partner-image"
+                  width="1280"
+                  height="720"
+                  loading="lazy"
+                />
+              </a>
+              <h3>{{ partner.name }}</h3>
+              <p>{{ partner.description }}</p>
 
-      <section class="partners-section">
-        <h2>My Featured Partners</h2>
-        <div class="partners-grid">
-          <div
-            v-for="partner in partners"
-            :key="partner.name"
-            class="partner-card"
-          >
-            <a 
-              :href="partner.url" 
+              <ul v-if="partner.highlights" class="highlights-list">
+                <li v-for="(highlight, index) in partner.highlights" :key="index">
+                  <strong>{{ highlight.title }}:</strong> {{ highlight.text }}
+                </li>
+              </ul>
+              <a
+                :href="partner.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-btn-primary"
+              >
+                VISIT {{ partner.name.toUpperCase() }} &rarr;
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <aside class="partners-sidebar" aria-label="Connect and visit our partners">
+          <section class="more-partners">
+            <h2>Partner Up & Connect</h2>
+            <p class="party-desc">
+              Building a browser game or gaming community? Let's connect,
+              collaborate, and help players discover each other's projects.
+            </p>
+            <a
+              href="https://discord.gg/NuYwabjXUj"
               target="_blank"
               rel="noopener noreferrer"
+              class="btn-primary"
+              data-sfx="click"
             >
-              <img
-                :src="partner.image"
-                :alt="`Preview of ${partner.name}`"
-                class="partner-image"
-                width="1280"
-                height="720"
-                loading="lazy"
-              />
+              <span>Ping me on Discord</span>
+              <Icon icon="selfhst:discord-dark" alt="link to my discord" />
             </a>
-            <h3>{{ partner.name }}</h3>
-            <p>{{ partner.description }}</p>
+          </section>
 
-            <ul v-if="partner.highlights" class="highlights-list">
-              <li v-for="(highlight, index) in partner.highlights" :key="index">
-                <strong>{{ highlight.title }}:</strong> {{ highlight.text }}
-              </li>
-            </ul>
+          <nav class="partner-links" aria-label="Partner websites">
+            <h2>Visit our partners</h2>
             <a
+              v-for="partner in partners"
+              :key="partner.url"
               :href="partner.url"
               target="_blank"
               rel="noopener noreferrer"
-              class="link-btn-primary"
             >
-              VISIT {{ partner.name.toUpperCase() }} &rarr;
+              <span>{{ partner.name }}</span>
+              <span aria-hidden="true">↗</span>
             </a>
-          </div>
-        </div>
-      </section>
+          </nav>
+        </aside>
+      </div>
 
-      <section class="more-partners">
-        <h2>Partner Up & Connect</h2>
-        <p class="party-desc">
-          Are you building an indie game, a party game platform, or a gaming
-          community? As a solo dev, I am always open to connecting with fellow
-          creators, collaborating, or exchanging recommendations. Feel free to
-          reach out if you'd like to partner up!
-        </p>
-        <a
-          href="https://discord.gg/NuYwabjXUj"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn-primary"
-          data-sfx="click"
-        >
-          <span>Ping me on Discord</span>
-          <Icon icon="selfhst:discord-dark" alt="link to my discord" />
-        </a>
-      </section>
-
-      <router-link to="/" class="link">GO TO HOME</router-link>
     </ContentPage>
   </main>
 </template>
@@ -128,6 +142,27 @@ const partners = [
     ],
   },
   {
+    name: "Plungee",
+    url: "https://plungee.netlify.app/",
+    image: "/assets/images/image-plungee.webp",
+    description:
+      "A colorful gravity-driven browser platformer. Steer your character through obstacle-filled levels, tackle the campaign and weekly challenges, or jump into online multiplayer. Create your own levels and discover creations from the community.",
+    highlights: [
+      {
+        title: "Simple Controls, Tricky Levels",
+        text: "Move left and right while gravity carries you through levels filled with springs, lasers, and other obstacles.",
+      },
+      {
+        title: "Campaign & Weekly Challenges",
+        text: "Explore the campaign at different difficulty levels and test your skills in the weekly challenge.",
+      },
+      {
+        title: "Multiplayer & Community Levels",
+        text: "Play online, build your own levels, and try levels made by other players.",
+      },
+    ],
+  },
+  {
     name: "Schoolfight",
     url: "https://eckeecke.itch.io/school-fight",
     image: "/schoolfight-preview.webp",
@@ -168,10 +203,33 @@ const partners = [
 
 .page {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-  max-width: 700px;
+  box-sizing: border-box;
+}
+
+.partners-layout {
+  display: grid;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.partners-section,
+.partners-sidebar {
+  min-width: 0;
+}
+
+.partners-sidebar {
+  display: grid;
+  width: 100%;
+  gap: 24px;
+  align-content: start;
+}
+
+@media (min-width: 1024px) {
+  .partners-layout {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    gap: 32px;
+    align-items: start;
+  }
 }
 
 h2 {
@@ -184,8 +242,17 @@ h2 {
   line-height: 1.6;
 }
 
+.partners-intro {
+  max-width: 70ch;
+  margin: 0 0 32px;
+}
+
 .partners-section {
-  margin-top: 32px;
+  margin-top: 0;
+}
+
+.partners-section > h2 {
+  margin-top: 0;
 }
 
 .partners-grid {
@@ -229,7 +296,7 @@ h2 {
 }
 
 .partner-card p {
-  margin-bottom: 16px;
+  margin: 0 0 16px;
   line-height: 1.5;
 }
 
@@ -244,16 +311,56 @@ h2 {
 }
 
 .more-partners {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(15, 12, 29, 0.75);
 }
 
-.link {
-  display: block;
-  text-align: center;
-  margin-top: 32px;
+.more-partners h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.more-partners .party-desc {
+  font-size: 14px;
+}
+
+.more-partners .btn-primary {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.more-partners .btn-primary svg {
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.partner-links h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.partner-links a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--color-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.partner-links a:hover,
+.partner-links a:focus-visible {
+  color: var(--primary);
 }
 
 .link-btn-primary {

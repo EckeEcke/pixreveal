@@ -6,7 +6,7 @@
         FAST-PACED PROGRESSIVE IMAGE REVEAL QUIZ
       </h1>
       <div class="hero">
-        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+        <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" badge="Trailer" />
 
         <div>
          <p class="hero-desc">

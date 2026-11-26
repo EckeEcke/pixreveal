@@ -35,7 +35,7 @@
                 </router-link>
             </div>
             <div class="trailer-bento">
-              <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" />
+              <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" badge="Trailer" />
               <div class="tiles-column">
                 <router-link to="/play-online" data-sfx="click" class="tile-link">
                   <SelectionTile

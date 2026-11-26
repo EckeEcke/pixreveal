@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" class="trailer" />
+      <YoutubeEmbed video-id="YQl5jOqm2n0" thumbnail-url="/assets/images/trailer-preview.webp" badge="Trailer" class="trailer" />
 
       <div class="two-columns">
         <PartyHowTo />

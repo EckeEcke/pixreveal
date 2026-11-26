@@ -4,12 +4,27 @@ const fs = require('node:fs');
 const ts = require('typescript');
 const { createPinia, setActivePinia } = require('pinia');
 
-function setup() {
+function loadUtility(file) {
+  const module = { exports: {} };
+  const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  new Function('exports', 'require', code)(module.exports, id => {
+    if (id === '@/utils/random') return loadUtility('src/utils/random.ts');
+    if (id === '@/data/drawings.json') return { default: [] };
+    throw Error(id);
+  });
+  return module.exports;
+}
+
+const roundOptions = loadUtility('src/utils/roundOptions.ts');
+
+function setup(sourceDrawings) {
   setActivePinia(createPinia());
   const timers = new Map(); let next = 0;
   const sounds = [];
   const game = { gameState: 'feedback', setGameState(state) { this.gameState = state; } };
-  const drawings = ['A','B','C','D'].map(name => ({ name, category: 'Gaming', data: [[1,0],[0,1]] }));
+  const drawings = sourceDrawings ?? ['A','B','C','D'].map(name => ({ name, category: 'Gaming', primaryColor: 1, data: [[1,0],[0,1]] }));
   const config = { includeUgc: false, selectedCategories: ['Gaming'] };
   const code = ts.transpileModule(fs.readFileSync('src/stores/survival.ts','utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
   const module = { exports: {} };
@@ -19,6 +34,7 @@ function setup() {
     if (id === './config') return { useConfigStore: () => config };
     if (id === './sound') return { useSoundStore: () => ({playSound: sound => sounds.push(sound)}) };
     if (id === './game') return { useGameStore: () => game };
+    if (id === '@/utils/roundOptions') return roundOptions;
     if (id.includes('workerTimers')) return {
       workerSetInterval: fn => { const id = ++next; timers.set(id,fn); return id; },
       workerClearInterval: id => timers.delete(id)
@@ -53,6 +69,45 @@ test('timeout and exhausted pool enter gameover without retaining an old drawing
   assert.equal(h.store.isGameOver,true); assert.equal(h.timers.size,0);
   h.store.startSurvival(); h.store.drawings=[]; h.store.setNextDrawing();
   assert.equal(h.store.isGameOver,true); assert.equal(h.store.currentDrawing,undefined);
+});
+
+test('survival prefers similar answers and fills missing matches from the remaining pool', () => {
+  const drawing = (name, category, primaryColor) => ({ name, category, primaryColor, data: [[primaryColor]] });
+  const target = drawing('Target', 'Animals', 1);
+  const both = ['Both A', 'Both B', 'Both C'].map(name => drawing(name, 'Animals', 1));
+  const color = drawing('Same color', 'Food', 1);
+  const category = drawing('Same category', 'Animals', 2);
+  const fallback = drawing('Other', 'Gaming', 3);
+  const cases = [
+    { candidates: [...both, color, category, fallback], expected: both.map(d => d.name) },
+    { candidates: [both[0], color, category, fallback], expected: [both[0].name, color.name, category.name] },
+    { candidates: [both[0], category, fallback], expected: [both[0].name, category.name, fallback.name] },
+  ];
+
+  for (const { candidates, expected } of cases) {
+    const source = [target, ...candidates];
+    const before = JSON.stringify(source);
+    const h = setup(source);
+    h.store.startSurvival();
+    h.store.drawings = [target];
+    h.store.setNextDrawing();
+    const options = h.store.currentDrawing.options;
+    assert.equal(options.length, 4);
+    assert.equal(new Set(options.map(o => o.title)).size, 4);
+    assert.deepEqual(options.filter(o => o.isCorrect), [{ title: target.name, isCorrect: true }]);
+    assert.deepEqual(options.filter(o => !o.isCorrect).map(o => o.title).sort(), expected.sort());
+    assert.equal(JSON.stringify(source), before);
+    h.store.stop();
+  }
+});
+
+test('answer selection handles a small pool without using the solution as a distractor', () => {
+  const target = { name: 'Target', category: 'Animals', primaryColor: 1, data: [[1]] };
+  const other = { ...target, name: 'Other' };
+  assert.deepEqual(roundOptions.createRoundOptions(target, [target]), [{ title: 'Target', isCorrect: true }]);
+  const options = roundOptions.createRoundOptions(target, [target, other]);
+  assert.equal(options.length, 2);
+  assert.deepEqual(options.filter(o => !o.isCorrect), [{ title: 'Other', isCorrect: false }]);
 });
 
 test('answer buttons play one feedback sound for correct, incorrect and devil answers', () => {
