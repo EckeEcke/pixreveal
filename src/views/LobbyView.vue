@@ -1,93 +1,89 @@
 <template>
-<div>
+<div class="lobby-page">
   <div ref="lobbyWrapperRef" class="lobby-wrapper">
     <div class="back-btn-wrapper">
       <button class="back-btn" @click="$router.back()" data-sfx="back">
         <Icon icon="pixel:angle-left-solid" />
       </button>
     </div>   
-   <div class="lobby-card">
+   <div class="lobby-card" :class="{ 'party-lobby': isParty }">
       <h1>{{ isParty ? "PARTY LOBBY" : "ONLINE LOBBY" }}</h1>
       <span class="pre-headline">{{ configStore.maxRounds }} Rounds · {{ configStore.revealTime }}s per round</span>
-      <h1></h1>
       <div class="lobby-layout">
-        <!-- Linke Spalte: Hosting & Beitritt -->
-        <div class="lobby-left-column">
-          <h2>INVITE PLAYERS</h2>
-          <div class="qr-code">
-            <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
+        <section class="lobby-left-column lobby-invite" aria-labelledby="lobby-invite-heading">
+          <h2 id="lobby-invite-heading">INVITE PLAYERS</h2>
+          <div class="lobby-room-id">
+            <span>ROOM ID</span>
+            <button
+              type="button"
+              class="lobby-room-code"
+              :aria-label="`Copy room ID ${channelStore.currentRoomId}`"
+              data-sfx="click"
+              @click="copyToClipboard"
+            >
+              {{ channelStore.currentRoomId }}
+              <Icon icon="pixel:copy" />
+            </button>
           </div>
           <div class="share-room-buttons">
-            <button
-              @click="copyLinkToClipboard"
-              class="btn-outline"
-              data-sfx="click"
-            >
+            <button class="btn-outline" data-sfx="click" @click="copyLinkToClipboard">
               <Icon icon="pixel:link-solid" />
               COPY INVITE LINK
             </button>
-            <button
-              v-if="canNativeShare"
-              class="btn-outline"
-              @click="shareNative"
-              data-sfx="click"
-            >
+            <button v-if="canNativeShare" class="btn-outline" data-sfx="click" @click="shareNative">
               <Icon icon="pixel:share" />
               SHARE
             </button>
           </div>
-          <div class="room-id">
-            ROOM ID:
-            <span @click="copyToClipboard" data-sfx="click">
-              {{ channelStore.currentRoomId }}
-              <Icon icon="pixel:copy" />
-            </span>
-          </div>
-          <ButtonPrimary
-            v-if="channelStore.isHost"
-            data-sfx="click"
-            class="start-btn"
-            :class="players.length > (isParty ? 2 : 1) ? 'pulse-btn' : ''"
-            @clicked="startGame"
-            :disabled="channelStore.isHost && players.length < (isParty ? 3 : 2) && !isStarting"
-          >
-          {{ isParty ? "START PARTY" : "START GAME" }}
-          </ButtonPrimary>
-          <LoadingAnimation
-            v-if="
-              ((channelStore.isHost && players.length <= 2) || !channelStore.isHost) || isStarting
-            "
-            :text="isStarting ? 'STARTING GAME' : (channelStore.isHost ? 'WAITING FOR MORE PLAYERS' : 'WAITING FOR HOST')"
-            class="loading-animation"
-          />
-        </div>
+          <details class="lobby-qr" :class="{ 'party-qr': isParty }" :open="isParty || isDesktopLobby">
+            <summary>
+              QR CODE
+              <Icon icon="pixel:angle-down-solid" />
+            </summary>
+            <div class="qr-code">
+              <qrcode-vue :value="inviteLink" :size="150" render-as="svg" />
+            </div>
+          </details>
+        </section>
 
-        <!-- Rechte Spalte: Spielerliste & Chat -->
+        <!-- Players and start action -->
         <div class="lobby-right-column">
-          <h2 v-if="isParty">PLAYERS IN LOBBY ({{ players.length - 1 }})</h2>
-          <h2 v-else>PLAYERS IN LOBBY ({{ players.length }})</h2>
+          <h2>PLAYERS IN LOBBY ({{ players.length }})</h2>
           <div class="players-grid">
             <PlayerDisplay
               v-for="player in players"
               size="small"
               :key="player.playerId"
-              :name="isParty && player.isHost ? 'HOST' : player.username"
-              :avatar-index="
-                isParty && player.isHost ? undefined : player.avatarIndex
-              "
+              :name="player.username"
+              :avatar-index="player.avatarIndex"
               :avatar-sprite-sheet="player.avatarSpriteSheet"
               :name-effect="player.nameEffect"
               :avatar-effect="player.avatarEffect"
-              :class="[
-                isParty && player.isHost ? 'hidden' : '',
-                { 'editable-player': isMe(player.playerId) },
-              ]"
+              :class="{ 'editable-player': isMe(player.playerId) }"
               :is-host="player.isHost"
               :show-you-indicator="isMe(player.playerId)"
               :is-own-player="isMe(player.playerId)"
               @click="isMe(player.playerId) && (showPlayerEditModal = true)"
             />
-            <div v-if="(isParty && players.length < 3) || (!isParty && players.length < 2)" class="not-enough-players">Minimum of 2 players required. Invite more players to start</div>
+          </div>
+          <div class="lobby-start-area" :aria-busy="isStarting">
+            <p v-if="!isStarting" class="lobby-status" :class="{ ready: channelStore.isHost && canStart }" role="status">
+              {{ lobbyStatus }}
+            </p>
+            <p v-if="channelStore.isHost && !canStart && !isStarting" class="invite-hint">
+              Share the invite link or let players scan the QR code.
+            </p>
+            <ButtonPrimary
+              v-if="channelStore.isHost"
+              class="start-btn"
+              :class="{ 'pulse-btn': canStart && !isStarting }"
+              :disabled="!canStart || isStarting"
+              data-sfx="click"
+              @clicked="startGame"
+            >
+              {{ isParty ? "START PARTY" : "START GAME" }}
+            </ButtonPrimary>
+            <LoadingAnimation v-if="isStarting" text="STARTING GAME" class="loading-animation" />
           </div>
           <LobbyChat v-if="false" />
         </div>
@@ -136,8 +132,19 @@ const inviteLink = computed(
 );
 
 const players = computed(() =>
-  channelStore.playersOnline.filter((p) => p.isOnline),
+  channelStore.playersOnline.filter((p) => p.isOnline && (!isParty.value || !p.isHost)),
 );
+const canStart = computed(() => players.value.length >= 2);
+const lobbyStatus = computed(() => {
+  if (!channelStore.isHost) return "WAITING FOR HOST";
+  if (canStart.value) return "READY TO START";
+  return players.value.length === 1
+    ? "INVITE ONE MORE PLAYER TO START"
+    : "INVITE AT LEAST 2 PLAYERS TO START";
+});
+const lobbyBreakpoint = window.matchMedia("(min-width: 769px)");
+const isDesktopLobby = ref(lobbyBreakpoint.matches);
+const updateLobbyBreakpoint = () => { isDesktopLobby.value = lobbyBreakpoint.matches; };
 const isMe = (id) => id === channelStore.playerId;
 const showPlayerEditModal = ref(false);
 
@@ -158,7 +165,7 @@ const resizeGame = () => {
     return;
   }
 
-  const baseWidth = 750;
+  const baseWidth = 900;
   const baseHeight = 900;
 
   // Nicht skalieren, wenn der Screen kleiner ist als die Basis
@@ -183,14 +190,16 @@ onMounted(() => {
   canNativeShare.value = !!navigator.share;
   resizeGame();
   window.addEventListener('resize', resizeGame);
+  lobbyBreakpoint.addEventListener('change', updateLobbyBreakpoint);
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', resizeGame);
+  lobbyBreakpoint.removeEventListener('change', updateLobbyBreakpoint);
 });
 
 const startGame = () => {
-  if (isStarting.value) return;
+  if (isStarting.value || !channelStore.isHost || !canStart.value) return;
   isStarting.value = true;
   soundStore.playSound("click");
   if (isParty.value) {
@@ -392,5 +401,191 @@ h2 {
 
 .hidden {
   display: none;
+}
+
+.lobby-page {
+  width: 850px;
+  max-width: 100%;
+}
+
+.lobby-card .pre-headline {
+  margin-bottom: 32px;
+}
+
+.lobby-card .lobby-layout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  align-items: start;
+}
+
+.lobby-card :is(.lobby-left-column, .lobby-right-column) {
+  min-width: 0;
+}
+
+.lobby-card h2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.lobby-card .players-grid {
+  margin-top: 0;
+}
+
+.lobby-card :deep(.player-hud.is-you) {
+  background: rgba(10, 4, 20, 0.92);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.lobby-room-id {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  width: 100%;
+}
+
+.lobby-room-id > span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.lobby-room-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  color: var(--primary);
+  font: inherit;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.lobby-room-code svg {
+  font-size: 18px;
+}
+
+.lobby-invite .share-room-buttons {
+  order: 3;
+}
+
+.lobby-card .share-room-buttons .btn-outline {
+  min-height: 44px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.lobby-qr {
+  width: 100%;
+}
+
+.lobby-qr summary {
+  display: none;
+}
+
+.lobby-qr .qr-code {
+  margin: 0;
+}
+
+.lobby-start-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.lobby-status {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.lobby-status.ready {
+  color: var(--neon-success);
+}
+
+.invite-hint {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.lobby-card .start-btn {
+  margin-top: 0;
+  height: 56px;
+  font-size: 18px;
+}
+
+.lobby-card .loading-animation {
+  margin-top: 0;
+}
+
+.lobby-card :is(button, summary):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  .lobby-card {
+    padding: 24px;
+  }
+
+  .lobby-card h1 {
+    font-size: 26px;
+  }
+
+  .lobby-card .lobby-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .lobby-card .lobby-right-column {
+    grid-row: 1;
+  }
+
+  .lobby-invite {
+    grid-row: 2;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 24px;
+  }
+
+  .lobby-card:not(.party-lobby) .lobby-invite .share-room-buttons {
+    order: 0;
+  }
+
+  .lobby-qr:not(.party-qr) summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    letter-spacing: 1px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .lobby-qr summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lobby-qr[open] summary svg {
+    transform: rotate(180deg);
+  }
+
+  .lobby-qr:not(.party-qr) .qr-code {
+    margin-top: 8px;
+  }
 }
 </style>

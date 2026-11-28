@@ -148,11 +148,12 @@ export const useGameStore = defineStore("game", () => {
     setGameState("starting");
   };
 
-  const prepareGame = (customRevealTime: number, customRounds?: Round[]) => {
+  const prepareGame = (customRevealTime: number | string, customRounds?: Round[]) => {
     if (customRounds) {
       rounds.value = customRounds;
       configStore.maxRounds = customRounds.length;
-      configStore.revealTime = customRevealTime;
+      const duration = Number(customRevealTime);
+      if (Number.isInteger(duration) && duration > 0) configStore.revealTime = duration;
     } else {
       createRounds(maxRounds.value);
     }

@@ -1,78 +1,80 @@
 <template>
-  <main>
+  <main :class="{ 'results-ready': resultsReady, 'has-highlight-data': highlights.length > 0, 'has-highlights': resultsReady && highlights.length > 0 }">
     <Transition name="fade" mode="out-in">
-      <GameTransition
-        v-if="showIntro"
-        first="GAME"
-        second="OVER"
-        @done="handleIntroDone"
-      />
+      <GameTransition v-if="showIntro" first="GAME" second="OVER" @done="handleIntroDone" />
     </Transition>
 
-    <div>
-      <div v-if="!waitingForFinalResults" class="results-card">
-        <h1 class="logo">GAME <span>OVER</span></h1>
-
-        <OnlineHighlights :players="playersOnline" />
-
-        <TransitionGroup name="reveal-item" tag="div" class="players-list">
-          <div
-            v-for="{ player, index } in revealedPlayersDisplay"
-            :key="player.playerId"
-          >
-            <PlayerDisplay
-              size="small"
-              :position="player.hasFinished ? index + 1 : undefined"
-              :name="player.username"
-              :avatar-index="player.avatarIndex"
-              :avatar-sprite-sheet="player.avatarSpriteSheet"
-              :name-effect="player.nameEffect"
-              :avatar-effect="player.avatarEffect"
-              :points="animatedPoints[player.playerId] ?? player.points"
-              static-points-display
-              :points-trend="countingUpIds.has(player.playerId) ? 'up' : null"
-              :is-pending="!player.hasFinished"
-              :correct-answers="player.correctAnswers"
-              :show-you-indicator="isMe(player.playerId)"
-              :is-own-player="isMe(player.playerId)"
-              :answer-history="player.answerHistory"
-            />
-          </div>
-        </TransitionGroup>
-
-        <div class="gameover-actions">
-          <ButtonPrimary
-            class="btn-primary pulse-btn"
-            data-sfx="click"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="playAgainOnline"
-          >
-            <Icon icon="pixel:refresh-solid" />
-            Play Again
-          </ButtonPrimary>
-          <ButtonSecondary
-            class="btn-secondary"
-            data-sfx="back"
-            @mouseenter="soundStore.handleHoverSound"
-            @clicked="goBackOnline"
-          >
-            <Icon icon="pixel:arrow-left" />
-            Go back
-          </ButtonSecondary>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="waitingForFinalResults" class="results-card">
+    <div class="results-card">
       <h1 class="logo">GAME <span>OVER</span></h1>
-      <LoadingAnimation text="PLEASE KEEP THIS WINDOW OPEN WHILE WAITING FOR REMAINING PLAYERS" />
-      <div v-if="joke" class="random-joke-box">
-        <h2>Random joke</h2>
-        <p>{{ joke }}</p>
+      <div v-if="waitingForFinalResults" class="waiting-results">
+        <div class="waiting-summary" role="status">
+          <h2><span>{{ finishedPlayersCount }}</span> of {{ activePlayers.length }} players finished</h2>
+          <p>Results will appear when everyone has finished. Keep this window open.</p>
+        </div>
+        <LoadingAnimation />
+        <section class="waiting-players" aria-labelledby="waiting-heading">
+          <h2 id="waiting-heading" class="section-title">STILL PLAYING</h2>
+          <PlayerDisplay
+            v-for="player in pendingPlayers"
+            :key="player.playerId"
+            size="small"
+            :name="player.username"
+            :avatar-index="player.avatarIndex"
+            :avatar-sprite-sheet="player.avatarSpriteSheet"
+            :name-effect="player.nameEffect"
+            :avatar-effect="player.avatarEffect"
+          />
+        </section>
+      </div>
+
+      <div v-else class="results-layout">
+        <section class="ranking-section" aria-labelledby="ranking-heading">
+          <h2 id="ranking-heading" class="section-title">FINAL RANKING</h2>
+          <TransitionGroup name="reveal-item" tag="div" class="players-list">
+            <div v-for="{ player, index } in revealedPlayersDisplay" :key="player.playerId">
+              <PlayerDisplay
+                size="small"
+                :position="player.hasFinished ? index + 1 : undefined"
+                :name="player.username"
+                :avatar-index="player.avatarIndex"
+                :avatar-sprite-sheet="player.avatarSpriteSheet"
+                :name-effect="player.nameEffect"
+                :avatar-effect="player.avatarEffect"
+                :points="animatedPoints[player.playerId] ?? 0"
+                static-points-display
+                :points-trend="countingUpIds.has(player.playerId) ? 'up' : null"
+                :is-pending="!player.hasFinished"
+                :correct-answers="player.correctAnswers"
+                :show-you-indicator="isMe(player.playerId)"
+                :is-own-player="isMe(player.playerId)"
+                :answer-history="player.answerHistory"
+              />
+            </div>
+          </TransitionGroup>
+          <div class="details-reveal">
+            <div class="details-content">
+              <div v-if="resultsReady" class="gameover-actions">
+                <ButtonPrimary class="pulse-btn" data-sfx="click" @mouseenter="soundStore.handleHoverSound" @clicked="playAgainOnline">
+                  <Icon icon="pixel:refresh-solid" /> Play Again
+                </ButtonPrimary>
+                <ButtonSecondary data-sfx="back" @mouseenter="soundStore.handleHoverSound" @clicked="goBackOnline">
+                  <Icon icon="pixel:arrow-left" /> Leave room
+                </ButtonSecondary>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section v-if="highlights.length > 0" class="highlights-section details-reveal" aria-labelledby="highlights-heading" :aria-hidden="!resultsReady">
+          <div class="details-content">
+            <template v-if="resultsReady">
+              <h2 id="highlights-heading" class="section-title">HIGHLIGHTS</h2>
+              <OnlineHighlights :highlights="highlights" />
+            </template>
+          </div>
+        </section>
       </div>
     </div>
 
-    <LobbyChat v-if="false" />
     <WinnerAnimation
       v-if="!waitingForFinalResults && winnerPlayer"
       :show="showWinnerAnimation"
@@ -82,7 +84,7 @@
       :name-effect="winnerPlayer.nameEffect"
       :avatar-effect="winnerPlayer.avatarEffect"
       :is-winner="isMe(winnerPlayer.playerId)"
-      @done="showWinnerAnimation = false"
+      @done="handleWinnerDone"
     />
   </main>
 </template>
@@ -91,377 +93,230 @@
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import OnlineHighlights from "@/components/game-ui/OnlineHighlights.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
-import LobbyChat from "@/components/game-ui/LobbyChat.vue";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
-import { workerSetTimeout, workerClearTimeout } from "@/services/workerTimers";
-
+import { workerSetTimeout, workerClearTimeout, workerSetInterval, workerClearInterval } from "@/services/workerTimers";
+import { buildOnlineHighlights } from "@/utils/onlineHighlights";
 import { useChannelStore } from "@/stores/channel";
 import { useOnlineStore } from "@/stores/online";
 import { useGameStore } from "@/stores/game";
 import { useSoundStore } from "@/stores/sound";
 import { useAchievementsStore } from "@/stores/achievements";
-import { usePlayerStore } from "@/stores/player";
 
 const channelStore = useChannelStore();
 const onlineStore = useOnlineStore();
 const gameStore = useGameStore();
 const soundStore = useSoundStore();
 const achievementsStore = useAchievementsStore();
-const playerStore = usePlayerStore();
 const router = useRouter();
 
 const showIntro = ref(true);
 const showWinnerAnimation = ref(false);
 const winnerAnimationShown = ref(false);
+const resultsReady = ref(false);
 const winnerSoundPlayed = ref(false);
 const partySoundPlayed = ref(false);
-
-let jokeTimer: ReturnType<typeof setTimeout> | null = null;
-let partySoundTimer: ReturnType<typeof workerSetTimeout> | null = null;
-let isMounted = true;
-
+let partySoundTimer: number | null = null;
 const revealedIds = ref<Set<string>>(new Set());
 const animatedPoints = ref<Record<string, number>>({});
 const countingUpIds = ref<Set<string>>(new Set());
-let revealTimer: ReturnType<typeof setTimeout> | null = null;
-let winnerAnimationTimer: ReturnType<typeof setTimeout> | null = null;
-let countUpFrames: Record<string, number> = {};
+let revealTimer: number | null = null;
+let countUpTimer: number | null = null;
 
-const REVEAL_DELAY_MAX_MS = 900; // bei ≤4 Spielern
-const REVEAL_DELAY_MIN_MS = 400; // bei ≥12 Spielern
-const REVEAL_DELAY_SCALE_MIN_PLAYERS = 4;
-const REVEAL_DELAY_SCALE_MAX_PLAYERS = 12;
-const COUNT_UP_DURATION_MS = 5000;
-const COUNT_UP_UPDATE_INTERVAL_MS = 60;
-const WINNER_ANIMATION_DELAY_MS = 900;
-
+const SCORE_STEP_MS = 50;
 const getRevealDelay = (playerCount: number) => {
-  if (playerCount <= REVEAL_DELAY_SCALE_MIN_PLAYERS) return REVEAL_DELAY_MAX_MS;
-  if (playerCount >= REVEAL_DELAY_SCALE_MAX_PLAYERS) return REVEAL_DELAY_MIN_MS;
-  const t =
-    (playerCount - REVEAL_DELAY_SCALE_MIN_PLAYERS) /
-    (REVEAL_DELAY_SCALE_MAX_PLAYERS - REVEAL_DELAY_SCALE_MIN_PLAYERS);
-  return Math.round(REVEAL_DELAY_MAX_MS - t * (REVEAL_DELAY_MAX_MS - REVEAL_DELAY_MIN_MS));
+  if (playerCount <= 4) return 900;
+  if (playerCount >= 12) return 400;
+  return Math.round(900 - ((playerCount - 4) / 8) * 500);
+};
+const isMe = (id: string) => id === channelStore.playerId;
+const playersOnline = computed(() => channelStore.playersOnline);
+const activePlayers = computed(() => playersOnline.value.filter(player => player.isOnline));
+const pendingPlayers = computed(() => activePlayers.value.filter(player => !player.hasFinished));
+const finishedPlayersCount = computed(() => activePlayers.value.filter(player => player.hasFinished).length);
+const waitingForFinalResults = computed(() => pendingPlayers.value.length > 0);
+const highlights = computed(() => buildOnlineHighlights(playersOnline.value));
+const playersSortedByPoints = computed(() => [...playersOnline.value].sort((a, b) => b.points - a.points));
+const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
+const revealOrder = computed(() => [...playersSortedByPoints.value].reverse());
+const revealedPlayersDisplay = computed(() => playersSortedByPoints.value
+  .map((player, index) => ({ player, index }))
+  .filter(({ player }) => revealedIds.value.has(player.playerId)),
+);
+
+const stopCounting = () => {
+  workerClearInterval(countUpTimer);
+  countUpTimer = null;
+  soundStore.stopSound("counting");
+};
+const checkAndTriggerWinnerAnimation = () => {
+  const allRevealed = revealOrder.value.every(player => revealedIds.value.has(player.playerId));
+  if (!allRevealed || countingUpIds.value.size > 0 || winnerAnimationShown.value || !winnerPlayer.value || waitingForFinalResults.value) return;
+  winnerAnimationShown.value = true;
+  stopCounting();
+  if (isMe(winnerPlayer.value.playerId)) void achievementsStore.unlock("win-online");
+  showWinnerAnimation.value = true;
+  winnerSoundPlayed.value = true;
+  soundStore.playSound("winner");
+};
+const handleWinnerDone = () => {
+  if (!showWinnerAnimation.value) return;
+  showWinnerAnimation.value = false;
+  resultsReady.value = !waitingForFinalResults.value;
 };
 
-const isMe = (id: string) => id === channelStore.playerId;
-
-const playersOnline = computed(() => channelStore.playersOnline);
-const playersSortedByPoints = computed(() => {
-  return [...playersOnline.value].sort((a, b) => b.points - a.points);
-});
-const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
-
-const waitingForFinalResults = computed(() =>
-  playersOnline.value.some((player) => player.isOnline && !player.hasFinished),
-);
-
-const revealOrder = computed(() => [...playersSortedByPoints.value].reverse());
-
-const isRevealed = (playerId: string) => revealedIds.value.has(playerId);
-
-const revealedPlayersDisplay = computed(() =>
-  playersSortedByPoints.value
-    .map((player, index) => ({ player, index }))
-    .filter(({ player }) => isRevealed(player.playerId)),
-);
-
-const checkAndTriggerWinnerAnimation = () => {
-  const allRevealed = revealedIds.value.size >= revealOrder.value.length;
-  const allPointsCounted = countingUpIds.value.size === 0;
-
-  if (allRevealed && allPointsCounted && !winnerAnimationShown.value && winnerPlayer.value) {
-    winnerAnimationShown.value = true;
-    if (isMe(winnerPlayer.value.playerId)) {
-      void achievementsStore.unlock("win-online");
-    }
-    soundStore.stopSound("counting");
-    winnerAnimationTimer = setTimeout(() => {
-      winnerAnimationTimer = null;
-      showWinnerAnimation.value = true;
-      soundStore.playSound("winner");
-    }, WINNER_ANIMATION_DELAY_MS);
+const tickPoints = () => {
+  const stillCounting = new Set<string>();
+  for (const player of revealedPlayersDisplay.value.map(entry => entry.player)) {
+    const current = animatedPoints.value[player.playerId] ?? 0;
+    const next = Math.min(player.points, current + 1);
+    animatedPoints.value[player.playerId] = next;
+    if (next < player.points) stillCounting.add(player.playerId);
+  }
+  countingUpIds.value = stillCounting;
+  if (stillCounting.size === 0) {
+    stopCounting();
+    checkAndTriggerWinnerAnimation();
   }
 };
-
 const animatePointsFor = (player: { playerId: string; points: number }) => {
-  const start = performance.now();
-  const target = player.points;
   animatedPoints.value[player.playerId] = 0;
+  if (player.points <= 0) return;
   countingUpIds.value = new Set(countingUpIds.value).add(player.playerId);
-
-  let lastUpdate = start;
-  let lastValue = 0;
-
-  const step = (now: number) => {
-    const progress = Math.min((now - start) / COUNT_UP_DURATION_MS, 1);
-    const eased = 1 - Math.pow(1 - progress, 2); // ease-out quad
-    const isDue = now - lastUpdate >= COUNT_UP_UPDATE_INTERVAL_MS || progress === 1;
-
-    if (isDue) {
-      const nextValue = Math.round(target * eased);
-      if (nextValue !== lastValue) {
-        animatedPoints.value[player.playerId] = nextValue;
-        lastValue = nextValue;
-      }
-      lastUpdate = now;
-    }
-
-    if (progress < 1) {
-      countUpFrames[player.playerId] = requestAnimationFrame(step);
-    } else {
-      delete countUpFrames[player.playerId];
-      const next = new Set(countingUpIds.value);
-      next.delete(player.playerId);
-      countingUpIds.value = next;
-
-      checkAndTriggerWinnerAnimation();
-    }
-  };
-  countUpFrames[player.playerId] = requestAnimationFrame(step);
+  if (countUpTimer === null) {
+    soundStore.playSound("counting");
+    countUpTimer = workerSetInterval(tickPoints, SCORE_STEP_MS);
+  }
 };
-
 const revealNext = () => {
-  const order = revealOrder.value;
-  const nextIndex = revealedIds.value.size;
-  const delay = getRevealDelay(order.length);
-
-  if (nextIndex >= order.length) {
+  revealTimer = null;
+  const player = revealOrder.value.find(candidate => !revealedIds.value.has(candidate.playerId));
+  if (!player) {
     checkAndTriggerWinnerAnimation();
     return;
   }
-
-  soundStore.playSound("counting");
-
-  const player = order[nextIndex];
-  if (player) {
-    revealedIds.value = new Set(revealedIds.value).add(player.playerId);
-    soundStore.playSound("pop");
-    animatePointsFor(player);
+  revealedIds.value = new Set(revealedIds.value).add(player.playerId);
+  soundStore.playSound("pop");
+  animatePointsFor(player);
+  if (revealedIds.value.size < revealOrder.value.length) {
+    revealTimer = workerSetTimeout(revealNext, getRevealDelay(revealOrder.value.length));
   }
-
-  revealTimer = setTimeout(revealNext, delay);
+  checkAndTriggerWinnerAnimation();
 };
-
 const startReveal = () => {
+  resultsReady.value = false;
+  workerClearTimeout(revealTimer);
+  stopCounting();
   revealedIds.value = new Set();
   animatedPoints.value = {};
   countingUpIds.value = new Set();
-  if (revealTimer) clearTimeout(revealTimer);
-  revealTimer = setTimeout(revealNext, getRevealDelay(revealOrder.value.length));
+  revealTimer = workerSetTimeout(revealNext, getRevealDelay(revealOrder.value.length));
 };
-
-const playPartySoundOnce = () => {
-  if (partySoundPlayed.value) return;
-  if (!channelStore.isHost) return;
-  partySoundPlayed.value = true;
-  soundStore.playSound("party");
-};
-
 const handleIntroDone = () => {
   showIntro.value = false;
   soundStore.playSound("complete");
   partySoundTimer = workerSetTimeout(() => {
     partySoundTimer = null;
-    playPartySoundOnce();
+    if (partySoundPlayed.value || !channelStore.isHost) return;
+    partySoundPlayed.value = true;
+    soundStore.playSound("party");
   }, 2000);
 };
-
-watch(
-  [() => showIntro.value, () => waitingForFinalResults.value],
-  ([intro, waiting]) => {
-    if (intro || waiting) return;
-    startReveal();
-  },
-  { immediate: true },
-);
+watch([() => showIntro.value, () => waitingForFinalResults.value], ([intro, waiting]) => {
+  if (intro) return;
+  if (waiting) {
+    resultsReady.value = false;
+    workerClearTimeout(revealTimer);
+    revealTimer = null;
+    stopCounting();
+    return;
+  }
+  startReveal();
+}, { immediate: true });
 
 const playAgainOnline = () => {
   onlineStore.stopGame?.();
   gameStore.reset?.();
   router.push("/lobby");
 };
-
 const goBackOnline = () => {
-  if (
-    channelStore.isHost &&
-    channelStore.activeChannel &&
-    channelStore.playerId
-  ) {
-    channelStore.activeChannel.trigger("client-host-inactive", {
-      playerId: channelStore.playerId,
-    });
+  if (channelStore.isHost && channelStore.activeChannel && channelStore.playerId) {
+    channelStore.activeChannel.trigger("client-host-inactive", { playerId: channelStore.playerId });
   }
   onlineStore.stopGame?.();
   channelStore.reset?.();
   router.push("/");
 };
-
-const activeMembersCount = computed(
-  () => channelStore.playersOnline.filter((p) => p.isOnline).length,
-);
-
-const joke = ref(undefined);
-
-const fetchJoke = async () => {
-  try {
-    const response = await fetch("https://icanhazdadjoke.com/", {
-      headers: { Accept: "application/json" },
-    });
-    if (!response.ok) throw new Error("Network failed");
-
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      throw new Error(`Unexpected content-type: ${contentType}`);
-    }
-
-    const data = await response.json();
-    if (isMounted) joke.value = data.joke;
-  } catch (error) {
-    console.error("Error fetching joke:", error);
-  }
-  if (!isMounted) return;
-  jokeTimer = setTimeout(() => {
-    jokeTimer = null;
-    if (waitingForFinalResults.value) fetchJoke();
-  }, 10000);
-};
-
-watch(
-  () => activeMembersCount.value,
-  (count) => {
-    if (!channelStore.isHost) return;
-    if (!channelStore.activeChannel) return;
-    if (count > 1) return;
-    goBackOnline();
-  },
-);
+watch(() => activePlayers.value.length, (count) => {
+  if (channelStore.isHost && channelStore.activeChannel && count <= 1) goBackOnline();
+});
 
 gameStore.reset();
-
 onMounted(() => {
-  fetchJoke();
   if (channelStore.mode === "party" && channelStore.onlineGameRunning) {
     router.replace("/gameover-party-player");
     return;
   }
   void achievementsStore.unlock("play-online");
-  const winnerId = playersSortedByPoints.value[0]?.playerId;
-  if (winnerId && winnerId === channelStore.playerId) {
-    winnerSoundPlayed.value = true;
-    soundStore.playSound("winner");
-  }
 });
-
 onUnmounted(() => {
-  isMounted = false;
-  if (jokeTimer) {
-    clearTimeout(jokeTimer);
-    jokeTimer = null;
-  }
-  if (partySoundTimer) {
-    workerClearTimeout(partySoundTimer);
-    partySoundTimer = null;
-  }
-  if (revealTimer) {
-    clearTimeout(revealTimer);
-    revealTimer = null;
-  }
-  if (winnerAnimationTimer) {
-    clearTimeout(winnerAnimationTimer);
-    winnerAnimationTimer = null;
-  }
-  Object.values(countUpFrames).forEach((id) => cancelAnimationFrame(id));
-  countUpFrames = {};
-  if (winnerSoundPlayed.value) {
-    soundStore.stopSound("winner");
-  }
-  if (partySoundPlayed.value) {
-    soundStore.stopSound("party");
-  }
+  workerClearTimeout(partySoundTimer);
+  workerClearTimeout(revealTimer);
+  stopCounting();
+  if (winnerSoundPlayed.value) soundStore.stopSound("winner");
+  if (partySoundPlayed.value) soundStore.stopSound("party");
 });
 </script>
 
 <style scoped>
-main {
-  width: 600px;
-  max-width: 100%;
-}
-.gameover-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 32px;
-}
-.btn-primary {
-  animation: arcadeBlink 1.4s infinite;
-  font-size: 18px;
-  padding: 18px;
-  box-sizing: border-box;
-}
-
-.btn-secondary,
-.btn-primary {
-  width: 200%;
-}
-
-@media (min-width: 500px) {
-  .btn-secondary,
-  .btn-primary {
-    width: calc(50% - 8px);
-  }
-}
-
+main { width: 600px; max-width: 100%; transition: width 400ms ease; }
 .results-card {
-  position: relative;
-  overflow: hidden;
   border-radius: 8px;
   background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.12), transparent 50%), linear-gradient(135deg, rgba(32, 16, 46, 0.95), rgba(18, 9, 28, 0.98));
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15),
-    0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   padding: 32px;
+  box-sizing: border-box;
   text-align: center;
   margin-bottom: 32px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  @media (max-width: 400px) {
-    padding: 32px 16px;
-  }
 }
-
-.random-joke-box {
-  margin-top: 32px;
-  background: #111;
-  padding: 16px;
-  border-radius: 8px;
-  h2 {
-    margin-top: 0;
-    margin-bottom: 4px;
-  }
-  p {
-    margin-bottom: 8px;
-    opacity: 0.8;
-  }
+.results-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; transition: grid-template-columns 400ms ease, gap 400ms ease; }
+.has-highlights .results-layout { gap: 32px; }
+.ranking-section, .highlights-section { min-width: 0; }
+.details-reveal { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 400ms ease, opacity 250ms ease; }
+.details-content { min-width: 0; min-height: 0; overflow: hidden; }
+.results-ready .details-reveal { grid-template-rows: 1fr; opacity: 1; }
+.section-title { margin: 0 0 16px; font-size: 14px; line-height: 1.5; text-align: left; }
+.players-list { display: grid; }
+.results-card :deep(.player-hud) { min-width: 0; }
+.results-card :deep(.player-hud.is-you) { background: rgba(10, 4, 20, 0.92); box-shadow: inset 0 0 0 1px var(--primary); }
+.gameover-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 32px; }
+.gameover-actions :is(.btn-primary, .btn-secondary) { width: 100%; min-width: 0; min-height: 56px; padding: 14px 12px; box-sizing: border-box; font-size: 16px; }
+.waiting-results { display: flex; flex-direction: column; gap: 24px; }
+.waiting-summary h2 { margin: 0 0 12px; font-size: 20px; line-height: 1.4; }
+.waiting-summary h2 span { color: var(--primary); }
+.waiting-summary p { margin: 0; line-height: 1.5; color: rgba(255, 255, 255, 0.7); font-size: 14px; }
+.waiting-players { display: grid; gap: 12px; text-align: left; }
+.waiting-players h2 { margin-bottom: 4px; }
+.reveal-item-enter-active { transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
+.reveal-item-enter-from { opacity: 0; transform: translateY(12px); }
+.reveal-item-move { transition: transform 0.4s ease-out; }
+@media (min-width: 500px) { .gameover-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .has-highlight-data .results-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 0fr); }
+  main.has-highlights { width: 1100px; }
+  .has-highlights .results-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .highlights-section { overflow: hidden; }
+  .results-ready .highlights-section { transition-delay: 0ms, 150ms; }
 }
-
-.reveal-item-enter-active {
-  transition: all 0.4s ease-out;
-}
-.reveal-item-enter-from {
-  opacity: 0;
-  transform: translateY(12px);
-}
-.reveal-item-move {
-  transition: transform 0.4s ease-out;
+@media (max-width: 400px) { .results-card { padding: 24px 16px; } }
+@media (prefers-reduced-motion: reduce) {
+  main, .results-layout, .details-reveal, .reveal-item-enter-active, .reveal-item-move { transition: none; }
 }
 </style>

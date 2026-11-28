@@ -18,8 +18,8 @@ interface PresenceMember {
   nameEffect?: PlayerNameEffect;
   avatarEffect?: PlayerAvatarEffect;
   host: string | boolean | number;
-  rounds?: number;
-  duration?: number;
+  rounds?: number | string;
+  duration?: number | string;
 }
 
 interface PresenceHash {
@@ -89,11 +89,11 @@ export function syncPlayersFromHash(
 
     const memberIsHost = isHostFlag(member.host);
 
-    if (memberIsHost && member.rounds != null) {
-      configStore.maxRounds = member.rounds;
-    }
-    if (memberIsHost && member.duration != null) {
-      configStore.revealTime = member.duration;
+    if (memberIsHost) {
+      const rounds = Number(member.rounds);
+      const duration = Number(member.duration);
+      if (Number.isInteger(rounds) && rounds > 0) configStore.maxRounds = rounds;
+      if (Number.isInteger(duration) && duration > 0) configStore.revealTime = duration;
     }
 
     acc.push({

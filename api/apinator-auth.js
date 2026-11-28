@@ -1,5 +1,10 @@
 import crypto from "crypto";
 
+const positiveInteger = (value, fallback) => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+};
+
 const readJsonBody = (req) =>
   new Promise((resolve) => {
     let data = "";
@@ -40,8 +45,8 @@ export default async function handler(req, res) {
         : "classic";
     const playerId = req.headers["x-player-id"] || "anon";
     const isHost = req.headers["x-player-host"] === "true";
-    const rounds = req.headers["x-player-rounds"] || null;
-    const duration = req.headers["x-player-duration"] || 15;
+    const rounds = positiveInteger(req.headers["x-player-rounds"], null);
+    const duration = positiveInteger(req.headers["x-player-duration"], 15);
 
     const nameEffect = req.headers["x-player-name-effect"] || "none";
     const avatarEffect = req.headers["x-player-avatar-effect"] || "none";
