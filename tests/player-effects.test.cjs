@@ -6,13 +6,17 @@ const vue = require('vue');
 
 function compile(file) {
   return ts.transpileModule(fs.readFileSync(file, 'utf8'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
 }
 
 const catalogModule = { exports: {} };
 new Function('exports', compile('src/data/unlockables.ts'))(catalogModule.exports);
 const catalog = catalogModule.exports;
+const highlightsModule = { exports: {} };
+const revealModule = { exports: {} };
+new Function('exports', compile('src/utils/pixelReveal.ts'))(revealModule.exports);
+new Function('exports', 'require', compile('src/utils/onlineHighlights.ts'))(highlightsModule.exports, () => revealModule.exports);
 
 function profile(progress, saved = {}) {
   const values = new Map([['pixreveal:playerProfile', JSON.stringify(saved)]]);
@@ -28,6 +32,7 @@ function profile(progress, saved = {}) {
     '@/utils/random': { getRandomUserName: () => 'PLAYER' },
     './config': { useConfigStore: () => ({ revealTime: 10 }) },
     '@/utils/crypto': { generatePlayerId: () => 'ABCDE' },
+    '@/utils/onlineHighlights': highlightsModule.exports,
     '@/data/unlockables': catalog,
     '@/stores/achievements': { useAchievementsStore: () => achievements },
   };

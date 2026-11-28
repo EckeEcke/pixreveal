@@ -8,13 +8,14 @@ function execute(source, bindings, result = '') {
   const ast = ts.createSourceFile('test.ts', source, ts.ScriptTarget.Latest, true);
   const stripped = ts.factory.updateSourceFile(ast, ast.statements.filter(node => !ts.isImportDeclaration(node)));
   const code = ts.transpileModule(ts.createPrinter().printFile(stripped), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
   const exports = {};
   return new Function('exports', ...Object.keys(bindings), code + result)(exports, ...Object.values(bindings)) ?? exports;
 }
 
 const reveal = execute(fs.readFileSync('src/utils/pixelReveal.ts', 'utf8'), {});
+const highlightUtils = execute(fs.readFileSync('src/utils/onlineHighlights.ts', 'utf8'), reveal);
 const pixels = Array.from({ length: 256 }, (_, i) => i);
 const finish = seed => reveal.createPixelReveal(pixels, 8000, 0, seed).advance(8000).map(item => item.pixel);
 
@@ -88,7 +89,7 @@ function online() {
     defineStore: (_, factory) => factory, ref: vue.ref, watch() {},
     useChannelStore: () => channelStore, useGameStore: () => gameStore,
     usePlayerStore: () => ({}), useConfigStore: () => configStore,
-    useRouter: () => ({ push() {} }), createRevealSeed: () => nextSeed++,
+    useRouter: () => ({ push() {} }), createRevealSeed: () => nextSeed++, ...highlightUtils,
   }).useOnlineStore();
   store.setupEvents();
   return { store, gameStore, sent, events };
@@ -145,6 +146,7 @@ test('actual canvas catches up identically and changing the seed starts a fresh 
     first.frame(2000); first.frame(4000);
     assert.deepEqual(first.frame(6000), second.frame(6000));
     assert.equal(first.api.getDisplayedPixelArray().flat().filter(Boolean).length, 3);
+    assert.deepEqual(reveal.replayPixelGrid(first.props.pixelArray, 3, first.props.revealSeed), first.api.getDisplayedPixelArray());
     await first.update({ revealSeed: 'another-round' });
     assert.equal(first.api.getDisplayedPixelArray().flat().filter(Boolean).length, 0);
     assert.equal(first.frame(8000).flat().filter(Boolean).length, 1);

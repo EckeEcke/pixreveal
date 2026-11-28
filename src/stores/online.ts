@@ -5,7 +5,9 @@ import { useGameStore } from "./game";
 import { usePlayerStore } from "./player";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
-import type { OnlineHighlight, Player } from "@/types/player";
+import type { Player } from "@/types/player";
+import type { Round } from "@/types/game";
+import { buildOnlineHighlights, compactOnlineHighlightData, type OnlineHighlightData } from "@/utils/onlineHighlights";
 import { createRevealSeed } from "@/utils/pixelReveal";
 
 export const useOnlineStore = defineStore("online", () => {
@@ -15,6 +17,7 @@ export const useOnlineStore = defineStore("online", () => {
   const configStore = useConfigStore();
   const router = useRouter();
   const onlineGameRunning = ref(false);
+  const replayRounds = ref<Round[]>([]);
   const replayNavAllowedUntilAt = ref(0);
 
   const allowReplayNavigationWindow = (ms = 4000) => {
@@ -32,8 +35,7 @@ export const useOnlineStore = defineStore("online", () => {
     playerStore.correctAnswers = 0;
     playerStore.answerHistory = [];
     playerStore.onlineHighlights = [];
-    playerStore.bestCorrectHighlight = null;
-    playerStore.worstIncorrectHighlight = null;
+    playerStore.onlineAnswerSummaries = [];
 
     channelStore.playersOnline.forEach((p: Player) => {
       p.points = 0;
@@ -41,6 +43,7 @@ export const useOnlineStore = defineStore("online", () => {
       p.hasFinished = false;
       p.answerHistory = [];
       p.onlineHighlights = [];
+      p.onlineAnswerSummaries = [];
       p.bestCorrectHighlight = undefined;
       p.worstIncorrectHighlight = undefined;
     });
@@ -48,6 +51,25 @@ export const useOnlineStore = defineStore("online", () => {
 
   const eventsBound = ref(false);
   const boundChannel = ref<any>(null);
+
+  const applyHighlightData = (player: Player, data: OnlineHighlightData) => {
+    Object.assign(player, compactOnlineHighlightData(data));
+    player.bestCorrectHighlight = undefined;
+    player.worstIncorrectHighlight = undefined;
+  };
+  const broadcastFinalHighlights = () => {
+    if (!channelStore.isHost || !channelStore.activeChannel ||
+      !channelStore.playersOnline.filter(player => player.isOnline).every(player => player.hasFinished)) return;
+    const selected = new Set(buildOnlineHighlights(channelStore.playersOnline, replayRounds.value).map(slide => slide.key));
+    const players = channelStore.playersOnline.map(player => {
+      const data = compactOnlineHighlightData(player);
+      data.onlineHighlights = data.onlineHighlights.filter(highlight =>
+        selected.has(`${player.playerId}-${highlight.roundIndex}`));
+      applyHighlightData(player, data);
+      return { playerId: player.playerId, ...data };
+    });
+    channelStore.activeChannel.trigger("client-online-highlights", { players });
+  };
 
   const setupEvents = () => {
     const channel = channelStore.activeChannel;
@@ -63,6 +85,7 @@ export const useOnlineStore = defineStore("online", () => {
       onlineGameRunning.value = true;
       resetScoresForNextMatch();
       gameStore.prepareGame(data.revealTime, data.rounds);
+      replayRounds.value = [...gameStore.rounds];
       allowReplayNavigationWindow();
       router.push("/online");
     });
@@ -88,14 +111,11 @@ export const useOnlineStore = defineStore("online", () => {
 
     channel.bind(
       "client-player-finished",
-      (data: {
+      (data: OnlineHighlightData & {
         playerId: string;
         points: number;
         correctAnswers: number;
         answerHistory: boolean[];
-        onlineHighlights?: OnlineHighlight[];
-        bestCorrectHighlight?: OnlineHighlight | null;
-        worstIncorrectHighlight?: OnlineHighlight | null;
       }) => {
         const player = channelStore.playersOnline.find(
           (p: Player) => p.playerId === data.playerId,
@@ -105,25 +125,8 @@ export const useOnlineStore = defineStore("online", () => {
           player.hasFinished = true;
           player.correctAnswers = data.correctAnswers;
           player.answerHistory = data.answerHistory;
-          player.onlineHighlights = data.onlineHighlights ?? [];
-          player.bestCorrectHighlight = data.bestCorrectHighlight ?? undefined;
-          player.worstIncorrectHighlight = data.worstIncorrectHighlight ?? undefined;
-
-          if (
-            channelStore.isHost &&
-            channelStore.playersOnline
-              .filter((candidate) => candidate.isOnline)
-              .every((candidate) => candidate.hasFinished)
-          ) {
-            channel.trigger("client-online-highlights", {
-              players: channelStore.playersOnline.map((candidate) => ({
-                playerId: candidate.playerId,
-                onlineHighlights: candidate.onlineHighlights,
-                bestCorrectHighlight: candidate.bestCorrectHighlight,
-                worstIncorrectHighlight: candidate.worstIncorrectHighlight,
-              })),
-            });
-          }
+          applyHighlightData(player, data);
+          broadcastFinalHighlights();
         }
       },
     );
@@ -131,11 +134,8 @@ export const useOnlineStore = defineStore("online", () => {
     channel.bind(
       "client-online-highlights",
       (data: {
-        players?: Array<{
+        players?: Array<OnlineHighlightData & {
           playerId: string;
-          onlineHighlights?: OnlineHighlight[];
-          bestCorrectHighlight?: OnlineHighlight | null;
-          worstIncorrectHighlight?: OnlineHighlight | null;
         }>;
       }) => {
         for (const highlightPlayer of data.players ?? []) {
@@ -143,9 +143,7 @@ export const useOnlineStore = defineStore("online", () => {
             (candidate) => candidate.playerId === highlightPlayer.playerId,
           );
           if (!player) continue;
-          player.onlineHighlights = highlightPlayer.onlineHighlights ?? [];
-          player.bestCorrectHighlight = highlightPlayer.bestCorrectHighlight ?? undefined;
-          player.worstIncorrectHighlight = highlightPlayer.worstIncorrectHighlight ?? undefined;
+          applyHighlightData(player, highlightPlayer);
         }
       },
     );
@@ -165,6 +163,7 @@ export const useOnlineStore = defineStore("online", () => {
     gameStore.rounds.forEach((round) => {
       round.revealSeed = createRevealSeed();
     });
+    replayRounds.value = [...gameStore.rounds];
 
     channel.trigger("client-game-started", {
       startedAt: new Date().toISOString(),
@@ -183,9 +182,10 @@ export const useOnlineStore = defineStore("online", () => {
     const points = playerStore.points;
     const correctAnswers = playerStore.correctAnswers;
     const answerHistory = playerStore.answerHistory;
-    const onlineHighlights = playerStore.onlineHighlights;
-    const bestCorrectHighlight = playerStore.bestCorrectHighlight;
-    const worstIncorrectHighlight = playerStore.worstIncorrectHighlight;
+    const highlightData = compactOnlineHighlightData(playerStore);
+    if (replayRounds.value.length > 0 && replayRounds.value.every(round => round.revealSeed !== undefined)) {
+      highlightData.onlineHighlights = [];
+    }
     const me = channelStore.playersOnline.find(
       (p: Player) => p.playerId === channelStore.playerId,
     );
@@ -195,9 +195,7 @@ export const useOnlineStore = defineStore("online", () => {
       me.hasFinished = true;
       me.correctAnswers = correctAnswers;
       me.answerHistory = answerHistory
-      me.onlineHighlights = onlineHighlights;
-      me.bestCorrectHighlight = bestCorrectHighlight ?? undefined;
-      me.worstIncorrectHighlight = worstIncorrectHighlight ?? undefined;
+      applyHighlightData(me, highlightData);
     }
 
     channel.trigger("client-player-finished", {
@@ -205,14 +203,14 @@ export const useOnlineStore = defineStore("online", () => {
       points,
       correctAnswers,
       answerHistory,
-      onlineHighlights,
-      bestCorrectHighlight,
-      worstIncorrectHighlight,
+      ...highlightData,
     });
+    broadcastFinalHighlights();
   };
 
   const stopGame = () => {
     onlineGameRunning.value = false;
+    replayRounds.value = [];
     channelStore.setGameRunning(false);
   };
 
@@ -230,6 +228,7 @@ export const useOnlineStore = defineStore("online", () => {
   );
 
   return {
+    replayRounds,
     setupEvents,
     triggerGameStart,
     broadcastScore,

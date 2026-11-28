@@ -23,6 +23,10 @@
           </div>
           <p class="highlight-facts">
             Round {{ currentHighlight.highlight.roundIndex + 1 }}
+            <template v-if="currentHighlight.roundResult">
+              <span aria-hidden="true">&middot;</span>
+              {{ currentHighlight.roundResult.correct }} / {{ currentHighlight.roundResult.total }} correct
+            </template>
             <span aria-hidden="true">&middot;</span>
             {{ formatTime(currentHighlight.highlight.elapsedMs) }} s
             <span aria-hidden="true">&middot;</span>

@@ -13,7 +13,9 @@ function execute(source, bindings = {}, result = '') {
   const exports = {};
   return new Function('exports', ...Object.keys(bindings), code + result)(exports, ...Object.values(bindings)) ?? exports;
 }
-const { buildOnlineHighlights } = execute(fs.readFileSync('src/utils/onlineHighlights.ts', 'utf8'));
+const revealUtils = execute(fs.readFileSync('src/utils/pixelReveal.ts', 'utf8'));
+const highlightUtils = execute(fs.readFileSync('src/utils/onlineHighlights.ts', 'utf8'), revealUtils);
+const { buildOnlineHighlights, compactOnlineHighlightData, selectOnlineHighlightCandidates, summarizeOnlineAnswers } = highlightUtils;
 function clock() {
   let now = 0, id = 0;
   const tasks = new Map();
@@ -48,12 +50,12 @@ function setup(players) {
   const api = scope.run(() => execute(source, {
     ref: vue.ref, computed: vue.computed, watch: vue.watch,
     onMounted: fn => mounted.push(fn), onUnmounted: fn => unmounted.push(fn),
-    useChannelStore: () => channel, useOnlineStore: () => ({ stopGame: () => calls.push(['stop-game']) }),
-    useGameStore: () => ({ reset: () => calls.push(['reset-game']) }),
+    useChannelStore: () => channel, useOnlineStore: () => ({ replayRounds: [], stopGame: () => calls.push(['stop-game']) }),
+    useGameStore: () => ({ rounds: [], reset: () => calls.push(['reset-game']) }),
     useSoundStore: () => ({ playSound: name => calls.push(['play', name]), stopSound: name => calls.push(['stop', name]) }),
     useAchievementsStore: () => ({ unlock: id => calls.push(['unlock', id]) }),
     useRouter: () => ({ push: path => calls.push(['route', path]), replace: path => calls.push(['replace', path]) }),
-    buildOnlineHighlights, ...time,
+    ...highlightUtils, ...time,
   }, ';return { handleIntroDone, handleWinnerDone, resultsReady, animatedPoints, revealedIds, countingUpIds, showWinnerAnimation, waitingForFinalResults, pendingPlayers, finishedPlayersCount, playAgainOnline, goBackOnline };'));
   mounted.forEach(fn => fn());
   return { api, time, calls, channel, async start() { api.handleIntroDone(); await vue.nextTick(); },
@@ -179,8 +181,9 @@ test('highlights identify shared fastest times, blind guesses and quick misses f
   const result = buildOnlineHighlights([
     highlighted('one', [snapshot(0, true, 1000, 12), snapshot(1, false, 1000, 10)]),
     highlighted('two', [snapshot(0, true, 1000, 18), snapshot(1, true, 2000, 0)]),
+    highlighted('missing', []),
   ]);
-  assert.deepEqual(result.map(slide => slide.title), ['Joint fastest guess', 'Joint fastest guess', 'Quick miss', 'Blind guess']);
+  assert.deepEqual(result.map(slide => slide.title), ['Blind guess', 'Joint fastest guess', 'Quick miss', 'Joint fastest guess']);
   assert.equal(new Set(result.map(slide => slide.key)).size, 4);
   assert.deepEqual(result[0].highlight.pixels, [[1, 2], [3, 0]]);
 });
@@ -192,7 +195,7 @@ test('round-wide highlight claims require snapshots from everyone; other categor
   assert.equal(full.find(slide => slide.key === 'one-0').title, 'Only correct guess');
   const incomplete = buildOnlineHighlights([first, second, highlighted('missing', [])]);
   assert.equal(incomplete.find(slide => slide.key === 'one-0').title, 'Correct answer');
-  assert.equal(full.find(slide => slide.key === 'two-0').title, 'Wrong answer');
+  assert.equal(full.find(slide => slide.key === 'two-0').title, 'Only wrong guess');
 });
 
 test('legacy highlight fallbacks and duplicate rounds produce stable slides without mutating players', () => {
@@ -206,11 +209,18 @@ test('legacy highlight fallbacks and duplicate rounds produce stable slides with
 });
 
 test('quick, sparse, patient and blind-miss categories require the matching measurements', () => {
-  const result = buildOnlineHighlights([
-    highlighted('baseline', [snapshot(0, true, 0, 1)]),
-    highlighted('guesser', [snapshot(1, true, 1000, 20), snapshot(2, true, 4000, 4), snapshot(3, true, 6000, 20), snapshot(4, true, 3000, 20), snapshot(5, false, 3000, 0)]),
-  ]);
-  assert.deepEqual(result.map(slide => slide.title), ['Fastest guess', 'Quick recognition', 'Only a few pixels', 'Took their time', 'Correct answer', 'Blind guess missed']);
+  for (const [answer, title] of [
+    [snapshot(1, true, 1000, 20), 'Quick recognition'],
+    [snapshot(2, true, 4000, 4), 'Only a few pixels'],
+    [snapshot(3, true, 6000, 20), 'Took their time'],
+    [snapshot(4, true, 3000, 20), 'Correct answer'],
+    [snapshot(5, false, 3000, 0), 'Blind guess missed'],
+  ]) {
+    const result = buildOnlineHighlights([
+      highlighted('baseline', [snapshot(0, true, 0, 1)]), highlighted('guesser', [answer]),
+    ]);
+    assert.equal(result.find(slide => slide.key === `guesser-${answer.roundIndex}`).title, title);
+  }
 });
 
 test('fewest-pixel and everyone-correct highlights are selected only when the evidence supports them', () => {

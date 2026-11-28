@@ -3,7 +3,8 @@ import { defineStore } from "pinia";
 import { getRandomUserName } from "@/utils/random";
 import { useConfigStore } from "./config";
 import { generatePlayerId } from "@/utils/crypto";
-import type { OnlineHighlight } from "@/types/player";
+import type { OnlineAnswerSummary, OnlineHighlight } from "@/types/player";
+import { selectOnlineHighlightCandidates, summarizeOnlineAnswers } from "@/utils/onlineHighlights";
 import type { AvatarSpriteSheet } from "@/utils/avatar";
 import { NAME_EFFECTS, AVATAR_EFFECTS, type PlayerNameEffect, type PlayerAvatarEffect } from "@/data/unlockables";
 import { useAchievementsStore } from "@/stores/achievements";
@@ -46,8 +47,7 @@ export const usePlayerStore = defineStore("player", () => {
   const correctAnswers = ref(0);
   const answerHistory: Ref<boolean[]> = ref([]);
   const onlineHighlights = ref<OnlineHighlight[]>([]);
-  const bestCorrectHighlight = ref<OnlineHighlight | null>(null);
-  const worstIncorrectHighlight = ref<OnlineHighlight | null>(null);
+  const onlineAnswerSummaries = ref<OnlineAnswerSummary[]>([]);
   const gameMode = ref<
     "classic" | "inspect" | "gravity" | "survival" | string
   >("classic");
@@ -85,8 +85,7 @@ export const usePlayerStore = defineStore("player", () => {
     correctAnswers.value = 0;
     answerHistory.value = [];
     onlineHighlights.value = [];
-    bestCorrectHighlight.value = null;
-    worstIncorrectHighlight.value = null;
+    onlineAnswerSummaries.value = [];
   };
 
   const setPlayerName = (newName: string) => {
@@ -132,30 +131,8 @@ export const usePlayerStore = defineStore("player", () => {
   }
 
   const recordHighlight = (highlight: OnlineHighlight) => {
-    onlineHighlights.value.push(highlight);
-
-    const current = highlight.isCorrect
-      ? bestCorrectHighlight.value
-      : worstIncorrectHighlight.value;
-
-    if (!current) {
-      if (highlight.isCorrect) bestCorrectHighlight.value = highlight;
-      else worstIncorrectHighlight.value = highlight;
-      return;
-    }
-
-    const isBetter = highlight.isCorrect
-      ? highlight.elapsedMs < current.elapsedMs ||
-        (highlight.elapsedMs === current.elapsedMs &&
-          highlight.visiblePixelCount < current.visiblePixelCount)
-      : highlight.elapsedMs > current.elapsedMs ||
-        (highlight.elapsedMs === current.elapsedMs &&
-          highlight.visiblePixelCount > current.visiblePixelCount);
-
-    if (isBetter) {
-      if (highlight.isCorrect) bestCorrectHighlight.value = highlight;
-      else worstIncorrectHighlight.value = highlight;
-    }
+    onlineAnswerSummaries.value = summarizeOnlineAnswers([...onlineAnswerSummaries.value, highlight]);
+    onlineHighlights.value = selectOnlineHighlightCandidates([...onlineHighlights.value, highlight]);
   }
 
   return {
@@ -172,8 +149,7 @@ export const usePlayerStore = defineStore("player", () => {
     isCreatorMode,
     answerHistory,
     onlineHighlights,
-    bestCorrectHighlight,
-    worstIncorrectHighlight,
+    onlineAnswerSummaries,
     setUser,
     setAvatar,
     setSheet,

@@ -10,6 +10,8 @@ export type OnlineHighlight = {
   visiblePixelCount: number;
 };
 
+export type OnlineAnswerSummary = Omit<OnlineHighlight, "pixels">;
+
 export interface Player {
   playerId: string;
   username: string;
@@ -24,6 +26,7 @@ export interface Player {
   correctAnswers: number;
   answerHistory?: boolean[];
   onlineHighlights?: OnlineHighlight[];
+  onlineAnswerSummaries?: OnlineAnswerSummary[];
   bestCorrectHighlight?: OnlineHighlight;
   worstIncorrectHighlight?: OnlineHighlight;
 }

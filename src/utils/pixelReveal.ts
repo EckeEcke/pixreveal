@@ -23,6 +23,19 @@ export function dailyRevealSeed(date: string, roundIndex: number): string {
   return `daily:${date}:${roundIndex}`;
 }
 
+export function replayPixelGrid(data: readonly (readonly number[])[], visiblePixelCount: number, seed: RevealSeed): number[][] {
+  const grid = data.map(row => row.map(() => 0));
+  const pixels: Array<{ x: number; y: number; val: number }> = [];
+  data.forEach((row, y) => row.forEach((val, x) => {
+    if (val !== 0) pixels.push({ x, y, val });
+  }));
+  const order = createPixelReveal(pixels, 0, 0, seed).advance(0);
+  for (const { pixel } of order.slice(0, Math.max(0, Math.floor(visiblePixelCount)))) {
+    grid[pixel.y]![pixel.x] = pixel.val;
+  }
+  return grid;
+}
+
 export function createPixelReveal<T>(
   pixels: readonly T[],
   durationMs: number,

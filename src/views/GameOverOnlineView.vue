@@ -73,6 +73,10 @@
           </div>
         </section>
       </div>
+      <details v-if="resultsReady && guessCount > 0" class="all-guesses" @toggle="galleryOpen = ($event.target as HTMLDetailsElement).open">
+        <summary>All guesses <span>{{ guessCount }}</span></summary>
+        <OnlineGuessesGallery v-if="galleryOpen" :players="playersOnline" :rounds="onlineStore.replayRounds" />
+      </details>
     </div>
 
     <WinnerAnimation
@@ -95,13 +99,14 @@ import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import PlayerDisplay from "@/components/game-ui/PlayerDisplay.vue";
 import OnlineHighlights from "@/components/game-ui/OnlineHighlights.vue";
+import OnlineGuessesGallery from "@/components/game-ui/OnlineGuessesGallery.vue";
 import LoadingAnimation from "@/components/page-layout/LoadingAnimation.vue";
 import WinnerAnimation from "@/components/game-ui/WinnerAnimation.vue";
 import GameTransition from "@/components/game-ui/GameTransition.vue";
 import ButtonPrimary from "@/components/page-ui/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/page-ui/ButtonSecondary.vue";
 import { workerSetTimeout, workerClearTimeout, workerSetInterval, workerClearInterval } from "@/services/workerTimers";
-import { buildOnlineHighlights } from "@/utils/onlineHighlights";
+import { buildOnlineHighlights, getOnlineGuessSummaries } from "@/utils/onlineHighlights";
 import { useChannelStore } from "@/stores/channel";
 import { useOnlineStore } from "@/stores/online";
 import { useGameStore } from "@/stores/game";
@@ -119,6 +124,7 @@ const showIntro = ref(true);
 const showWinnerAnimation = ref(false);
 const winnerAnimationShown = ref(false);
 const resultsReady = ref(false);
+const galleryOpen = ref(false);
 const winnerSoundPlayed = ref(false);
 const partySoundPlayed = ref(false);
 let partySoundTimer: number | null = null;
@@ -140,7 +146,8 @@ const activePlayers = computed(() => playersOnline.value.filter(player => player
 const pendingPlayers = computed(() => activePlayers.value.filter(player => !player.hasFinished));
 const finishedPlayersCount = computed(() => activePlayers.value.filter(player => player.hasFinished).length);
 const waitingForFinalResults = computed(() => pendingPlayers.value.length > 0);
-const highlights = computed(() => buildOnlineHighlights(playersOnline.value));
+const highlights = computed(() => buildOnlineHighlights(playersOnline.value, onlineStore.replayRounds));
+const guessCount = computed(() => getOnlineGuessSummaries(playersOnline.value).length);
 const playersSortedByPoints = computed(() => [...playersOnline.value].sort((a, b) => b.points - a.points));
 const winnerPlayer = computed(() => playersSortedByPoints.value[0] ?? null);
 const revealOrder = computed(() => [...playersSortedByPoints.value].reverse());
@@ -256,6 +263,7 @@ watch(() => activePlayers.value.length, (count) => {
   if (channelStore.isHost && channelStore.activeChannel && count <= 1) goBackOnline();
 });
 
+if (!onlineStore.replayRounds.length) onlineStore.replayRounds = [...gameStore.rounds];
 gameStore.reset();
 onMounted(() => {
   if (channelStore.mode === "party" && channelStore.onlineGameRunning) {
@@ -294,6 +302,10 @@ main { width: 600px; max-width: 100%; transition: width 400ms ease; }
 .results-ready .details-reveal { grid-template-rows: 1fr; opacity: 1; }
 .section-title { margin: 0 0 16px; font-size: 14px; line-height: 1.5; text-align: left; }
 .players-list { display: grid; }
+.all-guesses { margin-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; text-align: left; }
+.all-guesses summary { cursor: pointer; color: var(--primary); font-size: 14px; padding: 8px 0; }
+.all-guesses summary span { color: rgba(255, 255, 255, 0.6); margin-left: 8px; font-size: 12px; }
+.all-guesses summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
 .results-card :deep(.player-hud) { min-width: 0; }
 .results-card :deep(.player-hud.is-you) { background: rgba(10, 4, 20, 0.92); box-shadow: inset 0 0 0 1px var(--primary); }
 .gameover-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 32px; }

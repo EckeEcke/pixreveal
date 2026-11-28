@@ -234,13 +234,13 @@ const handleAnswer = (selectedOption: any) => {
   gameStore.setGameState("feedback");
   clearAllLocalTimers();
 
-  if (!playerStore.isCreatorMode && selectedOption) {
+  if (!playerStore.isCreatorMode) {
     const pixels = pixelCanvasRef.value?.getDisplayedPixelArray() ?? [];
     const highlight: OnlineHighlight = {
       roundIndex: gameStore.currentRoundIndex,
-      pixels: pixels.map((row) => [...row]),
-      givenAnswer: selectedOption.title || selectedOption.name || "Unknown",
-      isCorrect: Boolean(selectedOption.isCorrect),
+      pixels: selectedOption && currentRound.value?.revealSeed === undefined ? pixels.map((row) => [...row]) : [],
+      givenAnswer: selectedOption?.title || selectedOption?.name || "",
+      isCorrect: Boolean(selectedOption?.isCorrect),
       elapsedMs: Math.max(0, (timerDuration.value - timer.value) * 1000),
       visiblePixelCount: pixels.reduce(
         (total, row) => total + row.filter((pixel) => pixel !== 0).length,
