@@ -18,6 +18,7 @@ import { usePlayerStore } from "@/stores/player"
 import { useSoundStore } from "@/stores/sound"
 import { useConfigStore } from "@/stores/config"
 import { useCanvasBase } from "@/composables/useCanvasBase"
+import { createPixelReveal } from "@/utils/pixelReveal"
 
 const props = defineProps({
   pixelArray: Array,
@@ -25,6 +26,7 @@ const props = defineProps({
   isRevealing: Boolean,
   isStatusIcon: Boolean,
   timerDuration: Number,
+  revealSeed: [String, Number],
   pauseReveal: Boolean,
   mousePos: Object,
   isMagnifierMode: Boolean,
@@ -60,11 +62,9 @@ const {
 const soundStore = useSoundStore()
 const playerStore = usePlayerStore()
 
-const timerDuration = props.timerDuration || 15
-
 let autoAngle = 0
 const offset = 90
-let intervalId = null
+let pixelReveal = null
 
 const isPageHidden = ref(document.hidden)
 const handleVisibilityChange = () => {
@@ -134,8 +134,7 @@ const getAutoMousePos = () => {
 }
 
 const startReveal = () => {
-  if (intervalId) clearInterval(intervalId)
-  intervalId = null
+  pixelReveal = null
   animatedPixels.value = []
   updateFlatPixelList()
   displayedPixels.value = []
@@ -150,22 +149,10 @@ const startReveal = () => {
     return
   }
 
-  const totalDurationMs = props.isStatusIcon ? 500 : timerDuration * 1000 - 2000
-  const dynamicSpeed = allVisible.length > 0 ? totalDurationMs / allVisible.length : 0
-  allVisible.sort(() => Math.random() - 0.5)
-
-  intervalId = setInterval(() => {
-    if (props.pauseReveal) return
-    if (allVisible.length > 0) {
-      const next = allVisible.pop()
-      displayedPixels.value.push({ ...next, createdAt: Date.now() })
-
-      if (!props.muteSound) soundStore.playSound("reveal")
-    } else {
-      clearInterval(intervalId)
-      intervalId = null
-    }
-  }, dynamicSpeed)
+  const totalDurationMs = props.isStatusIcon ? 500 : (props.timerDuration || 15) * 1000 - 2000
+  const now = performance.now()
+  pixelReveal = createPixelReveal(allVisible, totalDurationMs, now, props.revealSeed)
+  pixelReveal.setPaused(!!props.pauseReveal, now)
 
   if (!getAnimationFrameId()) render()
 }
@@ -194,10 +181,7 @@ const preparePhysicsPixels = (type) => {
 }
 
 const triggerCorrectAnswer = () => {
-  if (intervalId) {
-    clearInterval(intervalId)
-    intervalId = null
-  }
+  pixelReveal = null
 
   displayedPixels.value = [...flatPixelList.value]
   playPop()
@@ -207,10 +191,7 @@ const triggerCorrectAnswer = () => {
 }
 
 const triggerIncorrectAnswer = () => {
-  if (intervalId) {
-    clearInterval(intervalId)
-    intervalId = null
-  }
+  pixelReveal = null
 
   displayedPixels.value = [...flatPixelList.value]
 
@@ -322,6 +303,16 @@ const render = () => {
   const { cellSize, gap, baseSize } = calculateGrid(resolution)
   const now = Date.now()
 
+  if (pixelReveal) {
+    const next = pixelReveal.advance(performance.now())
+    for (const { pixel, ageMs } of next) {
+      displayedPixels.value.push({ ...pixel, createdAt: now - ageMs })
+    }
+    // One sound per frame avoids a burst of overlapping sounds after a stall.
+    if (next.length > 0 && !props.muteSound) soundStore.playSound("reveal")
+    if (pixelReveal.complete) pixelReveal = null
+  }
+
   ctx.clearRect(0, 0, internalSize, internalSize)
 
   let shakeX = 0
@@ -432,7 +423,14 @@ defineExpose({
   internalSize,
 })
 
-watch([() => props.pixelArray, () => props.isRevealing], () => startReveal(), { deep: true })
+watch(
+  [() => props.pixelArray, () => props.isRevealing, () => props.revealSeed],
+  () => startReveal(),
+  { deep: true },
+)
+watch(() => props.pauseReveal, (paused) => {
+  pixelReveal?.setPaused(!!paused, performance.now())
+})
 
 onMounted(() => {
   document.addEventListener("visibilitychange", handleVisibilityChange)
@@ -440,7 +438,7 @@ onMounted(() => {
 })
 onUnmounted(() => {
   document.removeEventListener("visibilitychange", handleVisibilityChange)
-  clearInterval(intervalId)
+  pixelReveal = null
   stopAnimation()
 })
 </script>

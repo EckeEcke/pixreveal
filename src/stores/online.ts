@@ -6,6 +6,7 @@ import { usePlayerStore } from "./player";
 import { useConfigStore } from "./config";
 import { useRouter } from "vue-router";
 import type { OnlineHighlight, Player } from "@/types/player";
+import { createRevealSeed } from "@/utils/pixelReveal";
 
 export const useOnlineStore = defineStore("online", () => {
   const channelStore = useChannelStore();
@@ -161,6 +162,9 @@ export const useOnlineStore = defineStore("online", () => {
     // This also ensures lobby setting changes are reflected in the next match.
     resetScoresForNextMatch();
     gameStore.prepareGame(configStore.revealTime);
+    gameStore.rounds.forEach((round) => {
+      round.revealSeed = createRevealSeed();
+    });
 
     channel.trigger("client-game-started", {
       startedAt: new Date().toISOString(),

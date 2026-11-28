@@ -42,6 +42,7 @@
           :is-revealing="true"
           :is-status-icon="hasAnswered && !hasAnsweredCorrectly"
           :timer-duration="timerDuration"
+          :reveal-seed="currentRound?.revealSeed"
           :pauseReveal="showFinalRoundTransition || showBonusRoundTransition"
         />
       </div>

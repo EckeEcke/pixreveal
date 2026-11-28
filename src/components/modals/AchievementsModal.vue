@@ -20,7 +20,6 @@
         v-for="achievement in ACHIEVEMENTS"
         :key="achievement.id"
         class="achievement-row"
-        :class="{ unlocked: achievementsStore.isUnlocked(achievement.id) }"
       >
         <span
           v-if="achievementsStore.isUnlocked(achievement.id)"
@@ -106,11 +105,6 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.035);
-  opacity: 0.3;
-}
-
-.achievement-row.unlocked {
-  opacity: 1;
 }
 
 .achievement-icon {

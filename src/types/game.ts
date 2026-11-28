@@ -17,6 +17,7 @@ export type Round = {
   answer: string;
   data: PixelGrid;
   options: RoundOption[];
+  revealSeed?: string | number;
 };
 
 export type GameState =

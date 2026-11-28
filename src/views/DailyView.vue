@@ -36,6 +36,7 @@
         :is-revealing="isRevealing"
         :is-status-icon="hasAnswered"
         :timer-duration="timerDuration"
+        :reveal-seed="dailyRevealSeed(dailyStore.date, currentRoundIndex)"
         :is-magnifier-mode="mode === 'inspect'"
         :mouse-pos="mousePos"
         @mousemove="updateMousePos"
@@ -70,6 +71,7 @@ import AnswerButtons from "@/components/game-ui/AnswerButtons.vue"
 import { useConfigStore } from "@/stores/config"
 import GameHeader from "@/components/game-ui/GameHeader.vue"
 import MinimalSettings from "@/components/page-ui/MinimalSettings.vue"
+import { dailyRevealSeed } from "@/utils/pixelReveal"
 import {
   workerClearInterval,
   workerClearTimeout,

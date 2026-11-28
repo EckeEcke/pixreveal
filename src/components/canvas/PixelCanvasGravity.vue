@@ -36,7 +36,7 @@ const configStore = useConfigStore();
 const { playSound} = useSoundStore();
 
 const gravity = 0.5;
-const bounce = -0.3;
+const bounce = -0.2;
 const activePixels = ref([]);
 const animatedPhysicsPixels = ref([]);
 
@@ -306,7 +306,10 @@ const render = () => {
           playSound("reveal");
         }
         p.velocity *= bounce;
-        if (Math.abs(p.velocity) < 0.5) p.landed = true;
+        if (Math.abs(p.velocity) < 1) {
+          p.velocity = 0;
+          p.landed = true;
+        }
       }
       drawY = p.currentY;
     }
@@ -317,7 +320,7 @@ const render = () => {
 
     ctx.fillStyle = color;
     ctx.shadowColor = color;
-    ctx.shadowBlur = p.val === 1 ? 0 : props.isStatusIcon ? 15 * scale : 10;
+    ctx.shadowBlur = p.val === 1 ? 0 : props.isStatusIcon ? 15 * scale : 8;
 
     ctx.fillRect(
       p.x + gap + centerOffset,
