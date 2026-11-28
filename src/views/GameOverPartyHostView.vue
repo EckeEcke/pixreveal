@@ -12,39 +12,43 @@
       <div class="party-wrapper" ref="contentRef">
         <div class="results-card party-results-card">
           <h1 class="logo">PARTY <span>OVER</span></h1>
-          <PartyTitles :players="partyPlayersSorted" :waiting="!revealDone" />
-          <div class="final-rankings">
-            <h2>Final Rankings</h2>
-            <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
-              <PlayerDisplay
-                :position="index + 1"
-                :name="player.username"
-                :subline="getPartyTitleEmojis(player, index)"
-                :avatar-index="player.avatarIndex"
-                :avatar-sprite-sheet="player.avatarSpriteSheet"
-                :name-effect="player.nameEffect"
-                :avatar-effect="player.avatarEffect"
-                :points="player.points"
-              />
+          <div class="results-layout">
+            <section class="moderator-section" aria-label="Moderator comments">
+              <PartyTitles :players="partyPlayersSorted" :waiting="!revealDone" />
+            </section>
+            <section class="final-rankings" aria-labelledby="ranking-heading">
+              <h2 id="ranking-heading">Final Rankings</h2>
+              <div v-for="(player, index) in partyPlayersSorted" :key="player.playerId">
+                <PlayerDisplay
+                  :position="index + 1"
+                  :name="player.username"
+                  :subline="getPartyTitleEmojis(player, index)"
+                  :avatar-index="player.avatarIndex"
+                  :avatar-sprite-sheet="player.avatarSpriteSheet"
+                  :name-effect="player.nameEffect"
+                  :avatar-effect="player.avatarEffect"
+                  :points="player.points"
+                />
+              </div>
+            </section>
+            <div class="party-actions">
+              <ButtonPrimary
+                class="btn-primary pulse-btn"
+                data-sfx="click"
+                @mouseenter="soundStore.handleHoverSound"
+                @clicked="playAgain"
+              >
+                <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
+              >
+              <ButtonSecondary
+                class="btn-secondary"
+                data-sfx="back"
+                @mouseenter="soundStore.handleHoverSound"
+                @clicked="goBack"
+              >
+                <Icon icon="pixel:arrow-left" /> Go back
+              </ButtonSecondary>
             </div>
-          </div>
-          <div class="party-actions">
-            <ButtonPrimary
-              class="btn-primary pulse-btn"
-              data-sfx="click"
-              @mouseenter="soundStore.handleHoverSound"
-              @clicked="playAgain"
-            >
-              <Icon icon="pixel:refresh-solid" /> Play again</ButtonPrimary
-            >
-            <ButtonSecondary
-              class="btn-secondary"
-              data-sfx="back"
-              @mouseenter="soundStore.handleHoverSound"
-              @clicked="goBack"
-            >
-              <Icon icon="pixel:arrow-left" /> Go back
-            </ButtonSecondary>
           </div>
         </div>
       </div>
@@ -99,7 +103,7 @@ const scale = ref(1);
 const VIEWPORT_MARGIN = 24;
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 1.8;
-const SCALE_BREAKPOINT = 1000;
+const SCALE_BREAKPOINT = 1200;
 
 let resizeObserver = null;
 let rafId = null;
@@ -323,8 +327,8 @@ main {
   justify-content: center;
   align-items: center;
   width: 100%;
-  @media (min-width: 1000px) {
-    width: calc(100dvw - 16px);
+  @media (min-width: 1200px) {
+    width: 100%;
     height: calc(100dvh - 32px);
   }
   overflow: hidden;
@@ -392,10 +396,13 @@ main {
 }
 
 .party-actions {
+  grid-area: actions;
   display: flex;
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
+  width: 100%;
+  align-self: start;
 }
 
 .rank-prophet {
@@ -423,11 +430,45 @@ main {
 }
 
 .final-rankings {
+  grid-area: ranking;
   padding: 0 0 16px;
   border-radius: 8px;
-  margin: 32px 0;
+  margin: 0;
   max-height: 250px;
   overflow-y: auto;
+}
+
+.results-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "moderator" "ranking" "actions";
+  align-items: start;
+  gap: 32px;
+}
+
+.moderator-section, .final-rankings { min-width: 0; }
+.moderator-section { grid-area: moderator; }
+.moderator-section :deep(.party-titles) { margin: 0; }
+.final-rankings h2 { margin: 0 0 16px; text-align: left; font-size: 18px; }
+.final-rankings :deep(.player-hud) { min-width: 0; }
+
+@media (max-width: 575px) {
+  .moderator-section :deep(.party-titles) { grid-template-columns: 60px minmax(0, 1fr); }
+  .moderator-section :deep(.title-pill) { min-width: 0; overflow-wrap: anywhere; }
+  .moderator-section :deep(.snapshot-content) { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .moderator-section :deep(.snapshot-image) { max-width: 160px; height: auto; }
+  .moderator-section :deep(.player-pill) { max-width: 100%; box-sizing: border-box; }
+  .moderator-section :deep(.player-pill-name) { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+}
+
+@media (min-width: 1200px) {
+  .party-wrapper { width: 1280px; }
+  .results-layout {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "moderator ranking" "actions ranking";
+  }
+  .final-rankings { max-height: none; overflow-y: visible; }
 }
 
 

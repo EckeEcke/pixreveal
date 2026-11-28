@@ -527,7 +527,7 @@ onBeforeUnmount(() => stop());
 
 .title-pill {
   cursor: pointer;
-  min-height: 230px;
+  min-height: 244px;
   box-sizing: border-box;
   padding: 16px;
   border-radius: 8px;
@@ -546,7 +546,7 @@ onBeforeUnmount(() => stop());
 }
 
 .snapshot-title-pill {
-  min-height: 180px;
+  min-height: 244px;
 }
 
 .snapshot-content {
